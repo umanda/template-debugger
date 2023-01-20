@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { Modal, ModalOverlay, ModalContent, ModalFooter, Text, Flex, ModalCloseButton } from "@chakra-ui/react"
 import Signin from "./Signin"
 import Signup from "./Signup"
