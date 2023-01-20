@@ -14,17 +14,19 @@ const Designer: any = () => {
   const [typeSign, setTypeSign] = useState("signin")
   const { id } = useParams()
   const navigate = useNavigate()
+  const token = localStorage.getItem("token")
 
   useEffect(() => {
     if (user) {
       user?.token !== null && api.signInByToken(user.token)
+    } else if (token) {
+      console.log(token)
+    } else {
+      // window.location.href = "https://beta.drawify.com/"
+      console.log("redirect base beta drawify")
     }
     id === undefined && navigate(`/composer/${generateId("proj")}`)
   }, [])
-
-  useEffect(() => {
-    if (user === null) window.location.href = "https://beta.drawify.com/"
-  }, [user])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>
