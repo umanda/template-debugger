@@ -1,6 +1,3 @@
-// import type { NextPage } from "next"
-// import Head from "next/head"
-// import DesignEditor from "components/DesignEditor"
 import { Flex, useDisclosure } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
