@@ -21,7 +21,6 @@ import { generateId } from "../utils/unique"
 import { AuthType } from "./AuthModal"
 import * as api from "../services/api"
 import { useEditor, useScenes } from "@layerhub-pro/react"
-import { IDesign } from "@layerhub-pro/types"
 import useDesignEditorContext from "../hooks/useDesignEditorContext"
 
 export default function SignIn({
@@ -73,7 +72,7 @@ export default function SignIn({
       }
       setNamesPages(sceneNames)
     } catch {
-      navigate(`/designer/${generateId("proj")}`)
+      navigate(`/composer/${generateId("proj")}`)
     }
   }, [id, navigate])
 

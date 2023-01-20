@@ -20,6 +20,7 @@ export interface User {
   favorites: number
   downloaded: number
   plan?: string
+  token?: string
 }
 export interface Drawifier extends User {}
 

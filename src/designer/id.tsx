@@ -6,6 +6,7 @@ import DesignEditor from "../components/DesignEditor"
 import SigninModal from "../components/Modals/AuthModal"
 import { useNavigate, useParams } from "react-router-dom"
 import { generateId } from "../components/utils/unique"
+import * as api from "../.././src/components/services/api"
 
 const Designer: any = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -15,6 +16,9 @@ const Designer: any = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
+    if (user) {
+      user?.token !== null && api.signInByToken(user.token)
+    }
     id === undefined && navigate(`/composer/${generateId("proj")}`)
   }, [])
 
