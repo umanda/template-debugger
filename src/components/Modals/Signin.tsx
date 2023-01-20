@@ -72,7 +72,7 @@ export default function SignIn({
       }
       setNamesPages(sceneNames)
     } catch {
-      navigate(`/composer/${generateId("proj")}`)
+      navigate(`/designer/${generateId("proj")}`)
     }
   }, [id, navigate])
 

@@ -19,7 +19,7 @@ const Designer: any = () => {
     if (user) {
       user?.token !== null && api.signInByToken(user.token)
     }
-    id === undefined && navigate(`/composer/${generateId("proj")}`)
+    id === undefined && navigate(`/designer/${generateId("proj")}`)
   }, [])
 
   useEffect(() => {
