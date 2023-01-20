@@ -153,52 +153,48 @@ input:checked + .slider:before {
 .slider.blue:before {
   border-radius: 50%;
 }
- 
- 
-.swiper-button-prev::after{
-  content: " prev"; 
+
+.swiper-button-prev::after {
+  content: " prev";
   position: absolute;
-  left: -10px;  
-  color: black;  
+  left: -10px;
+  color: black;
 }
-.swiper-button-next::after{
+.swiper-button-next::after {
   content: " next";
   position: absolute;
-  right: -10px;  
-  color: black;  
+  right: -10px;
+  color: black;
 }
 
 .swiper {
   width: 95%;
-  height: 95%;  
-
+  height: 95%;
 }
-.swiper-slide{
-  display: flex; 
+.swiper-slide {
+  display: flex;
   justify-content: center;
-  align-items: center;  
+  align-items: center;
 }
- 
-.swiper-slide img { 
+
+.swiper-slide img {
   width: 348px;
   height: 225px;
   object-fit: cover;
   background: white;
-  box-shadow: 0.5px 0px 1px .5px lightgray;
-  padding:  5px;
+  box-shadow: 0.5px 0px 1px 0.5px lightgray;
+  padding: 5px;
   border-radius: 7px;
 }
 
- 
-
-  @media only screen and (max-width: 600px) {
-    .iframe-class{
-      width: auto;
-      height: auto;
-    }
+@media only screen and (max-width: 600px) {
+  .iframe-class {
+    width: auto;
+    height: auto;
   }
+}
 
-  /* @media only screen and (min-width: 600px) {
+/* @media only screen and (min-width: 600px) {
     .iframe-class{
       width: auto;
       height: auto;

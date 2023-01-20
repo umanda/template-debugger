@@ -206,8 +206,7 @@ export default function VectorColorPicker() {
             pattern="[0-9]*(.[0-9]+)?"
             size={"xs"}
             onChange={(e) => {
-              //@ts-ignore
-              e.target.value === NaN
+              e.target.value
                 ? handleChange("charSpacingTemp", 0)
                 : handleChange("charSpacingTemp", parseFloat(e.target.value))
             }}
