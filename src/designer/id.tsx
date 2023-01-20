@@ -23,14 +23,13 @@ const Designer: any = () => {
   }, [])
 
   useEffect(() => {
-    user === null && onOpen()
-    setTypeSign("signin")
+    if (user === null) window.location.href = "https://beta.drawify.com/"
+    // setTypeSign("signin")
   }, [user])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>
       <SigninModal setType={setTypeSign} type={typeSign} onClose={onClose} isOpen={isOpen} onOpen={onOpen} />
-
       <Flex flex={1}>
         <DesignEditor />
       </Flex>
