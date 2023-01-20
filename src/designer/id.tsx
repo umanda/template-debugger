@@ -19,12 +19,11 @@ const Designer: any = () => {
     if (user) {
       user?.token !== null && api.signInByToken(user.token)
     }
-    id === undefined && navigate(`/designer/${generateId("proj")}`)
+    id === undefined && navigate(`/composer/${generateId("proj")}`)
   }, [])
 
   useEffect(() => {
     if (user === null) window.location.href = "https://beta.drawify.com/"
-    // setTypeSign("signin")
   }, [user])
 
   return (
