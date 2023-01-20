@@ -5,7 +5,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Designer />} />
-      <Route path="/designer/:id" element={<Designer />} />
+      <Route path="/composer/:id" element={<Designer />} />
     </Routes>
   )
 }

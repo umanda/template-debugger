@@ -15,7 +15,7 @@ const Designer: any = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    id === undefined && navigate(`/designer/${generateId("proj")}`)
+    id === undefined && navigate(`/composer/${generateId("proj")}`)
   }, [])
 
   useEffect(() => {
