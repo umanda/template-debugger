@@ -36,6 +36,25 @@ export const signup = (props: SignupDto): Promise<User> => {
   })
 }
 
+export const signInByToken = (token: string): Promise<User> => {
+  return new Promise((resolve, reject) => {
+    const bodyParameters = {
+      key: "value"
+    }
+    const config = {
+      headers: { Authorization: `Bearer ${token}` }
+    }
+    base
+      .post("/signin/token", bodyParameters, config)
+      .then(({ data }: any) => {
+        resolve(data)
+      })
+      .catch((err: any) => {
+        reject(err)
+      })
+  })
+}
+
 export const makeMagicLink = (props: string): Promise<{ url: string }> => {
   return new Promise((resolve, reject) => {
     base
@@ -428,6 +447,7 @@ export const oldSignIn = (props: Partial<SigninDto>): Promise<User> => {
     base
       .post("/old/signIn", props)
       .then(({ data }) => {
+        console.log(data)
         resolve(data.user)
       })
       .catch((err) => reject(err))
