@@ -47,7 +47,7 @@ export const signInByToken = (token: string): Promise<User> => {
     base
       .post("/signin/token", bodyParameters, config)
       .then(({ data }: any) => {
-        resolve(data)
+        resolve(data.user)
       })
       .catch((err: any) => {
         reject(err)
