@@ -7,6 +7,8 @@ import SigninModal from "../components/Modals/AuthModal"
 import { useNavigate, useParams } from "react-router-dom"
 import { generateId } from "../components/utils/unique"
 import * as api from "../.././src/components/services/api"
+import { useAppDispatch } from "../components/store/store"
+import { signInByToken } from "../components/store/user/action"
 
 const Designer: any = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -15,18 +17,18 @@ const Designer: any = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
+  const dispath = useAppDispatch()
 
   useEffect(() => {
     if (user) {
       user?.token !== null && api.signInByToken(user.token)
     } else if (token) {
-      console.log(token)
+      token !== "" && dispath(signInByToken(token))
     } else {
-      // window.location.href = "https://beta.drawify.com/"
-      console.log("redirect base beta drawify")
+      window.location.href = "https://beta.drawify.com/"
     }
     id === undefined && navigate(`/composer/${generateId("proj")}`)
-  }, [])
+  }, [user])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>

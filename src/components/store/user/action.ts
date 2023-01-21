@@ -21,6 +21,19 @@ export const oldSignIn = createAsyncThunk<any, SigninDto, { rejectValue: boolean
   }
 )
 
+export const signInByToken = createAsyncThunk<any, string, { rejectValue: boolean }>(
+  "user/signInByToken",
+  async (args, { dispatch, rejectWithValue }) => {
+    try {
+      const user: any = await api.signInByToken(args)
+      // dispatch(setUser({ ...user, email: args.email }))
+      return user
+    } catch (err: any) {
+      return err
+    }
+  }
+)
+
 export const signin = createAsyncThunk<any, SigninDto, { rejectValue: boolean }>(
   "user/signin",
   async (args, { dispatch, rejectWithValue }) => {
@@ -28,13 +41,7 @@ export const signin = createAsyncThunk<any, SigninDto, { rejectValue: boolean }>
       const user: any = await api.signin(args)
       dispatch(setUser({ ...user, email: args.email }))
       const me = await api.userMe()
-      // console.log(subme)
       dispatch(setUser({ ...user, ...me }))
-      // try {
-      //   const subme = await api.getsubscriptionMe()
-      //   const plan = subme.subscription.plan
-      //   dispatch(setUser({ ...user, ...me, ...plan }))
-      // } catch {}
       return user
     } catch (err: any) {
       return rejectWithValue(err)
@@ -72,6 +79,7 @@ export const getListDrawifiers = createAsyncThunk<void, Partial<ISearchDrawifier
 export const logout = createAsyncThunk<any, void, { rejectValue: boolean }>(
   "user/logout",
   async (_, { dispatch, rejectWithValue }) => {
+    localStorage.setItem("token", "")
     try {
       const logout = await api.logout()
       dispatch(removeUser())
