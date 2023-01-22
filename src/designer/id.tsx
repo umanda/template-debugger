@@ -19,6 +19,8 @@ const Designer: any = () => {
   const token = localStorage.getItem("token")
   const dispath = useAppDispatch()
 
+  console.log(user)
+
   useEffect(() => {
     if (user) {
       user?.token !== null && api.signInByToken(user.token)
