@@ -101,13 +101,13 @@ export default function Template() {
       setResourcesTemplate(selectListTemplate)
     }
 
-    if (selectListFavoriteTemplates[0] === undefined && user) {
+    if (user) {
       dispatch(getListFavoriteTemplates({ query: { favorited: true } }))
     }
     setMore(true)
     setLoad(true)
     setDisableTab(false)
-  }, [selectListFavoriteTemplates, defaultRecommend])
+  }, [selectListFavoriteTemplates, user, defaultRecommend])
 
   const fetchDataResource = async () => {
     setMore(false)

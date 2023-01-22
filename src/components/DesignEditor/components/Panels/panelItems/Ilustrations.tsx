@@ -128,12 +128,12 @@ export default function Ilustrations() {
       setResourcesIllustration(selectListResources)
       setMore(true)
     }
-    if (selectListFavoriteResources[0] === undefined && user) {
+    if (user) {
       dispatch(getFavoritedResources({ query: { favorited: true } }))
     }
     setLoad(true)
     setDisableTab(false)
-  }, [selectListResources, user])
+  }, [selectListResources])
 
   const fetchDataResource = async () => {
     setMore(false)
