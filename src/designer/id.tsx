@@ -20,16 +20,14 @@ const Designer: any = () => {
   const dispath = useAppDispatch()
 
   useEffect(() => {
-    if (id) {
-      if (user) {
-        console.log("sign in with user token")
-        user?.token !== null && dispath(signInByToken(user.token))
-      } else if (token) {
-        console.log("sign in with token by drawify 2.0")
-        token !== "" && dispath(signInByToken(token))
-      } else {
-        // window.location.href = "https://beta.drawify.com/home"
-      }
+    if (user) {
+      console.log("sign in with user token")
+      user?.token !== null && dispath(signInByToken(user.token))
+    } else if (token) {
+      console.log("sign in with token by drawify 2.0")
+      token !== "" && dispath(signInByToken(token))
+    } else {
+      // window.location.href = "https://beta.drawify.com/home"
     }
     id === undefined && navigate(`/composer/${generateId("proj")}`)
   }, [id, token])
