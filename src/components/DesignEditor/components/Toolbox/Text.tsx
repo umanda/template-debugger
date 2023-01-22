@@ -65,6 +65,7 @@ export default function Text() {
   React.useEffect(() => {
     if (activeObject && activeObject.type === "StaticText") {
       const textProperties = getTextProperties(activeObject, fonts)
+      console.log(textProperties)
       setState({ ...state, ...textProperties })
     }
   }, [activeObject, scenes])

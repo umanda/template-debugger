@@ -1,4 +1,4 @@
-import { Flex, useDisclosure } from "@chakra-ui/react"
+import { Button, Flex, useDisclosure } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { selectUser } from "../components/store/user/selector"
@@ -12,27 +12,7 @@ import { signInByToken } from "../components/store/user/action"
 
 const Designer: any = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const user = useSelector(selectUser)
   const [typeSign, setTypeSign] = useState("signin")
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const token = localStorage.getItem("token")
-  const dispath = useAppDispatch()
-
-  useEffect(() => {
-    if (id) {
-      if (user) {
-        console.log("sign in with user token")
-        user?.token !== null && dispath(signInByToken(user.token))
-      } else if (token) {
-        console.log("sign in with token by drawify 2.0")
-        token !== "" && dispath(signInByToken(token))
-      } else {
-        // window.location.href = "https://beta.drawify.com/home"
-      }
-    }
-    id === undefined && navigate(`/composer/${generateId("proj")}`)
-  }, [id, token])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>
