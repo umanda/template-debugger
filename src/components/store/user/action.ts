@@ -26,7 +26,7 @@ export const signInByToken = createAsyncThunk<any, string, { rejectValue: boolea
   async (args, { dispatch, rejectWithValue }) => {
     try {
       const user: any = await api.signInByToken(args)
-      dispatch(setUser(user))
+      dispatch(setUser({ ...user, token: args }))
       return user
     } catch (err: any) {
       return err
