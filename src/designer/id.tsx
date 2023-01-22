@@ -23,8 +23,10 @@ const Designer: any = () => {
 
   useEffect(() => {
     if (user) {
+      console.log("sign in with user token")
       user?.token !== null && api.signInByToken(user.token)
     } else if (token) {
+      console.log("sign in with token by drawify 2.0")
       token !== "" && dispath(signInByToken(token))
     } else {
       window.location.href = "https://beta.drawify.com/home"
