@@ -18,28 +18,23 @@ const Designer: any = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    lodaTemplateById()
-  }, [])
+    editor && lodaTemplateById()
+  }, [editor])
 
   const lodaTemplateById = useCallback(async () => {
     try {
       console.log("load by id")
       const resolve: any = await api.getProjectById({ id })
-      // editor?.design?.setDesign(resolve)
-      console.log(resolve)
+      editor?.design?.setDesign(resolve)
       let sceneNames: string[] = []
-      let cont = 0
       for (const scn of resolve.scenes) {
-        scenes[cont].setScene(scn)
         sceneNames.push(scn.name)
       }
-      cont++
       setNamesPages(sceneNames)
     } catch (err: any) {
-      console.log("change page", err)
       navigate(`/composer/${generateId("proj")}`)
     }
-  }, [id, navigate])
+  }, [id, navigate, editor])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>
