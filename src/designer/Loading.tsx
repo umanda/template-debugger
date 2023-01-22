@@ -16,7 +16,7 @@ function Loading({ text }: { text?: string }) {
         console.log("sign in with token by drawify 2.0")
         token !== "" && dispath(signInByToken(token))
       } else {
-        window.location.href = "https://beta.drawify.com/home"
+        // window.location.href = "https://beta.drawify.com/home"
       }
     }
     id === undefined && navigate(`/composer/${generateId("proj")}`)

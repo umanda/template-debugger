@@ -133,7 +133,7 @@ export default function Ilustrations() {
     }
     setLoad(true)
     setDisableTab(false)
-  }, [selectListResources])
+  }, [selectListResources, user])
 
   const fetchDataResource = async () => {
     setMore(false)

@@ -1,14 +1,7 @@
-import { Button, Flex, useDisclosure } from "@chakra-ui/react"
-import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
-import { selectUser } from "../components/store/user/selector"
+import { Flex, useDisclosure } from "@chakra-ui/react"
+import { useState } from "react"
 import DesignEditor from "../components/DesignEditor"
 import SigninModal from "../components/Modals/AuthModal"
-import { useNavigate, useParams } from "react-router-dom"
-import { generateId } from "../components/utils/unique"
-import * as api from "../.././src/components/services/api"
-import { useAppDispatch } from "../components/store/store"
-import { signInByToken } from "../components/store/user/action"
 
 const Designer: any = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
