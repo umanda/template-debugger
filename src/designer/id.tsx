@@ -27,10 +27,10 @@ const Designer: any = () => {
     } else if (token) {
       token !== "" && dispath(signInByToken(token))
     } else {
-      window.location.href = "https://beta.drawify.com/"
+      window.location.href = "https://beta.drawify.com/home"
     }
     id === undefined && navigate(`/composer/${generateId("proj")}`)
-  }, [user])
+  }, [])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>
