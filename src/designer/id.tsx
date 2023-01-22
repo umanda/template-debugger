@@ -32,7 +32,7 @@ const Designer: any = () => {
       }
     }
     id === undefined && navigate(`/composer/${generateId("proj")}`)
-  }, [id])
+  }, [id, token])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>
