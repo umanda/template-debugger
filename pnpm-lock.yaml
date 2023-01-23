@@ -9,8 +9,8 @@ specifiers:
   '@emotion/react': ^11.9.3
   '@emotion/styled': ^11.9.3
   '@layerhub-io/react-custom-scrollbar': ^0.0.1
-  '@layerhub-pro/react': ^1.9.1
-  '@layerhub-pro/types': ^1.9.1
+  '@layerhub-pro/react': ^1.10.0
+  '@layerhub-pro/types': ^1.10.0
   '@reduxjs/toolkit': ^1.8.3
   '@types/lodash': ^4.14.182
   '@types/mime': ^2.0.3
@@ -38,6 +38,7 @@ specifiers:
   redux-persist: ^6.0.0
   redux-thunk: ^2.4.1
   typescript: ^4.9.3
+  use-debounce: ^8.0.4
   vite: ^4.0.0
 
 dependencies:
@@ -49,8 +50,8 @@ dependencies:
   '@emotion/react': 11.10.5_3stiutgnnbnfnf3uowm5cip22i
   '@emotion/styled': 11.10.5_jrh5enlbqfbnumycmktdqgd6se
   '@layerhub-io/react-custom-scrollbar': 0.0.1_react@18.2.0
-  '@layerhub-pro/react': 1.9.1
-  '@layerhub-pro/types': 1.9.1
+  '@layerhub-pro/react': 1.10.0
+  '@layerhub-pro/types': 1.10.0
   '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
   '@types/lodash': 4.14.191
   axios: 0.27.2
@@ -71,6 +72,7 @@ dependencies:
   redux: 4.2.0
   redux-persist: 6.0.0_react@18.2.0+redux@4.2.0
   redux-thunk: 2.4.2_redux@4.2.0
+  use-debounce: 8.0.4_react@18.2.0
 
 devDependencies:
   '@types/mime': 2.0.3
@@ -1857,11 +1859,11 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@layerhub-pro/core/1.9.1:
-    resolution: {integrity: sha512-Qag3X8RJCHED8POikRIBpH5uLw4Y38WeGOhtI/ETl32nQ6K+2jbsI3PXGPjHxZrBmRobkkCJAiV3pmbB8+uK5g==}
+  /@layerhub-pro/core/1.10.0:
+    resolution: {integrity: sha512-hOaulqh0DyDizXm+11QE2xTVMbt5E9IqwVnimBZnZt3qJskpTGSTcyUpQFgZceFMLmaAGC9nnrnTPV+qIGr7kA==}
     dependencies:
-      '@layerhub-pro/objects': 1.9.1_fabric@5.3.0
-      '@layerhub-pro/types': 1.9.1
+      '@layerhub-pro/objects': 1.10.0_fabric@5.3.0
+      '@layerhub-pro/types': 1.10.0
       fabric: 5.3.0
       lodash: 4.17.21
       nanoid: 3.3.4
@@ -1874,8 +1876,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@layerhub-pro/objects/1.9.1_fabric@5.3.0:
-    resolution: {integrity: sha512-U3iLvXogZdtew1J400W7swhAJ6IDRyN9jDiQ1mIDjfJByzDdLC4bfds9JQJy6tDOlIT6sZRQgVHmzY/aXkhBqg==}
+  /@layerhub-pro/objects/1.10.0_fabric@5.3.0:
+    resolution: {integrity: sha512-HNwzDOuIdrbJsv5VUOm/r1PYFWfpkhw0+egJiW2Hwwuzvc0AG9F7LEDBiRQQSHkaI3KY/sEEfnnbGdcIwYyGZA==}
     peerDependencies:
       fabric: ^5.3.0
     dependencies:
@@ -1883,10 +1885,10 @@ packages:
       lodash: 4.17.21
     dev: false
 
-  /@layerhub-pro/react/1.9.1:
-    resolution: {integrity: sha512-tdjJzZvGv5CyXuRpIBBECZs7tE1Q/ju19QpUkB/z1dND/tlbGnfajKgmT+QiUizT4xvQMujfZk1Fn509/+tA7w==}
+  /@layerhub-pro/react/1.10.0:
+    resolution: {integrity: sha512-lhRgE/tdQ1FFhTA0+gZKLwyJ1UuKgh1EyV1F7IjhYuKFafreZ5/h+2REVyoVE6+f6Usvt84gES9GaDVlq3QY8w==}
     dependencies:
-      '@layerhub-pro/core': 1.9.1
+      '@layerhub-pro/core': 1.10.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       resize-observer-polyfill: 1.5.1
@@ -1897,8 +1899,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@layerhub-pro/types/1.9.1:
-    resolution: {integrity: sha512-vBw/zmvY/lN++C+v/ROMNye+C45EmQ7f86jhxCEzXDfhKmjRIOXSZiZ6GblfWVRHwOiB9goZjGA2HfubbYTWKw==}
+  /@layerhub-pro/types/1.10.0:
+    resolution: {integrity: sha512-duJAmD2MkthOMPBzPDnpBGTMV9SMM63+V36CMnrYXYNSAq2E7dHH2rHEQU5QIGPjTlgMGj9HyxQNB6N4KXxBmg==}
     dev: false
 
   /@mapbox/node-pre-gyp/1.0.10:
@@ -4095,6 +4097,15 @@ packages:
       '@types/react': 18.0.27
       react: 18.2.0
       tslib: 2.4.1
+    dev: false
+
+  /use-debounce/8.0.4_react@18.2.0:
+    resolution: {integrity: sha512-fGqsYQzl8kLHF2QpQSgIwgOgJmnh6j5L6SIzQiHdLfwp3q1egUL3btq5Bg2SJysH6A0ILLgT2IqXZKoNJr0nFw==}
+    engines: {node: '>= 10.0.0'}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /use-sidecar/1.1.2_3stiutgnnbnfnf3uowm5cip22i:

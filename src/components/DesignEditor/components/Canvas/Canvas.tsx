@@ -146,7 +146,7 @@ export default function Canva() {
           type: "StaticVector",
           name: "Shape",
           src: resourceDrag.url,
-          ...{ watermark: resourceDrag?.license === "paid" && "https://ik.imagekit.io/scenify/drawify-small.svg" },
+          // ...{ watermark: resourceDrag?.license === "paid" && "https://ik.imagekit.io/scenify/drawify-small.svg" },
           metadata: {}
         }
         if (editor) {
@@ -157,15 +157,8 @@ export default function Canva() {
     [activeScene, editor, user, resourceDrag]
   )
 
-  const makeClick = React.useCallback(() => {
-    if (editor?.freeDrawer?.canvas?.isDrawingMode && draw.type) {
-      editor.freeDrawer.disable()
-      editor.freeDrawer.enable(draw.type, { color: draw.color, opacity: draw.opacity / 100, size: draw.size })
-    }
-  }, [draw, activeScene, editor])
-
   return (
-    <Flex flex={1} position="relative" onClick={makeClick} onDrop={(ev) => dropEvent(ev)} id="app">
+    <Flex flex={1} position="relative" onDrop={(ev) => dropEvent(ev)} id="app">
       <ContextMenu />
       <Flex w="full" h="full">
         <Canvas />

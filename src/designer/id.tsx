@@ -1,5 +1,5 @@
 import { Flex, useDisclosure } from "@chakra-ui/react"
-import { useEditor, useScenes } from "@layerhub-pro/react"
+import { useEditor } from "@layerhub-pro/react"
 import { useCallback, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import DesignEditor from "../components/DesignEditor"
@@ -12,7 +12,6 @@ const Designer: any = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [typeSign, setTypeSign] = useState("signin")
   const editor = useEditor()
-  const scenes = useScenes()
   const { setNamesPages } = useDesignEditorContext()
   const { id } = useParams()
   const navigate = useNavigate()
@@ -23,7 +22,6 @@ const Designer: any = () => {
 
   const lodaTemplateById = useCallback(async () => {
     try {
-      console.log("load by id")
       const resolve: any = await api.getProjectById({ id })
       editor?.design?.setDesign(resolve)
       let sceneNames: string[] = []

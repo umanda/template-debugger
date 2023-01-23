@@ -40,6 +40,8 @@ import DesignName from "./DesignName"
 import Resize from "./Resize"
 import SigninModal from "../../../Modals/AuthModal"
 import { useParams } from "react-router-dom"
+import { useDebounce } from "use-debounce"
+import { json } from "node:stream/consumers"
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -297,7 +299,7 @@ function ShareMenu() {
               />
             </Center>
           </Box>
-          <Box>
+          {/* <Box>
             <Box color="#A9A9B2">MAGIC LINK</Box>
             <Flex sx={{ paddingY: "0.5rem" }}>
               <Button w="100%" leftIcon={<Magic size={24} />} variant="outline" onClick={() => makeMagicLink()}>
@@ -305,7 +307,7 @@ function ShareMenu() {
               </Button>
               <Input value={valueInput} position="absolute" onChange={() => {}} visibility={"hidden"} id="input" />
             </Flex>
-          </Box>
+          </Box> */}
           {/* <Box>
               <Box color="#A9A9B2">INVITE</Box>
               <Box sx={{ paddingY: "0.5rem" }}>
@@ -567,24 +569,32 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const scenes = useScenes()
   const currentScene = useActiveScene()
   const [autoSave, setAutoSave] = useState<boolean>(true)
+  const [stateJson, setStateJson] = useState<any>("")
+  const [stateChange] = useDebounce(stateJson, 5000)
+
+  useEffect(() => {
+    functionSave()
+  }, [stateChange, namesPages])
+
+  useEffect(() => {
+    setAutoSave(false)
+  }, [currentScene, id, design, autoSave, namesPages, editor, scenes])
 
   React.useEffect(() => {
-    functionSave()
-  }, [scenes, currentScene, user, namesPages])
+    let watcher = async () => {
+      setStateJson(JSON.stringify(editor.design.toJSON()))
+    }
+    if (editor) {
+      editor.on("history:updated", watcher)
+    }
+    return () => {
+      if (editor) {
+        editor.off("history:updated", watcher)
+      }
+    }
+  }, [editor, namesPages])
 
   const functionSave = useCallback(async () => {
-    try {
-      if (autoSave === true && user) {
-        setAutoSave(false)
-        await save()
-        setAutoSave(true)
-      }
-    } catch {
-      setAutoSave(true)
-    }
-  }, [editor, scenes, currentScene, id, design, autoSave, namesPages])
-
-  const save = useCallback(async () => {
     try {
       let designJSON: any = design?.toJSON()
       designJSON.id = id
@@ -607,7 +617,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
           _hover={{ color: "#15BE53" }}
           color={autoSave === false ? "#DDDFE5" : "#15BE53"}
           icon={<Sync size={24} />}
-          onClick={() => (!user ? onOpen() : save())}
+          onClick={() => (!user ? onOpen() : functionSave())}
         />
       </Tooltip>
     </Flex>

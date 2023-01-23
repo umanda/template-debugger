@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Input, Spacer } from "@chakra-ui/react"
+import { Box, Button, Flex, IconButton, Input, Spacer } from "@chakra-ui/react"
 import React from "react"
 import { useActiveObject, useActiveScene, useDesign, useEditor, useScenes } from "@layerhub-pro/react"
 import Common from "./Common"
@@ -65,7 +65,6 @@ export default function Text() {
   React.useEffect(() => {
     if (activeObject && activeObject.type === "StaticText") {
       const textProperties = getTextProperties(activeObject, fonts)
-      console.log(textProperties)
       setState({ ...state, ...textProperties })
     }
   }, [activeObject, scenes])
@@ -78,18 +77,21 @@ export default function Text() {
     let watcher = async () => {
       if (activeObject && activeObject.type === "StaticText") {
         const textProperties = getTextProperties(activeObject, fonts)
+        console.log(textProperties)
         setState({ ...state, ...textProperties })
       }
     }
     if (editor) {
-      editor.on("history:changed", watcher)
+      editor.on("history:updated", watcher)
     }
     return () => {
       if (editor) {
-        editor.off("history:changed", watcher)
+        editor.off("history:updated", watcher)
       }
     }
   }, [editor, activeObject])
+
+  console.log(state.styleOptions.hasBold)
 
   const makeBold = React.useCallback(async () => {
     if (state.bold) {
@@ -247,36 +249,33 @@ export default function Text() {
             padding: "0 0.25rem"
           }}
         >
-          <Button
+          <IconButton
+            aria-label="Bold"
             disabled={!state.styleOptions.hasBold}
             onClick={makeBold}
             display={"flex"}
             alignItems={"center"}
-            size={"sm"}
-            variant="unstyled"
-          >
-            <Bold size={24} />
-          </Button>
-          <Button
-            disabled={!state.styleOptions.hasItalic}
+            variant="ghost"
+            icon={<Bold size={24} />}
+          />
+          <IconButton
+            aria-label="Italic"
+            disabled={!state.styleOptions.hasBold}
             onClick={makeItalic}
             display={"flex"}
             alignItems={"center"}
-            size={"sm"}
-            variant="unstyled"
-          >
-            <Italic size={24} />
-          </Button>
-          <Button
-            sx={{ ...(!state.underline && { color: "rgb(169,169,169)" }) }}
+            variant="ghost"
+            icon={<Italic size={24} />}
+          />
+          <IconButton
+            aria-label="Underline"
+            disabled={true}
             onClick={makeUnderline}
             display={"flex"}
             alignItems={"center"}
-            size={"sm"}
-            variant="unstyled"
-          >
-            <Underline size={24} />
-          </Button>
+            variant="ghost"
+            icon={<Underline size={24} />}
+          />
         </Box>
 
         <LetterCase />

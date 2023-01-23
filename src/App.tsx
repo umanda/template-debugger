@@ -29,11 +29,10 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
   const initialState = useCallback(async () => {
     if (id) {
       if (token) {
-        console.log("sign in with token by drawify 2.0")
         token !== "" && (await dispath(signInByToken(token)))
         setState(!state)
       } else {
-        window.location.href = "https://beta.drawify.com/home"
+        // window.location.href = "https://beta.drawify.com/home"
       }
     }
     id === undefined && navigate(`/composer/${generateId("proj")}`)

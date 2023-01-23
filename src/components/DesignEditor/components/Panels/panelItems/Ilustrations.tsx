@@ -194,21 +194,15 @@ export default function Ilustrations() {
           type: "StaticVector",
           name: "Shape",
           src: resource.url,
-          // left: 680,
-          // originX: "center",
-          ...{ watermark: resource.license === "paid" && "https://ik.imagekit.io/scenify/drawify-small.svg" },
+          // ...{ watermark: resource.license === "paid" && "https://ik.imagekit.io/scenify/drawify-small.svg" },
           metadata: {}
         }
-        // let resolve:any
         if (editor) {
           await activeScene.objects.add(options)
-          // setTimeout(() => {
-          //   activeScene.objects.update({ left: 0, top: 0 })
-          // }, 200)
         }
       } catch {}
     },
-    [activeScene, editor, user, activeObject]
+    [activeScene, editor]
   )
 
   const onDragStart = React.useCallback(
@@ -219,50 +213,47 @@ export default function Ilustrations() {
     [activeScene, editor, setResourceDrag]
   )
 
-  const makeFilter = useCallback(
-    async ({
-      input,
-      stateFavorites,
-      stateRecents
-    }: {
-      input?: string[]
-      stateFavorites?: boolean
-      stateRecents?: boolean
-    }) => {
-      setMore(true)
-      setLoad(false)
-      setDisableTab(true)
+  const makeFilter = async ({
+    input,
+    stateFavorites,
+    stateRecents
+  }: {
+    input?: string[]
+    stateFavorites?: boolean
+    stateRecents?: boolean
+  }) => {
+    setMore(true)
+    setLoad(false)
+    setDisableTab(true)
 
-      if (input) {
-        setNameIllustration(input)
-        setResourcesIllustration([])
-        if (input[0] === "") {
-          setListRecommend({ words: [] })
-        }
+    if (input) {
+      setNameIllustration(input)
+      setResourcesIllustration([])
+      if (input[0] === "") {
+        setListRecommend({ words: [] })
       }
+    }
 
-      if (stateFavorites || stateFavorite) {
-        setStateRecent(false)
-        setStateFavorite(true)
-      } else if (stateRecents || stateRecent) {
-        setStateRecent(true)
-        setStateFavorite(false)
-      }
+    if (stateFavorites || stateFavorite) {
+      setStateRecent(false)
+      setStateFavorite(true)
+    } else if (stateRecents || stateRecent) {
+      setStateRecent(true)
+      setStateFavorite(false)
+    }
 
-      try {
-        //@ts-ignore
-        if (!stateFavorite && !stateRecent && input[0] === undefined) {
-          setResourcesIllustration(selectListResources)
-        } else {
-          setResourcesIllustration([])
-        }
-      } catch {
+    try {
+      //@ts-ignore
+      if (!stateFavorite && !stateRecent && input[0] === undefined) {
+        setResourcesIllustration(selectListResources)
+      } else {
         setResourcesIllustration([])
       }
-      setValidateContent(null)
-    },
-    [selectListResources, stateFavorite, stateRecent]
-  )
+    } catch {
+      setResourcesIllustration([])
+    }
+    setValidateContent(null)
+  }
 
   const makeFavorite = useCallback(
     async (obj: IResource) => {
@@ -619,6 +610,7 @@ function IllustrationItem({
             <Center
               onClick={() => {
                 makeFavorite(illustration)
+                setLike(!like)
               }}
               _hover={{ cursor: "pointer" }}
               boxSize="21px"
@@ -707,7 +699,7 @@ function ModalIllustration({
         type: "StaticVector",
         name: "Shape",
         src: resource.url,
-        ...(resource.license === "paid" && { watermark: "https://ik.imagekit.io/scenify/drawify-small.svg" }),
+        // ...(resource.license === "paid" && { watermark: "https://ik.imagekit.io/scenify/drawify-small.svg" }),
         metadata: {}
       }
       if (editor) {

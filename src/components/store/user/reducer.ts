@@ -15,7 +15,6 @@ const initialState: UserState = {
 export const userReducer = createReducer(initialState, (builder) => {
   builder.addCase(setUser, (state, { payload }) => {
     state.user = payload
-    console.log(payload)
   })
   builder.addCase(removeUser, (state) => {
     state.user = null

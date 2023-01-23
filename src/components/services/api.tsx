@@ -447,7 +447,6 @@ export const oldSignIn = (props: Partial<SigninDto>): Promise<User> => {
     base
       .post("/old/signIn", props)
       .then(({ data }) => {
-        console.log(data)
         resolve(data.user)
       })
       .catch((err) => reject(err))
