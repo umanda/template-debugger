@@ -510,6 +510,7 @@ function UserMenu() {
         duration: 5000,
         isClosable: true
       })
+      window.location.href = "https://beta.drawify.com/home/"
     } else {
       toast({
         title: "LOGOUT UNSUCCESSFULLY.",
