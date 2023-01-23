@@ -77,7 +77,6 @@ export default function Text() {
     let watcher = async () => {
       if (activeObject && activeObject.type === "StaticText") {
         const textProperties = getTextProperties(activeObject, fonts)
-        console.log(textProperties)
         setState({ ...state, ...textProperties })
       }
     }
@@ -90,8 +89,6 @@ export default function Text() {
       }
     }
   }, [editor, activeObject])
-
-  console.log(state.styleOptions.hasBold)
 
   const makeBold = React.useCallback(async () => {
     if (state.bold) {
@@ -251,7 +248,7 @@ export default function Text() {
         >
           <IconButton
             aria-label="Bold"
-            disabled={!state.styleOptions.hasBold}
+            isDisabled={!state.styleOptions.hasBold}
             onClick={makeBold}
             display={"flex"}
             alignItems={"center"}
@@ -260,7 +257,7 @@ export default function Text() {
           />
           <IconButton
             aria-label="Italic"
-            disabled={!state.styleOptions.hasBold}
+            isDisabled={!state.styleOptions.hasItalic}
             onClick={makeItalic}
             display={"flex"}
             alignItems={"center"}
@@ -269,7 +266,6 @@ export default function Text() {
           />
           <IconButton
             aria-label="Underline"
-            disabled={true}
             onClick={makeUnderline}
             display={"flex"}
             alignItems={"center"}

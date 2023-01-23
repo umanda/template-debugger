@@ -337,10 +337,10 @@ function FileMenu() {
   const { isOpen: isOpenView, onToggle: onToggleView, onClose: onCloseView, onOpen: onOpenView } = useDisclosure()
   const dispatch = useAppDispatch()
   const editor = useEditor()
-  const { id } = useParams()
   const toast = useToast()
   const activeScene = useActiveScene()
   const user = useSelector(selectUser)
+
   const handleLogout = async () => {
     const resolve = await dispatch(logout())
     if (resolve?.payload) {
@@ -351,6 +351,7 @@ function FileMenu() {
         duration: 5000,
         isClosable: true
       })
+      window.location.href = "https://beta.drawify.com/home"
     } else {
       toast({
         title: "LOGOUT UNSUCCESSFULLY.",
@@ -573,12 +574,15 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const [stateChange] = useDebounce(stateJson, 5000)
 
   useEffect(() => {
-    functionSave()
+    try {
+      functionSave()
+      setAutoSave(true)
+    } catch {}
   }, [stateChange, namesPages])
 
   useEffect(() => {
     setAutoSave(false)
-  }, [currentScene, id, design, autoSave, namesPages, editor, scenes])
+  }, [currentScene, design, namesPages, editor, scenes])
 
   React.useEffect(() => {
     let watcher = async () => {
@@ -604,7 +608,6 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         return e
       })
       user && (await dispatch(updateProject(designJSON)))
-      setAutoSave(true)
     } catch {}
   }, [editor, scenes, currentScene, id, design, autoSave, namesPages])
 

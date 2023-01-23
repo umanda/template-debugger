@@ -5,10 +5,10 @@ import useResourcesContext from "../../../hooks/useResourcesContext"
 export default function FreeDrawing() {
   const { draw } = useResourcesContext()
   const editor = useEditor()
+
   const toggleDrawing = () => {
     if (editor?.freeDrawer?.canvas?.isDrawingMode) {
       editor.freeDrawer.disable()
-      // setIsDrawing(false)
     } else {
       editor.freeDrawer.enable(draw.type, {
         opacity: draw.opacity,

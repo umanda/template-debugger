@@ -18,9 +18,9 @@ export default function Pencil() {
     updateDrawing()
   }, [draw])
 
-  React.useEffect(() => {
-    editor?.freeDrawer?.canvas?.isDrawingMode === false && setDraw({ ...draw, type: null })
-  }, [editor?.freeDrawer?.canvas?.isDrawingMode])
+  // React.useEffect(() => {
+  //   editor?.freeDrawer?.canvas?.isDrawingMode === false && setDraw({ ...draw, type: null })
+  // }, [editor?.freeDrawer?.canvas?.isDrawingMode])
 
   const updateDrawing = useCallback(() => {
     if (draw.type) {
