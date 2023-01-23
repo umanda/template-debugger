@@ -510,6 +510,8 @@ function UserMenu() {
         duration: 5000,
         isClosable: true
       })
+      document.cookie = "drawify_session" + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;"
+      //drawify_session
       window.location.href = "https://beta.drawify.com/home/"
     } else {
       toast({
