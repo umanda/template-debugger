@@ -41,7 +41,7 @@ import Resize from "./Resize"
 import SigninModal from "../../../Modals/AuthModal"
 import { useParams } from "react-router-dom"
 import { useDebounce } from "use-debounce"
-import { json } from "node:stream/consumers"
+import Cookies from "js-cookie"
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -351,7 +351,7 @@ function FileMenu() {
         duration: 5000,
         isClosable: true
       })
-      window.location.href = "https://beta.drawify.com/home"
+      window.location.href = "https://beta.drawify.com/home/"
     } else {
       toast({
         title: "LOGOUT UNSUCCESSFULLY.",
@@ -501,6 +501,7 @@ function UserMenu() {
   const [typeSign, setTypeSign] = useState("signin")
 
   const handleLogout = async () => {
+    Cookies.remove("drawify_session", { path: "/", domain: "beta.drawify.com" })
     const resolve = await dispatch(logout())
     if (resolve?.payload) {
       toast({
@@ -510,8 +511,6 @@ function UserMenu() {
         duration: 5000,
         isClosable: true
       })
-      document.cookie = "drawify_session" + "=;expires=Thu, 01 Jan 1970 00:00:01 GMT;"
-      //drawify_session
       window.location.href = "https://beta.drawify.com/home/"
     } else {
       toast({

@@ -32,7 +32,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
         token !== "" && (await dispath(signInByToken(token)))
         setState(!state)
       } else {
-        // window.location.href = "https://beta.drawify.com/home"
+        window.location.href = "https://beta.drawify.com/home/"
       }
     }
     id === undefined && navigate(`/composer/${generateId("proj")}`)
