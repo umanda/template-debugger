@@ -122,11 +122,11 @@ export default function Pencil() {
             sx={{ cursor: "pointer", gap: "0.25rem" }}
             flexDir="column"
           >
-            <Box
+            <Center
               sx={{ border: `2px solid ${draw.type === "PencilBrush" ? "#5456F5" : "#DDDFE5"}`, borderRadius: "4px" }}
             >
               <Pencil1 size={60} />
-            </Box>
+            </Center>
             <Center>Marker</Center>
           </Flex>
           <Flex
@@ -134,12 +134,11 @@ export default function Pencil() {
             sx={{ cursor: "pointer", gap: "0.25rem" }}
             flexDir="column"
           >
-            <Box
+            <Center
               sx={{ border: `2px solid ${draw.type === "MarkerBrush" ? "#5456F5" : "#DDDFE5"}`, borderRadius: "4px" }}
             >
               <Pencil2 size={60} />
-            </Box>
-
+            </Center>
             <Center>Highlight</Center>
           </Flex>
           <Flex
@@ -147,12 +146,11 @@ export default function Pencil() {
             sx={{ cursor: "pointer", gap: "0.25rem" }}
             flexDir="column"
           >
-            <Box
+            <Center
               sx={{ border: `2px solid ${draw.type === "RibbonBrush" ? "#5456F5" : "#DDDFE5"}`, borderRadius: "4px" }}
             >
               <Pencil3 size={60} />
-            </Box>
-
+            </Center>
             <Center>Glow</Center>
           </Flex>
           <Flex
@@ -160,14 +158,14 @@ export default function Pencil() {
             sx={{ cursor: "pointer", gap: "0.25rem" }}
             flexDir="column"
           >
-            <Box
+            <Center
               sx={{
                 border: `2px solid ${draw.type === "SpraypaintBrush" ? "#5456F5" : "#DDDFE5"}`,
                 borderRadius: "4px"
               }}
             >
               <Pencil4 size={60} />
-            </Box>
+            </Center>
             <Center>Spray</Center>
           </Flex>
           <Flex

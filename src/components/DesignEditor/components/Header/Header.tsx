@@ -39,9 +39,10 @@ import { updateProject } from "../../../store/project/action"
 import DesignName from "./DesignName"
 import Resize from "./Resize"
 import SigninModal from "../../../Modals/AuthModal"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useDebounce } from "use-debounce"
 import Cookies from "js-cookie"
+import { generateId } from "../../../utils/unique"
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -327,19 +328,26 @@ function ShareMenu() {
 
 function FileMenu() {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const {
-    isOpen: isOpenProject,
-    onToggle: onToggleProject,
-    onClose: onCloseProject,
-    onOpen: onOpenProject
-  } = useDisclosure()
-  const { isOpen: isOpenEdit, onToggle: onToggleEdit, onClose: onCloseEdit, onOpen: onOpenEdit } = useDisclosure()
-  const { isOpen: isOpenView, onToggle: onToggleView, onClose: onCloseView, onOpen: onOpenView } = useDisclosure()
+  const { isOpen: isOpenProject, onClose: onCloseProject, onOpen: onOpenProject } = useDisclosure()
+  const { isOpen: isOpenEdit, onClose: onCloseEdit, onOpen: onOpenEdit } = useDisclosure()
+  const { isOpen: isOpenView, onClose: onCloseView, onOpen: onOpenView } = useDisclosure()
+  const [state, setState] = useState<boolean>(false)
   const dispatch = useAppDispatch()
   const editor = useEditor()
   const toast = useToast()
   const activeScene = useActiveScene()
   const user = useSelector(selectUser)
+  const navigate = useNavigate()
+  const scenes = useScenes()
+  const design = useDesign()
+  const { setNamesPages } = useDesignEditorContext()
+  const initialFocusRef = React.useRef()
+
+  useEffect(() => {
+    onCloseEdit()
+    onCloseProject()
+    onCloseView()
+  }, [isOpen, state])
 
   const handleLogout = async () => {
     const resolve = await dispatch(logout())
@@ -364,8 +372,22 @@ function FileMenu() {
     }
   }
 
+  const handleNew = useCallback(async () => {
+    for (const scn of scenes) {
+      await design.deleteScene(scn.id)
+    }
+    setNamesPages(["Untitled design"])
+    navigate(`/composer/${generateId("proj")}`)
+  }, [design, scenes, navigate, editor])
+
   return (
-    <Popover isOpen={isOpen} onClose={onClose} onOpen={onOpen} placement="bottom-start">
+    <Popover
+      isOpen={isOpen}
+      initialFocusRef={initialFocusRef}
+      onClose={onClose}
+      onOpen={onOpen}
+      placement="bottom-start"
+    >
       <PopoverTrigger>
         <Button
           color={isOpen ? "#FFFFFF" : "inherit"}
@@ -377,44 +399,72 @@ function FileMenu() {
         </Button>
       </PopoverTrigger>
       {/* @ts-ignore */}
-      <PopoverContent w="250px" fontSize={"14px"} paddingY={"0.25rem"}>
+      <PopoverContent ref={initialFocusRef} w="250px" fontSize={"14px"} paddingY={"0.25rem"}>
         <PopoverArrow />
-        <Button
-          _hover={{ color: "#5456f5", bg: "var(--chakra-colors-gray-200)" }}
-          borderRadius="none"
-          // onClick={() => router.push("/")}
-          onMouseOver={() => {
-            onCloseProject()
-            onCloseEdit()
-            onCloseView()
-          }}
-          variant="ghost"
-          justifyContent="left"
+        <MenuOption>
+          <Flex
+            w="full"
+            onMouseOver={() => {
+              setState(!state)
+            }}
+          >
+            Home
+          </Flex>
+        </MenuOption>
+        <Popover
+          isOpen={isOpenProject}
+          onClose={onCloseProject}
+          onOpen={onOpenProject}
+          placement="right"
+          initialFocusRef={initialFocusRef}
         >
-          Home
-        </Button>
-        <Popover isOpen={isOpenProject} onClose={onCloseProject} placement="right">
-          <PopoverContent w="96px">
+          <PopoverTrigger>
+            <MenuOption>
+              <Flex
+                w="full"
+                onClick={onOpenProject}
+                onMouseOver={() => {
+                  onOpenProject()
+                  onCloseEdit()
+                  onCloseView()
+                }}
+              >
+                Project
+                <Spacer />
+                <Right size={18} />
+              </Flex>
+            </MenuOption>
+          </PopoverTrigger>
+          <PopoverContent w="100px">
             <PopoverArrow />
+            <MenuOption onClick={handleNew}>New</MenuOption>
+            {/* <MenuOption> Export</MenuOption>
+            <MenuOption> Import</MenuOption> */}
           </PopoverContent>
         </Popover>
-        <Popover isOpen={isOpenEdit} onClose={onCloseEdit} placement="right">
+        <Popover
+          isOpen={isOpenEdit}
+          onClose={onCloseEdit}
+          initialFocusRef={initialFocusRef}
+          onOpen={onOpenEdit}
+          placement="right"
+        >
           <PopoverTrigger>
-            <Button
-              _hover={{ color: "#5456f5", bg: "var(--chakra-colors-gray-200)" }}
-              borderRadius="none"
-              variant="ghost"
-              onClick={onToggleEdit}
-              onMouseOver={() => {
-                onOpenEdit()
-                onCloseProject()
-                onCloseView()
-              }}
-            >
-              Edit
-              <Spacer />
-              <Right size={18} />
-            </Button>
+            <MenuOption>
+              <Flex
+                w="full"
+                onClick={onOpenEdit}
+                onMouseOver={() => {
+                  onOpenEdit()
+                  onCloseView()
+                  onCloseProject()
+                }}
+              >
+                Edit
+                <Spacer />
+                <Right size={18} />
+              </Flex>
+            </MenuOption>
           </PopoverTrigger>
           <PopoverContent w="100px">
             <PopoverArrow />
@@ -426,23 +476,29 @@ function FileMenu() {
             <MenuOption onClick={() => activeScene.objects.remove()}>Delete</MenuOption>
           </PopoverContent>
         </Popover>
-        <Popover isOpen={isOpenView} onClose={onCloseView} placement="right">
+        <Popover
+          isOpen={isOpenView}
+          onClose={onCloseView}
+          initialFocusRef={initialFocusRef}
+          onOpen={onOpenView}
+          placement="right"
+        >
           <PopoverTrigger>
-            <Button
-              _hover={{ color: "#5456f5", bg: "var(--chakra-colors-gray-200)" }}
-              borderRadius="none"
-              onClick={onToggleView}
-              variant="ghost"
-              onMouseOver={() => {
-                onOpenView()
-                onCloseEdit()
-                onCloseProject()
-              }}
-            >
-              View
-              <Spacer />
-              <Right size={18} />
-            </Button>
+            <MenuOption>
+              <Flex
+                w="full"
+                onClick={onOpenView}
+                onMouseOver={() => {
+                  onOpenView()
+                  onCloseEdit()
+                  onCloseProject()
+                }}
+              >
+                View
+                <Spacer />
+                <Right size={18} />
+              </Flex>
+            </MenuOption>
           </PopoverTrigger>
           <PopoverContent w="100px">
             <PopoverArrow />
@@ -464,7 +520,19 @@ function FileMenu() {
         >
           Help
         </Button> */}
-        {user && <MenuOption onClick={handleLogout}>Logout</MenuOption>}
+        {user && (
+          <MenuOption>
+            <Flex
+              w="full"
+              onMouseOver={() => {
+                setState(!state)
+              }}
+              onClick={handleLogout}
+            >
+              Logout
+            </Flex>
+          </MenuOption>
+        )}
       </PopoverContent>
     </Popover>
   )
