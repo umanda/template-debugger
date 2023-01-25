@@ -351,7 +351,7 @@ function FileMenu() {
         duration: 5000,
         isClosable: true
       })
-      window.location.href = "https://beta.drawify.com/home/"
+      window.location.href = "https://beta.drawify.com/auth/flush"
     } else {
       toast({
         title: "LOGOUT UNSUCCESSFULLY.",
@@ -510,7 +510,7 @@ function UserMenu() {
         duration: 5000,
         isClosable: true
       })
-      window.location.href = "https://beta.drawify.com/home/"
+      window.location.href = "https://beta.drawify.com/auth/flush"
     } else {
       toast({
         title: "LOGOUT UNSUCCESSFULLY.",
