@@ -22,10 +22,8 @@ specifiers:
   axios: ^0.27.2
   cookie: ^0.5.0
   cropperjs: ^1.5.12
-  dotenv: ^16.0.3
   eslint: ^8.24.0
   framer-motion: ^6.4.2
-  js-cookie: ^3.0.1
   lodash: ^4.17.21
   mime: ^3.0.0
   nanoid: ^4.0.0
@@ -60,9 +58,7 @@ dependencies:
   axios: 0.27.2
   cookie: 0.5.0
   cropperjs: 1.5.13
-  dotenv: 16.0.3
   framer-motion: 6.5.1_biqbaboplfbrettd7655fr4n2y
-  js-cookie: 3.0.1
   lodash: 4.17.21
   mime: 3.0.0
   nanoid: 4.0.0
@@ -2515,11 +2511,6 @@ packages:
     dev: false
     optional: true
 
-  /dotenv/16.0.3:
-    resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
-    engines: {node: '>=12'}
-    dev: false
-
   /electron-to-chromium/1.4.284:
     resolution: {integrity: sha512-M8WEXFuKXMYMVr45fo8mq0wUrrJHheiKZf6BArTKk9ZBYCKJEOU5H8cdWgDT+qCVZf7Na4lVUaZsA+h6uA9+PA==}
     dev: true
@@ -3049,11 +3040,6 @@ packages:
   /isexe/2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
-
-  /js-cookie/3.0.1:
-    resolution: {integrity: sha512-+0rgsUXZu4ncpPxRL+lNEptWMOWl9etvPHc/koSRp6MPwpRYAhmk0dUG00J4bxVV3r9uUzfo24wW0knS07SKSw==}
-    engines: {node: '>=12'}
-    dev: false
 
   /js-sdsl/4.2.0:
     resolution: {integrity: sha512-dyBIzQBDkCqCu+0upx25Y2jGdbTGxE9fshMsCdK0ViOongpV+n5tXRcZY9v7CaVQ79AGS9KA1KHtojxiM7aXSQ==}
