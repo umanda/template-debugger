@@ -501,7 +501,6 @@ function UserMenu() {
   const [typeSign, setTypeSign] = useState("signin")
 
   const handleLogout = async () => {
-    Cookies.remove("drawify_session", { path: "/", domain: "beta.drawify.com" })
     const resolve = await dispatch(logout())
     if (resolve?.payload) {
       toast({
@@ -569,22 +568,23 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const { namesPages } = useDesignEditorContext()
   const dispatch = useAppDispatch()
   const editor = useEditor()
-  const scenes = useScenes()
+  const activeScene = useActiveScene()
   const currentScene = useActiveScene()
-  const [autoSave, setAutoSave] = useState<boolean>(true)
+  const scenes = useScenes()
+  const [autoSave, setAutoSave] = useState<boolean>(false)
   const [stateJson, setStateJson] = useState<any>("")
   const [stateChange] = useDebounce(stateJson, 5000)
+  const [resolve, setResolve] = useState<any>(null)
 
   useEffect(() => {
     try {
-      functionSave()
-      setAutoSave(true)
+      activeScene && functionSave()
     } catch {}
   }, [stateChange, namesPages])
 
   useEffect(() => {
     setAutoSave(false)
-  }, [currentScene, design, namesPages, editor, scenes])
+  }, [scenes, namesPages])
 
   React.useEffect(() => {
     let watcher = async () => {
@@ -602,16 +602,22 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
 
   const functionSave = useCallback(async () => {
     try {
-      let designJSON: any = design?.toJSON()
-      designJSON.id = id
-      designJSON.scenes.map((e: any, index: number) => {
-        e.name = namesPages[index]
-        e.position = index
-        return e
-      })
-      user && (await dispatch(updateProject(designJSON)))
+      if (resolve === null) {
+        setResolve("")
+      } else if (resolve !== undefined) {
+        let designJSON: any = design?.toJSON()
+        designJSON.id = id
+        designJSON.scenes.map((e: any, index: number) => {
+          e.name = namesPages[index]
+          e.position = index
+          e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          return e
+        })
+        user && setResolve((await dispatch(updateProject(designJSON))).payload)
+        resolve !== undefined && setAutoSave(true)
+      }
     } catch {}
-  }, [editor, scenes, currentScene, id, design, autoSave, namesPages])
+  }, [editor, scenes, currentScene, id, design, autoSave, namesPages, resolve])
 
   return (
     <Flex>

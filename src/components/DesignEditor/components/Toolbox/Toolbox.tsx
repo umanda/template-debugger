@@ -20,29 +20,20 @@ export default function Toolbox() {
   const editor = useEditor()
 
   React.useEffect(() => {
-    if (activePanel !== "Pencil") {
-      const selectionType = getSelectionType(activeObject)
-      if (selectionType) {
-        if (selectionType.length > 1) {
-          setState({ toolbox: "Multiple" })
-        } else {
-          setState({ toolbox: selectionType[0] })
-        }
+    // if (activePanel !== "Pencil") {
+    const selectionType = getSelectionType(activeObject)
+    if (selectionType) {
+      if (selectionType.length > 1) {
+        setState({ toolbox: "Multiple" })
       } else {
-        setState({ toolbox: DEFAULT_TOOLBOX })
-        setActiveMenu("")
+        setState({ toolbox: selectionType[0] })
       }
-    }
-  }, [activeObject, activePanel])
-
-  React.useEffect(() => {
-    if (activePanel === "Pencil") {
-      setPrevState(state)
-      setState({ toolbox: "FreeDrawing" })
     } else {
-      setState(prevState)
+      setState({ toolbox: DEFAULT_TOOLBOX })
+      setActiveMenu("")
     }
-  }, [activePanel])
+    // }
+  }, [activeObject, activePanel])
 
   React.useEffect(() => {
     let watcher = async () => {

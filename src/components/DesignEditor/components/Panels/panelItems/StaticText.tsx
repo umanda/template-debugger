@@ -139,7 +139,7 @@ export default function Statictext() {
           {state.lineHeight}%
         </Flex>
         <Flex flexDirection="row" justifyContent="center" alignItems="center" gap="10px">
-          Transparency
+          Opacity
           <Slider defaultValue={opacity.opacityValue} onChange={(value) => onChange(value)}>
             <SliderTrack>
               <SliderFilledTrack />

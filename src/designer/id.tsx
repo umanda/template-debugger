@@ -1,12 +1,11 @@
 import { Flex, useDisclosure } from "@chakra-ui/react"
-import { useEditor } from "@layerhub-pro/react"
+import { useDesign, useEditor } from "@layerhub-pro/react"
 import { useCallback, useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import DesignEditor from "../components/DesignEditor"
 import useDesignEditorContext from "../components/hooks/useDesignEditorContext"
 import SigninModal from "../components/Modals/AuthModal"
 import * as api from "../components/services/api"
-import { generateId } from "../components/utils/unique"
 
 const Designer: any = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -14,25 +13,27 @@ const Designer: any = () => {
   const editor = useEditor()
   const { setNamesPages } = useDesignEditorContext()
   const { id } = useParams()
-  const navigate = useNavigate()
+  const design = useDesign()
 
   useEffect(() => {
-    editor && lodaTemplateById()
-  }, [editor])
+    design && lodaTemplateById()
+  }, [design])
 
   const lodaTemplateById = useCallback(async () => {
     try {
-      const resolve: any = await api.getProjectById({ id })
-      editor?.design?.setDesign(resolve)
-      let sceneNames: string[] = []
-      for (const scn of resolve.scenes) {
-        sceneNames.push(scn.name)
+      if (design) {
+        const resolve: any = await api.getProjectById({ id })
+        setTimeout(() => {
+          design.setDesign(resolve)
+        }, 1000)
+        let sceneNames: string[] = []
+        for (const scn of resolve.scenes) {
+          sceneNames.push(scn.name)
+        }
+        setNamesPages(sceneNames)
       }
-      setNamesPages(sceneNames)
-    } catch (err: any) {
-      navigate(`/composer/${generateId("proj")}`)
-    }
-  }, [id, navigate, editor])
+    } catch (err: any) {}
+  }, [id, editor])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>

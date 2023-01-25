@@ -1,6 +1,6 @@
-import { Box, Center, Flex, Grid, GridItem, Input, Text } from "@chakra-ui/react"
+import { Box, Button, Center, Flex, Grid, GridItem, Input, Text } from "@chakra-ui/react"
 import { Slider, SliderFilledTrack, SliderThumb, SliderTrack } from "@chakra-ui/react"
-import { useEditor, useIsFreeDrawing } from "@layerhub-pro/react"
+import { useEditor } from "@layerhub-pro/react"
 import { DEFAULT_COLORS } from "../../../../constants/consts"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
 import Pencil1 from "../../../../Icons/Pencil1"
@@ -8,19 +8,16 @@ import Pencil2 from "../../../../Icons/Pencil2"
 import Pencil3 from "../../../../Icons/Pencil3"
 import Pencil4 from "../../../../Icons/Pencil4"
 import Pencil5 from "../../../../Icons/Pencil5"
-import React, { useCallback } from "react"
+import React, { useCallback, useState } from "react"
 
 export default function Pencil() {
   const editor = useEditor()
   const { draw, setDraw } = useResourcesContext()
+  const [typeDraw, setTypeDraw] = useState<any>("")
 
   React.useEffect(() => {
     updateDrawing()
   }, [draw])
-
-  // React.useEffect(() => {
-  //   editor?.freeDrawer?.canvas?.isDrawingMode === false && setDraw({ ...draw, type: null })
-  // }, [editor?.freeDrawer?.canvas?.isDrawingMode])
 
   const updateDrawing = useCallback(() => {
     if (draw.type) {
@@ -89,8 +86,32 @@ export default function Pencil() {
     [draw]
   )
 
+  const toggleDrawing = useCallback(() => {
+    if (editor?.freeDrawer?.canvas?.isDrawingMode) {
+      editor.freeDrawer.disable()
+      setTypeDraw(draw.type)
+      setDraw({ ...draw, type: null })
+    } else {
+      if (typeDraw === "") {
+        editor.freeDrawer.enable(draw.type !== null ? draw.type : "PencilBrush", {
+          opacity: draw.opacity,
+          size: draw.size,
+          color: draw.color
+        })
+        draw.type === null && setDraw({ ...draw, type: "PencilBrush" })
+      } else {
+        editor.freeDrawer.enable(typeDraw, {
+          opacity: draw.opacity,
+          size: draw.size,
+          color: draw.color
+        })
+        setDraw({ ...draw, type: typeDraw })
+      }
+    }
+  }, [editor, draw, typeDraw])
+
   return (
-    <Flex flexDir="column" sx={{ width: "320px", borderRight: "1px solid #ebebeb" }}>
+    <Flex h="full" flexDir="column" sx={{ width: "full", borderRight: "1px solid #ebebeb" }}>
       <Box>
         <Text margin="10px" color="#A9A9B2">
           PENS & ERASER
@@ -166,7 +187,17 @@ export default function Pencil() {
           </Flex>
         </Grid>
       </Box>
-
+      <Center flexDir="row" marginRight="20px" marginLeft="20px" marginTop="10px">
+        <Button
+          _hover={{}}
+          background={editor?.freeDrawer?.canvas?.isDrawingMode ? "brand.500" : "inherit"}
+          onClick={toggleDrawing}
+          w="full"
+          variant={"outline"}
+        >
+          {editor?.freeDrawer?.canvas?.isDrawingMode ? "Disable drawing" : "Enable drawing"}
+        </Button>
+      </Center>
       <Box padding={"10px 0"}>
         <Grid marginInline="10px" templateColumns="repeat(6, 1fr)" gap="10px" marginTop="15px">
           <GridItem fontSize={"14px"} color="#545465" colSpan={2} alignItems="center">
@@ -196,7 +227,7 @@ export default function Pencil() {
         {draw.type !== "EraserBrush" && (
           <Grid marginInline="10px" templateColumns="repeat(6, 1fr)" gap="10px" marginTop="15px">
             <GridItem fontSize={"14px"} color="#545465" colSpan={2} alignItems="center">
-              Transparency
+              Opacity
             </GridItem>
             <GridItem colSpan={3} alignItems="center" justifyItems="center">
               <Slider

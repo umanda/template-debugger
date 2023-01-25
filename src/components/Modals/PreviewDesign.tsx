@@ -1,6 +1,6 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { Box, Modal, ModalCloseButton, ModalContent, ModalOverlay, Flex, IconButton, Center } from "@chakra-ui/react"
-import { useEditor } from "@layerhub-pro/react"
+import { useEditor, useScenes } from "@layerhub-pro/react"
 import { motion, AnimatePresence } from "framer-motion"
 import { wrap } from "popmotion"
 import useIsOpenPreview from "../hooks/useIsOpenPreview"
@@ -42,18 +42,25 @@ const swipePower = (offset: number, velocity: number) => {
 function PreviewModal() {
   const [[page, direction], setPage] = React.useState([0, 0])
   const { isOpenPreview, onClosePreview } = useIsOpenPreview()
+  const scenes = useScenes()
   const [images, setImages] = React.useState<string[]>([])
-
   const [options, setOptions] = React.useState<{ imageIndex: number; maxIndex: number }>({
     imageIndex: 0,
     maxIndex: 0
   })
-  const editor = useEditor()
-
-  const imageIndex = wrap(0, images.length, page)
+  const imageIndex = wrap(0, scenes.length, page)
   const paginate = (newDirection: number) => {
     setPage([page + newDirection, newDirection])
   }
+
+  useEffect(() => {
+    let previews: string[] = []
+    for (const scn of scenes) {
+      previews = previews.concat(scn.preview)
+    }
+    setImages(previews)
+    setOptions({ ...options, maxIndex: previews.length })
+  }, [])
 
   return (
     <Modal size={"full"} isOpen={isOpenPreview} onClose={onClosePreview}>
@@ -143,7 +150,7 @@ function PreviewModal() {
               position="absolute"
               right={"0"}
               padding={"5px"}
-              display={`${imageIndex >= options.maxIndex ? "none" : "block"}`}
+              display={`${imageIndex >= scenes.length - 1 ? "none" : "block"}`}
             >
               <IconButton
                 onClick={() => paginate(1)}

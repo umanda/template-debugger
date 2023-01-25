@@ -183,7 +183,7 @@ export default function VectorColorPicker() {
       </Grid>
       <Grid templateColumns="repeat(6, 1fr)" gap="10px" marginTop="15px">
         <GridItem colSpan={1} alignItems="center">
-          Transparency
+          Opacity
         </GridItem>
         <GridItem colSpan={3} alignItems="center" justifyItems="center">
           <Slider
