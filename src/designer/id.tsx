@@ -1,38 +1,36 @@
 import { Flex, useDisclosure } from "@chakra-ui/react"
-import { useDesign, useEditor } from "@layerhub-pro/react"
-import { useCallback, useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useSelector } from "react-redux"
+import { selectUser } from "../components/store/user/selector"
 import DesignEditor from "../components/DesignEditor"
-import useDesignEditorContext from "../components/hooks/useDesignEditorContext"
 import SigninModal from "../components/Modals/AuthModal"
-import * as api from "../components/services/api"
+import { useNavigate, useParams } from "react-router-dom"
+import { generateId } from "../components/utils/unique"
+import * as api from "../.././src/components/services/api"
+import { useAppDispatch } from "../components/store/store"
+import { signInByToken } from "../components/store/user/action"
 
 const Designer: any = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const user = useSelector(selectUser)
   const [typeSign, setTypeSign] = useState("signin")
-  const editor = useEditor()
-  const { setNamesPages } = useDesignEditorContext()
   const { id } = useParams()
-  const design = useDesign()
-  useEffect(() => {
-    design && lodaTemplateById()
-  }, [design])
+  const navigate = useNavigate()
+  const token = localStorage.getItem("token")
+  const dispath = useAppDispatch()
 
-  const lodaTemplateById = useCallback(async () => {
-    try {
-      if (design) {
-        const resolve: any = await api.getProjectById({ id })
-        setTimeout(() => {
-          design.setDesign(resolve)
-        }, 1000)
-        let sceneNames: string[] = []
-        for (const scn of resolve.scenes) {
-          sceneNames.push(scn.name)
-        }
-        setNamesPages(sceneNames)
-      }
-    } catch (err: any) {}
-  }, [id, editor])
+  console.log(user)
+
+  useEffect(() => {
+    if (user) {
+      user?.token !== null && api.signInByToken(user.token)
+    } else if (token) {
+      token !== "" && dispath(signInByToken(token))
+    } else {
+      window.location.href = "https://drawify.local/"
+    }
+    id === undefined && navigate(`/composer/${generateId("proj")}`)
+  }, [user])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>
