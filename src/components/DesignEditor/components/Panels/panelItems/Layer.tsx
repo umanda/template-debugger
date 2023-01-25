@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react"
-import { Box, Center, Flex, IconButton, Spacer } from "@chakra-ui/react"
+import { Box, Button, Center, Flex, IconButton, Spacer } from "@chakra-ui/react"
 import { useActiveScene, useObjects } from "@layerhub-pro/react"
 import Lock from "../../../../Icons/Lock"
 import Unlock from "../../../../Icons/Unlock"
@@ -8,6 +8,7 @@ import Trash from "../../../../Icons/Trash"
 import Drag from "../../../../Icons/Drag"
 import Eye from "../../../../Icons/Eye"
 import Scrollable from "../../../../utils/Scrollable"
+import Eye_hide from "../../../../Icons/Eye_hide"
 
 export default function Layer() {
   const [objects, setObjects] = useState<any[]>([])
@@ -55,7 +56,7 @@ export default function Layer() {
   function LayerItem({ name, visible, id, locked, setObjects }: Props) {
     const activeScene: any = useActiveScene()
     const object: any = activeScene.objects.findById(id)
-    const [stateIcon, setStateIcon] = React.useState(object[0]?.locked)
+    const [stateIcon, setStateIcon] = React.useState({ lock: object[0]?.locked, eye: object[0].visible })
     const [state, setState] = React.useState<State>({
       name,
       visible,
@@ -70,7 +71,7 @@ export default function Layer() {
 
     const handleLockLayer = useCallback(() => {
       const object: any = activeScene.objects.findById(id)
-      setStateIcon(!stateIcon)
+      setStateIcon({ ...state, lock: !stateIcon.lock, eye: stateIcon.eye })
       if (object[0].locked) {
         activeScene.objects.unlock(id)
       } else {
@@ -84,8 +85,16 @@ export default function Layer() {
       setObjects(activeScene.layers.filter((e: any) => e.name !== "Custom"))
     }, [id, activeScene])
 
+    const IconEye = useCallback(() => {
+      if (stateIcon.eye) {
+        return <Eye size={24} />
+      } else {
+        return <Eye_hide size={24} />
+      }
+    }, [stateIcon.eye])
+
     function IconLock() {
-      if (stateIcon) {
+      if (stateIcon.lock) {
         return <Lock size={24} />
       } else {
         return <Unlock size={24} />
@@ -100,30 +109,39 @@ export default function Layer() {
         position={name === "Custom" ? "absolute" : "relative"}
       >
         <IconButton size="xs" aria-label="Search database" variant={"ghost"} icon={<Drag size={24} />} />
-        <Flex alignItems={"center"}>
-          <IconButton size="xs" aria-label="Search database" variant={"ghost"} icon={<Images size={22} />} />
-          <Box fontSize="14px">{name === undefined ? "Draw" : name}</Box>
+        <IconButton
+          size="xs"
+          aria-label="Search database"
+          onClick={() => activeScene.objects.select(id)}
+          variant={"ghost"}
+          icon={<Images size={22} />}
+        />
+        <Flex w="full" alignItems={"center"}>
+          <Button
+            size="xs"
+            variant="ghost"
+            w="full"
+            onClick={() => activeScene.objects.select(id)}
+            justifyContent="left"
+            fontSize="14px"
+          >
+            {name === undefined ? "Draw" : name}
+          </Button>
         </Flex>
         <Spacer />
         <IconButton
           size="xs"
           onClick={handleLockLayer}
           aria-label="Search database"
-          variant={"Lock"}
+          variant={"ghost"}
           icon={<IconLock />}
         />
-        <IconButton
-          size="xs"
-          onClick={handlevisibilityLayer}
-          aria-label="Eye"
-          variant={"ghost"}
-          icon={<Eye size={24} />}
-        />
+        <IconButton size="xs" onClick={handlevisibilityLayer} aria-label="Eye" variant={"ghost"} icon={<IconEye />} />
         <IconButton
           size="xs"
           onClick={handleRemoveLayer}
           aria-label="Search database"
-          variant={"Trash"}
+          variant={"ghost"}
           icon={<Trash size={24} />}
         />
       </Flex>

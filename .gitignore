@@ -40,3 +40,4 @@ dist
 dist/*
 
 yarn.lock
+.env
