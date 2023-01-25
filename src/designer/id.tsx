@@ -14,7 +14,6 @@ const Designer: any = () => {
   const { setNamesPages } = useDesignEditorContext()
   const { id } = useParams()
   const design = useDesign()
-
   useEffect(() => {
     design && lodaTemplateById()
   }, [design])

@@ -4,6 +4,8 @@ import Designer from "../src/designer/id"
 import { useAppDispatch } from "./components/store/store"
 import { signInByToken } from "./components/store/user/action"
 import { generateId } from "./components/utils/unique"
+const redirectHome: string = import.meta.env.VITE_REDIRECT_HOME
+
 function App() {
   const [state, setState] = useState(false)
 
@@ -32,7 +34,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
         token !== "" && (await dispath(signInByToken(token)))
         setState(!state)
       } else {
-        window.location.href = "https://beta.drawify.com/home/"
+        window.location.href = redirectHome
       }
     }
     id === undefined && navigate(`/composer/${generateId("proj")}`)

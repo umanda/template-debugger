@@ -41,8 +41,8 @@ import Resize from "./Resize"
 import SigninModal from "../../../Modals/AuthModal"
 import { useNavigate, useParams } from "react-router-dom"
 import { useDebounce } from "use-debounce"
-import Cookies from "js-cookie"
 import { generateId } from "../../../utils/unique"
+const redirectLogout = import.meta.env.VITE_LOGOUT
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -359,7 +359,7 @@ function FileMenu() {
         duration: 5000,
         isClosable: true
       })
-      window.location.href = "https://beta.drawify.com/auth/flush"
+      window.location.href = redirectLogout
     } else {
       toast({
         title: "LOGOUT UNSUCCESSFULLY.",
@@ -578,7 +578,7 @@ function UserMenu() {
         duration: 5000,
         isClosable: true
       })
-      window.location.href = "https://beta.drawify.com/auth/flush"
+      window.location.href = redirectLogout
     } else {
       toast({
         title: "LOGOUT UNSUCCESSFULLY.",

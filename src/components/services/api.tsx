@@ -16,9 +16,10 @@ import {
 } from "../interfaces/editor"
 import { IExportProjectNoLogin, listProjectsDTO, ShareTemplate } from "../interfaces/template"
 import { IListComments, SaveCommentDTO } from "../interfaces/comment"
+const baseURL = import.meta.env.VITE_API_CONNECTION
 
 const base = axios.create({
-  baseURL: "https://backend.drawify.net/v1/",
+  baseURL: baseURL,
   withCredentials: true
 })
 
