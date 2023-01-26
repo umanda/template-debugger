@@ -1,7 +1,7 @@
 import { Box, Center, Flex, Grid, GridItem, IconButton, Image, Spinner } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import { useActiveScene, useEditor } from "@layerhub-pro/react"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { nanoid } from "nanoid"
 import { useSelector } from "react-redux"
 // import { deleteResourceComposite, getListResourcesComposite } from "~/store/resources/action"
@@ -13,6 +13,8 @@ import Scrollable from "../../../../utils/Scrollable"
 import InfiniteScroll from "../../../../utils/InfiniteScroll"
 import LazyLoadImage from "../../../../utils/LazyLoadImage"
 import Trash from "../../../../Icons/Trash"
+import { selectListResourcesComposite } from "../../../../store/resources/selector"
+import { deleteResourceComposite, getListResourcesComposite } from "../../../../store/resources/action"
 
 const font = {
   name: "JustAnotherHand-Regular",
@@ -24,39 +26,39 @@ export default function Text() {
   const editor = useEditor()
   const dispatch = useAppDispatch()
   const [listResources, setListResources] = useState<any[]>([])
-  // const selectListResources = useSelector(selectListResourcesComposite)
+  const selectListResources = useSelector(selectListResourcesComposite)
   const [more, setMore] = useState(false)
-  const [load, setLoad] = useState(true)
+  const [load, setLoad] = useState(false)
   const activeScene = useActiveScene()
 
-  // useEffect(() => {
-  //   // initialState()
-  // }, [user])
+  useEffect(() => {
+    initialState()
+  }, [user, selectListResources.length])
 
   const initialState = async () => {
-    // if (user) {
-    //   if (selectListResources[0] === undefined) {
-    //     const resolve: any = (await (
-    //       await dispatch(getListResourcesComposite({ page: 1, limit: 10, query: {} }))
-    //     ).payload) as any[]
-    //     resolve.name !== "AxiosError" && setListResources(resolve)
-    //     resolve[0] !== undefined ? setMore(true) : setMore(false)
-    //   } else {
-    //     setListResources(selectListResources)
-    //     setMore(true)
-    //   }
-    // }
-    // setLoad(true)
+    if (user) {
+      if (selectListResources[0] === undefined) {
+        const resolve: any = (await (
+          await dispatch(getListResourcesComposite({ page: 1, limit: 10, query: {} }))
+        ).payload) as any[]
+        resolve.name !== "AxiosError" && setListResources(resolve)
+        resolve[0] !== undefined ? setMore(true) : setMore(false)
+      } else {
+        setListResources(selectListResources)
+        setMore(true)
+      }
+    }
+    setLoad(true)
   }
 
   const fetchDataResource = async () => {
     setMore(false)
-    // const resolve = (
-    //   await dispatch(getListResourcesComposite({ page: listResources.length / 10 + 1, limit: 10, query: {} }))
-    // ).payload as any[]
-    // setListResources(listResources.concat(resolve))
-    // resolve[0] !== undefined ? setMore(true) : setMore(false)
-    // setLoad(true)
+    const resolve = (
+      await dispatch(getListResourcesComposite({ page: listResources.length / 10 + 1, limit: 10, query: {} }))
+    ).payload as any[]
+    setListResources(listResources.concat(resolve))
+    resolve[0] !== undefined ? setMore(true) : setMore(false)
+    setLoad(true)
   }
 
   const addHeader = React.useCallback(async () => {
@@ -78,7 +80,7 @@ export default function Text() {
   }, [activeScene, editor])
 
   const makeDeleteResource = async (id: string) => {
-    // dispatch(deleteResourceComposite(id))
+    dispatch(deleteResourceComposite(id))
   }
 
   const addObject = (images: any) => {}

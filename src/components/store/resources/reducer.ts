@@ -1,9 +1,13 @@
 import { createReducer } from "@reduxjs/toolkit"
 import {
+  addResourceComposite,
+  clearResourceComposite,
   clearResourceUpload,
   closeUploading,
   deleteResource,
+  setIdDeleteResourceComposite,
   setListFavoriteResources,
+  setListResourceComposite,
   setMakeFavoriteResource,
   setResourcesImages,
   setResourcesShapes,
@@ -11,7 +15,7 @@ import {
   setUploads
 } from "./action"
 import lodash from "lodash"
-import { interfaceUploads, IResource, Uploading } from "../../interfaces/editor"
+import { interfaceUploads, IResolveComponent, IResource, Uploading } from "../../interfaces/editor"
 
 interface ResourcesImagesState {
   resources: IResource[]
@@ -77,5 +81,28 @@ export const uploadsReducer = createReducer(initialState, (builder) => {
   })
   builder.addCase(clearResourceUpload, (state, { payload }) => {
     state.uploads = payload
+  })
+})
+interface ListResourceComposite {
+  resources: IResolveComponent[]
+}
+
+const initialListResourceComposite: ListResourceComposite = {
+  resources: []
+}
+
+export const listResourceCompositeReducer = createReducer(initialListResourceComposite, (builder) => {
+  builder.addCase(setListResourceComposite, (state, { payload }) => {
+    state.resources = lodash.uniqBy(state.resources.concat(payload), "id")
+  })
+  builder.addCase(addResourceComposite, (state, { payload }) => {
+    state.resources = state.resources.concat(payload)
+  })
+  builder.addCase(setIdDeleteResourceComposite, (state, { payload }) => {
+    state.resources = state.resources?.filter((e) => e.id !== payload)
+  })
+  builder.addCase(clearResourceComposite, (state, { payload }) => {
+    // state.resources = state.resources?.filter((e) => e.id !== payload)
+    state.resources = payload
   })
 })

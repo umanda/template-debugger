@@ -1,6 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react"
 import Icons from "../../../Icons"
-import React from "react"
 import { useEditor } from "@layerhub-pro/react"
 import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
 import { PANEL_ITEMS } from "../../../constants/panel-items"

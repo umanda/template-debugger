@@ -1,11 +1,32 @@
 import { useActiveScene, useContextMenuRequest, useEditor } from "@layerhub-pro/react"
 import { Box } from "@chakra-ui/react"
 import Mail from "../../../Icons/Mail"
+import { useAppDispatch } from "../../../store/store"
+import { createResourceComposite } from "../../../store/resources/action"
+import { generateId } from "../../../utils/unique"
 
 function ContextMenu() {
   const contextMenuRequest = useContextMenuRequest()
-  const editor = useEditor()
   const activeScene = useActiveScene()
+  const editor = useEditor()
+  const dispath = useAppDispatch()
+
+  const saveAsComponentHandler = async () => {
+    if (activeScene) {
+      const component: any = await activeScene.exportComponent()
+      if (component) {
+        dispath(
+          createResourceComposite({
+            id: generateId("gres"),
+            name: "",
+            category: "MIXED",
+            types: component.metadata.types,
+            component: component
+          })
+        )
+      }
+    }
+  }
 
   if (!contextMenuRequest || !contextMenuRequest.target) {
     return <></>
@@ -102,6 +123,15 @@ function ContextMenu() {
           icon="Unlock"
           label="Lock"
         />
+        {/* <ContextMenuItem
+          disabled={true}
+          onClick={() => {
+            saveAsComponentHandler()
+            editor.cancelContextMenuRequest()
+          }}
+          icon="FileIco"
+          label="Save as component"
+        /> */}
       </div>
     )
   }
@@ -189,6 +219,14 @@ function ContextMenu() {
             icon="Unlock"
             label="Lock"
           />
+          {/* <ContextMenuItem
+            onClick={() => {
+              saveAsComponentHandler()
+              editor.cancelContextMenuRequest()
+            }}
+            icon="FileIco"
+            label="Save as component"
+          /> */}
         </div>
       ) : (
         <div // @ts-ignore

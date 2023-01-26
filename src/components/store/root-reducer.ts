@@ -4,7 +4,12 @@ import persistReducer from "redux-persist/es/persistReducer"
 import { colorReducer } from "./colors/reducer"
 import { categoryFontsReducer, fontsReducer, listUseFontsReducer } from "./fonts/reducer"
 import { listRecomendReducer } from "./recommend/reducer"
-import { resourcesImagesReducer, resourcesShapeReducer, uploadsReducer } from "./resources/reducer"
+import {
+  listResourceCompositeReducer,
+  resourcesImagesReducer,
+  resourcesShapeReducer,
+  uploadsReducer
+} from "./resources/reducer"
 import { listTemplateReducer } from "./templates/reducer"
 import { listDrawifiersReducer, userReducer, UserState } from "./user/reducer"
 import storage from "redux-persist/lib/storage"
@@ -21,6 +26,7 @@ const rootReducer = combineReducers({
     listTemplates: listTemplateReducer,
     uploads: uploadsReducer,
     fonts: fontsReducer,
+    resourcesComposite: listResourceCompositeReducer,
     categoryFonts: categoryFontsReducer,
     useFonts: listUseFontsReducer,
     resourcesShapes: resourcesShapeReducer,

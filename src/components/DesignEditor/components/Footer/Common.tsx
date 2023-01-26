@@ -33,7 +33,7 @@ import Help from "../../../Icons/Help"
 import Plus from "../../../Icons/Plus"
 
 export default function Common() {
-  const { setActiveMenu, isScenesVisible, setIsScenesVisible, activeMenu } = useDesignEditorContext()
+  const { setActivePanel, isScenesVisible, setIsScenesVisible, activePanel } = useDesignEditorContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const zoomRatio = useZoomRatio() as number
   const editor = useEditor()
@@ -44,16 +44,16 @@ export default function Common() {
       if (editor?.freeDrawer?.canvas?.isDrawingMode) {
         editor.freeDrawer.disable()
       }
-      if (setActiveMenu && activeMenu !== type) {
-        if (activeMenu !== "Background" && activeMenu !== "Layer") {
-          activeMenu && setPrevPanel(activeMenu)
+      if (setActivePanel && activePanel !== type) {
+        if (activePanel !== "Background" && activePanel !== "Layer") {
+          activePanel && setPrevPanel(activePanel)
         }
-        setActiveMenu(type)
+        setActivePanel(type)
       } else {
-        setActiveMenu(prevPanel)
+        setActivePanel(prevPanel)
       }
     },
-    [activeMenu, prevPanel, setActiveMenu, editor]
+    [activePanel, prevPanel, setActivePanel, editor]
   )
 
   return (
@@ -82,8 +82,8 @@ export default function Common() {
         </Button>
         <Button
           size="sm"
-          color={activeMenu === "Background" ? "white" : "inherit"}
-          background={activeMenu === "Background" ? "brand.500" : "inherit"}
+          color={activePanel === "Background" ? "white" : "inherit"}
+          background={activePanel === "Background" ? "brand.500" : "inherit"}
           _hover={{}}
           leftIcon={<Background size={24} />}
           onClick={() => changePanel("Background")}
@@ -93,8 +93,8 @@ export default function Common() {
         </Button>
         <Button
           size="sm"
-          color={activeMenu === "Layer" ? "white" : "inherit"}
-          background={activeMenu === "Layer" ? "brand.500" : "inherit"}
+          color={activePanel === "Layer" ? "white" : "inherit"}
+          background={activePanel === "Layer" ? "brand.500" : "inherit"}
           _hover={{}}
           leftIcon={<Layers size={24} />}
           onClick={() => changePanel("Layer")}

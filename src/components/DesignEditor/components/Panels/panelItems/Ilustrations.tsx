@@ -194,7 +194,8 @@ export default function Ilustrations() {
           type: "StaticVector",
           name: "Shape",
           src: resource.url,
-          // ...{ watermark: resource.license === "paid" && "https://ik.imagekit.io/scenify/drawify-small.svg" },
+          erasable: false,
+          // ...{ watermark: resource.license === "paid" ? "https://ik.imagekit.io/scenify/drawify-small.svg" : "" },
           metadata: {}
         }
         if (editor) {
@@ -202,7 +203,7 @@ export default function Ilustrations() {
         }
       } catch {}
     },
-    [activeScene, editor]
+    [activeScene, editor, activeObject]
   )
 
   const onDragStart = React.useCallback(
@@ -641,7 +642,6 @@ function ModalIllustration({
   const user = useSelector(selectUser)
   const editor = useEditor()
   const activeScene = useActiveScene()
-  const dispatch = useAppDispatch()
   const [resources, setResources] = useState<IResource[]>([])
   const [load, setLoad] = useState(false)
   const [sort, setSort] = useState<string>("ALPHABETIC")
@@ -690,7 +690,7 @@ function ModalIllustration({
   }, [listFavorite, resources, resourcesPrev, typeFilter, type, idDrawifier, sort])
 
   const addObject = useCallback(
-    (resource: IResource) => {
+    async (resource: IResource) => {
       if (user) {
         const ctx = { id: resource.id }
         api.recentResource(ctx.id)
@@ -703,7 +703,7 @@ function ModalIllustration({
         metadata: {}
       }
       if (editor) {
-        activeScene.objects.add(options)
+        await activeScene.objects.add(options)
       }
     },
     [activeScene, editor]

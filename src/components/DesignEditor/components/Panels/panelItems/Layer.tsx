@@ -56,7 +56,7 @@ export default function Layer() {
   function LayerItem({ name, visible, id, locked, setObjects }: Props) {
     const activeScene: any = useActiveScene()
     const object: any = activeScene.objects.findById(id)
-    const [stateIcon, setStateIcon] = React.useState({ lock: object[0]?.locked, eye: object[0].visible })
+    const [stateIcon, setStateIcon] = React.useState({ lock: object[0]?.locked, eye: object[0]?.visible })
     const [state, setState] = React.useState<State>({
       name,
       visible,

@@ -14,7 +14,6 @@ interface ToolboxState {
 
 export default function Toolbox() {
   const { setActiveMenu, activePanel } = useDesignEditorContext()
-  const [prevState, setPrevState] = React.useState<ToolboxState>({ toolbox: "Text" })
   const [state, setState] = React.useState<ToolboxState>({ toolbox: "Text" })
   const activeObject = useActiveObject() as ILayer
   const editor = useEditor()
@@ -32,7 +31,6 @@ export default function Toolbox() {
       setState({ toolbox: DEFAULT_TOOLBOX })
       setActiveMenu("")
     }
-    // }
   }, [activeObject, activePanel])
 
   React.useEffect(() => {
