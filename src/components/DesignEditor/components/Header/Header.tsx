@@ -644,6 +644,13 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const [stateChange] = useDebounce(stateJson, 5000)
   const [resolve, setResolve] = useState<any>(null)
 
+  document.onkeydown = function (e) {
+    if (e.ctrlKey && e.keyCode === 83) {
+      functionSave()
+      return false
+    }
+  }
+
   useEffect(() => {
     try {
       activeScene && functionSave()

@@ -28,7 +28,7 @@ export default function Text() {
   const [listResources, setListResources] = useState<any[]>([])
   const selectListResources = useSelector(selectListResourcesComposite)
   const [more, setMore] = useState(false)
-  const [load, setLoad] = useState(false)
+  const [load, setLoad] = useState(true)
   const activeScene = useActiveScene()
 
   useEffect(() => {
@@ -36,29 +36,29 @@ export default function Text() {
   }, [user, selectListResources.length])
 
   const initialState = async () => {
-    if (user) {
-      if (selectListResources[0] === undefined) {
-        const resolve: any = (await (
-          await dispatch(getListResourcesComposite({ page: 1, limit: 10, query: {} }))
-        ).payload) as any[]
-        resolve.name !== "AxiosError" && setListResources(resolve)
-        resolve[0] !== undefined ? setMore(true) : setMore(false)
-      } else {
-        setListResources(selectListResources)
-        setMore(true)
-      }
-    }
-    setLoad(true)
+    // if (user) {
+    //   if (selectListResources[0] === undefined) {
+    //     const resolve: any = (await (
+    //       await dispatch(getListResourcesComposite({ page: 1, limit: 10, query: {} }))
+    //     ).payload) as any[]
+    //     resolve.name !== "AxiosError" && setListResources(resolve)
+    //     resolve[0] !== undefined ? setMore(true) : setMore(false)
+    //   } else {
+    //     // setListResources(selectListResources)
+    //     setMore(true)
+    //   }
+    // }
+    // setLoad(true)
   }
 
   const fetchDataResource = async () => {
-    setMore(false)
-    const resolve = (
-      await dispatch(getListResourcesComposite({ page: listResources.length / 10 + 1, limit: 10, query: {} }))
-    ).payload as any[]
-    setListResources(listResources.concat(resolve))
-    resolve[0] !== undefined ? setMore(true) : setMore(false)
-    setLoad(true)
+    // setMore(false)
+    // const resolve = (
+    //   await dispatch(getListResourcesComposite({ page: listResources.length / 10 + 1, limit: 10, query: {} }))
+    // ).payload as any[]
+    // setListResources(listResources.concat(resolve))
+    // resolve[0] !== undefined ? setMore(true) : setMore(false)
+    // setLoad(true)
   }
 
   const addHeader = React.useCallback(async () => {

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import React, { useCallback, useRef } from "react"
 import {
   Flex,
   Box,
@@ -10,7 +10,7 @@ import {
   DrawerBody,
   useDisclosure
 } from "@chakra-ui/react"
-import { Canvas, fabric, useActiveScene, useEditor } from "@layerhub-pro/react"
+import { Canvas, fabric, useActiveObject, useActiveScene, useEditor, useZoomRatio } from "@layerhub-pro/react"
 import ContextMenu from "../ContextMenu"
 import { useSelector } from "react-redux"
 import * as api from "../../../services/api"
@@ -20,11 +20,14 @@ import Plus from "../../../Icons/Plus"
 import MobileModal from "../../../Modals/MobileModal"
 
 export default function Canva() {
-  const { draw, resourceDrag } = useResourcesContext()
+  const { resourceDrag } = useResourcesContext()
+  const zoom = useZoomRatio()
   const editor = useEditor()
   const activeScene = useActiveScene()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const user = useSelector(selectUser)
+  const activeObject: any = useActiveObject()
+  const flexRef = React.useRef<any>()
 
   React.useEffect(() => {
     const deleteIcon =
@@ -135,6 +138,30 @@ export default function Canva() {
     // app?.addEventListener
   } catch {}
 
+  document.onkeydown = function (e) {
+    if (
+      e.ctrlKey &&
+      (e.keyCode === 67 ||
+        e.keyCode === 86 ||
+        e.keyCode === 85 ||
+        e.keyCode === 117 ||
+        e.keyCode === 107 ||
+        e.keyCode === 109 ||
+        e.keyCode === 69 ||
+        e.keyCode === 68)
+    ) {
+      if (e.ctrlKey && e.keyCode === 107) editor.zoom.zoomToRatio(zoom + 0.05)
+      if (e.ctrlKey && e.keyCode === 109) editor.zoom.zoomToRatio(zoom - 0.05)
+      if (e.ctrlKey && e.keyCode === 68) activeScene.objects.clone()
+      if (e.ctrlKey && e.keyCode === 69) {
+        activeScene.layers.map((e, index) => {
+          if (index > 1) activeScene.objects.remove(e.id)
+        })
+        editor.zoom.zoomToRatio(zoom - 0.0000000000001 + 0.0000000000001)
+      }
+    }
+  }
+
   const dropEvent = useCallback(
     (ev: React.DragEvent<HTMLDivElement>) => {
       if (ev.dataTransfer.getData("resource")) {
@@ -158,7 +185,7 @@ export default function Canva() {
   )
 
   return (
-    <Flex flex={1} position="relative" onDrop={(ev) => dropEvent(ev)} id="app">
+    <Flex ref={flexRef} onClick={() => {}} flex={1} position="relative" onDrop={(ev) => dropEvent(ev)} id="app">
       <ContextMenu />
       <Flex w="full" h="full">
         <Canvas />
