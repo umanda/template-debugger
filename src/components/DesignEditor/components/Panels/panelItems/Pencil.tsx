@@ -125,7 +125,7 @@ export default function Pencil() {
             <Center
               sx={{ border: `2px solid ${draw.type === "PencilBrush" ? "#5456F5" : "#DDDFE5"}`, borderRadius: "4px" }}
             >
-              <Pencil1 size={60} />
+              <Pencil1 size={62} />
             </Center>
             <Center>Marker</Center>
           </Flex>

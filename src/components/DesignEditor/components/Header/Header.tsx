@@ -13,7 +13,7 @@ import {
   useToast
 } from "@chakra-ui/react"
 import { Popover, PopoverArrow, PopoverContent, PopoverTrigger } from "@chakra-ui/react"
-import { useActiveScene, useDesign, useEditor, useScenes } from "@layerhub-pro/react"
+import { useActiveScene, useDesign, useEditor, useScenes, useZoomRatio } from "@layerhub-pro/react"
 import { useSelector } from "react-redux"
 import { useEffect, useState } from "react"
 import * as api from "../../../services/api"
@@ -643,11 +643,37 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const [stateJson, setStateJson] = useState<any>("")
   const [stateChange] = useDebounce(stateJson, 5000)
   const [resolve, setResolve] = useState<any>(null)
+  const zoom = useZoomRatio()
 
   document.onkeydown = function (e) {
-    if (e.ctrlKey && e.keyCode === 83) {
-      functionSave()
+    if (
+      e.ctrlKey &&
+      (e.keyCode === 67 ||
+        e.keyCode === 86 ||
+        e.keyCode === 85 ||
+        e.keyCode === 117 ||
+        e.keyCode === 107 ||
+        e.keyCode === 109 ||
+        e.keyCode === 69 ||
+        e.keyCode === 68 ||
+        e.keyCode === 83 ||
+        e.keyCode === 65 ||
+        e.keyCode === 64)
+    ) {
+      if (e.ctrlKey && e.keyCode === 107) editor.zoom.zoomToRatio(zoom + 0.05)
+      if (e.ctrlKey && e.keyCode === 109) editor.zoom.zoomToRatio(zoom - 0.05)
+      if (e.ctrlKey && e.keyCode === 68) activeScene.objects.clone()
+      if (e.ctrlKey && e.keyCode === 83) functionSave()
+      if (e.ctrlKey && e.keyCode === 65) activeScene.objects.select()
+      if (e.ctrlKey && e.keyCode === 69) {
+        activeScene.layers.map((e, index) => {
+          if (index > 1) activeScene.objects.remove(e.id)
+        })
+        editor.zoom.zoomToRatio(zoom - 0.0000000000001 + 0.0000000000001)
+      }
       return false
+    } else {
+      return true
     }
   }
 

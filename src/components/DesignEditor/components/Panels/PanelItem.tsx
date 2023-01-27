@@ -7,6 +7,7 @@ import ChevronLeft from "../../../Icons/ChevronLeft"
 export default function PanelItem() {
   const [state, setState] = React.useState({ selected: "Templates" })
   const { activeMenu, activePanel, isSidebarVisible, setIsSidebarVisible } = useDesignEditorContext()
+
   React.useEffect(() => {
     setState({ selected: activePanel })
   }, [activePanel])
@@ -41,7 +42,9 @@ export default function PanelItem() {
           {isSidebarVisible && (
             <Portal>
               <Box
-                onClick={() => setIsSidebarVisible(false)}
+                onClick={() => {
+                  setIsSidebarVisible(false)
+                }}
                 sx={{
                   position: "absolute",
                   height: "24px",

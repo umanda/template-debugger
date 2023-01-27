@@ -138,36 +138,13 @@ export default function Canva() {
     // app?.addEventListener
   } catch {}
 
-  document.onkeydown = function (e) {
-    if (
-      e.ctrlKey &&
-      (e.keyCode === 67 ||
-        e.keyCode === 86 ||
-        e.keyCode === 85 ||
-        e.keyCode === 117 ||
-        e.keyCode === 107 ||
-        e.keyCode === 109 ||
-        e.keyCode === 69 ||
-        e.keyCode === 68)
-    ) {
-      if (e.ctrlKey && e.keyCode === 107) editor.zoom.zoomToRatio(zoom + 0.05)
-      if (e.ctrlKey && e.keyCode === 109) editor.zoom.zoomToRatio(zoom - 0.05)
-      if (e.ctrlKey && e.keyCode === 68) activeScene.objects.clone()
-      if (e.ctrlKey && e.keyCode === 69) {
-        activeScene.layers.map((e, index) => {
-          if (index > 1) activeScene.objects.remove(e.id)
-        })
-        editor.zoom.zoomToRatio(zoom - 0.0000000000001 + 0.0000000000001)
-      }
-    }
-  }
-
   const dropEvent = useCallback(
     (ev: React.DragEvent<HTMLDivElement>) => {
       if (ev.dataTransfer.getData("resource")) {
         if (user) {
-          const ctx = { id: ev.dataTransfer.getData("id") }
-          api.recentResource(ctx.id)
+          const ctx = { id: ev.dataTransfer.getData("resource") }
+          api.recentResource(resourceDrag.id)
+          console.log(ctx)
         }
         const options = {
           type: "StaticVector",

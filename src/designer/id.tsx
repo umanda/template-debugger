@@ -1,26 +1,16 @@
 import { Flex, useDisclosure } from "@chakra-ui/react"
 import { useCallback, useEffect, useState } from "react"
-import { useSelector } from "react-redux"
-import { selectUser } from "../components/store/user/selector"
 import DesignEditor from "../components/DesignEditor"
 import SigninModal from "../components/Modals/AuthModal"
-import { useNavigate, useParams } from "react-router-dom"
-import { generateId } from "../components/utils/unique"
+import { useParams } from "react-router-dom"
 import * as api from "../.././src/components/services/api"
-import { useAppDispatch } from "../components/store/store"
-import { signInByToken } from "../components/store/user/action"
 import { useDesign, useEditor } from "@layerhub-pro/react"
 import useDesignEditorContext from "../components/hooks/useDesignEditorContext"
-const redirectHome = import.meta.env.VITE_REDIRECT_HOME
 
 const Designer: any = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const user = useSelector(selectUser)
   const [typeSign, setTypeSign] = useState("signin")
   const { id } = useParams()
-  const navigate = useNavigate()
-  const token = localStorage.getItem("token")
-  const dispath = useAppDispatch()
   const editor = useEditor()
   const { setNamesPages } = useDesignEditorContext()
   const design = useDesign()
@@ -28,17 +18,6 @@ const Designer: any = () => {
   useEffect(() => {
     design && lodaTemplateById()
   }, [design])
-
-  useEffect(() => {
-    if (user) {
-      user?.token !== null && api.signInByToken(user.token)
-    } else if (token) {
-      token !== "" && dispath(signInByToken(token))
-    } else {
-      window.location.href = redirectHome
-    }
-    id === undefined && navigate(`/composer/${generateId("proj")}`)
-  }, [user])
 
   const lodaTemplateById = useCallback(async () => {
     try {
