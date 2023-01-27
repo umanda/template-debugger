@@ -13,12 +13,15 @@ export default function Vector() {
 
   useEffect(() => {
     if (activeObject && activeObject.type === "StaticVector") {
-      setIndexColorPicker(-1)
+      if (activeObject.type === "StaticVector") {
+        indexColorPicker > Object.values(activeObject.colorMap).length - 1 &&
+          setIndexColorPicker(Object.values(activeObject.colorMap).length - 1)
+      }
       const objects = activeObject?._objects[0]?._objects
       const objectColors = groupBy(objects, "fill")
       vectorPaths.current = objectColors
       setColors({ ...colors, colorMap: activeObject.colorMap })
-    }
+    } else setIndexColorPicker(-1)
   }, [activeScene, activeObject])
 
   return (

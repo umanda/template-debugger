@@ -73,7 +73,6 @@ export default function TextColorPicker() {
     <Flex
       flexDir="column"
       sx={{ width: "320px", borderRight: "1px solid #ebebeb" }}
-      fontFamily="Outfit"
       textColor="#A9A9B2"
       padding="1rem"
       gap="1rem"

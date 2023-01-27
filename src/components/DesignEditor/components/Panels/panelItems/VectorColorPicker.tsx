@@ -38,6 +38,8 @@ export default function VectorColorPicker() {
   const [colorHex, setColorHex] = useState<string>("")
   const { isOpen, onOpen, onClose } = useDisclosure()
 
+  console.log("illustation")
+
   useEffect(() => {
     if (activeObject) activeObject.type !== "StaticVector" && setActiveMenu("Illustrations")
   }, [activeObject])
@@ -83,7 +85,7 @@ export default function VectorColorPicker() {
   }
 
   return (
-    <Flex flexDir="column" fontFamily="Outfit" fontSize="12px" sx={{ width: "320px" }} padding="10px" gap="10px">
+    <Flex flexDir="column" fontSize="12px" sx={{ width: "320px" }} padding="10px" gap="10px">
       <Flex color="#A9A9B2">MORE COLORS</Flex>
       <GridItem>
         <Popover isOpen={isOpen} onClose={onClose} onOpen={onOpen} placement="bottom-start">
@@ -142,7 +144,7 @@ export default function VectorColorPicker() {
           )
         })}
       </Grid>
-      <Flex sx={{ fontSize: "14px" }} color="#A9A9B2">
+      <Flex sx={{ fontSize: "12px" }} color="#A9A9B2">
         RECENT COLORS
       </Flex>
       <Grid templateColumns="repeat(7, 44px)">
@@ -164,7 +166,7 @@ export default function VectorColorPicker() {
           )
         })}
       </Grid>
-      <Flex sx={{ fontSize: "14px" }} color="#A9A9B2">
+      <Flex sx={{ fontSize: "12px" }} color="#A9A9B2">
         DEFAULT COLORS
       </Flex>
       <Grid gap="10px" templateColumns="repeat(7, 1fr)">
