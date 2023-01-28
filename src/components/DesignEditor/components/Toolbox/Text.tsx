@@ -58,7 +58,7 @@ export default function Text() {
   const activeObject = useActiveObject() as Required<IStaticText>
   const editor = useEditor()
   const fonts = useSelector(selectFonts)
-  const { setActiveMenu, colorText, setColorText } = useDesignEditorContext()
+  const { setActiveMenu, colorText, setColorText, activeMenu } = useDesignEditorContext()
   const activeScene = useActiveScene()
   const scenes = useScenes()
 
@@ -224,7 +224,7 @@ export default function Text() {
           _hover={{ cursor: "pointer" }}
           borderWidth="2px"
           borderStyle="solid"
-          onClick={() => setActiveMenu("TextColorPicker")}
+          onClick={() => (activeMenu !== "TextColorPicker" ? setActiveMenu("TextColorPicker") : setActiveMenu(""))}
         ></Flex>
 
         <Button

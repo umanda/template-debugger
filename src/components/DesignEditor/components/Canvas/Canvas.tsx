@@ -144,7 +144,6 @@ export default function Canva() {
         if (user) {
           const ctx = { id: ev.dataTransfer.getData("resource") }
           api.recentResource(resourceDrag.id)
-          console.log(ctx)
         }
         const options = {
           type: "StaticVector",

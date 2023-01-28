@@ -38,8 +38,6 @@ export default function VectorColorPicker() {
   const [colorHex, setColorHex] = useState<string>("")
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  console.log("illustation")
-
   useEffect(() => {
     if (activeObject) activeObject.type !== "StaticVector" && setActiveMenu("Illustrations")
   }, [activeObject])

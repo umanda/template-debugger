@@ -28,6 +28,8 @@ import InfiniteScroll from "../../../../utils/InfiniteScroll"
 import MenuOption from "../../../../utils/MenuOption"
 import { getCategoryFonts, getListUseFonts, getUseFont } from "../../../../store/fonts/action"
 import { selectCategoryFonts, selectFonts, selectListUseFonts } from "../../../../store/fonts/selector"
+import { ILayer } from "@layerhub-pro/types"
+import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
 
 export default function FontSelector() {
   const [language, setLanguage] = React.useState("English")
@@ -44,6 +46,12 @@ export default function FontSelector() {
   const listUseFonts = useSelector(selectListUseFonts)
   const [content, setContent] = React.useState<string>("")
   const activeScene = useActiveScene()
+  const activeObject = useActiveObject() as ILayer
+  const { setActiveMenu } = useDesignEditorContext()
+
+  useEffect(() => {
+    if (activeObject) activeObject.type !== "StaticText" && setActiveMenu("")
+  }, [activeObject])
 
   useEffect(() => {
     initialState()

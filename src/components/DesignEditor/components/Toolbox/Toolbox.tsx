@@ -19,7 +19,6 @@ export default function Toolbox() {
   const editor = useEditor()
 
   React.useEffect(() => {
-    // if (activePanel !== "Pencil") {
     const selectionType = getSelectionType(activeObject)
     if (selectionType) {
       if (selectionType.length > 1) {
