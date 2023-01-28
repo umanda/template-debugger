@@ -16,7 +16,7 @@ import {
   Center
 } from "@chakra-ui/react"
 import { Popover, PopoverTrigger, PopoverContent, PopoverArrow } from "@chakra-ui/react"
-import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useEditor, useScenes } from "@layerhub-pro/react"
 import { useSelector } from "react-redux"
 import { useAppDispatch } from "../../../../store/store"
 import { selectUser } from "../../../../store/user/selector"
@@ -30,6 +30,7 @@ import { getCategoryFonts, getListUseFonts, getUseFont } from "../../../../store
 import { selectCategoryFonts, selectFonts, selectListUseFonts } from "../../../../store/fonts/selector"
 import { ILayer } from "@layerhub-pro/types"
 import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
+import { getTextProperties } from "../../../../utils/text"
 
 export default function FontSelector() {
   const [language, setLanguage] = React.useState("English")
@@ -46,12 +47,21 @@ export default function FontSelector() {
   const listUseFonts = useSelector(selectListUseFonts)
   const [content, setContent] = React.useState<string>("")
   const activeScene = useActiveScene()
-  const activeObject = useActiveObject() as ILayer
+  const activeObject: any = useActiveObject()
   const { setActiveMenu } = useDesignEditorContext()
+  const [typeFont, setTypeFont] = useState("")
+  const scenes = useScenes()
 
   useEffect(() => {
     if (activeObject) activeObject.type !== "StaticText" && setActiveMenu("")
   }, [activeObject])
+
+  useEffect(() => {
+    if (activeObject) {
+      const textProperties = getTextProperties(activeObject, fonts)
+      setTypeFont(textProperties.family)
+    }
+  }, [editor, activeScene, activeObject, scenes])
 
   useEffect(() => {
     initialState()
@@ -197,10 +207,11 @@ export default function FontSelector() {
       <Scrollable>
         <InfiniteScroll hasMore={false} fetchData={() => {}}>
           <Flex flexDir="column">
-            {commonFonts.map((font, index) => (
+            {commonFonts.map((font: any, index) => (
               <Box
                 key={index}
                 onClick={() => handleFontFamilyChange(font)}
+                border={font.family === typeFont ? "3px solid #5456F5" : null}
                 sx={{
                   height: "full",
                   display: "flex",

@@ -23,9 +23,9 @@ const Designer: any = () => {
     try {
       if (design) {
         const resolve: any = await api.getProjectById({ id })
-        setTimeout(() => {
-          design.setDesign(resolve)
-        }, 1000)
+        setTimeout(async () => {
+          await design.setDesign(resolve)
+        }, 100)
         let sceneNames: string[] = []
         for (const scn of resolve.scenes) {
           sceneNames.push(scn.name)

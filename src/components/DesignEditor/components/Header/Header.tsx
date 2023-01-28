@@ -42,6 +42,7 @@ import SigninModal from "../../../Modals/AuthModal"
 import { useNavigate, useParams } from "react-router-dom"
 import { useDebounce } from "use-debounce"
 import { generateId } from "../../../utils/unique"
+import { IDesign } from "@layerhub-pro/types"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 
 export default function Header() {
@@ -342,6 +343,7 @@ function FileMenu() {
   const design = useDesign()
   const { setNamesPages } = useDesignEditorContext()
   const initialFocusRef = React.useRef()
+  const inputFileRef = React.useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     onCloseEdit()
@@ -372,6 +374,21 @@ function FileMenu() {
     }
   }
 
+  const makeDownload = (data: Object) => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data))
+    const a = document.createElement("a")
+    a.href = dataStr
+    a.download = "drawify.json"
+    a.click()
+  }
+
+  const handleExport = useCallback(() => {
+    if (design) {
+      const data = design.toJSON()
+      makeDownload(data)
+    }
+  }, [design, makeDownload])
+
   const handleNew = useCallback(async () => {
     for (const scn of scenes) {
       await design.deleteScene(scn.id)
@@ -379,6 +396,34 @@ function FileMenu() {
     setNamesPages(["Untitled design"])
     navigate(`/composer/${generateId("proj")}`)
   }, [design, scenes, navigate, editor])
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files![0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (res) => {
+        const result = res.target!.result as string
+        const design = JSON.parse(result)
+        handleImportDesign(design)
+      }
+      reader.onerror = (err) => {
+        console.log(err)
+      }
+
+      reader.readAsText(file)
+    }
+  }
+
+  const handleImportDesign = React.useCallback(
+    async (data: IDesign) => {
+      editor?.design.setDesign(data)
+    },
+    [editor]
+  )
+
+  const handleInputFileRefClick = () => {
+    inputFileRef.current?.click()
+  }
 
   return (
     <Popover
@@ -437,9 +482,17 @@ function FileMenu() {
           </PopoverTrigger>
           <PopoverContent w="100px">
             <PopoverArrow />
+            <input
+              multiple={false}
+              onChange={handleFileInput}
+              type="file"
+              id="file"
+              ref={inputFileRef}
+              style={{ display: "none" }}
+            />
             <MenuOption onClick={handleNew}>New</MenuOption>
-            {/* <MenuOption> Export</MenuOption>
-            <MenuOption> Import</MenuOption> */}
+            <MenuOption onClick={handleExport}> Export</MenuOption>
+            <MenuOption onClick={handleInputFileRefClick}> Import</MenuOption>
           </PopoverContent>
         </Popover>
         <Popover
