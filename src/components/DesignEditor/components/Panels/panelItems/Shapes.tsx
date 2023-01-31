@@ -14,14 +14,13 @@ import LazyLoadImage from "../../../../utils/LazyLoadImage"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
 import { getListResourcesShapes } from "../../../../store/resources/action"
 import { selectResourceShapes } from "../../../../store/resources/selector"
+import { selectProject } from "../../../../store/project/selector"
 
 const initialQuery = {
   page: 1,
   limit: 40,
   query: {
-    categories: ["SHAPE"],
     used: false,
-    visibility: "public",
     favorited: false
   },
   sorts: ["ALPHABETIC"]
@@ -43,6 +42,8 @@ export default function Shapes() {
   const [loadMoreResources, setLoadMoreResources] = useState<boolean>(false)
   const [validateContent, setValidateContent] = useState<string | null>(null)
   const activeScene = useActiveScene()
+  const projectSelect = useSelector(selectProject)
+
   useEffect(() => {
     initialState()
   }, [user])
@@ -66,20 +67,17 @@ export default function Shapes() {
     if (stateRecent === false && type.filled === false && type.outlined === false) {
       let newQuery = initialQuery
       newQuery.page = resources.length / 40 + 1
-      const resolve = (await (await dispatch(getListResourcesShapes(newQuery))).payload) as IResource[]
+      const resolve = (await dispatch(getListResourcesShapes(newQuery))).payload as IResource[]
       setResources(resources.concat(resolve))
       resolve[0] === undefined ? setFetching(true) : setFetching(false)
     } else {
-      const resolve: any[] = await api.searchResources({
+      const resolve: any[] = await api.resourceSearchShapes({
         page: resources.length / 40 + 1,
         limit: 40,
         query: {
           content: types,
-          visibility: "public",
-          categories: ["SHAPE"],
           used: stateRecent
-        },
-        sorts: ["ALPHABETIC"]
+        }
       })
       if (resolve[0] === undefined && resources[0] === undefined) {
         setValidateContent("Nothing was found related to the filter entered")
@@ -102,9 +100,10 @@ export default function Shapes() {
 
   const addObject = useCallback(
     (images: any) => {
-      if (user) {
+      console.log(projectSelect)
+      if (user && projectSelect.id) {
         const ctx = { id: images.id }
-        api.recentResource(ctx.id)
+        api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
       }
       const options = {
         type: "StaticVector",
@@ -116,7 +115,7 @@ export default function Shapes() {
         activeScene.objects.add(options)
       }
     },
-    [activeScene, editor]
+    [activeScene, editor, projectSelect]
   )
 
   const onDragStart = React.useCallback(
@@ -136,7 +135,7 @@ export default function Shapes() {
 
       if (outlined) {
         setType({ filled: false, outlined: true })
-        setTypes("OUTLINED")
+        setTypes("outlined")
       } else if (outlined === false) {
         setType({ ...type, outlined: false })
         setTypes(undefined)
@@ -144,7 +143,7 @@ export default function Shapes() {
 
       if (filled) {
         setType({ outlined: false, filled: true })
-        setTypes("FILLED")
+        setTypes("filled")
       } else if (filled === false) {
         setType({ ...type, filled: false })
         setTypes(undefined)
@@ -161,7 +160,7 @@ export default function Shapes() {
       }
       setFetching(false)
     },
-    [stateRecent, selectShapes]
+    [stateRecent, selectShapes, types, type]
   )
 
   return (
@@ -265,7 +264,7 @@ export default function Shapes() {
                         _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
                       >
                         <Flex w="full" h="full">
-                          <LazyLoadImage url={obj.preview} />
+                          <LazyLoadImage url={obj.url} />
                         </Flex>
                       </GridItem>
                     )

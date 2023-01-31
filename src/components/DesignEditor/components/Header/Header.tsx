@@ -43,6 +43,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useDebounce } from "use-debounce"
 import { generateId } from "../../../utils/unique"
 import { IDesign } from "@layerhub-pro/types"
+import { selectProject } from "../../../store/project/selector"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 
 export default function Header() {
@@ -151,11 +152,13 @@ function ShareMenu() {
   const [valueInput, setValueInput] = useState<string>("")
   const [typeSign, setTypeSign] = useState("signin")
   const currentScene = useActiveScene()
+  const projectSelect = useSelector(selectProject)
+  const { namesPages } = useDesignEditorContext()
 
   const handleDownload = async (type: string) => {
     let resolve: any
     if (editor && user) {
-      resolve = await api.getExportProject({ id, scene_ids: [], type })
+      resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
     }
     const url = resolve.url
     const fileTypeParts = url.split(".")
@@ -177,10 +180,12 @@ function ShareMenu() {
     async (type: string) => {
       if (user) {
         try {
-          let designJSON: any = design.toJSON()
-          designJSON.id = id
+          let designJSON: any = design?.toJSON()
+          designJSON.key = id
           designJSON.scenes.map((e: any, index: number) => {
+            e.name = namesPages[index]
             e.position = index
+            e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
             return e
           })
           const resolve = (await dispatch(updateProject(designJSON))).payload
@@ -194,7 +199,7 @@ function ShareMenu() {
         } catch {}
       }
     },
-    [activeScene]
+    [activeScene, namesPages]
   )
 
   const makeMagicLink = useCallback(async () => {
@@ -394,7 +399,7 @@ function FileMenu() {
       await design.deleteScene(scn.id)
     }
     setNamesPages(["Untitled design"])
-    navigate(`/composer/${generateId("proj")}`)
+    navigate(`/composer/${generateId("", 10)}`)
   }, [design, scenes, navigate, editor])
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -760,7 +765,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         setResolve("")
       } else if (resolve !== undefined) {
         let designJSON: any = design?.toJSON()
-        designJSON.id = id
+        designJSON.key = id
         designJSON.scenes.map((e: any, index: number) => {
           e.name = namesPages[index]
           e.position = index

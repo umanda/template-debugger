@@ -48,7 +48,7 @@ export const signInByToken = (token: string): Promise<User> => {
     base
       .post("/signin/token", bodyParameters, config)
       .then(({ data }: any) => {
-        resolve(data.user)
+        resolve(data.customer)
       })
       .catch((err: any) => {
         reject(err)
@@ -391,25 +391,20 @@ export const getUploads = (): Promise<interfaceUploads[]> => {
   })
 }
 
-export const getSignedURLForUpload = (props: {
-  filename: string
-  operation: string
-}): Promise<{ signed_url: string; url: string }> => {
+export const getSignedURLForUpload = (props: { filename: string; type: string }): Promise<{ signed_urls: [any] }> => {
   return new Promise((resolve, reject) => {
     base
       .post("/uploads/signed", props)
       .then(({ data }) => {
         resolve(data)
       })
-      .catch((err) => null)
+      .catch((err) => reject(err))
   })
 }
 
 export const getSave = (props: {
-  id: string
+  filename: string
   name: string
-  type: string
-  url: string
 }): Promise<{ image: { id: string; name: string; type: string; url: string } }> => {
   return new Promise((resolve, reject) => {
     base
@@ -437,7 +432,7 @@ export const userMe = (): Promise<User> => {
     base
       .get("/user/me")
       .then(({ data }: any) => {
-        resolve(data.user)
+        resolve(data.customer)
       })
       .catch((e) => reject(e))
   })
@@ -459,7 +454,7 @@ export const signin = (props: Partial<SigninDto>): Promise<User> => {
     base
       .post("/signin", props)
       .then(({ data }) => {
-        resolve(data.user)
+        resolve(data.customer)
       })
       .catch((err) => reject(err))
   })
@@ -544,9 +539,9 @@ export const getTemplate = (props: string) => {
   })
 }
 
-export const getUseTemplate = (prop: string) => {
+export const getUseTemplate = ({ template_id, project_id }) => {
   return new Promise((resolve, reject) => {
-    base.put(`/templates/${prop}/use`).then(({ data }: any) => {
+    base.put(`/templates/use`, { template_id, project_id }).then(({ data }: any) => {
       resolve(data)
     })
   })
@@ -563,12 +558,12 @@ export const getTemplateById = (id: string): Promise<IDesign> => {
   })
 }
 
-export const resourceSearchShapes = (props: Partial<SearchResourceDto>) => {
+export const resourceSearchShapes = (props: Partial<SearchResourceDto>): Promise<any[]> => {
   return new Promise((resolve, reject) => {
     base
-      .post("/es/resource", props)
+      .post("/shapes/search", props)
       .then(({ data }: any) => {
-        const resources = data.resources as IResource[]
+        const resources = data.shapes as IResource[]
         resolve(resources)
       })
       .catch(null)
@@ -586,9 +581,9 @@ export const searchResources = (props: Partial<SearchResourceDto>): Promise<IRes
   })
 }
 
-export const recentResource = (idResource: String) => {
+export const recentResource = ({ project_id, resource_id }) => {
   return new Promise(() => {
-    base.put("/resource/" + idResource + "/use")
+    base.put("/resource/use", { project_id, resource_id })
   })
 }
 

@@ -47,6 +47,8 @@ import { selectListRecommendTemplate } from "../../../../store/recommend/selecto
 import { getListRecommend } from "../../../../store/recommend/action"
 import Order from "../../../../Modals/Order"
 import LazyLoadImage from "../../../../utils/LazyLoadImage"
+import { useParams } from "react-router-dom"
+import { selectProject } from "../../../../store/project/selector"
 
 const initialQuery = {
   page: 1,
@@ -54,7 +56,7 @@ const initialQuery = {
   query: {
     visibility: "public"
   },
-  sorts: ["ALPHABETIC"]
+  sorts: []
 }
 
 export default function Template() {
@@ -83,6 +85,8 @@ export default function Template() {
   const [toolTip, setToolTip] = useState(false)
   const design = useDesign()
   const activeScene = useActiveScene()
+  const { id } = useParams()
+  const projectSelector = useSelector(selectProject)
 
   useEffect(() => {
     initialState()
@@ -117,7 +121,7 @@ export default function Template() {
       stateFavorite === false &&
       stateRecent === false &&
       orderDrawifier[0] === "" &&
-      order[0] === "ALPHABETIC"
+      order[0] === null
     ) {
       let newQuery = initialQuery
       newQuery.page = resourcesTemplate.length / 10 + 1
@@ -129,7 +133,7 @@ export default function Template() {
             query: {
               visibility: "public"
             },
-            sorts: ["ALPHABETIC"]
+            sorts: []
           })
         )
       ).payload) as IDesign[]
@@ -186,13 +190,13 @@ export default function Template() {
     async (template: IDesign) => {
       // @ts-ignore
       setDesignEditorLoading({ isLoading: true, preview: template.preview })
-      user && api.getUseTemplate(template.id)
+      user && api.getUseTemplate({ template_id: template.id, project_id: projectSelector.id })
       const designData: any = await api.getTemplateById(template.id)
       await loadGraphicTemplate(designData)
       designData.scenes[0].frame = designData.frame
       await activeScene.setScene(designData.scenes[0])
     },
-    [design, activeScene]
+    [design, activeScene, projectSelector]
   )
 
   const makeFilter = async ({

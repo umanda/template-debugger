@@ -91,12 +91,11 @@ export const uploadFile = createAsyncThunk<void, { file: File; nameFile: string 
     })
     const updatedFileName = uniqueFilename(file.name)
     const updatedFile = new File([file], updatedFileName)
-    const response = await api.getSignedURLForUpload({ filename: updatedFileName, operation: "upload" })
+    const response = await api.getSignedURLForUpload({ filename: updatedFileName, type: "IMAGE" })
     const contentType = mime.getType(updatedFileName) as string
-    const typeFile = updatedFileName.split(".")
-    const save: any = await api.getSave({ id: typeFile[0], name: args.nameFile, type: typeFile[1], url: response.url })
+    const save: any = await api.getSave({ filename: updatedFileName, name: args.nameFile })
     dispatch(setUploads([save.image]))
-    await axios.put(response.signed_url, updatedFile, {
+    await axios.put(response.signed_urls[0].signed_url, updatedFile, {
       headers: { "Content-Type": contentType },
       onUploadProgress: (progressEvent: any) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)

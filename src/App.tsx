@@ -34,10 +34,11 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
         token !== "" && (await dispath(signInByToken(token)))
         setState(!state)
       } else {
-        window.location.href = redirectHome
+        setState(!state)
+        // window.location.href = redirectHome
       }
     }
-    id === undefined && navigate(`/composer/${generateId("proj")}`)
+    id === undefined && navigate(`/composer/${generateId("", 10)}`)
   }, [id, token])
 
   return (

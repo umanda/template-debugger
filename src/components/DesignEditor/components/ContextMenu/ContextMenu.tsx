@@ -17,7 +17,7 @@ function ContextMenu() {
       if (component) {
         dispath(
           createResourceComposite({
-            id: generateId("gres"),
+            id: generateId("", 10),
             name: "",
             category: "MIXED",
             types: component.metadata.types,

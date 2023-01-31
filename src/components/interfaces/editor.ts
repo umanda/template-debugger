@@ -148,6 +148,7 @@ export interface SearchResourceDto {
     styles?: string[]
     favorited?: boolean
     used?: boolean
+    type?: any
   }
   sorts?: string[]
 }

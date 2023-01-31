@@ -52,10 +52,12 @@ import FilterByTemplates from "../../../../Icons/FilterByTemplates"
 import FilterByTags from "../../../../Icons/FilterByTags"
 import { selectResourceImages } from "../../../../store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "../../../../store/resources/action"
+import { useParams } from "react-router-dom"
+import { selectProject } from "../../../../store/project/selector"
 
 export const limitCharacters = (name: string) => {
-  const newName = name.substring(0, 15)
-  if (name.length > 15) {
+  const newName = name?.substring(0, 15)
+  if (name?.length > 15) {
     return `${newName}.`
   } else {
     return newName
@@ -70,7 +72,7 @@ const initialQuery = {
     drawifier_ids: [],
     names: [],
     suggested: [],
-    categories: ["IMAGE"],
+    categories: [],
     colors: [],
     tags: [""],
     visibility: "public",
@@ -108,6 +110,7 @@ export default function Ilustrations() {
   const [toolTip, setToolTip] = useState(false)
   const activeScene = useActiveScene()
   const activeObject = useActiveObject()
+  const projectSelect = useSelector(selectProject)
 
   useEffect(() => {
     initialState()
@@ -158,7 +161,7 @@ export default function Ilustrations() {
           drawifier_ids: orderDrawifier[0]?.length > 0 ? orderDrawifier : undefined,
           visibility: "public",
           tags: nameIllustration[0] === "" ? undefined : nameIllustration,
-          categories: ["IMAGE"],
+          categories: [],
           favorited: stateFavorite ? true : undefined,
           used: stateRecent ? true : undefined
         },
@@ -188,7 +191,7 @@ export default function Ilustrations() {
       try {
         if (user) {
           const ctx = { id: resource.id }
-          api.recentResource(ctx.id)
+          api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
         }
         const options = {
           type: "StaticVector",
@@ -201,9 +204,11 @@ export default function Ilustrations() {
         if (editor) {
           await activeScene.objects.add(options)
         }
-      } catch {}
+      } catch (err) {
+        console.log(err)
+      }
     },
-    [activeScene, editor, activeObject]
+    [activeScene, editor, activeObject, projectSelect]
   )
 
   const onDragStart = React.useCallback(
@@ -598,8 +603,8 @@ function IllustrationItem({
         }}
       >
         <Flex gap="5px" alignItems="center">
-          <Avatar size={"xs"} name={illustration.drawifier.name} src={illustration.drawifier.avatar} />
-          <Box sx={{ fontSize: "12px" }}>{limitCharacters(illustration.drawifier.name)}</Box>
+          <Avatar size={"xs"} name={illustration?.drawifier?.name} src={illustration?.drawifier?.avatar} />
+          <Box sx={{ fontSize: "12px" }}>{limitCharacters(illustration?.drawifier?.name)}</Box>
         </Flex>
         <Center gap={"0.25rem"}>
           {illustration.license === "paid" && (
@@ -652,6 +657,7 @@ function ModalIllustration({
   const drawifiers = useSelector(selectListDrawifiers)
   const [resourcesPrev, setResourcesPrev] = useState<IResource[]>([])
   const [nameResource, setNameResource] = useState<string>("")
+  const projectSelect = useSelector(selectProject)
 
   useEffect(() => {
     setSort("ALPHABETIC")
@@ -672,7 +678,7 @@ function ModalIllustration({
         limit: 10,
         query: {
           drawifier_ids: type === "id" ? [typeFilter.drawifier.id] : idDrawifier !== "" ? [idDrawifier] : undefined,
-          visibility: "public",
+          // visibility: "public",
           tags: type === "tag" ? typeFilter.tags : undefined,
           categories: ["IMAGE"]
         },
@@ -693,7 +699,7 @@ function ModalIllustration({
     async (resource: IResource) => {
       if (user) {
         const ctx = { id: resource.id }
-        api.recentResource(ctx.id)
+        api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
       }
       const options = {
         type: "StaticVector",

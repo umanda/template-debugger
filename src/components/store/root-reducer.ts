@@ -13,6 +13,7 @@ import {
 import { listTemplateReducer } from "./templates/reducer"
 import { listDrawifiersReducer, userReducer, UserState } from "./user/reducer"
 import storage from "redux-persist/lib/storage"
+import { projectReducer } from "./project/reducer"
 
 const usersPersistConfig: PersistConfig<UserState> = {
   key: "user",
@@ -32,7 +33,8 @@ const rootReducer = combineReducers({
     resourcesShapes: resourcesShapeReducer,
     userDrawifiers: listDrawifiersReducer,
     resourcesImages: resourcesImagesReducer,
-    colors: colorReducer
+    colors: colorReducer,
+    project: projectReducer
   })
 })
 export default rootReducer

@@ -18,6 +18,7 @@ import { selectUser } from "../../../store/user/selector"
 import useResourcesContext from "../../../hooks/useResourcesContext"
 import Plus from "../../../Icons/Plus"
 import MobileModal from "../../../Modals/MobileModal"
+import { selectProject } from "../../../store/project/selector"
 
 export default function Canva() {
   const { resourceDrag } = useResourcesContext()
@@ -26,7 +27,7 @@ export default function Canva() {
   const activeScene = useActiveScene()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const user = useSelector(selectUser)
-  const activeObject: any = useActiveObject()
+  const projectSelect = useSelector(selectProject)
   const flexRef = React.useRef<any>()
 
   React.useEffect(() => {
@@ -143,7 +144,7 @@ export default function Canva() {
       if (ev.dataTransfer.getData("resource")) {
         if (user) {
           const ctx = { id: ev.dataTransfer.getData("resource") }
-          api.recentResource(resourceDrag.id)
+          api.recentResource({ project_id: projectSelect.id, resource_id: resourceDrag.id })
         }
         const options = {
           type: "StaticVector",

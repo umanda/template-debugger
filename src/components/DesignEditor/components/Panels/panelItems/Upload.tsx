@@ -9,6 +9,7 @@ import {
   Grid,
   GridItem,
   IconButton,
+  Image,
   Input,
   Popover,
   PopoverArrow,
@@ -31,6 +32,7 @@ import { selectUser } from "../../../../store/user/selector"
 import Scrollable from "../../../../utils/Scrollable"
 import InfiniteScroll from "../../../../utils/InfiniteScroll"
 import LazyLoadImage from "../../../../utils/LazyLoadImage"
+import LoadImageUpload from "../../../../utils/LoadImageUpload"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
 import { uniqueFilename } from "../../../../utils/unique"
 import { IUpload } from "../../../../interfaces/editor"
@@ -517,7 +519,8 @@ export default function Upload() {
                         icon={<Trash size={20} />}
                       />
                       <Flex w="full" h="full" onClick={() => addImageToCanvas(upload.url, upload.id, upload.type)}>
-                        <LazyLoadImage url={upload.url} />
+                        <LazyLoadImage url={upload?.url} />
+                        {/* <LoadImageUpload url={upload.new_url} urlBack={upload.old_url} /> */}
                       </Flex>
                     </GridItem>
                   ))}
