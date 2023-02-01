@@ -3,15 +3,18 @@ import { useCallback, useEffect, useState } from "react"
 import DesignEditor from "../components/DesignEditor"
 import SigninModal from "../components/Modals/AuthModal"
 import { useParams } from "react-router-dom"
-import * as api from "../.././src/components/services/api"
-import { useDesign, useEditor } from "@layerhub-pro/react"
+import { useActiveScene, useDesign, useEditor } from "@layerhub-pro/react"
 import useDesignEditorContext from "../components/hooks/useDesignEditorContext"
 import { useAppDispatch } from "../components/store/store"
 import { useSelector } from "react-redux"
 import { selectUser } from "../components/store/user/selector"
-import { updateProject } from "../components/store/project/action"
+import { getProjectByKey, updateProject } from "../components/store/project/action"
+import { getFonts } from "../components/store/fonts/action"
+import { getListDrawifiers } from "../components/store/user/action"
+import { loadFonts } from "../components/utils/fonts"
 
 const Designer: any = () => {
+  const [state, setSate] = useState<boolean>(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [typeSign, setTypeSign] = useState("signin")
   const { id } = useParams()
@@ -20,6 +23,7 @@ const Designer: any = () => {
   const design = useDesign()
   const dispatch = useAppDispatch()
   const user = useSelector(selectUser)
+  const activeScene = useActiveScene()
 
   useEffect(() => {
     design && lodaTemplateById()
@@ -28,18 +32,31 @@ const Designer: any = () => {
   const lodaTemplateById = useCallback(async () => {
     try {
       if (design && user) {
-        const resolve: any = await api.getProjectByKey({ id })
+        dispatch(getListDrawifiers({}))
+        await dispatch(getFonts())
+        const resolve: any = (await dispatch(getProjectByKey(id))).payload
         setTimeout(async () => {
           await design.setDesign(resolve)
         }, 100)
         let sceneNames: string[] = []
         for (const scn of resolve.scenes) {
+          scn.layers.map(async (layer) => {
+            if (layer?.type === "StaticText") {
+              const font = { name: layer.fontFamily, url: layer.fontURL }
+              await loadFonts([font])
+              activeScene.objects.update({ fontFamily: layer.fontFamily, fontURL: layer.fontURL })
+            }
+          })
           sceneNames.push(scn.name)
         }
         setNamesPages(sceneNames)
+        setSate(true)
       }
     } catch (err: any) {
+      await dispatch(getFonts())
+      await dispatch(getListDrawifiers({}))
       user && functionSave()
+      setSate(true)
     }
   }, [id, editor])
 
@@ -61,7 +78,7 @@ const Designer: any = () => {
     <Flex sx={{ height: "100vh", width: "100vw" }}>
       <SigninModal setType={setTypeSign} type={typeSign} onClose={onClose} isOpen={isOpen} onOpen={onOpen} />
       <Flex flex={1}>
-        <DesignEditor />
+        <DesignEditor state={state} />
       </Flex>
     </Flex>
   )

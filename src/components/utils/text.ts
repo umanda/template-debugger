@@ -14,12 +14,16 @@ export const getTextProperties = (object: Required<IStaticText>, fonts: any[]) =
     hasItalic: !!hasItalic,
     options: selectedFamily
   }
-  return {
-    color,
-    family: selectedFamily[0]?.family,
-    bold: family.includes("Bold"),
-    italic: family.includes("Italic"),
-    underline: object.underline,
-    styleOptions
+  if (selectedFamily) {
+    return {
+      color,
+      family: selectedFamily[0]?.family,
+      bold: family.includes("Bold"),
+      italic: family.includes("Italic"),
+      underline: object.underline,
+      styleOptions
+    }
+  } else {
+    return null
   }
 }

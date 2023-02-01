@@ -35,7 +35,6 @@ import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
 import HorizontalScroll from "../../../../utils/HorizontaScroll"
 import Scrollable from "../../../../utils/Scrollable"
 import InfiniteScroll from "../../../../utils/InfiniteScroll"
-import { loadTemplateFonts } from "../../../../utils/fonts"
 import { IDesign, IResolveRecommend } from "../../../../interfaces/editor"
 import { selectListTemplates } from "../../../../store/templates/selector"
 import {

@@ -69,7 +69,7 @@ export default function Order({
 
   const orderByStats = () => {
     setSkeleton(false)
-    setPage && setPage(1)
+    setPage && setPage(0)
     id !== "" ? setDrawifier([id]) : setDrawifier([])
     if (value === "A - Z") {
       setOrder(["ALPHABETIC"])

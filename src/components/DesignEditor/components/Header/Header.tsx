@@ -411,9 +411,7 @@ function FileMenu() {
         const design = JSON.parse(result)
         handleImportDesign(design)
       }
-      reader.onerror = (err) => {
-        console.log(err)
-      }
+      reader.onerror = (err) => {}
 
       reader.readAsText(file)
     }

@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react"
 import { Route, Routes, useNavigate, useParams } from "react-router-dom"
 import Designer from "../src/designer/id"
+import { getFonts } from "./components/store/fonts/action"
 import { useAppDispatch } from "./components/store/store"
-import { signInByToken } from "./components/store/user/action"
+import { getListDrawifiers, signInByToken } from "./components/store/user/action"
 import { generateId } from "./components/utils/unique"
 const redirectHome: string = import.meta.env.VITE_REDIRECT_HOME
 
@@ -22,7 +23,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
   const { id } = useParams()
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
-  const dispath = useAppDispatch()
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     initialState()
@@ -31,7 +32,9 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
   const initialState = useCallback(async () => {
     if (id) {
       if (token) {
-        token !== "" && (await dispath(signInByToken(token)))
+        await dispatch(getFonts())
+        await dispatch(getListDrawifiers({}))
+        token !== "" && (await dispatch(signInByToken(token)))
         setState(!state)
       } else {
         window.location.href = redirectHome

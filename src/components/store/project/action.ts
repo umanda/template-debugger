@@ -14,3 +14,14 @@ export const updateProject = createAsyncThunk<any, any, { rejectValue: void }>(
     } catch (error) {}
   }
 )
+
+export const getProjectByKey = createAsyncThunk<any, string, { rejectValue: void }>(
+  "projects/getProjectByKey",
+  async (args, { dispatch, rejectWithValue }) => {
+    try {
+      const project: any = await api.getProjectByKey({ id: args })
+      dispatch(setUpdateProject(project))
+      return project
+    } catch (error) {}
+  }
+)

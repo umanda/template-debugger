@@ -164,7 +164,7 @@ export default function Canva() {
   return (
     <Flex ref={flexRef} onClick={() => {}} flex={1} position="relative" onDrop={(ev) => dropEvent(ev)} id="app">
       <ContextMenu />
-      <Flex w="full" h="full">
+      <Flex flex={1}>
         <Canvas />
       </Flex>
       <Center

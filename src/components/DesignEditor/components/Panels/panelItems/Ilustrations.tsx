@@ -112,7 +112,7 @@ export default function Ilustrations() {
   const activeScene = useActiveScene()
   const activeObject = useActiveObject()
   const projectSelect = useSelector(selectProject)
-  const [page, setPage] = useState<number>(1)
+  const [page, setPage] = useState<number>(0)
 
   useEffect(() => {
     initialState()
@@ -156,6 +156,7 @@ export default function Ilustrations() {
       setResourcesIllustration(selectListResources.concat(resolve))
       resolve[0] !== undefined && setMore(true)
     } else {
+      console.log(page)
       const resolve: any[] = await api.searchResources({
         page: page,
         limit: 10,
@@ -181,10 +182,12 @@ export default function Ilustrations() {
           obj.id === resource.id && setMore(false)
         })
       })
-      const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
       if (nameIllustration[0] !== "") {
-        setResourcesIllustration(resourcesIllustration.concat(resolve))
+        resolve.sort((a, b) => b.count_drawings - a.count_drawings)
+        const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "drawifierId")
+        setResourcesIllustration(validateResources)
       } else {
+        const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
         setResourcesIllustration(validateResources)
       }
     }
@@ -233,7 +236,7 @@ export default function Ilustrations() {
     stateFavorites?: boolean
     stateRecents?: boolean
   }) => {
-    setPage(1)
+    setPage(0)
     setMore(true)
     setLoad(false)
     setDisableTab(true)
@@ -439,7 +442,7 @@ export default function Ilustrations() {
                 setOrderDrawifier([])
                 initialState()
                 setListRecommend({ words: [] })
-                setPage(1)
+                setPage(0)
               }}
             >
               All
