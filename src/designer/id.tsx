@@ -6,14 +6,20 @@ import { useParams } from "react-router-dom"
 import * as api from "../.././src/components/services/api"
 import { useDesign, useEditor } from "@layerhub-pro/react"
 import useDesignEditorContext from "../components/hooks/useDesignEditorContext"
+import { useAppDispatch } from "../components/store/store"
+import { useSelector } from "react-redux"
+import { selectUser } from "../components/store/user/selector"
+import { updateProject } from "../components/store/project/action"
 
 const Designer: any = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [typeSign, setTypeSign] = useState("signin")
   const { id } = useParams()
   const editor = useEditor()
-  const { setNamesPages } = useDesignEditorContext()
+  const { setNamesPages, namesPages } = useDesignEditorContext()
   const design = useDesign()
+  const dispatch = useAppDispatch()
+  const user = useSelector(selectUser)
 
   useEffect(() => {
     design && lodaTemplateById()
@@ -21,8 +27,8 @@ const Designer: any = () => {
 
   const lodaTemplateById = useCallback(async () => {
     try {
-      if (design) {
-        const resolve: any = await api.getProjectById({ id })
+      if (design && user) {
+        const resolve: any = await api.getProjectByKey({ id })
         setTimeout(async () => {
           await design.setDesign(resolve)
         }, 100)
@@ -32,8 +38,24 @@ const Designer: any = () => {
         }
         setNamesPages(sceneNames)
       }
-    } catch (err: any) {}
+    } catch (err: any) {
+      user && functionSave()
+    }
   }, [id, editor])
+
+  const functionSave = useCallback(async () => {
+    try {
+      let designJSON: any = design?.toJSON()
+      designJSON.key = id
+      designJSON.scenes.map((e: any, index: number) => {
+        e.name = namesPages[index]
+        e.position = index
+        e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+        return e
+      })
+      user && (await dispatch(updateProject(designJSON))).payload
+    } catch {}
+  }, [editor, design, namesPages, id])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>

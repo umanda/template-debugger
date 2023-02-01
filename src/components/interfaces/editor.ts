@@ -137,7 +137,7 @@ export interface SearchResourceDto {
   limit?: number
   query: {
     ids?: string[]
-    drawifier_ids?: string[]
+    drawifier_ids?: any[]
     names?: string[]
     suggested?: string[]
     tags?: string[]
@@ -149,6 +149,7 @@ export interface SearchResourceDto {
     favorited?: boolean
     used?: boolean
     type?: any
+    keywords?: string[]
   }
   sorts?: string[]
 }

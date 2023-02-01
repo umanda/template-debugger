@@ -65,28 +65,6 @@ const getFontsFromObjects = (objects: Partial<ILayer>[]) => {
   return fonts
 }
 
-export const loadVideoEditorAssets = async (payload: IScene) => {
-  const layers: Partial<ILayer>[] = []
-  for (const layer of payload.layers) {
-    if (layer.type === "StaticVideo") {
-      // @ts-ignore
-      const video = await loadVideoResource(layer.src)
-      const frame = (await captureFrame(video)) as string
-      const duration = await captureDuration(video)
-      layers.push({
-        ...layer,
-        preview: frame
-      })
-    } else {
-      layers.push(layer)
-    }
-  }
-  return {
-    ...payload,
-    layers: layers
-  }
-}
-
 export const loadTemplateFonts = async (design: IScene) => {
   const fonts = getFontsFromObjects(design.layers)
   if (fonts.length > 0) {

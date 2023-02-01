@@ -199,7 +199,7 @@ function ShareMenu() {
         } catch {}
       }
     },
-    [activeScene, namesPages]
+    [activeScene, namesPages, id]
   )
 
   const makeMagicLink = useCallback(async () => {
@@ -697,10 +697,9 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const activeScene = useActiveScene()
   const currentScene = useActiveScene()
   const scenes = useScenes()
-  const [autoSave, setAutoSave] = useState<boolean>(false)
+  const [autoSave, setAutoSave] = useState<boolean>(true)
   const [stateJson, setStateJson] = useState<any>("")
   const [stateChange] = useDebounce(stateJson, 5000)
-  const [resolve, setResolve] = useState<any>(null)
   const zoom = useZoomRatio()
 
   document.onkeydown = function (e) {
@@ -737,12 +736,12 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
 
   useEffect(() => {
     try {
-      activeScene && functionSave()
+      if (activeScene && stateJson !== "") functionSave()
     } catch {}
   }, [stateChange, namesPages])
 
   useEffect(() => {
-    setAutoSave(false)
+    stateJson !== "" && setAutoSave(false)
   }, [scenes, namesPages])
 
   React.useEffect(() => {
@@ -761,22 +760,18 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
 
   const functionSave = useCallback(async () => {
     try {
-      if (resolve === null) {
-        setResolve("")
-      } else if (resolve !== undefined) {
-        let designJSON: any = design?.toJSON()
-        designJSON.key = id
-        designJSON.scenes.map((e: any, index: number) => {
-          e.name = namesPages[index]
-          e.position = index
-          e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-          return e
-        })
-        user && setResolve((await dispatch(updateProject(designJSON))).payload)
-        resolve !== undefined && setAutoSave(true)
-      }
+      let designJSON: any = design?.toJSON()
+      designJSON.key = id
+      designJSON.scenes.map((e: any, index: number) => {
+        e.name = namesPages[index]
+        e.position = index
+        e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+        return e
+      })
+      user && (await dispatch(updateProject(designJSON))).payload
+      setAutoSave(true)
     } catch {}
-  }, [editor, scenes, currentScene, id, design, autoSave, namesPages, resolve])
+  }, [editor, scenes, currentScene, id, design, autoSave, namesPages])
 
   return (
     <Flex>

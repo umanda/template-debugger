@@ -100,7 +100,6 @@ export default function Shapes() {
 
   const addObject = useCallback(
     (images: any) => {
-      console.log(projectSelect)
       if (user && projectSelect.id) {
         const ctx = { id: images.id }
         api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })

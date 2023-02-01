@@ -21,10 +21,8 @@ export default function LazyLoadImage({
     const image = new Image()
     try {
       image.src = url
-      console.log(image)
     } catch {
       image.src = urlBack
-      console.log(image)
     }
     image.onload = async () => {
       setTimeout(() => {

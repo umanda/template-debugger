@@ -504,7 +504,7 @@ export const getListFavoritedTemplates = (): Promise<any> => {
   })
 }
 
-export const getProjectById = (props: { id: string; owner_id?: string }): Promise<IDesign> => {
+export const getProjectByKey = (props: { id: string; owner_id?: string }): Promise<IDesign> => {
   return new Promise((resolve, reject) => {
     if (props.owner_id) {
       base
@@ -517,7 +517,7 @@ export const getProjectById = (props: { id: string; owner_id?: string }): Promis
         })
     } else {
       base
-        .get("/projects/" + props.id)
+        .get("/projects/" + props.id + "/key")
         .then(({ data }: any) => {
           resolve(data.project)
         })

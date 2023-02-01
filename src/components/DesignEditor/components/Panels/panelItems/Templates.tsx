@@ -35,7 +35,7 @@ import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
 import HorizontalScroll from "../../../../utils/HorizontaScroll"
 import Scrollable from "../../../../utils/Scrollable"
 import InfiniteScroll from "../../../../utils/InfiniteScroll"
-import { loadTemplateFonts, loadVideoEditorAssets } from "../../../../utils/fonts"
+import { loadTemplateFonts } from "../../../../utils/fonts"
 import { IDesign, IResolveRecommend } from "../../../../interfaces/editor"
 import { selectListTemplates } from "../../../../store/templates/selector"
 import {
@@ -85,7 +85,6 @@ export default function Template() {
   const [toolTip, setToolTip] = useState(false)
   const design = useDesign()
   const activeScene = useActiveScene()
-  const { id } = useParams()
   const projectSelector = useSelector(selectProject)
 
   useEffect(() => {
@@ -145,7 +144,7 @@ export default function Template() {
         limit: 10,
         query: {
           drawifier_ids: orderDrawifier[0]?.length > 0 ? orderDrawifier : undefined,
-          suggested: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
+          names: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
           visibility: "public",
           favorited: stateFavorite ? true : undefined,
           used: stateRecent ? true : undefined
@@ -171,29 +170,21 @@ export default function Template() {
     setLoadMoreResources(false)
   }
 
-  const loadGraphicTemplate = useCallback(async (payload: IDesign) => {
-    const { scenes } = payload
-    for (const scn of scenes) {
-      const scene: any = {
-        name: scn.name,
-        frame: payload.frame,
-        id: scn.id,
-        layers: scn.layers,
-        metadata: {}
-      }
-      const loadedScene = await loadVideoEditorAssets(scene)
-      await loadTemplateFonts(loadedScene)
-    }
-  }, [])
-
   const loadTemplateById = React.useCallback(
     async (template: IDesign) => {
       // @ts-ignore
       setDesignEditorLoading({ isLoading: true, preview: template.preview })
-      user && api.getUseTemplate({ template_id: template.id, project_id: projectSelector.id })
-      const designData: any = await api.getTemplateById(template.id)
-      await loadGraphicTemplate(designData)
+      // user && api.getUseTemplate({ template_id: template.id, project_id: projectSelector.id })
+      let designData: any = await api.getTemplateById(template.id)
       designData.scenes[0].frame = designData.frame
+      designData.scenes[0].layers.map((layer) => {
+        if (layer.src)
+          if (layer.src.includes("https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/"))
+            layer.src = layer.src.replace(
+              "https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/",
+              "https://ik.imagekit.io/jwzv5rwz9/drawify/"
+            )
+      })
       await activeScene.setScene(designData.scenes[0])
     },
     [design, activeScene, projectSelector]
