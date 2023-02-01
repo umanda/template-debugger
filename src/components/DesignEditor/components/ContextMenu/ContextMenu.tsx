@@ -58,7 +58,7 @@ function ContextMenu() {
           disabled={true}
         />
         <ContextMenuItem
-          disabled={!activeScene.objects.clipboard}
+          disabled={!activeScene.objects.paste}
           onClick={() => {
             activeScene.objects.paste()
             editor.cancelContextMenuRequest()

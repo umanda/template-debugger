@@ -64,7 +64,7 @@ export default function SignIn({
 
   const lodaById = useCallback(async () => {
     try {
-      const resolve: any = await api.getProjectById({ id })
+      const resolve: any = await api.getProjectByKey({ id })
       editor.design.setDesign(resolve)
       let sceneNames: string[] = []
       for (const scn of resolve.scenes) {

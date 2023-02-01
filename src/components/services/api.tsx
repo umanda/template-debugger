@@ -276,7 +276,6 @@ export const getListUseFonts = (): Promise<IFont[]> => {
   })
 }
 
-//getListProjects
 export const getProjects = (props: Partial<listProjectsDTO>): Promise<IProject[]> => {
   return new Promise((resolve, reject) => {
     base
