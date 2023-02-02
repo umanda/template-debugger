@@ -44,8 +44,6 @@ export default function SignIn({
 
   const makeJoin = async () => {
     try {
-      // const response: any = await (await dispath(oldSignIn(options))).payload
-      // if (response.name === "AxiosError") {
       try {
         const response: any = await dispath(signin(options))
         if (!response?.error) {
@@ -55,10 +53,6 @@ export default function SignIn({
           setErr("Authentication failed. Please check your credentials and try again.")
         }
       } catch {}
-      // } else if (response.id) {
-      //   lodaById()
-      //   onClose()
-      // }
     } catch {}
   }
 

@@ -1,7 +1,7 @@
 import React, { useCallback, useRef } from "react"
 import {
   Flex,
-  Box,
+  Button,
   Center,
   Drawer,
   DrawerOverlay,
@@ -150,11 +150,14 @@ export default function Canva() {
           type: "StaticVector",
           name: "Shape",
           src: resourceDrag.url,
-          // ...{ watermark: resourceDrag?.license === "paid" && "https://ik.imagekit.io/scenify/drawify-small.svg" },
-          metadata: {}
+          erasable: false,
+          watermark:
+            resourceDrag.license === "paid"
+              ? user.plan !== "HERO" && "https://ik.imagekit.io/scenify/drawify-small.svg"
+              : null
         }
         if (editor) {
-          activeScene.objects.add(options)
+          activeScene.objects.add(options, { desiredSize: 200 })
         }
       }
     },
@@ -162,7 +165,7 @@ export default function Canva() {
   )
 
   return (
-    <Flex ref={flexRef} onClick={() => {}} flex={1} position="relative" onDrop={(ev) => dropEvent(ev)} id="app">
+    <Flex ref={flexRef} flex={1} position="relative" onDrop={(ev) => dropEvent(ev)} id="app">
       <ContextMenu />
       <Flex flex={1}>
         <Canvas />

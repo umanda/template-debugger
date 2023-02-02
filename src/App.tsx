@@ -15,6 +15,7 @@ function App() {
       <Route path="/" element={state ? <Designer /> : <Loading setState={setState} state={state} />} />
       <Route path="/composer/" element={state ? <Designer /> : <Loading setState={setState} state={state} />} />
       <Route path="/composer/:id" element={state ? <Designer /> : <Loading setState={setState} state={state} />} />
+      {/* <Route path="/composer/test/test" element={<Test />} /> */}
     </Routes>
   )
 }

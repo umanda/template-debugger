@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Box, Button, Flex, Input, useDisclosure, IconButton } from "@chakra-ui/react"
+import { Box, Button, Flex, Input, useDisclosure, IconButton, Portal } from "@chakra-ui/react"
 import { Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from "@chakra-ui/react"
 import { useDesign, useObjects } from "@layerhub-pro/react"
 import { IFrame } from "@layerhub-pro/types"
@@ -117,90 +117,92 @@ const Resize = () => {
           Resize
         </Button>
       </PopoverTrigger>
-      <PopoverContent w="360px">
-        <PopoverArrow />
-        <PopoverBody paddingBottom={"1rem"}>
-          <Flex flexDirection="column">
-            <Box>
-              <Box color="#A9A9B2">ORIENTATION</Box>
-              <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", padding: "0.75rem 0" }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <Radio onClick={() => setMode("LANDSCAPE")} selected={mode === "LANDSCAPE"} />
-                  <Box>Landscape</Box>
-                </Box>
-                <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <Radio onClick={() => setMode("PORTRAIT")} selected={mode === "PORTRAIT"} />
-                  <Box>Portrait</Box>
+      <Portal appendToParentPortal>
+        <PopoverContent zIndex={100} w="360px">
+          <PopoverArrow />
+          <PopoverBody paddingBottom={"1rem"}>
+            <Flex flexDirection="column">
+              <Box>
+                <Box color="#A9A9B2">ORIENTATION</Box>
+                <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", padding: "0.75rem 0" }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <Radio onClick={() => setMode("LANDSCAPE")} selected={mode === "LANDSCAPE"} />
+                    <Box>Landscape</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <Radio onClick={() => setMode("PORTRAIT")} selected={mode === "PORTRAIT"} />
+                    <Box>Portrait</Box>
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-            <Box>
-              <Box color={"#A9A9B2"}>CUSTOM SIZE</Box>
-              <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.75rem 0" }}>
-                <Box>
-                  <Radio onClick={() => setMode("CUSTOM")} selected={mode === "CUSTOM"} />{" "}
-                </Box>
-                <Flex gap="10px">
-                  <Flex alignItems={"center"}>
-                    <Input
-                      disabled={mode !== "CUSTOM"}
-                      placeholder="width"
-                      value={displayFrame.width}
-                      onChange={(e) => onChange("width", (e.target as any).value)}
-                      onBlur={() => handleOnBlur("width")}
-                    />
+              <Box>
+                <Box color={"#A9A9B2"}>CUSTOM SIZE</Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.75rem 0" }}>
+                  <Box>
+                    <Radio onClick={() => setMode("CUSTOM")} selected={mode === "CUSTOM"} />{" "}
+                  </Box>
+                  <Flex gap="10px">
+                    <Flex alignItems={"center"}>
+                      <Input
+                        disabled={mode !== "CUSTOM"}
+                        placeholder="width"
+                        value={displayFrame.width}
+                        onChange={(e) => onChange("width", (e.target as any).value)}
+                        onBlur={() => handleOnBlur("width")}
+                      />
+                    </Flex>
+                    <Flex alignItems={"center"}>
+                      <Input
+                        disabled={mode !== "CUSTOM"}
+                        placeholder="Height"
+                        value={displayFrame.height}
+                        onChange={(e) => onChange("height", (e.target as any).value)}
+                        onBlur={() => handleOnBlur("height")}
+                      />
+                    </Flex>
+                    {inputLocked ? (
+                      <IconButton
+                        variant={"ghost"}
+                        aria-label="lock"
+                        disabled={mode !== "CUSTOM"}
+                        onClick={() => setInputLocked(false)}
+                        icon={<Lock size={28} />}
+                      />
+                    ) : (
+                      <IconButton
+                        variant={"ghost"}
+                        aria-label="lock"
+                        disabled={mode !== "CUSTOM"}
+                        onClick={() => setInputLocked(true)}
+                        icon={<Unlock size={28} />}
+                      />
+                    )}
                   </Flex>
-                  <Flex alignItems={"center"}>
-                    <Input
-                      disabled={mode !== "CUSTOM"}
-                      placeholder="Height"
-                      value={displayFrame.height}
-                      onChange={(e) => onChange("height", (e.target as any).value)}
-                      onBlur={() => handleOnBlur("height")}
-                    />
-                  </Flex>
-                  {inputLocked ? (
-                    <IconButton
-                      variant={"ghost"}
-                      aria-label="lock"
-                      disabled={mode !== "CUSTOM"}
-                      onClick={() => setInputLocked(false)}
-                      icon={<Lock size={28} />}
-                    />
-                  ) : (
-                    <IconButton
-                      variant={"ghost"}
-                      aria-label="lock"
-                      disabled={mode !== "CUSTOM"}
-                      onClick={() => setInputLocked(true)}
-                      icon={<Unlock size={28} />}
-                    />
-                  )}
-                </Flex>
-              </Box>
-            </Box>
-            <Box>
-              <Box color={"#A9A9B2"}>SIZES</Box>
-              <Box sx={{ display: "grid", gap: "0.75rem", padding: "0.75rem 0" }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <Radio onClick={() => setMode("FACEBOOK")} selected={mode === "FACEBOOK"} />
-                  <Box>Facebook</Box>
-                </Box>
-                <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                  <Radio onClick={() => setMode("INSTAGRAM")} selected={mode === "INSTAGRAM"} />
-                  <Box>Instagram</Box>
                 </Box>
               </Box>
-            </Box>
+              <Box>
+                <Box color={"#A9A9B2"}>SIZES</Box>
+                <Box sx={{ display: "grid", gap: "0.75rem", padding: "0.75rem 0" }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <Radio onClick={() => setMode("FACEBOOK")} selected={mode === "FACEBOOK"} />
+                    <Box>Facebook</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <Radio onClick={() => setMode("INSTAGRAM")} selected={mode === "INSTAGRAM"} />
+                    <Box>Instagram</Box>
+                  </Box>
+                </Box>
+              </Box>
 
-            <Box>
-              <Button onClick={applyResize} width={"100%"} variant={"outline"}>
-                Resize
-              </Button>
-            </Box>
-          </Flex>
-        </PopoverBody>
-      </PopoverContent>
+              <Box>
+                <Button onClick={applyResize} width={"100%"} variant={"outline"}>
+                  Resize
+                </Button>
+              </Box>
+            </Flex>
+          </PopoverBody>
+        </PopoverContent>
+      </Portal>
     </Popover>
   )
 }

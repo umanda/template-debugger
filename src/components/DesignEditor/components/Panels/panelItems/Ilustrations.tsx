@@ -156,7 +156,6 @@ export default function Ilustrations() {
       setResourcesIllustration(selectListResources.concat(resolve))
       resolve[0] !== undefined && setMore(true)
     } else {
-      console.log(page)
       const resolve: any[] = await api.searchResources({
         page: page,
         limit: 10,
@@ -208,15 +207,17 @@ export default function Ilustrations() {
           name: "Shape",
           src: resource.url,
           erasable: false,
-          // ...{ watermark: resource.license === "paid" ? "https://ik.imagekit.io/scenify/drawify-small.svg" : "" },
-          metadata: {}
+          watermark:
+            resource.license === "paid"
+              ? user.plan !== "HERO" && "https://ik.imagekit.io/scenify/drawify-small.svg"
+              : null
         }
         if (editor) {
-          await activeScene.objects.add(options)
+          await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
         }
       } catch (err) {}
     },
-    [activeScene, editor, activeObject, projectSelect]
+    [activeScene, editor, activeObject, projectSelect, user]
   )
 
   const onDragStart = React.useCallback(
@@ -736,6 +737,7 @@ function ModalIllustration({
   const [resourcesPrev, setResourcesPrev] = useState<IResource[]>([])
   const [nameResource, setNameResource] = useState<string>("")
   const projectSelect = useSelector(selectProject)
+  const activeObject = useActiveObject()
 
   useEffect(() => {
     setSort("ALPHABETIC")
@@ -782,14 +784,17 @@ function ModalIllustration({
         type: "StaticVector",
         name: "Shape",
         src: resource.url,
-        // ...(resource.license === "paid" && { watermark: "https://ik.imagekit.io/scenify/drawify-small.svg" }),
-        metadata: {}
+        erasable: false,
+        watermark:
+          resource.license === "paid"
+            ? user.plan !== "HERO" && "https://ik.imagekit.io/scenify/drawify-small.svg"
+            : null
       }
       if (editor) {
-        await activeScene.objects.add(options)
+        await activeScene.objects.add(options, { desiredSize: 200 })
       }
     },
-    [activeScene, editor, projectSelect]
+    [activeScene, editor, activeObject, projectSelect, user]
   )
 
   const filterByName = useCallback(

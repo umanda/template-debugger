@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react"
-import { useActiveScene, useEditor } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
 import * as api from "../../../../services/api"
 import {
   Box,
@@ -71,6 +71,7 @@ export default function Upload() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const activeScene = useActiveScene()
   const { setResourceDrag } = useResourcesContext()
+  const activeObject = useActiveObject()
 
   useEffect(() => {
     user && initialState()
@@ -209,13 +210,14 @@ export default function Upload() {
       const options = {
         type: typeURL,
         src: url,
+        erasable: false,
         metadata: {}
       }
       if (editor) {
         activeScene.objects.add(options)
       }
     },
-    [activeScene, editor]
+    [activeScene, editor, activeObject, user]
   )
 
   const handleFileInput = (e: any) => {

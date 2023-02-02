@@ -8,25 +8,27 @@ export const removeUser = createAction<void>("user/setremoveUser")
 export const setUpdateProfile = createAction<Partial<User>>("user/setupdateProfile")
 export const setListDrawifiers = createAction<IDrawifier[]>("drawifier/setListDrawifiers")
 
-export const oldSignIn = createAsyncThunk<any, SigninDto, { rejectValue: boolean }>(
-  "user/olSignIn",
-  async (args, { dispatch, rejectWithValue }) => {
-    try {
-      const user: any = await api.oldSignIn(args)
-      dispatch(setUser({ ...user, email: args.email }))
-      return user
-    } catch (err: any) {
-      return err
-    }
-  }
-)
+// export const oldSignIn = createAsyncThunk<any, SigninDto, { rejectValue: boolean }>(
+//   "user/olSignIn",
+//   async (args, { dispatch, rejectWithValue }) => {
+//     try {
+//       const user: any = await api.oldSignIn(args)
+//       dispatch(setUser({ ...user, email: args.email }))
+//       return user
+//     } catch (err: any) {
+//       return err
+//     }
+//   }
+// )
 
 export const signInByToken = createAsyncThunk<any, string, { rejectValue: boolean }>(
   "user/signInByToken",
   async (args, { dispatch, rejectWithValue }) => {
     try {
       const user: any = await api.signInByToken(args)
-      dispatch(setUser({ ...user, token: args }))
+      const plan = await api.getsubscriptionMe()
+      const me = await api.userMe()
+      dispatch(setUser({ ...user, ...me, plan: plan.subscription.plan, token: args }))
       return user
     } catch (err: any) {
       return err
@@ -42,6 +44,7 @@ export const signin = createAsyncThunk<any, SigninDto, { rejectValue: boolean }>
       dispatch(setUser({ ...user, email: args.email }))
       const me = await api.userMe()
       dispatch(setUser({ ...user, ...me }))
+      const plan = api.getsubscriptionMe()
       return user
     } catch (err: any) {
       return rejectWithValue(err)

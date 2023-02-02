@@ -55,7 +55,6 @@ export default function PanelItem() {
                   transform: "translateY(-50%)",
                   left: "380px",
                   boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.06)",
-                  zIndex: 101,
                   display: ["none", "none", "grid", "grid"],
                   placeContent: "center",
                   cursor: "pointer",

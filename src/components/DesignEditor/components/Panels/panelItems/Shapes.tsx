@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { Box, Button, Center, Flex, Grid, GridItem, Spinner } from "@chakra-ui/react"
-import { useActiveScene, useEditor } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import Scrollable from "../../../../utils/Scrollable"
 import { useAppDispatch } from "../../../../store/store"
@@ -43,6 +43,7 @@ export default function Shapes() {
   const [validateContent, setValidateContent] = useState<string | null>(null)
   const activeScene = useActiveScene()
   const projectSelect = useSelector(selectProject)
+  const activeObject = useActiveObject()
 
   useEffect(() => {
     initialState()
@@ -108,13 +109,14 @@ export default function Shapes() {
         type: "StaticVector",
         name: "Shape",
         src: images.url,
+        erasable: false,
         metadata: {}
       }
       if (editor) {
-        activeScene.objects.add(options)
+        activeScene.objects.add(options, { desiredSize: 200 })
       }
     },
-    [activeScene, editor, projectSelect]
+    [activeScene, editor, activeObject, projectSelect, user]
   )
 
   const onDragStart = React.useCallback(
