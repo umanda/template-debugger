@@ -21,7 +21,7 @@ function SigninModal({
 }) {
   return (
     <Modal isOpen={isOpen} closeOnEsc={false} closeOnOverlayClick={false} onClose={onClose} isCentered>
-      <ModalOverlay />
+      <ModalOverlay width="100%" h="100%" />
       <ModalContent>
         {type === "signin" ? (
           <Signin onClose={onClose} setAuthtype={setType} />

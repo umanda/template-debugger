@@ -20,7 +20,7 @@ export default function Layer() {
   }, [activeScene, object])
 
   return (
-    <Box h="full" sx={{ width: "320px" }}>
+    <Box h="full" sx={{ width: "320px", borderRight: "1px solid #DDDFE5", padding: ".5rem" }}>
       {objects.length === 0 && (
         <Center w="full" h="full">
           No layer found

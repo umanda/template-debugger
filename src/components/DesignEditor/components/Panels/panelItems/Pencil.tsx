@@ -123,6 +123,7 @@ export default function Pencil() {
             flexDir="column"
           >
             <Center
+              marginX={"auto"}
               sx={{ border: `2px solid ${draw.type === "PencilBrush" ? "#5456F5" : "#DDDFE5"}`, borderRadius: "4px" }}
             >
               <Pencil1 size={62} />
@@ -135,6 +136,7 @@ export default function Pencil() {
             flexDir="column"
           >
             <Center
+              marginX={"auto"}
               sx={{ border: `2px solid ${draw.type === "MarkerBrush" ? "#5456F5" : "#DDDFE5"}`, borderRadius: "4px" }}
             >
               <Pencil2 size={60} />
@@ -147,6 +149,7 @@ export default function Pencil() {
             flexDir="column"
           >
             <Center
+              marginX={"auto"}
               sx={{ border: `2px solid ${draw.type === "RibbonBrush" ? "#5456F5" : "#DDDFE5"}`, borderRadius: "4px" }}
             >
               <Pencil3 size={60} />
@@ -159,6 +162,7 @@ export default function Pencil() {
             flexDir="column"
           >
             <Center
+              marginX={"auto"}
               sx={{
                 border: `2px solid ${draw.type === "SpraypaintBrush" ? "#5456F5" : "#DDDFE5"}`,
                 borderRadius: "4px"
@@ -174,6 +178,7 @@ export default function Pencil() {
             flexDir="column"
           >
             <Box
+              marginX={"auto"}
               sx={{
                 border: `2px solid ${draw.type === "EraserBrush" ? "#5456F5" : "#DDDFE5"}`,
                 borderRadius: "4px"
