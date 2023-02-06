@@ -123,13 +123,13 @@ export default function Header() {
       </Flex>
       <DesignName />
       <Flex gap={"1rem"} alignItems={"center"} paddingRight="1rem">
-        <Button className="usr-feedback" colorScheme={"orange"} onClick={() => {}}>
+        {/* <Button className="usr-feedback" colorScheme={"orange"} onClick={() => {}}>
           Feedback
-        </Button>
+        </Button> */}
 
         <ShareMenu />
 
-        <Button className="btn-preview" colorScheme={"brand"} onClick={() => onOpenPreview()} rightIcon={<Play size={24} />}>
+        <Button className="btn-preview" colorScheme={"orange"} onClick={() => onOpenPreview()} rightIcon={<Play size={24} />}>
           Preview
         </Button>
 
