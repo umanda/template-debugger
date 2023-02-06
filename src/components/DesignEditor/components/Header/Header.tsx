@@ -123,13 +123,13 @@ export default function Header() {
       </Flex>
       <DesignName />
       <Flex gap={"1rem"} alignItems={"center"} paddingRight="1rem">
-        <Button className="usr-feedback" colorScheme={"orange"} onClick={() => {}}>
+        {/* <Button className="usr-feedback" colorScheme={"orange"} onClick={() => {}}>
           Feedback
-        </Button>
+        </Button> */}
 
         <ShareMenu />
 
-        <Button className="btn-preview" colorScheme={"brand"} onClick={() => onOpenPreview()} rightIcon={<Play size={24} />}>
+        <Button className="btn-preview" colorScheme={"orange"} onClick={() => onOpenPreview()} rightIcon={<Play size={24} />}>
           Preview
         </Button>
 
@@ -453,9 +453,9 @@ function FileMenu() {
         </Button>
       </PopoverTrigger>
       {/* @ts-ignore */}
-      <PopoverContent ref={initialFocusRef} w="250px" fontSize={"14px"} paddingY={"0.25rem"}>
+      <PopoverContent ref={initialFocusRef} w="250px" fontSize={"14px"} padding={"0.5rem"}>
         <PopoverArrow />
-        <MenuOption>
+        {/* <MenuOption>
           <Flex
             w="full"
             onMouseOver={() => {
@@ -464,7 +464,7 @@ function FileMenu() {
           >
             Home
           </Flex>
-        </MenuOption>
+        </MenuOption> */}
         <Popover
           isOpen={isOpenProject}
           onClose={onCloseProject}
@@ -489,7 +489,7 @@ function FileMenu() {
               </Flex>
             </MenuOption>
           </PopoverTrigger>
-          <PopoverContent w="100px">
+          <PopoverContent w="150px" fontSize={"14px"} padding={"0.5rem"}>
             <PopoverArrow />
             <input
               multiple={false}
@@ -528,7 +528,7 @@ function FileMenu() {
               </Flex>
             </MenuOption>
           </PopoverTrigger>
-          <PopoverContent w="100px">
+          <PopoverContent w="150px" fontSize={"14px"} padding={"0.5rem"}>
             <PopoverArrow />
             <MenuOption onClick={() => activeScene.history.undo()}>Undo</MenuOption>
             <MenuOption onClick={() => activeScene.history.redo()}>Redo</MenuOption>
@@ -562,7 +562,7 @@ function FileMenu() {
               </Flex>
             </MenuOption>
           </PopoverTrigger>
-          <PopoverContent w="100px">
+          <PopoverContent w="150px" fontSize={"14px"} padding={"0.5rem"}>
             <PopoverArrow />
             <MenuOption onClick={() => editor.zoom.zoomIn()}>Zoom in</MenuOption>
             <MenuOption onClick={() => editor.zoom.zoomOut()}> Zoom out</MenuOption>

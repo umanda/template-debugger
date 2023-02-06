@@ -285,9 +285,9 @@ export default function Template() {
 
   return (
     <Box h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" display="flex" flexDirection="column">
-      <Flex padding={"0 1rem"} gap={"0.5rem"}>
+      <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
         <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
-          <HStack>
+          <HStack  width={'100%'} >
             <PopoverAnchor>
               <Tooltip
                 isOpen={toolTip}
