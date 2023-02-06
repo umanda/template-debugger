@@ -34,7 +34,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
     if (id) {
       if (token) {
         await dispatch(getFonts())
-        await dispatch(getListDrawifiers({}))
+        dispatch(getListDrawifiers({}))
         token !== "" && (await dispatch(signInByToken(token)))
         setState(!state)
       } else {

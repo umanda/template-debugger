@@ -32,8 +32,6 @@ const Designer: any = () => {
   const lodaTemplateById = useCallback(async () => {
     try {
       if (design && user) {
-        dispatch(getListDrawifiers({}))
-        await dispatch(getFonts())
         const resolve: any = (await dispatch(getProjectByKey(id))).payload
         setTimeout(async () => {
           await design.setDesign(resolve)
@@ -53,8 +51,6 @@ const Designer: any = () => {
         setSate(true)
       }
     } catch (err: any) {
-      await dispatch(getFonts())
-      await dispatch(getListDrawifiers({}))
       user && functionSave()
       setSate(true)
     }
