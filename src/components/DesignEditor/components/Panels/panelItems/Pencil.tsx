@@ -193,12 +193,13 @@ export default function Pencil() {
       <Center flexDir="row" marginRight="20px" marginLeft="20px" marginTop="10px">
         <Button
           _hover={{}}
-          background={editor?.freeDrawer?.canvas?.isDrawingMode ? "brand.500" : "inherit"}
+          colorScheme='brand' 
+          variant={editor?.freeDrawer?.canvas?.isDrawingMode ? "solid" : "outline"}
+          //background={editor?.freeDrawer?.canvas?.isDrawingMode ? "brand.500" : "inherit"}
           onClick={toggleDrawing}
           w="full"
-          variant={"outline"}
         >
-          {editor?.freeDrawer?.canvas?.isDrawingMode ? "Disable drawing" : "Enable drawing"}
+          {editor?.freeDrawer?.canvas?.isDrawingMode ? "Disable pen" : "Enable pen"}
         </Button>
       </Center>
       <Box padding={"10px 0"}>

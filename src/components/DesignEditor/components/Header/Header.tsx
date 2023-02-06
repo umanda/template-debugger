@@ -44,6 +44,7 @@ import { useDebounce } from "use-debounce"
 import { generateId } from "../../../utils/unique"
 import { IDesign } from "@layerhub-pro/types"
 import { selectProject } from "../../../store/project/selector"
+import DrawifyD from "../../../Icons/DrawifyD"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 
 export default function Header() {
@@ -79,7 +80,7 @@ export default function Header() {
       <Flex alignItems="center">
         <Flex sx={{ width: ["auto", "72px"], alignItems: "center", justifyContent: "center" }}>
           {/* <Link href={`/`}> */}
-          <IconButton variant={"ghost"} aria-label="undo" icon={<Home size={24} />} />
+          <IconButton variant={"ghost"} aria-label="" icon={<DrawifyD size={24} />} />
           {/* </Link> */}
         </Flex>
         <Flex padding={"0 1rem"} gap={"1rem"} alignItems={"center"}>
@@ -92,7 +93,7 @@ export default function Header() {
                 aria-label="undo"
                 onClick={() => activeScene.history.undo()}
                 icon={<Undo size={24} />}
-                color={state.undo === 0 ? "#DDDFE5" : "black"}
+                color={state.undo === 0 ? "#DDDFE5" : "#5456F5"}
               />
             </Tooltip>
             <Tooltip label="Redo" fontSize="md">
@@ -101,7 +102,7 @@ export default function Header() {
                 onClick={() => activeScene.history.redo()}
                 aria-label="redo"
                 icon={<Redo size={24} />}
-                color={state.redo === 0 ? "#DDDFE5" : "black"}
+                color={state.redo === 0 ? "#DDDFE5" : "#5456F5"}
               />
             </Tooltip>
           </Flex>
@@ -127,9 +128,14 @@ export default function Header() {
         </Button>
 
         <ShareMenu />
-        <Tooltip label="Present" fontSize="md">
+
+        <Button className="btn-preview" colorScheme={"brand"} onClick={() => onOpenPreview()} rightIcon={<Play size={24} />}>
+          Preview
+        </Button>
+
+        {/* <Tooltip label="Present" fontSize="md">
           <IconButton variant={"ghost"} aria-label="Play" onClick={() => onOpenPreview()} icon={<Play size={24} />} />
-        </Tooltip>
+        </Tooltip> */}
         {/* <Tooltip label="Notifications" fontSize="md">
           <IconButton variant={"ghost"} aria-label="Bell" icon={<Bell size={24} />} />
         </Tooltip> */}

@@ -206,13 +206,13 @@ export default function Text() {
           </Box>
         </Box>
       </Flex>
-      <Box sx={{ padding: "0 1rem" }}>
+      {/* <Box sx={{ padding: "0 1rem" }}>
         <Tabs size={"sm"}>
           <TabList>
             <Tab>All</Tab>
           </TabList>
         </Tabs>
-      </Box>
+      </Box> */}
       <Flex w="full" h="full">
         <Scrollable autoHide={true}>
           <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
