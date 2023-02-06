@@ -140,12 +140,12 @@ function PreviewModal() {
                 Left
               </IconButton>
             </Box>
-            <Box position="absolute" left={"45%"} right={"45%"} padding={"5px"}>
+            {/* <Box position="absolute" left={"45%"} right={"45%"} padding={"5px"}>
               <Center gap="0.5rem">
                 <IconButton size="md" aria-label="pencil" variant={"outline"} icon={<Pencil size={20} />} />
                 <IconButton size="md" aria-label="eraser" variant={"outline"} icon={<Eraser size={20} />} />
               </Center>
-            </Box>
+            </Box> */}
             <Box
               position="absolute"
               right={"0"}

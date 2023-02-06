@@ -652,7 +652,7 @@ function IllustrationItem({
         >
           <FilterByTags size={30} />
         </Flex>
-        <Flex
+        {/* <Flex
           onClick={() => OpenModalIllustration("id", illustration)}
           zIndex={5}
           visibility={isHovering ? "visible" : "hidden"}
@@ -665,7 +665,7 @@ function IllustrationItem({
           color="#545465"
         >
           <FilterByTemplates size={30} />
-        </Flex>
+        </Flex> */}
         <Flex opacity={isHovering ? "0.2" : "1"} w="full" h="full" onClick={addObject}>
           <LazyLoadImage url={illustration.preview} />
         </Flex>
