@@ -54,7 +54,7 @@ const Designer: any = () => {
       user && functionSave()
       setSate(true)
     }
-  }, [id, editor])
+  }, [id, editor, user, design])
 
   const functionSave = useCallback(async () => {
     try {
