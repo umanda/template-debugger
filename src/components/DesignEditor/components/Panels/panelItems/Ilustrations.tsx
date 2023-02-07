@@ -53,7 +53,6 @@ import FilterByTemplates from "../../../../Icons/FilterByTemplates"
 import FilterByTags from "../../../../Icons/FilterByTags"
 import { selectResourceImages } from "../../../../store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "../../../../store/resources/action"
-import { useParams } from "react-router-dom"
 import { selectProject } from "../../../../store/project/selector"
 
 export const limitCharacters = (name: string) => {
@@ -615,8 +614,6 @@ function IllustrationItem({
       return <Like size={20} />
     }
   }
-
-  console.log(illustration.preview)
 
   return (
     <Flex

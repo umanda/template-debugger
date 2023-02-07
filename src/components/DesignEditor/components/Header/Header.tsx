@@ -80,7 +80,12 @@ export default function Header() {
       <Flex alignItems="center">
         <Flex sx={{ width: ["auto", "72px"], alignItems: "center", justifyContent: "center" }}>
           {/* <Link href={`/`}> */}
-          <IconButton variant={"ghost"} aria-label="" icon={<DrawifyD size={24} />} />
+          <IconButton
+            variant={"ghost"}
+            aria-label=""
+            icon={<DrawifyD size={24} />}
+            onClick={() => (window.location.href = "https://beta.drawify.com/home")}
+          />
           {/* </Link> */}
         </Flex>
         <Flex padding={"0 1rem"} gap={"1rem"} alignItems={"center"}>
@@ -129,7 +134,12 @@ export default function Header() {
 
         <ShareMenu />
 
-        <Button className="btn-preview" colorScheme={"orange"} onClick={() => onOpenPreview()} rightIcon={<Play size={24} />}>
+        <Button
+          className="btn-preview"
+          colorScheme={"orange"}
+          onClick={() => onOpenPreview()}
+          rightIcon={<Play size={24} />}
+        >
           Preview
         </Button>
 

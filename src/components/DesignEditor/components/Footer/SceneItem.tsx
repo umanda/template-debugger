@@ -66,6 +66,7 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
     async (id: string) => {
       design.deleteScene(id)
       setNamesPages(namesPages.filter((e, i: number) => i !== index))
+      editor.design.activeScene.objects.deselect()
       onClose()
     },
     [namesPages, design, index]
@@ -80,10 +81,12 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
     async (id: string) => {
       if (editor?.freeDrawer?.canvas?.isDrawingMode) {
         editor.freeDrawer.disable()
+        editor.design.activeScene.objects.deselect()
       }
       namesPages.splice(index + 1, 0, namesPages[index])
       setNamesPages(namesPages)
       design.duplicateScene(id)
+      onClose()
     },
     [namesPages, design, index]
   )

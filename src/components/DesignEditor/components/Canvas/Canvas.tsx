@@ -141,7 +141,7 @@ export default function Canva() {
 
   const dropEvent = useCallback(
     (ev: React.DragEvent<HTMLDivElement>) => {
-      if (ev.dataTransfer.getData("resource")) {
+      if (ev.dataTransfer.getData("resource") === "image") {
         if (user) {
           const ctx = { id: ev.dataTransfer.getData("resource") }
           api.recentResource({ project_id: projectSelect.id, resource_id: resourceDrag.id })
@@ -159,6 +159,8 @@ export default function Canva() {
         if (editor) {
           activeScene.objects.add(options, { desiredSize: 200 })
         }
+      } else if (ev.dataTransfer.getData("resource") === "text") {
+        activeScene.objects.add(resourceDrag)
       }
     },
     [activeScene, editor, user, resourceDrag]

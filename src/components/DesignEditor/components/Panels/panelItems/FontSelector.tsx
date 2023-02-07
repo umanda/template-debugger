@@ -49,7 +49,7 @@ export default function FontSelector() {
   const activeScene = useActiveScene()
   const activeObject: any = useActiveObject()
   const { setActiveMenu } = useDesignEditorContext()
-  const [typeFont, setTypeFont] = useState("")
+  const [typeFont, setTypeFont] = useState("4725")
   const scenes = useScenes()
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function FontSelector() {
   useEffect(() => {
     if (activeObject) {
       const textProperties = getTextProperties(activeObject, fonts)
-      setTypeFont(textProperties?.family)
+      setTypeFont(fonts.filter((e) => e.family === textProperties?.family)[0].id)
     }
   }, [editor, activeScene, activeObject, scenes])
 
@@ -72,18 +72,19 @@ export default function FontSelector() {
     if (selectCategoryFont === null) {
       await dispatch(getCategoryFonts())
     }
-    setCommonFonts(
-      currentFonts.filter((e) => {
-        if (e.category === style.toLowerCase() && e.language === language.toLowerCase()) {
-          return e
-        }
-      })
-    )
-    currentFonts.filter((e) => {
-      if (e.category === style.toLowerCase() && e.language === language.toLowerCase()) {
-        return e
-      }
-    })[0] === undefined && setContent("There are no resources.")
+    setCommonFonts(fonts)
+    // setCommonFonts(
+    //   currentFonts.filter((e) => {
+    //     if (e.category === style.toLowerCase() && e.language === language.toLowerCase()) {
+    //       return e
+    //     }
+    //   })
+    // )
+    // currentFonts.filter((e) => {
+    //   if (e.category === style.toLowerCase() && e.language === language.toLowerCase()) {
+    //     return e
+    //   }
+    // })[0] === undefined && setContent("There are no resources.")
   }
 
   const makeFilter = async ({ recent, all }: { recent?: boolean; all?: boolean }) => {
@@ -129,7 +130,7 @@ export default function FontSelector() {
       <Flex margin="10px" color="#A9A9B2">
         TEXT
       </Flex>
-      <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", padding: "10px" }}>
+      {/* <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", padding: "10px" }}>
         <Popover onOpen={onOpenLanguage} onClose={onCloseLanguage} isOpen={isOpenLanguage} placement="bottom-start">
           <PopoverTrigger>
             <Button justifyContent={"space-between"} rightIcon={<Down size={20} />} variant="outline">
@@ -192,7 +193,7 @@ export default function FontSelector() {
             </PopoverContent>
           </Portal>
         </Popover>
-      </Box>
+      </Box> */}
       <TextSpacing />
       <Box sx={{ padding: "0 1rem" }}>
         <Tabs size={"sm"}>
@@ -211,7 +212,7 @@ export default function FontSelector() {
               <Box
                 key={index}
                 onClick={() => handleFontFamilyChange(font)}
-                border={font.family === typeFont ? "3px solid #5456F5" : null}
+                border={font.id === typeFont ? "3px solid #5456F5" : null}
                 sx={{
                   height: "full",
                   display: "flex",

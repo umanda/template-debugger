@@ -1,11 +1,23 @@
 import React from "react"
 import { IResource } from "../interfaces/editor"
 
+interface IFont {
+  id: string
+  width: number
+  type: string
+  textAlign: string
+  text: string
+  fontFamily: string
+  fontURL: string
+  fontSize: number
+  metadata: {}
+}
+
 interface IResourcesContext {
   draw: BrushOptions
   setDraw: React.Dispatch<React.SetStateAction<BrushOptions>>
   resourceDrag: IResource
-  setResourceDrag: React.Dispatch<React.SetStateAction<IResource>>
+  setResourceDrag: React.Dispatch<React.SetStateAction<IResource | IFont>>
 }
 
 export type BrushType =

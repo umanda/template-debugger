@@ -35,8 +35,10 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
       if (token) {
         await dispatch(getFonts())
         dispatch(getListDrawifiers({}))
-        token !== "" && (await dispatch(signInByToken(token)))
-        setState(!state)
+        if (token !== "") {
+          const resolve = (await dispatch(signInByToken(token))).payload
+          resolve.plan === "HERO" ? setState(!state) : (window.location.href = redirectHome)
+        }
       } else {
         window.location.href = redirectHome
       }

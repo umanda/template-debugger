@@ -171,20 +171,22 @@ export default function Template() {
 
   const loadTemplateById = React.useCallback(
     async (template: IDesign) => {
-      // @ts-ignore
-      setDesignEditorLoading({ isLoading: true, preview: template.preview })
-      // user && api.getUseTemplate({ template_id: template.id, project_id: projectSelector.id })
-      let designData: any = await api.getTemplateById(template.id)
-      designData.scenes[0].frame = designData.frame
-      designData.scenes[0].layers.map((layer) => {
-        if (layer.src)
-          if (layer.src.includes("https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/"))
-            layer.src = layer.src.replace(
-              "https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/",
-              "https://ik.imagekit.io/jwzv5rwz9/drawify/"
-            )
-      })
-      await activeScene.setScene(designData.scenes[0])
+      try {
+        // @ts-ignore
+        setDesignEditorLoading({ isLoading: true, preview: template.preview })
+        // user && api.getUseTemplate({ template_id: template.id, project_id: projectSelector.id })
+        let designData: any = await api.getTemplateById(template.id)
+        designData.scenes[0].frame = designData.frame
+        designData.scenes[0].layers.map((layer) => {
+          if (layer.src)
+            if (layer.src.includes("https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/"))
+              layer.src = layer.src.replace(
+                "https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/",
+                "https://ik.imagekit.io/jwzv5rwz9/drawify/"
+              )
+        })
+        await activeScene.setScene(designData.scenes[0])
+      } catch (err) {}
     },
     [design, activeScene, projectSelector]
   )
@@ -287,7 +289,7 @@ export default function Template() {
     <Box h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" display="flex" flexDirection="column">
       <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
         <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
-          <HStack  width={'100%'} >
+          <HStack width={"100%"}>
             <PopoverAnchor>
               <Tooltip
                 isOpen={toolTip}
