@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { Box, Button, Center, Flex, IconButton, Spacer } from "@chakra-ui/react"
-import { useActiveScene, useObjects } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useObjects } from "@layerhub-pro/react"
 import Lock from "../../../../Icons/Lock"
 import Unlock from "../../../../Icons/Unlock"
 import Images from "../../../../Icons/Images"
@@ -9,15 +9,18 @@ import Drag from "../../../../Icons/Drag"
 import Eye from "../../../../Icons/Eye"
 import Scrollable from "../../../../utils/Scrollable"
 import Eye_hide from "../../../../Icons/Eye_hide"
+import CircleUp from "../../../../Icons/CircleUp"
+import CircleDown from "../../../../Icons/CircleDown"
 
 export default function Layer() {
   const [objects, setObjects] = useState<any[]>([])
+  const activeObject = useActiveObject()
   const activeScene: any = useActiveScene()
   const object = useObjects()
 
   useEffect(() => {
     setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom"))
-  }, [activeScene, object])
+  }, [activeScene, object, activeObject])
 
   return (
     <Box h="full" sx={{ width: "320px", borderRight: "1px solid #DDDFE5", padding: ".5rem" }}>
@@ -54,8 +57,9 @@ export default function Layer() {
   interface State extends Props {}
 
   function LayerItem({ name, visible, id, locked, setObjects }: Props) {
-    const activeScene: any = useActiveScene()
+    const activeScene = useActiveScene()
     const object: any = activeScene.objects.findById(id)
+    const activeObject: any = useActiveObject()
     const [stateIcon, setStateIcon] = React.useState({ lock: object[0]?.locked, eye: object[0]?.visible })
     const [state, setState] = React.useState<State>({
       name,
@@ -101,8 +105,19 @@ export default function Layer() {
       }
     }
 
+    const handleFront = useCallback(() => {
+      activeScene.objects.bringForward(id)
+      setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom"))
+    }, [activeScene, id])
+
+    const handleBack = useCallback(() => {
+      activeScene.objects.sendBackwards(id)
+      setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom"))
+    }, [activeScene, id])
+
     return (
       <Flex
+        draggable={true}
         sx={{ alignItems: "center", height: "32px" }}
         marginRight="10px"
         visibility={name === "Custom" ? "hidden" : "visible"}
@@ -124,11 +139,26 @@ export default function Layer() {
             onClick={() => activeScene.objects.select(id)}
             justifyContent="left"
             fontSize="14px"
+            fontWeight={activeObject?.id === id ? "extrabold" : "light"}
           >
-            {name === undefined ? "Draw" : name}
+            {
+              object[0]?.name === "StaticText"
+                ? String(object[0]?.text).length <= 12
+                  ? object[0]?.text
+                  : `${object[0]?.text.substr(0, 12)}...`
+                : name
+
+              // name === undefined
+              //   ? "Draw"
+              //   : object[0]?.name === "StaticText"
+              //   ? `${object[0]?.text.substr(0, 12)}...`
+              //   : name
+            }
           </Button>
         </Flex>
         <Spacer />
+        <IconButton onClick={handleFront} size="xs" aria-label="Up" variant={"ghost"} icon={<CircleUp size={15} />} />
+        <IconButton onClick={handleBack} size="xs" aria-label="Up" variant={"ghost"} icon={<CircleDown size={15} />} />
         <IconButton
           size="xs"
           onClick={handleLockLayer}

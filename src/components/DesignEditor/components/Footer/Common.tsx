@@ -33,7 +33,7 @@ import Help from "../../../Icons/Help"
 import Plus from "../../../Icons/Plus"
 
 export default function Common() {
-  const { setActiveMenu, isScenesVisible, setIsScenesVisible, activeMenu } = useDesignEditorContext()
+  const { setActivePanel, isScenesVisible, setIsScenesVisible, activePanel } = useDesignEditorContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const zoomRatio = useZoomRatio() as number
   const editor = useEditor()
@@ -43,15 +43,15 @@ export default function Common() {
       if (editor?.freeDrawer?.canvas?.isDrawingMode) {
         editor.freeDrawer.disable()
       }
-      if (setActiveMenu && activeMenu !== type) {
-        if (activeMenu !== "Background" && activeMenu !== "Layer") {
+      if (setActivePanel && activePanel !== type) {
+        if (activePanel !== "Background" && activePanel !== "Layer") {
         }
-        setActiveMenu(type)
+        setActivePanel(type)
       } else {
-        setActiveMenu("")
+        setActivePanel("")
       }
     },
-    [activeMenu, setActiveMenu, editor]
+    [activePanel, setActivePanel, editor]
   )
 
   return (
@@ -80,8 +80,8 @@ export default function Common() {
         </Button>
         <Button
           size="sm"
-          color={activeMenu === "Background" ? "white" : "inherit"}
-          background={activeMenu === "Background" ? "brand.500" : "inherit"}
+          color={activePanel === "Background" ? "white" : "inherit"}
+          background={activePanel === "Background" ? "brand.500" : "inherit"}
           _hover={{}}
           leftIcon={<Background size={24} />}
           onClick={() => changePanel("Background")}
@@ -91,8 +91,8 @@ export default function Common() {
         </Button>
         <Button
           size="sm"
-          color={activeMenu === "Layer" ? "white" : "inherit"}
-          background={activeMenu === "Layer" ? "brand.500" : "inherit"}
+          color={activePanel === "Layer" ? "white" : "inherit"}
+          background={activePanel === "Layer" ? "brand.500" : "inherit"}
           _hover={{}}
           leftIcon={<Layers size={24} />}
           onClick={() => changePanel("Layer")}
@@ -125,7 +125,6 @@ export default function Common() {
         </Flex>
       </Flex>
       <Flex alignItems={"center"} justifyContent={"flex-end"}>
-
         <Flex gap="0.25rem" alignItems={"center"}>
           <Flex gap="3px">
             <Button
@@ -156,38 +155,30 @@ export default function Common() {
                       Basic Actions
                     </Text>
                     <Text padding={"10px"}>
-                      Ctrl +
-                      <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>A</label>-
+                      Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>A</label>-
                       Select All Objects
                     </Text>
                     <Text padding={"10px"}>
-                      Ctrl +
-                      <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>D</label>-
+                      Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>D</label>-
                       Duplicate Selection
                     </Text>
                     <Text padding={"10px"}>
-                      Ctrl +
-                      <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>E</label>-
+                      Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>E</label>-
                       Clear All Objects
                     </Text>
                     <Text padding={"10px"}>
-                      Ctrl +
-                      <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>S</label>-
-                      Save Project
+                      Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>S</label>- Save
+                      Project
                     </Text>
                     <Text padding={"10px"}>
-                      Ctrl +
-                      <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>Z</label>-
-                      Undo
+                      Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>Z</label>- Undo
                     </Text>
                     <Text padding={"10px"}>
-                      Ctrl +
-                      <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>Y</label>-
-                      Redo
+                      Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>Y</label>- Redo
                     </Text>
                     <Text padding={"10px"}>
-                      <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>Del</label>{" "}
-                      - Delete Object
+                      <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>Del</label> - Delete
+                      Object
                     </Text>
                   </Box>
                   <Flex flexDir="column" paddingLeft={"10px"} borderLeft={"2px solid rgb(232, 232, 232)"}>
@@ -195,19 +186,16 @@ export default function Common() {
                       Text Formatting
                     </Text>
                     <Text padding={"10px"}>
-                      Ctrl +
-                      <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>B</label>-
-                      Text Bold
+                      Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>B</label>- Text
+                      Bold
                     </Text>
                     <Text padding={"10px"}>
-                      Ctrl +
-                      <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>I</label>-
-                      Text Italic
+                      Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>I</label>- Text
+                      Italic
                     </Text>
                     <Text padding={"10px"}>
-                      Ctrl +
-                      <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>U</label>-
-                      Text Underline
+                      Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>U</label>- Text
+                      Underline
                     </Text>
                     <Spacer />
                     <Text paddingTop={"10px"} fontWeight={"bold"} paddingLeft="10px">
