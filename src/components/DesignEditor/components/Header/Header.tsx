@@ -84,7 +84,7 @@ export default function Header() {
             variant={"ghost"}
             aria-label=""
             icon={<DrawifyD size={24} />}
-            onClick={() => (window.location.href = "https://beta.drawify.com/home")}
+            onClick={() => (window.location.href = "https://beta.drawify.com/customer/projects")}
           />
           {/* </Link> */}
         </Flex>

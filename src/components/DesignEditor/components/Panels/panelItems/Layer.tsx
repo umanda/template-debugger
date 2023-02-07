@@ -19,7 +19,7 @@ export default function Layer() {
   const object = useObjects()
 
   useEffect(() => {
-    setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom"))
+    setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom").reverse())
   }, [activeScene, object, activeObject])
 
   return (
@@ -107,12 +107,12 @@ export default function Layer() {
 
     const handleFront = useCallback(() => {
       activeScene.objects.bringForward(id)
-      setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom"))
+      setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom").reverse())
     }, [activeScene, id])
 
     const handleBack = useCallback(() => {
       activeScene.objects.sendBackwards(id)
-      setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom"))
+      setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom").reverse())
     }, [activeScene, id])
 
     return (
