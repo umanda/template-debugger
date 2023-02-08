@@ -21,7 +21,7 @@ export default function PanelItem() {
     } else {
       setState({ selected: activePanel })
     }
-  }, [activeMenu, filterResource])
+  }, [activeMenu])
 
   React.useEffect(() => {
     setIsSidebarVisible(true)

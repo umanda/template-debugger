@@ -115,13 +115,16 @@ export default function Ilustrations() {
   const filterResource = localStorage.getItem("drawing_filter")
 
   useEffect(() => {
-    setNameIllustration([filterResource])
-    setNameIllustrationPrev([filterResource])
-  }, [filterResource])
+    if (filterResource !== undefined) {
+      setNameIllustration([filterResource])
+      setNameIllustrationPrev([filterResource])
+      localStorage.removeItem("drawing_filter")
+    }
+  }, [])
 
   useEffect(() => {
     filterResource === undefined && initialState()
-  }, [user, filterResource])
+  }, [user])
 
   const initialState = useCallback(async () => {
     setMore(false)
