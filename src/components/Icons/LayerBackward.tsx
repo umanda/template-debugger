@@ -9,11 +9,6 @@ function LayerBackward({ size }: { size: number }) {
           fill="currentColor"
         />
       </g>
-      <defs>
-        <clipPath id="clip0_1_186">
-          <rect width="24" height="24" fill="white" />
-        </clipPath>
-      </defs>
     </svg>
   )
 }

@@ -62,7 +62,7 @@ function ContextMenu() {
             activeScene.objects.copy()
             editor.cancelContextMenuRequest()
           }}
-          icon="FileIco"
+          icon="Copy"
           label="Copy"
           disabled={true}
         />
@@ -72,7 +72,7 @@ function ContextMenu() {
             activeScene.objects.paste()
             editor.cancelContextMenuRequest()
           }}
-          icon="FileIco"
+          icon="Paste"
           label="Paste"
         />
         <ContextMenuItem
@@ -217,7 +217,7 @@ function ContextMenu() {
               editor.cancelContextMenuRequest()
             }}
             icon="SendBackwards"
-            label="Send backward"
+            label="Send backwards"
           />
           <div style={{ margin: "0.5rem 0" }} />
           <ContextMenuItem
@@ -279,15 +279,14 @@ function ContextMenuItem({
 }) {
   const Icon = () => {
     if (icon === "Lock") return <Lock size={24} />
-    else if (icon === "BringToFront") return <LayerToFront size={24} />
-    else if (icon === "SendBackwards") return <LayerBackward size={24} />
-    else if (icon === "SendToBack") return <LayerToBack size={24} />
-    else if (icon === "BringForward") return <LayerForward size={24} />
-    else if (icon === "Trash") return <Trash size={24} />
-    else if (icon === "Unlock") return <Unlock size={24} />
-    else if (icon === "Copy") return <Copy size={24} />
-    else if (icon === "Paste") return <Paste size={15} />
-    else return <Mail size={24} />
+    if (icon === "BringToFront") return <LayerToFront size={24} />
+    if (icon === "SendBackwards") return <LayerBackward size={24} />
+    if (icon === "SendToBack") return <LayerToBack size={24} />
+    if (icon === "BringForward") return <LayerForward size={24} />
+    if (icon === "Trash") return <Trash size={24} />
+    if (icon === "Unlock") return <Unlock size={24} />
+    if (icon === "Copy") return <Copy size={24} />
+    if (icon === "Paste") return <Paste size={15} />
   }
 
   return (
