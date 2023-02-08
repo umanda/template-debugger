@@ -813,13 +813,13 @@ function ModalIllustration({
     [resourcesPrev, resources]
   )
 
-  const ValidateIcon = () => {
-    if (like) {
-      return <LikeClick size={20} />
-    } else {
-      return <Like size={20} />
-    }
-  }
+  // const ValidateIcon = () => {
+  //   if (like) {
+  //     return <LikeClick size={20} />
+  //   } else {
+  //     return <Like size={20} />
+  //   }
+  // }
 
   return (
     <Modal isOpen={isOpen} size={"full"} onClose={onClose}>

@@ -22,7 +22,7 @@ import { selectUser } from "../../../store/user/selector"
 import Trash from "../../../Icons/Trash"
 import OptionsScenes from "../../../Icons/OptionsScenes"
 import Rename from "../../../Icons/Rename"
-import Duplicate2 from "../../../Icons/Duplicate2"
+import Duplicate2 from "../../../Icons/Copy"
 
 interface Props {
   isCurrentScene: boolean

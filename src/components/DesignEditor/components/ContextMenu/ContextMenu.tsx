@@ -4,6 +4,15 @@ import Mail from "../../../Icons/Mail"
 import { useAppDispatch } from "../../../store/store"
 import { createResourceComposite } from "../../../store/resources/action"
 import { generateId } from "../../../utils/unique"
+import Lock from "../../../Icons/Lock"
+import LayerForward from "../../../Icons/LayerForward"
+import LayerToFront from "../../../Icons/LayerToFront"
+import LayerBackward from "../../../Icons/LayerBackward"
+import LayerToBack from "../../../Icons/LayerToBack"
+import Trash from "../../../Icons/Trash"
+import Unlock from "../../../Icons/Unlock"
+import Copy from "../../../Icons/Copy"
+import Paste from "../../../Icons/Paste"
 
 function ContextMenu() {
   const contextMenuRequest = useContextMenuRequest()
@@ -157,7 +166,7 @@ function ContextMenu() {
               activeScene.objects.copy()
               editor.cancelContextMenuRequest()
             }}
-            icon="FileIco"
+            icon="Copy"
             label="Copy"
           />
           <ContextMenuItem
@@ -165,7 +174,7 @@ function ContextMenu() {
               activeScene.objects.paste()
               editor.cancelContextMenuRequest()
             }}
-            icon="FileIco"
+            icon="Paste"
             label="Paste"
           />
           <ContextMenuItem
@@ -268,6 +277,19 @@ function ContextMenuItem({
   onClick: () => void
   disabled?: boolean
 }) {
+  const Icon = () => {
+    if (icon === "Lock") return <Lock size={24} />
+    else if (icon === "BringToFront") return <LayerToFront size={24} />
+    else if (icon === "SendBackwards") return <LayerBackward size={24} />
+    else if (icon === "SendToBack") return <LayerToBack size={24} />
+    else if (icon === "BringForward") return <LayerForward size={24} />
+    else if (icon === "Trash") return <Trash size={24} />
+    else if (icon === "Unlock") return <Unlock size={24} />
+    else if (icon === "Copy") return <Copy size={24} />
+    else if (icon === "Paste") return <Paste size={15} />
+    else return <Mail size={24} />
+  }
+
   return (
     <Box
       onClick={onClick}
@@ -283,7 +305,7 @@ function ContextMenuItem({
         opacity: disabled ? 0.4 : 1
       }}
     >
-      <Mail size={24} /> {label}
+      <Icon /> {label}
     </Box>
   )
 }
