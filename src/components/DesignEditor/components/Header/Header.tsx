@@ -46,6 +46,7 @@ import { IDesign } from "@layerhub-pro/types"
 import { selectProject } from "../../../store/project/selector"
 import DrawifyD from "../../../Icons/DrawifyD"
 const redirectLogout = import.meta.env.VITE_LOGOUT
+const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -84,7 +85,7 @@ export default function Header() {
             variant={"ghost"}
             aria-label=""
             icon={<DrawifyD size={24} />}
-            onClick={() => (window.location.href = "https://beta.drawify.com/customer/projects")}
+            onClick={() => (window.location.href = redirectUserProfilePage)}
           />
           {/* </Link> */}
         </Flex>
