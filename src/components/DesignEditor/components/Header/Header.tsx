@@ -159,6 +159,7 @@ export default function Header() {
 function ShareMenu() {
   const activeScene = useActiveScene()
   const editor = useEditor()
+  const scenes = useScenes()
   const dispatch = useAppDispatch()
   const { id } = useParams()
   const toast = useToast()
@@ -172,8 +173,31 @@ function ShareMenu() {
   const projectSelect = useSelector(selectProject)
   const { namesPages } = useDesignEditorContext()
 
+  // const functionSave = useCallback(async () => {
+  //   try {
+  //     let designJSON: any = design?.toJSON()
+  //     designJSON.key = id
+  //     designJSON.scenes.map((e: any, index: number) => {
+  //       e.name = namesPages[index]
+  //       e.position = index
+  //       e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+  //       return e
+  //     })
+  //     user && (await dispatch(updateProject(designJSON))).payload
+  //   } catch {}
+  // }, [editor, scenes, currentScene, id, design, namesPages])
+
   const handleDownload = async (type: string) => {
     let resolve: any
+    let designJSON: any = design?.toJSON()
+    designJSON.key = id
+    designJSON.scenes.map((e: any, index: number) => {
+      e.name = namesPages[index]
+      e.position = index
+      e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+      return e
+    })
+    await dispatch(updateProject(designJSON))
     if (editor && user) {
       resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
     }
