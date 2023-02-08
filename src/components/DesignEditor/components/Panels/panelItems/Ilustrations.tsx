@@ -112,10 +112,16 @@ export default function Ilustrations() {
   const activeObject = useActiveObject()
   const projectSelect = useSelector(selectProject)
   const [page, setPage] = useState<number>(0)
+  const filterResource = localStorage.getItem("drawing_filter")
 
   useEffect(() => {
-    initialState()
-  }, [user])
+    setNameIllustration([filterResource])
+    setNameIllustrationPrev([filterResource])
+  }, [filterResource])
+
+  useEffect(() => {
+    filterResource === undefined && initialState()
+  }, [user, filterResource])
 
   const initialState = useCallback(async () => {
     setMore(false)
@@ -137,7 +143,7 @@ export default function Ilustrations() {
     }
     setLoad(true)
     setDisableTab(false)
-  }, [selectListResources])
+  }, [selectListResources, filterResource])
 
   const fetchDataResource = async () => {
     setMore(false)
@@ -201,7 +207,7 @@ export default function Ilustrations() {
           const ctx = { id: resource.id }
           api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
         }
-        const options = {
+        const options: any = {
           type: "StaticVector",
           name: "Shape",
           src: resource.url,
@@ -474,7 +480,7 @@ export default function Ilustrations() {
             {load ? (
               nameIllustration[0] !== "" ? (
                 <Flex marginTop="20px" marginInline="20px" flexDir="column">
-                  {resourcesIllustration.map((r, index) => (
+                  {resourcesIllustration?.map((r, index) => (
                     <Flex flexDir="column" key={index} gap="5px" alignItems="center">
                       <Flex w="full">
                         <Avatar size="md" name={r?.drawifier_name} src={r?.avatar} />
@@ -779,7 +785,7 @@ function ModalIllustration({
         const ctx = { id: resource.id }
         api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
       }
-      const options = {
+      const options: any = {
         type: "StaticVector",
         name: "Shape",
         src: resource.url,

@@ -211,7 +211,7 @@ export default function Upload() {
       await api.getUseUploads(id)
       let typeURL = ""
       type === "svg" ? (typeURL = "StaticVector") : (typeURL = "StaticImage")
-      const options = {
+      const options: any = {
         type: typeURL,
         src: url,
         erasable: false,

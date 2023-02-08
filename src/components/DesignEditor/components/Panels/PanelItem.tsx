@@ -6,7 +6,8 @@ import ChevronLeft from "../../../Icons/ChevronLeft"
 
 export default function PanelItem() {
   const [state, setState] = React.useState({ selected: "Templates" })
-  const { activeMenu, activePanel, isSidebarVisible, setIsSidebarVisible } = useDesignEditorContext()
+  const { activeMenu, activePanel, isSidebarVisible, setIsSidebarVisible, setActivePanel } = useDesignEditorContext()
+  const filterResource = localStorage.getItem("drawing_filter")
 
   React.useEffect(() => {
     setState({ selected: activePanel })
@@ -15,10 +16,12 @@ export default function PanelItem() {
   React.useEffect(() => {
     if (activeMenu) {
       setState({ selected: activeMenu })
+    } else if (filterResource) {
+      setActivePanel("Illustrations")
     } else {
       setState({ selected: activePanel })
     }
-  }, [activeMenu])
+  }, [activeMenu, filterResource])
 
   React.useEffect(() => {
     setIsSidebarVisible(true)
