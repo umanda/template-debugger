@@ -294,9 +294,9 @@ function TextSpacing() {
       }
     }
   }
+
   const applyTextChange = (type: string, e: any) => {
     const value = e.target.value
-
     if (editor) {
       if (type === "charSpacing") {
         if (value !== "") {
@@ -345,7 +345,7 @@ function TextSpacing() {
       <Box sx={{ display: "grid", gridTemplateColumns: "94px 1fr 50px", gap: "0.2rem" }}>
         <Box> Line spacing</Box>
 
-        <Slider value={state.lineHeight} onChange={(value: number) => handleChange("lineHeight", value)}>
+        <Slider min={1} value={state.lineHeight} onChange={(value: number) => handleChange("lineHeight", value)}>
           <SliderTrack>
             <SliderFilledTrack />
           </SliderTrack>
