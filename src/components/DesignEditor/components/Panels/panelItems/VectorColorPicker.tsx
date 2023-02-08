@@ -37,6 +37,8 @@ export default function VectorColorPicker() {
   const zoomRatio = useZoomRatio()
   const [colorHex, setColorHex] = useState<string>("")
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [inputHex, setInputHex] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
+  const [inputHexPrev, setInputHexPrev] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
 
   useEffect(() => {
     if (activeObject) activeObject.type !== "StaticVector" && setActiveMenu("Illustrations")
@@ -104,16 +106,33 @@ export default function VectorColorPicker() {
                   style={{ width: "100%" }}
                   onChange={(color) => {
                     setColorHex(color)
+                    setInputHex(color)
+                    setInputHexPrev(color)
                     changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], color)
                   }}
                 />
                 <Box sx={{ padding: "1rem 0", display: "grid", gridTemplateColumns: "40px 1fr", alignItems: "center" }}>
                   <Box sx={{ color: "#A9A9B2" }}>HEX</Box>
                   <Input
-                    onChange={(e) =>
-                      changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], e.target.value)
-                    }
-                    value={Object.keys(colors.colorMap)[indexColorPicker]}
+                    onBlur={(e) => {
+                      setColorHex(inputHex)
+                      changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setColorHex(inputHex)
+                        changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
+                      }
+                    }}
+                    onChange={(e) => {
+                      setInputHex(e.target.value)
+                      setInputHexPrev(e.target.value)
+                      dispatch(getRecentColor(colorHex))
+                    }}
+                    // onChange={(e) =>
+                    //   changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], e.target.value)
+                    // }
+                    value={inputHexPrev}
                   />
                 </Box>
               </Box>
