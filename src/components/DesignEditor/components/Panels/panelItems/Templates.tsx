@@ -477,7 +477,7 @@ export default function Template() {
                   w="full"
                   variant="outline"
                   isLoading={loadMoreResources}
-                  disabled={!more}
+                  isDisabled={!more}
                   onClick={fetchDataResource}
                 >
                   {more ? "Load more resources?" : "There are no more resources"}

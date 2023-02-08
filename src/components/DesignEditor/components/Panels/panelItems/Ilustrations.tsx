@@ -133,7 +133,7 @@ export default function Ilustrations() {
       setMore(true)
     }
     if (user) {
-      dispatch(getFavoritedResources({ query: { favorited: true } }))
+      dispatch(getFavoritedResources({ query: { favorited: true }, sorts: [] }))
     }
     setLoad(true)
     setDisableTab(false)
@@ -156,7 +156,7 @@ export default function Ilustrations() {
       resolve[0] !== undefined && setMore(true)
     } else {
       const resolve: any[] = await api.searchResources({
-        page: page,
+        page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page,
         limit: 10,
         query: {
           drawifier_ids: orderDrawifier[0]?.length > 0 ? orderDrawifier : undefined,
@@ -527,7 +527,7 @@ export default function Ilustrations() {
                     w="full"
                     variant="outline"
                     isLoading={loadMoreResources}
-                    disabled={!more}
+                    isDisabled={!more}
                     onClick={fetchDataResource}
                   >
                     {more ? "Load more resources?" : "There are no more resources"}
@@ -554,7 +554,7 @@ export default function Ilustrations() {
                     w="full"
                     variant="outline"
                     isLoading={loadMoreResources}
-                    disabled={!more}
+                    isDisabled={!more}
                     onClick={fetchDataResource}
                   >
                     {more ? "Load more resources?" : "There are no more resources"}

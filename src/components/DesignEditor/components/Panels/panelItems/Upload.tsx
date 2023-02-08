@@ -67,7 +67,7 @@ export default function Upload() {
   let [stateFavorite, setStateFavorite] = useState<boolean>(false)
   let [stateRecent, setStateRecent] = useState<boolean>(false)
   const [disableTab, setDisableTab] = useState<boolean>(false)
-  const [loadMoreResources, setLoadMoreResources] = useState<boolean>(false)
+  const [loadMoreResources, setLoadMoreResources] = useState<boolean>(true)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const activeScene = useActiveScene()
   const { setResourceDrag } = useResourcesContext()
@@ -79,13 +79,17 @@ export default function Upload() {
 
   const initialState = async () => {
     if (selectResourcesUploads[0] === undefined) {
+      setLoadMoreResources(true)
       const resolveAction = await dispatch(uploadFiles(initialQuery))
       //@ts-ignore
       const resolve = resolveAction?.payload?.payload
       setResources(resolve)
+      setFetching(false)
+      setLoadMoreResources(false)
     } else {
       setResources(selectResourcesUploads)
-      setFetching(true)
+      setFetching(false)
+      setLoadMoreResources(false)
     }
   }
 
@@ -139,7 +143,7 @@ export default function Upload() {
   }
 
   const fetchDataResource = async () => {
-    setLoadMoreResources(true)
+    setFetching(true)
     if (
       nameUpload[0] === "" &&
       stateFavorite === false &&
@@ -248,6 +252,7 @@ export default function Upload() {
     recent?: boolean
     name?: string
   }) => {
+    setLoadMoreResources(true)
     setDisableTab(true)
     if (name || name === "") {
       setNameUpload(nameUploadPrev)
@@ -478,6 +483,8 @@ export default function Upload() {
                 setType({ png: false, jpg: false, svg: false })
                 setResources(selectResourcesUploads)
                 setValidateContent(null)
+                setLoadMoreResources(true)
+                initialState()
               }}
             >
               All
@@ -531,7 +538,7 @@ export default function Upload() {
                       w="full"
                       variant="outline"
                       isLoading={loadMoreResources}
-                      disabled={fetching}
+                      isDisabled={fetching}
                       onClick={fetchDataResource}
                     >
                       {fetching ? "There are no more resources" : "Load more resources?"}

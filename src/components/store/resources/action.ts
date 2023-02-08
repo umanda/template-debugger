@@ -93,7 +93,7 @@ export const uploadFile = createAsyncThunk<void, { file: File; nameFile: string 
     const updatedFile = new File([file], updatedFileName)
     const response = await api.getSignedURLForUpload({ filename: updatedFileName, type: "IMAGE" })
     const contentType = mime.getType(updatedFileName) as string
-    const save: any = await api.getSave({ filename: updatedFileName, name: args.nameFile })
+    const save: any = await api.getSave({ filename: updatedFileName.split(".")[0], name: args.nameFile })
     dispatch(setUploads([save.image]))
     await axios.put(response.signed_urls[0].signed_url, updatedFile, {
       headers: { "Content-Type": contentType },
