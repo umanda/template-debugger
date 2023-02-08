@@ -420,11 +420,11 @@ function FileMenu() {
     }
   }
 
-  const makeDownload = (data: Object) => {
+  const makeDownload = (data: any) => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data))
     const a = document.createElement("a")
     a.href = dataStr
-    a.download = "drawify.json"
+    a.download = `${data.name}.drawify`
     a.click()
   }
 
