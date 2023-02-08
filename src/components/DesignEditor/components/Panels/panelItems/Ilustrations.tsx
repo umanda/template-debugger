@@ -115,7 +115,7 @@ export default function Ilustrations() {
   const filterResource = localStorage.getItem("drawing_filter")
 
   useEffect(() => {
-    if (filterResource !== undefined) {
+    if (filterResource !== undefined && filterResource !== null) {
       setNameIllustration([filterResource])
       setNameIllustrationPrev([filterResource])
       localStorage.removeItem("drawing_filter")
