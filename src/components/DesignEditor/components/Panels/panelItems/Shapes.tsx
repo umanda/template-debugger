@@ -105,7 +105,7 @@ export default function Shapes() {
         const ctx = { id: images.id }
         api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
       }
-      const options = {
+      const options: any = {
         type: "StaticVector",
         name: "Shape",
         src: images.url,

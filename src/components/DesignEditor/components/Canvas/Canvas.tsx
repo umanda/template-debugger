@@ -146,7 +146,7 @@ export default function Canva() {
           const ctx = { id: ev.dataTransfer.getData("resource") }
           api.recentResource({ project_id: projectSelect.id, resource_id: resourceDrag.id })
         }
-        const options = {
+        const options: any = {
           type: "StaticVector",
           name: "Shape",
           src: resourceDrag.url,
