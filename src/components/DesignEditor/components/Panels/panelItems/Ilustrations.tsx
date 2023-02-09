@@ -54,6 +54,7 @@ import FilterByTags from "../../../../Icons/FilterByTags"
 import { selectResourceImages } from "../../../../store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "../../../../store/resources/action"
 import { selectProject } from "../../../../store/project/selector"
+const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
 export const limitCharacters = (name: string) => {
   const newName = name?.substring(0, 15)
@@ -215,10 +216,7 @@ export default function Ilustrations() {
           name: "Shape",
           src: resource.url,
           erasable: false,
-          watermark:
-            resource.license === "paid"
-              ? user.plan !== "HERO" && "https://ik.imagekit.io/scenify/drawify-small.svg"
-              : null
+          watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
         }
         if (editor) {
           await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
@@ -793,10 +791,7 @@ function ModalIllustration({
         name: "Shape",
         src: resource.url,
         erasable: false,
-        watermark:
-          resource.license === "paid"
-            ? user.plan !== "HERO" && "https://ik.imagekit.io/scenify/drawify-small.svg"
-            : null
+        watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
       }
       if (editor) {
         await activeScene.objects.add(options, { desiredSize: 200 })

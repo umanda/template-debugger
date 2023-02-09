@@ -47,8 +47,10 @@ import { selectListRecommendTemplate } from "../../../../store/recommend/selecto
 import { getListRecommend } from "../../../../store/recommend/action"
 import Order from "../../../../Modals/Order"
 import LazyLoadImage from "../../../../utils/LazyLoadImage"
-import { useParams } from "react-router-dom"
 import { selectProject } from "../../../../store/project/selector"
+const watermarkURL = import.meta.env.VITE_APP_WATERMARK
+const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
+const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
 const initialQuery = {
   page: 1,
@@ -183,14 +185,11 @@ export default function Template() {
         designData.scenes[0].frame = designData.frame
         designData.scenes[0].layers.map((layer) => {
           if (layer.src) {
-            if (layer.src.includes("https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/"))
-              layer.src = layer.src.replace(
-                "https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/",
-                "https://ik.imagekit.io/jwzv5rwz9/drawify/"
-              )
+            if (layer.src.includes(defaultPreviewTemplate))
+              layer.src = layer.src.replace(defaultPreviewTemplate, replacePreviewTemplate)
           }
           if (template?.license === "paid" && user?.plan !== "FREE" && layer.type === "StaticVector") {
-            layer.watermark = "https://ik.imagekit.io/scenify/drawify-small.svg"
+            layer.watermark = watermarkURL
           }
         })
         await activeScene.setScene(designData.scenes[0])

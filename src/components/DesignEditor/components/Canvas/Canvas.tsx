@@ -19,6 +19,7 @@ import useResourcesContext from "../../../hooks/useResourcesContext"
 import Plus from "../../../Icons/Plus"
 import MobileModal from "../../../Modals/MobileModal"
 import { selectProject } from "../../../store/project/selector"
+const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
 export default function Canva() {
   const { resourceDrag } = useResourcesContext()
@@ -151,10 +152,7 @@ export default function Canva() {
           name: "Shape",
           src: resourceDrag.url,
           erasable: false,
-          watermark:
-            resourceDrag.license === "paid"
-              ? user.plan !== "HERO" && "https://ik.imagekit.io/scenify/drawify-small.svg"
-              : null
+          watermark: resourceDrag.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
         }
         if (editor) {
           activeScene.objects.add(options, { desiredSize: 200 })
