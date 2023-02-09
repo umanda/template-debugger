@@ -16,7 +16,8 @@ import {
   Spinner,
   Text,
   Tooltip,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import { useActiveScene, useDesign } from "@layerhub-pro/react"
@@ -85,6 +86,7 @@ export default function Template() {
   const design = useDesign()
   const activeScene = useActiveScene()
   const projectSelector = useSelector(selectProject)
+  const toast = useToast()
 
   useEffect(() => {
     initialState()
@@ -172,23 +174,31 @@ export default function Template() {
   const loadTemplateById = React.useCallback(
     async (template: IDesign) => {
       try {
-        // @ts-ignore
-        setDesignEditorLoading({ isLoading: true, preview: template.preview })
-        // user && api.getUseTemplate({ template_id: template.id, project_id: projectSelector.id })
-        let designData: any = await api.getTemplateById(template.id)
-        designData.scenes[0].frame = designData.frame
-        designData.scenes[0].layers.map((layer) => {
-          if (layer.src)
-            if (layer.src.includes("https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/"))
-              layer.src = layer.src.replace(
-                "https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/",
-                "https://ik.imagekit.io/jwzv5rwz9/drawify/"
-              )
-        })
-        await activeScene.setScene(designData.scenes[0])
+        if (user?.plan !== "FREE") {
+          // @ts-ignore
+          setDesignEditorLoading({ isLoading: true, preview: template.preview })
+          // user && api.getUseTemplate({ template_id: template.id, project_id: projectSelector.id })
+          let designData: any = await api.getTemplateById(template.id)
+          designData.scenes[0].frame = designData.frame
+          designData.scenes[0].layers.map((layer) => {
+            if (layer.src)
+              if (layer.src.includes("https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/"))
+                layer.src = layer.src.replace(
+                  "https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/",
+                  "https://ik.imagekit.io/jwzv5rwz9/drawify/"
+                )
+          })
+          await activeScene.setScene(designData.scenes[0])
+        } else {
+          toast({
+            title: "Subscribe to use this feature.",
+            position: "top",
+            isClosable: true
+          })
+        }
       } catch (err) {}
     },
-    [design, activeScene, projectSelector]
+    [design, activeScene, projectSelector, user, toast]
   )
 
   const makeFilter = async ({
