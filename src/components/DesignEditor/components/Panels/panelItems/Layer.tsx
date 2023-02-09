@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react"
-import { Box, Button, Center, Flex, IconButton, Spacer } from "@chakra-ui/react"
+import { Box, Button, Center, Flex, IconButton, Image, Spacer } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useObjects } from "@layerhub-pro/react"
 import Lock from "../../../../Icons/Lock"
 import Unlock from "../../../../Icons/Unlock"
-import Images from "../../../../Icons/Images"
 import Trash from "../../../../Icons/Trash"
 import Drag from "../../../../Icons/Drag"
 import Eye from "../../../../Icons/Eye"
@@ -11,16 +10,19 @@ import Scrollable from "../../../../utils/Scrollable"
 import Eye_hide from "../../../../Icons/Eye_hide"
 import CircleUp from "../../../../Icons/CircleUp"
 import CircleDown from "../../../../Icons/CircleDown"
+import Pencil from "../../../../Icons/Pencil"
+import LetterUpperCase from "../../../../Icons/LetterUpperCase"
+import useResourcesContext from "../../../../hooks/useResourcesContext"
 
 export default function Layer() {
   const [objects, setObjects] = useState<any[]>([])
-  const activeObject = useActiveObject()
   const activeScene: any = useActiveScene()
-  const object = useObjects()
+  const activeObject = useActiveObject()
+  const { order } = useResourcesContext()
 
   useEffect(() => {
     setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom").reverse())
-  }, [activeScene, object, activeObject])
+  }, [activeScene, activeObject, order])
 
   return (
     <Box h="full" sx={{ width: "320px", borderRight: "1px solid #DDDFE5", padding: ".5rem" }}>
@@ -124,13 +126,26 @@ export default function Layer() {
         position={name === "Custom" ? "absolute" : "relative"}
       >
         <IconButton size="xs" aria-label="Search database" variant={"ghost"} icon={<Drag size={24} />} />
-        <IconButton
-          size="xs"
-          aria-label="Search database"
-          onClick={() => activeScene.objects.select(id)}
-          variant={"ghost"}
-          icon={<Images size={22} />}
-        />
+        {object[0]?.type === "StaticVector" ? (
+          <Center
+            borderRadius="md"
+            sx={{
+              alignItems: "center",
+              display: "flex",
+              ":hover": {
+                backgroundColor: "brand.50",
+                cursor: "pointer",
+                color: "brand.500"
+              }
+            }}
+          >
+            <Image w="30px" h="30px" maxH="40px" maxW="40px" src={object[0].src} alt="Resource" />
+          </Center>
+        ) : object[0]?.type === "StaticText" ? (
+          <IconButton size="30px" aria-label="Search database" variant={"ghost"} icon={<LetterUpperCase size={24} />} />
+        ) : (
+          <IconButton size="30px" aria-label="Search database" variant={"ghost"} icon={<Pencil size={24} />} />
+        )}
         <Flex w="full" alignItems={"center"}>
           <Button
             size="xs"

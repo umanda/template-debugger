@@ -69,15 +69,7 @@ const initialQuery = {
   page: 0,
   limit: 10,
   query: {
-    ids: [],
-    drawifier_ids: [],
-    names: [],
-    suggested: [],
-    categories: [],
-    colors: [],
-    tags: [""],
     visibility: "public",
-    styles: [],
     favorited: false,
     used: false
   },

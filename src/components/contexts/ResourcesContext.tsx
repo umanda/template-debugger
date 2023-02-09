@@ -18,6 +18,8 @@ interface IResourcesContext {
   setDraw: React.Dispatch<React.SetStateAction<BrushOptions>>
   resourceDrag: IResource
   setResourceDrag: React.Dispatch<React.SetStateAction<IResource | IFont>>
+  order: boolean
+  setOrder: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export type BrushType =
@@ -70,7 +72,9 @@ export const ResourcesContext = React.createContext<IResourcesContext>({
     preview: "",
     tags: []
   },
-  setResourceDrag: () => {}
+  setResourceDrag: () => {},
+  order: false,
+  setOrder: () => {}
 })
 
 export const ResourcesContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -101,11 +105,14 @@ export const ResourcesContextProvider = ({ children }: { children: React.ReactNo
     preview: "",
     tags: []
   })
+  const [order, setOrder] = React.useState<boolean>(false)
   const context = {
     draw,
     setDraw,
     resourceDrag,
-    setResourceDrag
+    setResourceDrag,
+    order,
+    setOrder
   }
   return <ResourcesContext.Provider value={context}>{children}</ResourcesContext.Provider>
 }
