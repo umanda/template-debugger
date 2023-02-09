@@ -37,7 +37,8 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
         dispatch(getListDrawifiers({}))
         if (token !== "") {
           const resolve = (await dispatch(signInByToken(token))).payload
-          resolve?.id ? setState(true) : (window.location.href = redirectHome)
+          console.log(resolve)
+          resolve?.id && setState(true)
           // resolve?.plan === "HERO" ? setState(!state) : (window.location.href = redirectHome)
         }
       } else {
@@ -45,7 +46,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
       }
     }
     id === undefined && navigate(`/composer/${generateId("", 10)}`)
-  }, [id, token])
+  }, [id, token, setState])
 
   return (
     <div
