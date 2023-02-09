@@ -20,7 +20,7 @@ import {
   useToast
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
-import { useActiveScene, useDesign } from "@layerhub-pro/react"
+import { useActiveScene, useDesign, useObjects } from "@layerhub-pro/react"
 import React, { useCallback, useRef, useState } from "react"
 import { useEffect } from "react"
 import { useSelector } from "react-redux"
@@ -87,6 +87,7 @@ export default function Template() {
   const activeScene = useActiveScene()
   const projectSelector = useSelector(selectProject)
   const toast = useToast()
+  const objects: any = useObjects()
 
   useEffect(() => {
     initialState()
@@ -172,30 +173,38 @@ export default function Template() {
   }
 
   const loadTemplateById = React.useCallback(
-    async (template: IDesign) => {
+    async (template: any) => {
       try {
-        if (user?.plan !== "FREE") {
-          // @ts-ignore
-          setDesignEditorLoading({ isLoading: true, preview: template.preview })
-          // user && api.getUseTemplate({ template_id: template.id, project_id: projectSelector.id })
-          let designData: any = await api.getTemplateById(template.id)
-          designData.scenes[0].frame = designData.frame
-          designData.scenes[0].layers.map((layer) => {
-            if (layer.src)
-              if (layer.src.includes("https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/"))
-                layer.src = layer.src.replace(
-                  "https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/",
-                  "https://ik.imagekit.io/jwzv5rwz9/drawify/"
-                )
-          })
-          await activeScene.setScene(designData.scenes[0])
-        } else {
-          toast({
-            title: "Subscribe to use this feature.",
-            position: "top",
-            isClosable: true
-          })
-        }
+        // if (user?.plan !== "FREE") {
+        // @ts-ignore
+        setDesignEditorLoading({ isLoading: true, preview: template.preview })
+        // user && api.getUseTemplate({ template_id: template.id, project_id: projectSelector.id })
+        let designData: any = await api.getTemplateById(template.id)
+        designData.scenes[0].frame = designData.frame
+        designData.scenes[0].layers.map((layer) => {
+          if (layer.src) {
+            if (layer.src.includes("https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/"))
+              layer.src = layer.src.replace(
+                "https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/",
+                "https://ik.imagekit.io/jwzv5rwz9/drawify/"
+              )
+          }
+          if (template?.license === "paid" && user?.plan !== "FREE" && layer.type === "StaticVector") {
+            layer.watermark = "https://ik.imagekit.io/scenify/drawify-small.svg"
+          }
+        })
+        await activeScene.setScene(designData.scenes[0])
+
+        // console.log(activeScene.layers)
+        // activeScene.objects.update({ watermark: "https://ik.imagekit.io/scenify/drawify-small.svg" })
+
+        // } else {
+        //   toast({
+        //     title: "Subscribe to use this feature.",
+        //     position: "top",
+        //     isClosable: true
+        //   })
+        // }
       } catch (err) {}
     },
     [design, activeScene, projectSelector, user, toast]
