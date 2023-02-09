@@ -44,7 +44,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
       }
     }
     id === undefined && navigate(`/composer/${generateId("", 10)}`)
-  }, [id, token, setState])
+  }, [id, token, state, setState])
 
   return (
     <div

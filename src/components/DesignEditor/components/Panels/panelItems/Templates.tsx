@@ -188,7 +188,7 @@ export default function Template() {
             if (layer.src.includes(defaultPreviewTemplate))
               layer.src = layer.src.replace(defaultPreviewTemplate, replacePreviewTemplate)
           }
-          if (template?.license === "paid" && user?.plan !== "FREE" && layer.type === "StaticVector") {
+          if (template?.license === "paid" && user?.plan === "FREE" && layer.type === "StaticVector") {
             layer.watermark = watermarkURL
           }
         })
