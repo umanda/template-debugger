@@ -737,6 +737,7 @@ function ModalIllustration({
   const [sort, setSort] = useState<string>("ALPHABETIC")
   const [idDrawifier, setIdDrawifier] = useState<string>("")
   const initialFocusRef = useRef<any>()
+  const refInputName = useRef<any>()
   const [name, setName] = useState<string>("")
   const { isOpen: isOpenDrawifier, onOpen: onOpenDrawifier, onClose: onCloseDrawifier } = useDisclosure()
   const drawifiers = useSelector(selectListDrawifiers)
@@ -801,9 +802,22 @@ function ModalIllustration({
   )
 
   const filterByName = useCallback(
-    (e: string) => {
+    async (e: string) => {
+      setLoad(false)
       setNameResource(e)
-      setResources(resourcesPrev.filter((r) => r.name.includes(e)))
+      const resolve: any[] = await api.searchResources({
+        page: 1,
+        limit: 10,
+        query: {
+          drawifier_ids:
+            type === "id" ? [Number(typeFilter.drawifier.id)] : idDrawifier !== "" ? [idDrawifier] : undefined,
+          tags: type === "tag" ? typeFilter.tags : undefined,
+          names: [e]
+        },
+        sorts: [sort]
+      })
+      setResources(resolve)
+      setLoad(true)
     },
     [resourcesPrev, resources]
   )
@@ -827,101 +841,107 @@ function ModalIllustration({
       >
         <ModalCloseButton />
         <ModalBody>
-          {load ? (
-            <Flex gap="10px" border="1px solid #DDDFE5" flexDir="column" bg="white" padding="20px">
-              <Center>
-                <Input
-                  w="40%"
-                  value={nameResource}
-                  onChange={(e) => {
-                    filterByName(e.target.value)
-                  }}
-                  placeholder="Search"
-                  bg="white"
-                />
-              </Center>
-              <Center gap="10px">
-                <Text color="#A9A9B2" fontSize="sm">
-                  FILTER BY STATS
-                </Text>
-                <RadioGroup onChange={setSort} value={sort}>
-                  <Stack direction="row" gap="10px">
-                    <Radio size="sm" value="ALPHABETIC">
-                      A - Z
-                    </Radio>
-                    <Radio size="sm" value="USED_AT">
-                      Most Recent
-                    </Radio>
-                    <Radio size="sm" value="LIKED">
-                      Most Favorite
-                    </Radio>
-                    <Radio size="sm" value="DOWNLOADED">
-                      Most Downloads
-                    </Radio>
-                  </Stack>
-                </RadioGroup>
-                <Text
-                  visibility={type === "tag" ? "visible" : "hidden"}
-                  position={type !== "tag" ? "absolute" : "relative"}
-                  color="#A9A9B2"
-                  fontSize="sm"
-                >
-                  FILTER BY DRAWIFIER
-                </Text>
-                <Popover
-                  initialFocusRef={initialFocusRef}
-                  isOpen={isOpenDrawifier}
-                  returnFocusOnClose={false}
-                  onClose={onCloseDrawifier}
-                  placement="right-start"
-                >
-                  <HStack>
-                    <PopoverAnchor>
-                      <Input
-                        ref={initialFocusRef}
-                        position={type !== "tag" ? "absolute" : "relative"}
-                        visibility={type === "tag" ? "visible" : "hidden"}
-                        placeholder="Start typing..."
-                        value={name}
-                        onFocus={() => {
-                          setName("")
-                          setIdDrawifier("")
-                        }}
-                        onBlur={onCloseDrawifier}
-                        onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
-                        onChange={(e) => {
-                          onOpenDrawifier()
-                          setName(e.target.value)
-                        }}
-                        zIndex={999}
-                      ></Input>
-                    </PopoverAnchor>
-                  </HStack>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverBody>
-                      <FilterByDrawifier
-                        setId={setIdDrawifier}
-                        onClose={onCloseDrawifier}
-                        listDrawifiers={drawifiers}
-                        setName={setName}
-                        name={name}
-                      />
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
-                <Button
-                  marginInline="10px"
-                  variant="outline"
-                  size="sm"
-                  bg="white"
-                  _hover={{ bg: "white" }}
-                  onClick={makeFilter}
-                >
-                  Filter
-                </Button>
-              </Center>
+          <Flex gap="10px" border="1px solid #DDDFE5" flexDir="column" bg="white" padding="20px">
+            <Center>
+              <Input
+                w="40%"
+                ref={refInputName}
+                value={nameResource}
+                onChange={(e) => setNameResource(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && refInputName.current.blur()}
+                onBlur={(e) => {
+                  filterByName(nameResource)
+                }}
+                placeholder="Search"
+                bg="white"
+              />
+            </Center>
+            <Center gap="10px">
+              <Text color="#A9A9B2" fontSize="sm">
+                FILTER BY STATS
+              </Text>
+              <RadioGroup onChange={setSort} value={sort}>
+                <Stack direction="row" gap="10px">
+                  <Radio size="sm" value="ALPHABETIC">
+                    A - Z
+                  </Radio>
+                  <Radio size="sm" value="USED_AT">
+                    Most Recent
+                  </Radio>
+                  <Radio size="sm" value="LIKED">
+                    Most Favorite
+                  </Radio>
+                  <Radio size="sm" value="DOWNLOADED">
+                    Most Downloads
+                  </Radio>
+                </Stack>
+              </RadioGroup>
+              <Text
+                visibility={type === "tag" ? "visible" : "hidden"}
+                position={type !== "tag" ? "absolute" : "relative"}
+                color="#A9A9B2"
+                fontSize="sm"
+              >
+                FILTER BY DRAWIFIER
+              </Text>
+              <Popover
+                initialFocusRef={initialFocusRef}
+                isOpen={isOpenDrawifier}
+                returnFocusOnClose={false}
+                onClose={onCloseDrawifier}
+                placement="right-start"
+              >
+                <HStack>
+                  <PopoverAnchor>
+                    <Input
+                      ref={initialFocusRef}
+                      position={type !== "tag" ? "absolute" : "relative"}
+                      visibility={type === "tag" ? "visible" : "hidden"}
+                      placeholder="Start typing..."
+                      value={name}
+                      onFocus={() => {
+                        setName("")
+                        setIdDrawifier("")
+                      }}
+                      onBlur={onCloseDrawifier}
+                      onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
+                      onChange={(e) => {
+                        onOpenDrawifier()
+                        setName(e.target.value)
+                      }}
+                      zIndex={999}
+                    ></Input>
+                  </PopoverAnchor>
+                </HStack>
+                <PopoverContent>
+                  <PopoverArrow />
+                  <PopoverBody>
+                    <FilterByDrawifier
+                      setId={setIdDrawifier}
+                      onClose={onCloseDrawifier}
+                      listDrawifiers={drawifiers}
+                      setName={setName}
+                      name={name}
+                    />
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
+              <Button
+                marginInline="10px"
+                variant="outline"
+                size="sm"
+                bg="white"
+                _hover={{ bg: "white" }}
+                onClick={makeFilter}
+              >
+                Filter
+              </Button>
+            </Center>
+
+            {load ? (
               <Box
+                w="full"
+                h="full"
                 sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", gap: "2rem", paddingY: "0.5rem" }}
               >
                 {resources.map((e, index) => (
@@ -966,12 +986,12 @@ function ModalIllustration({
                   </Flex>
                 ))}
               </Box>
-            </Flex>
-          ) : (
-            <Center h="500px">
-              <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-            </Center>
-          )}
+            ) : (
+              <Center h="500px">
+                <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+              </Center>
+            )}
+          </Flex>
         </ModalBody>
       </ModalContent>
     </Modal>

@@ -9,8 +9,8 @@ specifiers:
   '@emotion/react': ^11.9.3
   '@emotion/styled': ^11.9.3
   '@layerhub-io/react-custom-scrollbar': ^0.0.1
-  '@layerhub-pro/react': ^1.10.11
-  '@layerhub-pro/types': ^1.10.11
+  '@layerhub-pro/react': ^1.11.2
+  '@layerhub-pro/types': ^1.11.2
   '@reduxjs/toolkit': ^1.8.3
   '@types/js-cookie': ^3.0.2
   '@types/lodash': ^4.14.182
@@ -51,8 +51,8 @@ dependencies:
   '@emotion/react': 11.10.5_3stiutgnnbnfnf3uowm5cip22i
   '@emotion/styled': 11.10.5_jrh5enlbqfbnumycmktdqgd6se
   '@layerhub-io/react-custom-scrollbar': 0.0.1_react@18.2.0
-  '@layerhub-pro/react': 1.11.0
-  '@layerhub-pro/types': 1.11.0
+  '@layerhub-pro/react': 1.11.2
+  '@layerhub-pro/types': 1.11.2
   '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
   '@types/lodash': 4.14.191
   axios: 0.27.2
@@ -1861,11 +1861,11 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@layerhub-pro/core/1.11.0:
-    resolution: {integrity: sha512-vbKAsEYe7qkEvfFn1gdu7t9urXWjYnDEw8uEbXD4zYZkHb4Bppm/bWpOq9aJLDJugRwt34sRFvzOM8eAbjDNWg==}
+  /@layerhub-pro/core/1.11.2:
+    resolution: {integrity: sha512-hMsLjK224ty2QxNAYD+42bytxGjy48fDbDLuoyEaTWP9u06ffXoAauOsNzwfM9furqb+I10o8ePLbJoskaNe8A==}
     dependencies:
-      '@layerhub-pro/objects': 1.11.0_fabric@5.3.0
-      '@layerhub-pro/types': 1.11.0
+      '@layerhub-pro/objects': 1.11.2_fabric@5.3.0
+      '@layerhub-pro/types': 1.11.2
       fabric: 5.3.0
       lodash: 4.17.21
       nanoid: 3.3.4
@@ -1878,8 +1878,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@layerhub-pro/objects/1.11.0_fabric@5.3.0:
-    resolution: {integrity: sha512-srz4IEwjcaDSLul01QJ0yYCbryWYXnsXNSkWNW6kqy6OndfJhxb+eEIjYksIoKFPZ/9FWLH6CBINVttxjlKpSA==}
+  /@layerhub-pro/objects/1.11.2_fabric@5.3.0:
+    resolution: {integrity: sha512-aUA8gfmDydZ4Qsk63cLOfyMZuLG+Kpx/j+AlNGGEhhYpQT7C0ZXKkrKvFhqdGF9s72+qjl61oOVmW8ArUV03dg==}
     peerDependencies:
       fabric: ^5.3.0
     dependencies:
@@ -1887,10 +1887,10 @@ packages:
       lodash: 4.17.21
     dev: false
 
-  /@layerhub-pro/react/1.11.0:
-    resolution: {integrity: sha512-YkWT9qR+kOEmeYykTwSJZoGhpnNMkBy6x9lyx6/0bvH6vGgHD4nJjAIz9H1VEFz58sBh1VnrYkm/HEp9QFPoDg==}
+  /@layerhub-pro/react/1.11.2:
+    resolution: {integrity: sha512-KWzjndqd8/d1sskMtaVe5xCeswBeok48IajNzm5OxjaPV1D3ZtsrF5YmW8rISR9rHgxFjaOVTW6O6vQkmNkaOg==}
     dependencies:
-      '@layerhub-pro/core': 1.11.0
+      '@layerhub-pro/core': 1.11.2
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       resize-observer-polyfill: 1.5.1
@@ -1901,8 +1901,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@layerhub-pro/types/1.11.0:
-    resolution: {integrity: sha512-NdXz+GLITHhgrqVK5IrZ4biIqM06pijtlR9HnNYlxsFBTJa1wpSg9uIo1qMhN8Utxqco8qKQCEXtecOVlrTB1w==}
+  /@layerhub-pro/types/1.11.2:
+    resolution: {integrity: sha512-J5Segx8yiuARubCp6rVgx7z4zjdVLhdnq55bSS7u8WzGorPEhMmmZtO2x72XiVILo2Iw5tIzXxg0citC+qpVkg==}
     dev: false
 
   /@mapbox/node-pre-gyp/1.0.10:

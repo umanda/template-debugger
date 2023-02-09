@@ -22,6 +22,7 @@ import { selectColors } from "../../../../store/colors/selector"
 import { useEffect, useState } from "react"
 import { HexColorPicker } from "react-colorful"
 import { useAppDispatch, useAppSelector } from "../../../../store/store"
+import { throttle } from "lodash"
 
 export default function VectorColorPicker() {
   const { indexColorPicker, setIndexColorPicker, colors, setColors, setActiveMenu } = useDesignEditorContext()
@@ -48,7 +49,9 @@ export default function VectorColorPicker() {
     if (isOpen === false && colorHex !== "") dispatch(getRecentColor(colorHex))
   }, [isOpen])
 
-  const changeBackgroundColor = (prev: string, next: string) => {
+  const changeBackgroundColor = throttle((prev: string, next: string) => {
+    const objectRef = activeObject
+    console.log(next)
     setColors({
       ...colors,
       colorMap: {
@@ -56,9 +59,13 @@ export default function VectorColorPicker() {
         [prev]: next
       }
     })
-    activeScene.objects.updateLayerColor(prev, next)
-    editor.zoom.zoomToRatio(zoomRatio - 0.000000000000001 + 0.000000000000001)
-  }
+
+    if (activeObject) {
+      objectRef.updateLayerColor(prev, next)
+    }
+    editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
+    editor.zoom.zoomToRatio(zoomRatio - 0.000000001)
+  }, 100)
 
   const applyTextChange = (value: number, id: string) => {
     if (editor) {

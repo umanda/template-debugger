@@ -23,7 +23,6 @@ const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
 export default function Canva() {
   const { resourceDrag } = useResourcesContext()
-  const zoom = useZoomRatio()
   const editor = useEditor()
   const activeScene = useActiveScene()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -168,7 +167,16 @@ export default function Canva() {
     <Flex ref={flexRef} flex={1} position="relative" onDrop={(ev) => dropEvent(ev)} id="app">
       <ContextMenu />
       <Flex flex={1}>
-        <Canvas />
+        <Canvas
+          config={{
+            margin: 140,
+            outsideVisible: true,
+            guidelines: {
+              enabled: true,
+              color: ""
+            }
+          }}
+        />
       </Flex>
       <Center
         onClick={() => onOpen()}
