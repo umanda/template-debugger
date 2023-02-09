@@ -1,4 +1,4 @@
-import { useActiveScene, useContextMenuRequest, useEditor } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useContextMenuRequest, useEditor } from "@layerhub-pro/react"
 import { Box } from "@chakra-ui/react"
 import Mail from "../../../Icons/Mail"
 import { useAppDispatch } from "../../../store/store"
@@ -19,6 +19,7 @@ function ContextMenu() {
   const activeScene = useActiveScene()
   const editor = useEditor()
   const dispath = useAppDispatch()
+  const activeObject: any = useActiveObject()
 
   const saveAsComponentHandler = async () => {
     if (activeScene) {
@@ -37,11 +38,11 @@ function ContextMenu() {
     }
   }
 
-  if (!contextMenuRequest || !contextMenuRequest.target) {
+  if (!contextMenuRequest || !contextMenuRequest?.target) {
     return <></>
   }
 
-  if (contextMenuRequest.target.type === "Background") {
+  if (contextMenuRequest?.target?.type === "Background") {
     return (
       <div // @ts-ignore
         onContextMenu={(e: Event) => e.preventDefault()}
@@ -168,6 +169,7 @@ function ContextMenu() {
             }}
             icon="Copy"
             label="Copy"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           <ContextMenuItem
             onClick={() => {
@@ -176,6 +178,7 @@ function ContextMenu() {
             }}
             icon="Paste"
             label="Paste"
+            disabled={activeObject ? false : true}
           />
           <ContextMenuItem
             onClick={() => {
@@ -185,6 +188,7 @@ function ContextMenu() {
             }}
             icon="Trash"
             label="Delete"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           <div style={{ margin: "0.5rem 0" }} />
           <ContextMenuItem
@@ -194,6 +198,7 @@ function ContextMenu() {
             }}
             icon="BringToFront"
             label="Bring to front"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           <ContextMenuItem
             onClick={() => {
@@ -202,6 +207,7 @@ function ContextMenu() {
             }}
             icon="BringForward"
             label="Bring forward"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           <ContextMenuItem
             onClick={() => {
@@ -210,6 +216,7 @@ function ContextMenu() {
             }}
             icon="SendToBack"
             label="Send back"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           <ContextMenuItem
             onClick={() => {
@@ -218,6 +225,7 @@ function ContextMenu() {
             }}
             icon="SendBackwards"
             label="Send backwards"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           <div style={{ margin: "0.5rem 0" }} />
           <ContextMenuItem
@@ -227,6 +235,7 @@ function ContextMenu() {
             }}
             icon="Unlock"
             label="Lock"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           {/* <ContextMenuItem
             onClick={() => {
@@ -259,6 +268,7 @@ function ContextMenu() {
             }}
             icon="Lock"
             label="Unlock"
+            disabled={activeObject ? false : true}
           />
         </div>
       )}
