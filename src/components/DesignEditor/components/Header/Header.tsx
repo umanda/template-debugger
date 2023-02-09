@@ -745,7 +745,6 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
     if (
       e.ctrlKey &&
       (e.keyCode === 67 ||
-        e.keyCode === 86 ||
         e.keyCode === 85 ||
         e.keyCode === 117 ||
         e.keyCode === 107 ||

@@ -15,6 +15,8 @@ import useResourcesContext from "../../../../hooks/useResourcesContext"
 import { getListResourcesShapes } from "../../../../store/resources/action"
 import { selectResourceShapes } from "../../../../store/resources/selector"
 import { selectProject } from "../../../../store/project/selector"
+const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
+const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
 const initialQuery = {
   page: 1,
@@ -51,7 +53,7 @@ export default function Shapes() {
 
   const initialState = useCallback(async () => {
     if (selectShapes[0] === undefined) {
-      const resolve = (await dispatch(getListResourcesShapes(initialQuery))).payload as IResource[]
+      const resolve: any = (await dispatch(getListResourcesShapes(initialQuery))).payload
       resolve && setResources(resolve)
       resolve ? setFetching(false) : setFetching(true)
     } else {

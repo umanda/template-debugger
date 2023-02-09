@@ -59,7 +59,7 @@ export default function FontSelector() {
   useEffect(() => {
     if (activeObject) {
       const textProperties = getTextProperties(activeObject, fonts)
-      setTypeFont(fonts.filter((e) => e.family === textProperties?.family)[0].id)
+      setTypeFont(fonts.filter((e) => e.family === textProperties?.family)[0]?.id)
     }
   }, [editor, activeScene, activeObject, scenes])
 
@@ -208,7 +208,7 @@ export default function FontSelector() {
       <Scrollable>
         <InfiniteScroll hasMore={false} fetchData={() => {}}>
           <Flex flexDir="column">
-            {commonFonts.map((font: any, index) => (
+            {commonFonts?.map((font: any, index) => (
               <Box
                 key={index}
                 onClick={() => handleFontFamilyChange(font)}
