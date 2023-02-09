@@ -37,10 +37,11 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
         dispatch(getListDrawifiers({}))
         if (token !== "") {
           const resolve = (await dispatch(signInByToken(token))).payload
-          resolve.plan === "HERO" ? setState(!state) : (window.location.href = redirectHome)
+          resolve?.id ? setState(!state) : (window.location.href = redirectHome)
+          // resolve?.plan === "HERO" ? setState(!state) : (window.location.href = redirectHome)
         }
       } else {
-        window.location.href = redirectHome
+        // window.location.href = redirectHome
       }
     }
     id === undefined && navigate(`/composer/${generateId("", 10)}`)
