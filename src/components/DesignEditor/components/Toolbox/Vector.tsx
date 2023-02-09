@@ -40,7 +40,11 @@ export default function Vector() {
                 borderColor={indexColorPicker === index ? "brand.500" : "#A9A9B2"}
                 onClick={() => {
                   setIndexColorPicker(index)
-                  activeMenu !== "VectorColorPicker" ? setActiveMenu("VectorColorPicker") : setActiveMenu("")
+                  if (activeMenu !== "VectorColorPicker" || index !== indexColorPicker) {
+                    setActiveMenu("VectorColorPicker")
+                  } else {
+                    setActiveMenu("")
+                  }
                 }}
                 boxSize="30px"
                 borderRadius="20%"
