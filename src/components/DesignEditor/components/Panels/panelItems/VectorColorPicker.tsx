@@ -82,6 +82,16 @@ export default function VectorColorPicker() {
           : setSliderValue({ ...sliderValue, sliderValueTemp: value })
       }
     }
+    if (editor) {
+      if (type.includes("emp")) {
+        value >= 100
+          ? setSliderValue({ ...sliderValue, sliderValueTemp: 100 })
+          : setSliderValue({ ...sliderValue, sliderValueTemp: value })
+      } else {
+        setSliderValue({ ...sliderValue, sliderValue: value, sliderValueTemp: value })
+        activeScene.objects.update({ opacity: value / 100 })
+      }
+    }
   }
 
   return (
@@ -224,11 +234,8 @@ export default function VectorColorPicker() {
             inputMode="decimal"
             pattern="[0-9]*(.[0-9]+)?"
             size={"xs"}
-            onChange={(e) => {
-              e.target.value
-                ? handleChange("charSpacingTemp", 0)
-                : handleChange("charSpacingTemp", parseFloat(e.target.value))
-            }}
+            onKeyDown={(e) => e.key === "Enter" && applyTextChange(sliderValue.sliderValueTemp, activeObject.id)}
+            onChange={(e) => handleChange("charSpacingTemp", parseFloat(e.target.value))}
             onBlur={(e) => applyTextChange(parseFloat(e.target.value), activeObject.id)}
           />
         </GridItem>

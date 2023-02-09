@@ -193,7 +193,7 @@ export default function Pencil() {
       <Center flexDir="row" marginRight="20px" marginLeft="20px" marginTop="10px">
         <Button
           _hover={{}}
-          colorScheme='brand' 
+          colorScheme="brand"
           variant={editor?.freeDrawer?.canvas?.isDrawingMode ? "solid" : "outline"}
           //background={editor?.freeDrawer?.canvas?.isDrawingMode ? "brand.500" : "inherit"}
           onClick={toggleDrawing}
@@ -223,6 +223,7 @@ export default function Pencil() {
               inputMode="decimal"
               pattern="[0-9]*(.[0-9]+)?"
               size={"xs"}
+              onKeyDown={(e) => e.key === "Enter" && makeChangeDraw("size", draw.sizePrev)}
               onChange={(e) => makeChangeInput("size", e.target.value)}
               onBlur={(e) => makeChangeDraw("size", e.target.value)}
             />
@@ -259,6 +260,7 @@ export default function Pencil() {
                 inputMode="decimal"
                 pattern="[0-9]*(.[0-9]+)?"
                 size={"xs"}
+                onKeyDown={(e) => e.key === "Enter" && makeChangeDraw("transparency", draw.opacityPrev)}
                 onChange={(e) => makeChangeInput("transparency", e.target.value)}
                 onBlur={(e) => makeChangeDraw("transparency", e.target.value)}
               />

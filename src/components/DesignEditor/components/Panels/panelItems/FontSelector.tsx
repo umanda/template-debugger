@@ -296,7 +296,12 @@ function TextSpacing() {
   }
 
   const applyTextChange = (type: string, e: any) => {
-    const value = e.target.value
+    let value: any
+    try {
+      value = e.target.value
+    } catch {
+      value = e
+    }
     if (editor) {
       if (type === "charSpacing") {
         if (value !== "") {
@@ -326,7 +331,6 @@ function TextSpacing() {
         <Box>Letter spacing</Box>
         <Slider value={state.charSpacing} onChange={(value: number) => handleChange("charSpacing", value)}>
           <SliderTrack>
-            RECENT COLORS
             <SliderFilledTrack />
           </SliderTrack>
           <SliderThumb />
@@ -338,6 +342,7 @@ function TextSpacing() {
           inputMode="decimal"
           pattern="[0-9]*(.[0-9]+)?"
           size="xs"
+          onKeyDown={(e) => e.key === "Enter" && applyTextChange("charSpacing", state.charSpacingTemp)}
           onChange={(e) => handleChange("charSpacingTemp", parseFloat(e.target.value))}
           onBlur={(e) => applyTextChange("charSpacing", e)}
         />
@@ -358,6 +363,7 @@ function TextSpacing() {
           inputMode="decimal"
           pattern="[0-9]*(.[0-9]+)?"
           size={"xs"}
+          onKeyDown={(e) => e.key === "Enter" && applyTextChange("lineHeight", state.lineHeightTemp)}
           onChange={(e) => handleChange("lineHeightTemp", parseFloat(e.target.value))}
           onBlur={(e) => applyTextChange("lineHeight", e)}
         />

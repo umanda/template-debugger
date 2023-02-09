@@ -62,7 +62,12 @@ export default function TextColorPicker() {
   }
 
   const applyTextChange = (e: any) => {
-    const value = e.target.value
+    let value: any
+    try {
+      value = e.target.value
+    } catch {
+      value = e
+    }
     if (editor) {
       setState({ ...state, opacity: value, opacityTemp: value })
       activeScene.objects.update({ opacity: value / 100 })
@@ -166,6 +171,7 @@ export default function TextColorPicker() {
           textColor="black"
           pattern="[0-9]*(.[0-9]+)?"
           size={"xs"}
+          onKeyDown={(e) => e.key === "Enter" && applyTextChange(state.opacityTemp)}
           onChange={(e) => onChange("sliderValueTemp", parseFloat(e.target.value))}
           onBlur={(e) => applyTextChange(e)}
         />
