@@ -80,13 +80,13 @@ export default function Layer() {
   }
 
   return (
-    <Flex h="full" width="320px" borderRight="1px solid #DDDFE5" padding="0.5rem">
+    <Flex h="full" width="300px" borderRight="1px solid #DDDFE5" padding="0.5rem">
       {objects.length === 0 ? (
-        <Center bg="red" w="full" h="full">
+        <Center w="full" h="full">
           No layer found
         </Center>
       ) : (
-        <Flex w="280px" h="full">
+        <Flex w="320px" h="full">
           <DragDropContext
             onDragEnd={(result) => {
               const { source, destination } = result
@@ -214,7 +214,7 @@ export default function Layer() {
         w="full"
         alignItems="center"
         height="45px"
-        marginRight="10px"
+        paddingRight="20px"
         justify="center"
         flex={1}
         flexDir="column"
