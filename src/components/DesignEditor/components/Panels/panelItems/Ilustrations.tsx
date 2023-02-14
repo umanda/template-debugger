@@ -589,7 +589,7 @@ export default function Ilustrations() {
             </InfiniteScroll>
           </Scrollable>
         ) : (
-          <Center bg="red" h="50%" w="full" textAlign="center">
+          <Center h="full" w="full" textAlign="center">
             {validateContent}
           </Center>
         )}

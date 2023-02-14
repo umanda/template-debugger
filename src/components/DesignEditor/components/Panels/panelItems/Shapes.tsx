@@ -248,54 +248,56 @@ export default function Shapes() {
           </TabList>
         </Tabs>
       </Box>
-      {validateContent === null ? (
-        <Scrollable>
-          <InfiniteScroll hasMore={!fetching} fetchData={fetchDataResource}>
-            {load ? (
-              <Flex flexDir="column">
-                <Grid templateColumns="repeat(4, 72px)" gap="5px">
-                  {resources?.map((obj: any, index: number) => {
-                    return (
-                      <GridItem
-                        sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
-                        onClick={() => addObject(obj)}
-                        key={index}
-                        border="1px #DDDFE5 solid"
-                        padding="2px"
-                        h="70px"
-                        onDragStart={(e) => onDragStart(e, obj)}
-                        _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
-                      >
-                        <Flex w="full" h="full">
-                          <LazyLoadImage url={obj.url} />
-                        </Flex>
-                      </GridItem>
-                    )
-                  })}
-                </Grid>
-                <Button
-                  w="full"
-                  marginBlock="5px"
-                  variant="outline"
-                  isLoading={loadMoreResources}
-                  disabled={fetching}
-                  onClick={fetchDataResource}
-                >
-                  {!fetching ? "Load more resources?" : "There are no more resources"}
-                </Button>
-              </Flex>
-            ) : (
-              <Center h="40rem" w="full">
-                <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-              </Center>
-            )}
-          </InfiniteScroll>
-        </Scrollable>
-      ) : (
-        <Center h="full" w="full" textAlign="center">
-          {validateContent}
-        </Center>
-      )}
+      <Flex w="full" h="full" flexDir="column">
+        {validateContent === null ? (
+          <Scrollable>
+            <InfiniteScroll hasMore={!fetching} fetchData={fetchDataResource}>
+              {load ? (
+                <Flex flexDir="column">
+                  <Grid templateColumns="repeat(4, 72px)" gap="5px">
+                    {resources?.map((obj: any, index: number) => {
+                      return (
+                        <GridItem
+                          sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+                          onClick={() => addObject(obj)}
+                          key={index}
+                          border="1px #DDDFE5 solid"
+                          padding="2px"
+                          h="70px"
+                          onDragStart={(e) => onDragStart(e, obj)}
+                          _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
+                        >
+                          <Flex w="full" h="full">
+                            <LazyLoadImage url={obj.url} />
+                          </Flex>
+                        </GridItem>
+                      )
+                    })}
+                  </Grid>
+                  <Button
+                    w="full"
+                    marginBlock="5px"
+                    variant="outline"
+                    isLoading={loadMoreResources}
+                    disabled={fetching}
+                    onClick={fetchDataResource}
+                  >
+                    {!fetching ? "Load more resources?" : "There are no more resources"}
+                  </Button>
+                </Flex>
+              ) : (
+                <Flex h="50%" w="full" align="end" justify="center">
+                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+                </Flex>
+              )}
+            </InfiniteScroll>
+          </Scrollable>
+        ) : (
+          <Center h="full" w="full" textAlign="center">
+            {validateContent}
+          </Center>
+        )}
+      </Flex>
     </Box>
   )
 }

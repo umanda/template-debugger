@@ -501,63 +501,65 @@ export default function Upload() {
           </TabList>
         </Tabs>
       </Box>
-      {validateContent === null ? (
-        <Flex h="full" w="full">
-          <Scrollable autoHide={true}>
-            <InfiniteScroll hasMore={!fetching} fetchData={fetchDataResource}>
-              {!loadMoreResources ? (
-                <Grid gap="0.5rem" padding="0 2rem 2rem" gridTemplateColumns="1fr 1fr">
-                  {resources?.map((upload: any, index: number) => (
-                    <GridItem
-                      key={index}
-                      border="1px solid #d0d0d0"
-                      _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
-                      boxSize="120px"
-                      onDragStart={(e) => onDragStart(e, upload)}
-                    >
-                      <IconButton
-                        position="absolute"
-                        marginTop="5.5rem"
-                        marginLeft="5.8rem"
-                        variant="ghost"
-                        aria-label="Like"
-                        size="xs"
-                        _hover={{ color: "#fd7e14" }}
+      <Flex w="full" h="full" flexDir="column">
+        {validateContent === null ? (
+          <Flex h="full" w="full">
+            <Scrollable autoHide={true}>
+              <InfiniteScroll hasMore={!fetching} fetchData={fetchDataResource}>
+                {!loadMoreResources ? (
+                  <Grid gap="0.5rem" padding="0 2rem 2rem" gridTemplateColumns="1fr 1fr">
+                    {resources?.map((upload: any, index: number) => (
+                      <GridItem
+                        key={index}
                         border="1px solid #d0d0d0"
-                        onClick={() => handleDelete(upload)}
-                        icon={<Trash size={20} />}
-                      />
-                      <Flex w="full" h="full" onClick={() => addImageToCanvas(upload.url, upload.id, upload.type)}>
-                        <LazyLoadImage url={upload?.url} />
-                        {/* <LoadImageUpload url={upload.new_url} urlBack={upload.old_url} /> */}
-                      </Flex>
+                        _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
+                        boxSize="120px"
+                        onDragStart={(e) => onDragStart(e, upload)}
+                      >
+                        <IconButton
+                          position="absolute"
+                          marginTop="5.5rem"
+                          marginLeft="5.8rem"
+                          variant="ghost"
+                          aria-label="Like"
+                          size="xs"
+                          _hover={{ color: "#fd7e14" }}
+                          border="1px solid #d0d0d0"
+                          onClick={() => handleDelete(upload)}
+                          icon={<Trash size={20} />}
+                        />
+                        <Flex w="full" h="full" onClick={() => addImageToCanvas(upload.url, upload.id, upload.type)}>
+                          <LazyLoadImage url={upload?.url} />
+                          {/* <LoadImageUpload url={upload.new_url} urlBack={upload.old_url} /> */}
+                        </Flex>
+                      </GridItem>
+                    ))}
+                    <GridItem colSpan={2}>
+                      <Button
+                        w="full"
+                        variant="outline"
+                        isLoading={loadMoreResources}
+                        isDisabled={fetching}
+                        onClick={fetchDataResource}
+                      >
+                        {fetching ? "There are no more resources" : "Load more resources?"}
+                      </Button>
                     </GridItem>
-                  ))}
-                  <GridItem colSpan={2}>
-                    <Button
-                      w="full"
-                      variant="outline"
-                      isLoading={loadMoreResources}
-                      isDisabled={fetching}
-                      onClick={fetchDataResource}
-                    >
-                      {fetching ? "There are no more resources" : "Load more resources?"}
-                    </Button>
-                  </GridItem>
-                </Grid>
-              ) : (
-                <Center h="400px" w="full">
-                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-                </Center>
-              )}
-            </InfiniteScroll>
-          </Scrollable>
-        </Flex>
-      ) : (
-        <Center h="full" w="full" textAlign="center">
-          {validateContent}
-        </Center>
-      )}
+                  </Grid>
+                ) : (
+                  <Flex h="50%" w="full" align="end" justify="center">
+                    <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+                  </Flex>
+                )}
+              </InfiniteScroll>
+            </Scrollable>
+          </Flex>
+        ) : (
+          <Center h="full" w="full" textAlign="center">
+            {validateContent}
+          </Center>
+        )}
+      </Flex>
     </Box>
   )
 }
