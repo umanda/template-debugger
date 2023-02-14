@@ -174,7 +174,8 @@ export default function Canva() {
             guidelines: {
               enabled: true,
               color: ""
-            }
+            },
+            shortcuts: false
           }}
         />
       </Flex>

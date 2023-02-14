@@ -230,7 +230,7 @@ export default function Common() {
                         </Center>
                         - Object Move Right
                       </Flex>
-                      <Flex flexDir="row">
+                      <Flex align="center" flexDir="row">
                         Ctrl +
                         <label
                           style={{
@@ -246,7 +246,7 @@ export default function Common() {
                         </label>
                         - Zoom out
                       </Flex>
-                      <Flex flexDir="row">
+                      <Flex align="center" flexDir="row">
                         Ctrl +
                         <label
                           style={{

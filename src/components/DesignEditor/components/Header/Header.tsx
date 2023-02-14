@@ -13,7 +13,7 @@ import {
   useToast
 } from "@chakra-ui/react"
 import { Popover, PopoverArrow, PopoverContent, PopoverTrigger } from "@chakra-ui/react"
-import { useActiveScene, useDesign, useEditor, useScenes, useZoomRatio } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useDesign, useEditor, useScenes, useZoomRatio } from "@layerhub-pro/react"
 import { useSelector } from "react-redux"
 import { useEffect, useState } from "react"
 import * as api from "../../../services/api"
@@ -740,6 +740,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const [stateJson, setStateJson] = useState<any>("")
   const [stateChange] = useDebounce(stateJson, 5000)
   const zoom = useZoomRatio()
+  const activeObject: any = useActiveObject()
 
   document.onkeydown = function (e) {
     if (
@@ -753,6 +754,9 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         e.keyCode === 68 ||
         e.keyCode === 83 ||
         e.keyCode === 65 ||
+        e.keyCode === 90 ||
+        e.keyCode === 46 ||
+        e.keyCode === 89 ||
         e.keyCode === 64)
     ) {
       if (e.ctrlKey && e.keyCode === 107) editor.zoom.zoomToRatio(zoom + 0.05)
@@ -766,10 +770,11 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         })
         editor.zoom.zoomToRatio(zoom - 0.0000000000001 + 0.0000000000001)
       }
+      if (e.ctrlKey && e.keyCode === 90) activeScene.history.undo()
+      if (e.ctrlKey && e.keyCode === 89) activeScene.history.redo()
+      if (e.keyCode === 46) activeScene.objects.removeById(activeObject?.id)
       return false
-    } else {
-      return true
-    }
+    } else return true
   }
 
   useEffect(() => {

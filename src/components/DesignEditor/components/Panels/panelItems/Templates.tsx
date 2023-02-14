@@ -58,7 +58,7 @@ const initialQuery = {
   query: {
     visibility: "public"
   },
-  sorts: []
+  sorts: ["ALPHABETIC"]
 }
 
 export default function Template() {
@@ -136,7 +136,7 @@ export default function Template() {
             query: {
               visibility: "public"
             },
-            sorts: []
+            sorts: ["ALPHABETIC"]
           })
         )
       ).payload) as IDesign[]
@@ -147,7 +147,7 @@ export default function Template() {
         page: resourcesTemplate.length / 10 + 1,
         limit: 10,
         query: {
-          drawifier_ids: orderDrawifier[0]?.length > 0 ? orderDrawifier : undefined,
+          drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
           names: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
           visibility: "public",
           favorited: stateFavorite ? true : undefined,
@@ -194,7 +194,6 @@ export default function Template() {
         })
         await activeScene.setScene(designData.scenes[0])
 
-        // console.log(activeScene.layers)
         // activeScene.objects.update({ watermark: "https://ik.imagekit.io/scenify/drawify-small.svg" })
 
         // } else {
@@ -340,11 +339,11 @@ export default function Template() {
             <PopoverArrow />
             <PopoverBody id="input">
               <Flex id="input" flexDir="column" fontSize="12px" gap="5px">
-                <Flex id="input">
+                {/* <Flex id="input">
                   <Text id="input">Recent searches</Text>
                   <Spacer id="input" />
                   <Text id="input">Erase</Text>
-                </Flex>
+                </Flex> */}
                 <Flex id="input">Suggestion</Flex>
                 {contentInput?.words.map(
                   (obj, index) =>
@@ -408,7 +407,7 @@ export default function Template() {
                 setValidateContent(null)
                 setMore(false)
                 setOrder(["ALPHABETIC"])
-                setOrderDrawifier([""])
+                setOrderDrawifier([])
                 initialState()
                 setListRecommend({ words: [] })
               }}

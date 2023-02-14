@@ -51,7 +51,6 @@ export default function VectorColorPicker() {
 
   const changeBackgroundColor = throttle((prev: string, next: string) => {
     const objectRef = activeObject
-    console.log(next)
     setColors({
       ...colors,
       colorMap: {

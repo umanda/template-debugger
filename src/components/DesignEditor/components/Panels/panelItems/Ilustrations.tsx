@@ -106,6 +106,7 @@ export default function Ilustrations() {
   const projectSelect = useSelector(selectProject)
   const [page, setPage] = useState<number>(0)
   const filterResource = localStorage.getItem("drawing_filter")
+  const listDrawifiers: any = useSelector(selectListDrawifiers)
 
   useEffect(() => {
     if (filterResource !== undefined && filterResource !== null) {
@@ -116,7 +117,7 @@ export default function Ilustrations() {
   }, [])
 
   useEffect(() => {
-    filterResource === undefined && initialState()
+    filterResource === null && initialState()
   }, [user])
 
   const initialState = useCallback(async () => {
@@ -161,9 +162,9 @@ export default function Ilustrations() {
         page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page,
         limit: 10,
         query: {
-          drawifier_ids: orderDrawifier[0]?.length > 0 ? orderDrawifier : undefined,
+          drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
           visibility: "public",
-          keywords: nameIllustration[0] === "" ? undefined : nameIllustration,
+          keywords: nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
           categories: [],
           favorited: stateFavorite ? true : undefined,
           used: stateRecent ? true : undefined
@@ -241,7 +242,26 @@ export default function Ilustrations() {
     setDisableTab(true)
 
     if (input) {
-      setNameIllustration(input)
+      setOrderDrawifier([""])
+      const resolve = listDrawifiers.drawifiers.map((d) => {
+        const resolve = input[0].split(" ").filter((i) => {
+          if (i.toLocaleLowerCase() === d.first_name.toLocaleLowerCase()) {
+            setOrderDrawifier([d.id])
+            return d.first_name
+          } else if (i.toLocaleLowerCase() === d.last_name.toLocaleLowerCase()) {
+            setOrderDrawifier([d.id])
+            return d.last_name
+          }
+        })
+        if (resolve[0]) {
+          return resolve[0]
+        }
+      })
+      const param = resolve.find((r) => r !== undefined && r)
+      const value = input[0].split(" ").filter((i) => i !== param && i)
+      value[0] !== undefined
+        ? setNameIllustration(input[0].split(" ").filter((i) => i !== param && i))
+        : setNameIllustration([""])
       setResourcesIllustration([])
       if (input[0] === "") {
         setListRecommend({ words: [] })
@@ -369,11 +389,11 @@ export default function Ilustrations() {
             <PopoverArrow />
             <PopoverBody id="input">
               <Flex id="input" flexDir="column" fontSize="12px" gap="5px">
-                <Flex id="input">
+                {/* <Flex id="input">
                   <Text id="input">Recent searches</Text>
                   <Spacer id="input" />
                   <Text id="input">Erase</Text>
-                </Flex>
+                </Flex> */}
                 <Flex id="input">Suggestion</Flex>
                 {contentInput?.words.map(
                   (obj, index) =>
@@ -490,7 +510,7 @@ export default function Ilustrations() {
                         bg="linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5578606442577031) 27%, rgba(0,212,255,0) 100%)"
                       ></Flex>
                       <Grid gap="2px" templateColumns="repeat(2, 1fr)">
-                        {r?.drawings.map(
+                        {r?.drawings?.map(
                           (illustration, index) =>
                             illustration && (
                               <IllustrationItem
