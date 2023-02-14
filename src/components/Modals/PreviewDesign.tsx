@@ -10,7 +10,8 @@ import {
   ModalBody,
   ModalHeader,
   Button,
-  Spacer
+  Spacer,
+  Center
 } from "@chakra-ui/react"
 import { useEditor, useScenes } from "@layerhub-pro/react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -77,7 +78,7 @@ function PreviewModal() {
   return (
     <Modal size="full" isOpen={isOpenPreview} onClose={onClosePreview}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent overflow="hidden">
         <ModalHeader>
           <Flex>
             <IconButton variant="ghost" aria-label="Home" icon={<Home size={30} />} onClick={onClosePreview} />
@@ -88,60 +89,60 @@ function PreviewModal() {
           </Flex>
         </ModalHeader>
         {/* <ModalCloseButton /> */}
-        <ModalBody>
-          <Flex flexDir="column" h="100%" w="full">
+        <ModalBody flexDir="column">
+          <Center draggable={false} w="90vw" marginRight="10vw">
             <Flex h="80vh">
-              <AnimatePresence initial={false} custom={direction}>
-                <motion.img
-                  src={images[imageIndex]}
-                  custom={direction}
-                  variants={variants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{
-                    x: { type: "spring", stiffness: 300, damping: 30 },
-                    opacity: { duration: 0.2 }
-                  }}
-                  drag="x"
-                  dragConstraints={{ left: 0, right: 0 }}
-                  dragElastic={1}
-                  onDragEnd={(e, { offset, velocity }) => {
-                    const swipe = swipePower(offset.x, velocity.x)
-                    if (swipe < -swipeConfidenceThreshold) {
-                      paginate(1)
-                    } else if (swipe > swipeConfidenceThreshold) {
-                      paginate(-1)
-                    }
-                  }}
-                />
-              </AnimatePresence>
+              <Flex h="full" boxShadow="rgba(0, 0, 0, 0.35) 0px 5px 15px">
+                <AnimatePresence initial={false} custom={direction}>
+                  <motion.img
+                    src={images[imageIndex]}
+                    custom={direction}
+                    variants={variants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{
+                      x: { type: "spring", stiffness: 300, damping: 30 },
+                      opacity: { duration: 0.2 }
+                    }}
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={1}
+                    onDragEnd={(e, { offset, velocity }) => {
+                      const swipe = swipePower(offset.x, velocity.x)
+                      if (swipe < -swipeConfidenceThreshold) {
+                        paginate(1)
+                      } else if (swipe > swipeConfidenceThreshold) {
+                        paginate(-1)
+                      }
+                    }}
+                  />
+                </AnimatePresence>
+              </Flex>
             </Flex>
-            <Flex w="full" flexDir="row">
-              {/* <Flex position="absolute" display={`${imageIndex == 0 ? "none" : "block"}`}> */}
-              <IconButton
-                visibility={`${imageIndex == 0 ? "visible" : "hidden"}`}
-                onClick={() => paginate(-1)}
-                size="md"
-                variant={"outline"}
-                aria-label="left arrow"
-                icon={<LeftArrow size={20} />}
-              >
-                Left
-              </IconButton>
-              <Spacer />
-              {/* <Flex position="absolute" display={`${imageIndex >= scenes.length - 1 ? "none" : "block"}`}> */}
-              <IconButton
-                visibility={`${imageIndex >= scenes.length - 1 ? "visible" : "hidden"}`}
-                onClick={() => paginate(1)}
-                size="md"
-                variant={"outline"}
-                aria-label="right arrow"
-                icon={<RightArrow size={20} />}
-              >
-                Right
-              </IconButton>
-            </Flex>
+          </Center>
+          <Flex w="full" flexDir="row">
+            <IconButton
+              visibility={`${imageIndex == 0 ? "visible" : "hidden"}`}
+              onClick={() => paginate(-1)}
+              size="md"
+              variant={"outline"}
+              aria-label="left arrow"
+              icon={<LeftArrow size={20} />}
+            >
+              Left
+            </IconButton>
+            <Spacer />
+            <IconButton
+              visibility={`${imageIndex >= scenes.length - 1 ? "visible" : "hidden"}`}
+              onClick={() => paginate(1)}
+              size="md"
+              variant={"outline"}
+              aria-label="right arrow"
+              icon={<RightArrow size={20} />}
+            >
+              Right
+            </IconButton>
           </Flex>
         </ModalBody>
       </ModalContent>
