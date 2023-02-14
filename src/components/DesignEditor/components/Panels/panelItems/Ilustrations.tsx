@@ -582,14 +582,14 @@ export default function Ilustrations() {
                   </Flex>
                 )
               ) : (
-                <Center h="100%" w="full">
+                <Flex h="50%" w="full" align="end" justify="center">
                   <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-                </Center>
+                </Flex>
               )}
             </InfiniteScroll>
           </Scrollable>
         ) : (
-          <Center bg="red" h="full" w="full" textAlign="center">
+          <Center bg="red" h="50%" w="full" textAlign="center">
             {validateContent}
           </Center>
         )}

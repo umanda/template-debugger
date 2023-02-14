@@ -489,9 +489,9 @@ export default function Template() {
                   </Button>
                 </Flex>
               ) : (
-                <Center h="50vh" w="full">
+                <Flex h="50%" w="full" align="end" justify="center">
                   <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-                </Center>
+                </Flex>
               )}
             </InfiniteScroll>
           </Scrollable>
