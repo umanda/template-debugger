@@ -117,6 +117,7 @@ export default function Template() {
   }, [selectListFavoriteTemplates, user, defaultRecommend])
 
   const fetchDataResource = async () => {
+    console.log("fecth data")
     setMore(false)
     setLoadMoreResources(true)
     if (
@@ -177,10 +178,7 @@ export default function Template() {
   const loadTemplateById = React.useCallback(
     async (template: any) => {
       try {
-        // if (user?.plan !== "FREE") {
-        // @ts-ignore
         setDesignEditorLoading({ isLoading: true, preview: template.preview })
-        // user && api.getUseTemplate({ template_id: template.id, project_id: projectSelector.id })
         let designData: any = await api.getTemplateById(template.id)
         designData.scenes[0].frame = designData.frame
         designData.scenes[0].layers.map((layer) => {
@@ -192,17 +190,8 @@ export default function Template() {
             layer.watermark = watermarkURL
           }
         })
+        console.log(designData)
         await activeScene.setScene(designData.scenes[0])
-
-        // activeScene.objects.update({ watermark: "https://ik.imagekit.io/scenify/drawify-small.svg" })
-
-        // } else {
-        //   toast({
-        //     title: "Subscribe to use this feature.",
-        //     position: "top",
-        //     isClosable: true
-        //   })
-        // }
       } catch (err) {}
     },
     [design, activeScene, projectSelector, user, toast]
@@ -217,6 +206,7 @@ export default function Template() {
     stateFavorites?: boolean
     stateRecents?: boolean
   }) => {
+    console.log("make filter")
     setMore(true)
     setLoad(false)
     setDisableTab(false)
