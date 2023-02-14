@@ -1,13 +1,14 @@
 import React from "react"
-import { Box } from "@chakra-ui/react"
+import { Box, Flex } from "@chakra-ui/react"
 
 interface Props {
   children: React.ReactNode
   fetchData: () => void
   hasMore: boolean
+  activeSpinner?: boolean
 }
 
-function InfiniteScroll({ children, fetchData, hasMore }: Props) {
+function InfiniteScroll({ children, fetchData, hasMore, activeSpinner }: Props) {
   const lastElementRef = React.useRef<HTMLDivElement | null>(null)
 
   React.useEffect(() => {
@@ -34,7 +35,7 @@ function InfiniteScroll({ children, fetchData, hasMore }: Props) {
   }, [fetchData])
 
   return (
-    <Box>
+    <Box h="full">
       {children}
       <Box h="1px" ref={lastElementRef}></Box>
     </Box>

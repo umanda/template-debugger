@@ -117,7 +117,6 @@ export default function Template() {
   }, [selectListFavoriteTemplates, user, defaultRecommend])
 
   const fetchDataResource = async () => {
-    console.log("fecth data")
     setMore(false)
     setLoadMoreResources(true)
     if (
@@ -190,7 +189,6 @@ export default function Template() {
             layer.watermark = watermarkURL
           }
         })
-        console.log(designData)
         await activeScene.setScene(designData.scenes[0])
       } catch (err) {}
     },
@@ -206,7 +204,6 @@ export default function Template() {
     stateFavorites?: boolean
     stateRecents?: boolean
   }) => {
-    console.log("make filter")
     setMore(true)
     setLoad(false)
     setDisableTab(false)
@@ -425,83 +422,85 @@ export default function Template() {
           </TabList>
         </Tabs>
       </Box>
-      {validateContent === null ? (
-        <Scrollable autoHide={true}>
-          <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
-            {load ? (
-              <Flex flexDir="column">
-                <Box display="grid" gridTemplateColumns="1fr" padding="0.5rem">
-                  {resourcesTemplate.map((template: any, index) => {
-                    return (
-                      <Box
-                        paddingTop={"5px"}
-                        borderRadius={"2px"}
-                        marginBottom={"10px"}
-                        alignItems={"center"}
-                        display={"flex"}
-                        flexDirection="column"
-                        key={index}
-                        _hover={{
-                          border: "3px solid #5456F5"
-                        }}
-                      >
-                        <Flex
-                          maxH="full"
-                          minH="150px"
-                          w="full"
-                          border="1px solid #d0d0d0"
-                          _hover={{ cursor: "pointer" }}
-                          onClick={() => loadTemplateById(template)}
+      <Flex w="full" h="full" flexDir="column">
+        {validateContent === null ? (
+          <Scrollable autoHide={true}>
+            <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
+              {load ? (
+                <Flex flexDir="column">
+                  <Box display="grid" gridTemplateColumns="1fr" padding="0.5rem">
+                    {resourcesTemplate.map((template: any, index) => {
+                      return (
+                        <Box
+                          paddingTop={"5px"}
+                          borderRadius={"2px"}
+                          marginBottom={"10px"}
+                          alignItems={"center"}
+                          display={"flex"}
+                          flexDirection="column"
+                          key={index}
+                          _hover={{
+                            border: "3px solid #5456F5"
+                          }}
                         >
-                          {/* @ts-ignore */}
-                          <LazyLoadImage url={template.preview} />
-                        </Flex>
-                        <Flex fontSize={"12px"} align="center" flexDirection={"row"} w="100%" padding="3px">
-                          <Text color="#545465" fontWeight={400}>
-                            {template.name}
-                          </Text>
-                          <Spacer />
-                          {template.license === "paid" && (
-                            <Center bg="#F6D056" color="white" borderRadius="4px" boxSize="21px">
-                              <Pro size={20} />
-                            </Center>
-                          )}
-                          {user && (
-                            <IconButtonLike
-                              listFavorite={selectListFavoriteTemplates}
-                              template={template}
-                              setListTemplates={setResourcesTemplate}
-                              listTemplates={resourcesTemplate}
-                              stateFavorite={stateFavorite}
-                            />
-                          )}
-                        </Flex>
-                      </Box>
-                    )
-                  })}
-                </Box>
-                <Button
-                  w="full"
-                  variant="outline"
-                  isLoading={loadMoreResources}
-                  isDisabled={!more}
-                  onClick={fetchDataResource}
-                >
-                  {more ? "Load more resources?" : "There are no more resources"}
-                </Button>
-              </Flex>
-            ) : (
-              <Center h="40rem" w="full">
-                <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-              </Center>
-            )}
-          </InfiniteScroll>
-        </Scrollable>
-      ) : (
-        <Center h="full" w="full" textAlign="center">
-          {validateContent}
-        </Center>
-      )}
+                          <Flex
+                            maxH="full"
+                            minH="150px"
+                            w="full"
+                            border="1px solid #d0d0d0"
+                            _hover={{ cursor: "pointer" }}
+                            onClick={() => loadTemplateById(template)}
+                          >
+                            {/* @ts-ignore */}
+                            <LazyLoadImage url={template.preview} />
+                          </Flex>
+                          <Flex fontSize={"12px"} align="center" flexDirection={"row"} w="100%" padding="3px">
+                            <Text color="#545465" fontWeight={400}>
+                              {template.name}
+                            </Text>
+                            <Spacer />
+                            {template.license === "paid" && (
+                              <Center bg="#F6D056" color="white" borderRadius="4px" boxSize="21px">
+                                <Pro size={20} />
+                              </Center>
+                            )}
+                            {user && (
+                              <IconButtonLike
+                                listFavorite={selectListFavoriteTemplates}
+                                template={template}
+                                setListTemplates={setResourcesTemplate}
+                                listTemplates={resourcesTemplate}
+                                stateFavorite={stateFavorite}
+                              />
+                            )}
+                          </Flex>
+                        </Box>
+                      )
+                    })}
+                  </Box>
+                  <Button
+                    w="full"
+                    variant="outline"
+                    isLoading={loadMoreResources}
+                    isDisabled={!more}
+                    onClick={fetchDataResource}
+                  >
+                    {more ? "Load more resources?" : "There are no more resources"}
+                  </Button>
+                </Flex>
+              ) : (
+                <Center h="50vh" w="full">
+                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+                </Center>
+              )}
+            </InfiniteScroll>
+          </Scrollable>
+        ) : (
+          <Center h="full" w="full" textAlign="center">
+            {validateContent}
+          </Center>
+        )}
+      </Flex>
     </Box>
   )
 }

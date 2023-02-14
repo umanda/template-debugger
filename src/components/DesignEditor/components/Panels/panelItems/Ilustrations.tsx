@@ -487,46 +487,47 @@ export default function Ilustrations() {
           </TabList>
         </Tabs>
       </Box>
-      {validateContent === null ? (
-        <Scrollable autoHide={true}>
-          <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
-            {load ? (
-              nameIllustration[0] !== "" ? (
-                <Flex marginTop="20px" marginInline="20px" flexDir="column">
-                  {resourcesIllustration?.map((r, index) => (
-                    <Flex flexDir="column" key={index} gap="5px" alignItems="center">
-                      <Flex w="full">
-                        <Avatar size="md" name={r?.drawifier_name} src={r?.avatar} />
-                        <Center marginLeft="20px" flexDirection="column">
-                          <Box sx={{ fontSize: "12px" }} fontWeight="bold">
-                            {limitCharacters(r?.drawifier_name)}
-                          </Box>
-                          <Box sx={{ fontSize: "12px" }}>{`Found ${r?.count_drawings} drawings`}</Box>
-                        </Center>
+      <Flex w="full" h="full" flexDir="column">
+        {validateContent === null ? (
+          <Scrollable autoHide={true}>
+            <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
+              {load ? (
+                nameIllustration[0] !== "" ? (
+                  <Flex marginTop="20px" marginInline="20px" flexDir="column">
+                    {resourcesIllustration?.map((r, index) => (
+                      <Flex flexDir="column" key={index} gap="5px" alignItems="center">
+                        <Flex w="full">
+                          <Avatar size="md" name={r?.drawifier_name} src={r?.avatar} />
+                          <Center marginLeft="20px" flexDirection="column">
+                            <Box sx={{ fontSize: "12px" }} fontWeight="bold">
+                              {limitCharacters(r?.drawifier_name)}
+                            </Box>
+                            <Box sx={{ fontSize: "12px" }}>{`Found ${r?.count_drawings} drawings`}</Box>
+                          </Center>
+                        </Flex>
+                        <Flex
+                          h="1px"
+                          w="full"
+                          bg="linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5578606442577031) 27%, rgba(0,212,255,0) 100%)"
+                        ></Flex>
+                        <Grid gap="2px" templateColumns="repeat(2, 1fr)">
+                          {r?.drawings?.map(
+                            (illustration, index) =>
+                              illustration && (
+                                <IllustrationItem
+                                  makeFavorite={makeFavorite}
+                                  onDragStart={onDragStart}
+                                  addObject={() => addObject(illustration)}
+                                  illustration={illustration}
+                                  key={index}
+                                  listFavorite={selectListFavoriteResources}
+                                />
+                              )
+                          )}
+                        </Grid>
                       </Flex>
-                      <Flex
-                        h="1px"
-                        w="full"
-                        bg="linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5578606442577031) 27%, rgba(0,212,255,0) 100%)"
-                      ></Flex>
-                      <Grid gap="2px" templateColumns="repeat(2, 1fr)">
-                        {r?.drawings?.map(
-                          (illustration, index) =>
-                            illustration && (
-                              <IllustrationItem
-                                makeFavorite={makeFavorite}
-                                onDragStart={onDragStart}
-                                addObject={() => addObject(illustration)}
-                                illustration={illustration}
-                                key={index}
-                                listFavorite={selectListFavoriteResources}
-                              />
-                            )
-                        )}
-                      </Grid>
-                    </Flex>
-                  ))}
-                  {/* <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
+                    ))}
+                    {/* <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
                     {resourcesIllustration.map(
                       (illustration, index) =>
                         illustration && (
@@ -542,56 +543,57 @@ export default function Ilustrations() {
                     )}
                   </Box> */}
 
-                  <Button
-                    w="full"
-                    variant="outline"
-                    isLoading={loadMoreResources}
-                    isDisabled={!more}
-                    onClick={fetchDataResource}
-                  >
-                    {more ? "Load more resources?" : "There are no more resources"}
-                  </Button>
-                </Flex>
+                    <Button
+                      w="full"
+                      variant="outline"
+                      isLoading={loadMoreResources}
+                      isDisabled={!more}
+                      onClick={fetchDataResource}
+                    >
+                      {more ? "Load more resources?" : "There are no more resources"}
+                    </Button>
+                  </Flex>
+                ) : (
+                  <Flex flexDir="column">
+                    <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
+                      {resourcesIllustration.map(
+                        (illustration, index) =>
+                          illustration && (
+                            <IllustrationItem
+                              makeFavorite={makeFavorite}
+                              onDragStart={onDragStart}
+                              addObject={() => addObject(illustration)}
+                              illustration={illustration}
+                              key={index}
+                              listFavorite={selectListFavoriteResources}
+                            />
+                          )
+                      )}
+                    </Box>
+                    <Button
+                      w="full"
+                      variant="outline"
+                      isLoading={loadMoreResources}
+                      isDisabled={!more}
+                      onClick={fetchDataResource}
+                    >
+                      {more ? "Load more resources?" : "There are no more resources"}
+                    </Button>
+                  </Flex>
+                )
               ) : (
-                <Flex flexDir="column">
-                  <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
-                    {resourcesIllustration.map(
-                      (illustration, index) =>
-                        illustration && (
-                          <IllustrationItem
-                            makeFavorite={makeFavorite}
-                            onDragStart={onDragStart}
-                            addObject={() => addObject(illustration)}
-                            illustration={illustration}
-                            key={index}
-                            listFavorite={selectListFavoriteResources}
-                          />
-                        )
-                    )}
-                  </Box>
-                  <Button
-                    w="full"
-                    variant="outline"
-                    isLoading={loadMoreResources}
-                    isDisabled={!more}
-                    onClick={fetchDataResource}
-                  >
-                    {more ? "Load more resources?" : "There are no more resources"}
-                  </Button>
-                </Flex>
-              )
-            ) : (
-              <Center h="40rem" w="full">
-                <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-              </Center>
-            )}
-          </InfiniteScroll>
-        </Scrollable>
-      ) : (
-        <Center h="full" w="full" textAlign="center">
-          {validateContent}
-        </Center>
-      )}
+                <Center h="100%" w="full">
+                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+                </Center>
+              )}
+            </InfiniteScroll>
+          </Scrollable>
+        ) : (
+          <Center bg="red" h="full" w="full" textAlign="center">
+            {validateContent}
+          </Center>
+        )}
+      </Flex>
     </Box>
   )
 }

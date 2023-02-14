@@ -40,7 +40,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
           resolve?.plan ? setState(!state) : (window.location.href = redirectHome)
         }
       } else {
-        window.location.href = redirectHome
+        // window.location.href = redirectHome
       }
     }
     id === undefined && navigate(`/composer/${generateId("", 10)}`)
