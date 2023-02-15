@@ -129,20 +129,17 @@ function PreviewModal() {
               variant={"outline"}
               aria-label="left arrow"
               icon={<LeftArrow size={20} />}
-            >
-              Left
-            </IconButton>
+            />
             <Spacer />
             <IconButton
+              zIndex={99}
               visibility={`${imageIndex >= scenes.length - 1 ? "hidden" : "visible"}`}
               onClick={() => paginate(1)}
               size="md"
               variant={"outline"}
               aria-label="right arrow"
               icon={<RightArrow size={20} />}
-            >
-              Right
-            </IconButton>
+            />
           </Flex>
         </ModalBody>
       </ModalContent>
