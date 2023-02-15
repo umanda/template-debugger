@@ -455,7 +455,7 @@ export default function Upload() {
           variant="outline"
           size="sm"
         >
-          JPGE
+          JPG
         </Button>
       </Flex>
       <Flex margin={"0 1rem"} style={{ display: "flex" }}>
