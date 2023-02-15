@@ -75,6 +75,8 @@ function PreviewModal() {
     setOptions({ ...options, maxIndex: previews.length })
   }, [])
 
+  console.log(imageIndex)
+
   return (
     <Modal size="full" isOpen={isOpenPreview} onClose={onClosePreview}>
       <ModalOverlay />
@@ -90,7 +92,7 @@ function PreviewModal() {
         </ModalHeader>
         {/* <ModalCloseButton /> */}
         <ModalBody flexDir="column">
-          <Center draggable={false} w="90vw" marginRight="10vw">
+          <Center marginLeft="40px" draggable={false} w="90vw" marginRight="10vw">
             <Flex h="80vh">
               <Flex h="full" boxShadow="rgba(0, 0, 0, 0.35) 0px 5px 15px">
                 <AnimatePresence initial={false} custom={direction}>
@@ -121,9 +123,9 @@ function PreviewModal() {
               </Flex>
             </Flex>
           </Center>
-          <Flex w="full" flexDir="row">
+          <Flex marginTop="10px" w="full" flexDir="row">
             <IconButton
-              visibility={`${imageIndex == 0 ? "visible" : "hidden"}`}
+              visibility={`${imageIndex === 0 ? "hidden" : "visible"}`}
               onClick={() => paginate(-1)}
               size="md"
               variant={"outline"}
@@ -134,7 +136,7 @@ function PreviewModal() {
             </IconButton>
             <Spacer />
             <IconButton
-              visibility={`${imageIndex >= scenes.length - 1 ? "visible" : "hidden"}`}
+              visibility={`${imageIndex >= scenes.length - 1 ? "hidden" : "visible"}`}
               onClick={() => paginate(1)}
               size="md"
               variant={"outline"}
