@@ -75,8 +75,6 @@ function PreviewModal() {
     setOptions({ ...options, maxIndex: previews.length })
   }, [])
 
-  console.log(imageIndex)
-
   return (
     <Modal size="full" isOpen={isOpenPreview} onClose={onClosePreview}>
       <ModalOverlay />
