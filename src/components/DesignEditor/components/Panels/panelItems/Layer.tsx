@@ -80,7 +80,7 @@ export default function Layer() {
   }
 
   return (
-    <Flex h="full" width="300px" borderRight="1px solid #DDDFE5" padding="0.5rem">
+    <Flex h="full" width="300px" padding="0.5rem">
       {objects.length === 0 ? (
         <Center w="full" h="full">
           No layer found
@@ -97,7 +97,7 @@ export default function Layer() {
               setObjects((prevTasks) => reorder(prevTasks, source.index, destination.index))
             }}
           >
-            <Flex w="full" h="full">
+            <Flex w="full" h="full" flexDir="column">
               <Scrollable autoHide={true}>
                 <Droppable droppableId="key">
                   {(droppableProvided) => (
