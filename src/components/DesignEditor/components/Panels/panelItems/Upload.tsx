@@ -39,6 +39,8 @@ import { IUpload } from "../../../../interfaces/editor"
 import Trash from "../../../../Icons/Trash"
 import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "../../../../store/resources/action"
 import { selectUploads } from "../../../../store/resources/selector"
+const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
+const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
 const initialQuery = {
   page: 1,
@@ -207,8 +209,11 @@ export default function Upload() {
   )
 
   const addImageToCanvas = useCallback(
-    async (url: any, id: string, type?: string) => {
-      await api.getUseUploads(id)
+    async (url: string, id: string, type?: string) => {
+      if (url.includes(defaultPreviewTemplate)) url = url.replace(defaultPreviewTemplate, replacePreviewTemplate)
+      try {
+        await api.getUseUploads(id)
+      } catch {}
       let typeURL = ""
       type === "svg" ? (typeURL = "StaticVector") : (typeURL = "StaticImage")
       const options: any = {
@@ -503,7 +508,7 @@ export default function Upload() {
       </Box>
       <Flex w="full" h="full" flexDir="column">
         {validateContent === null ? (
-          <Flex h="full" w="full">
+          <Flex h="full" w="full" flexDir="column">
             <Scrollable autoHide={true}>
               <InfiniteScroll hasMore={!fetching} fetchData={fetchDataResource}>
                 {!loadMoreResources ? (

@@ -1,6 +1,7 @@
 import { createReducer } from "@reduxjs/toolkit"
 import {
   addResourceComposite,
+  addUpload,
   clearResourceComposite,
   clearResourceUpload,
   closeUploading,
@@ -81,6 +82,9 @@ export const uploadsReducer = createReducer(initialState, (builder) => {
   })
   builder.addCase(clearResourceUpload, (state, { payload }) => {
     state.uploads = payload
+  })
+  builder.addCase(addUpload, (state, { payload }) => {
+    state.uploads = payload.concat(state.uploads)
   })
 })
 interface ListResourceComposite {

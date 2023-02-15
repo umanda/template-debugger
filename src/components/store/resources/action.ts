@@ -27,6 +27,7 @@ export const deleteResource = createAction<IUpload>("uploads/deleteResource")
 export const addResourceComposite = createAction<IResolveComponent>("resources/addResourceComposite")
 export const setIdDeleteResourceComposite = createAction<string>("resources/setIdDeleteResourceComposite")
 export const setListResourceComposite = createAction<IResolveComponent>("resources/setResourceComposite")
+export const addUpload = createAction<interfaceUploads[]>("resources/setAddUpload")
 
 export const getFavoritedResources = createAsyncThunk<void, SearchResourceDto, any>(
   "resources/getFavoritedResources",
@@ -45,7 +46,9 @@ export const getListResourcesImages = createAsyncThunk<void, SearchResourceDto, 
       const resources: any = await api.getListResourcesImages(args)
       dispatch(setResourcesImages(resources))
       return resources
-    } catch (err) {}
+    } catch (err) {
+      return err
+    }
   }
 )
 export const makeFavoriteResource = createAsyncThunk<any, IResource, { rejectValue: void }>(
@@ -94,7 +97,7 @@ export const uploadFile = createAsyncThunk<void, { file: File; nameFile: string 
     const response = await api.getSignedURLForUpload({ filename: updatedFileName, type: "IMAGE" })
     const contentType = mime.getType(updatedFileName) as string
     const save: any = await api.getSave({ filename: updatedFileName, name: args.nameFile.split(".")[0] })
-    dispatch(setUploads([save.image]))
+    dispatch(addUpload([save.image]))
     await axios.put(response.signed_urls[0].signed_url, updatedFile, {
       headers: { "Content-Type": contentType },
       onUploadProgress: (progressEvent: any) => {
@@ -155,7 +158,7 @@ export const getListResourcesComposite = createAsyncThunk<void, any, any>(
       dispatch(setListResourceComposite(resolve))
       return resolve
     } catch (err) {
-      return []
+      return err
     }
   }
 )

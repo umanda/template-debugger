@@ -574,14 +574,18 @@ export const resourceSearchShapes = (props: Partial<SearchResourceDto>): Promise
   })
 }
 
-export const searchResources = (props: Partial<SearchResourceDto>): Promise<IResource[]> => {
+export const searchResources = (
+  props: Partial<SearchResourceDto>,
+  setState?: React.Dispatch<React.SetStateAction<number[]>>
+): Promise<IResource[]> => {
   return new Promise((resolve, reject) => {
     base
       .post("/es/resource", props)
       .then(({ data }) => {
+        if (data.notIds) setState(data.notIds)
         resolve(data.resources)
       })
-      .catch(null)
+      .catch((err) => reject(err))
   })
 }
 
@@ -604,7 +608,7 @@ export const getListResourcesImages = (props: Partial<SearchResourceDto>) => {
       .then(({ data }) => {
         resolve(data.resources)
       })
-      .catch(reject)
+      .catch((err) => reject(err))
   })
 }
 

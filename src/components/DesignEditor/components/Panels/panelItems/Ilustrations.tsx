@@ -106,6 +106,7 @@ export default function Ilustrations() {
   const projectSelect = useSelector(selectProject)
   const [page, setPage] = useState<number>(0)
   const filterResource = localStorage.getItem("drawing_filter")
+  const [notIds, setNotIds] = useState<number[]>([])
   const listDrawifiers: any = useSelector(selectListDrawifiers)
 
   useEffect(() => {
@@ -158,19 +159,26 @@ export default function Ilustrations() {
       setResourcesIllustration(selectListResources.concat(resolve))
       resolve[0] !== undefined && setMore(true)
     } else {
-      const resolve: any[] = await api.searchResources({
-        page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page,
-        limit: 10,
-        query: {
-          drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
-          visibility: "public",
-          keywords: nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
-          categories: [],
-          favorited: stateFavorite ? true : undefined,
-          used: stateRecent ? true : undefined
-        },
-        sorts: order
-      })
+      let resolve = []
+      try {
+        resolve = await api.searchResources(
+          {
+            page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page,
+            limit: 10,
+            query: {
+              drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
+              visibility: "public",
+              keywords: nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
+              categories: [],
+              favorited: stateFavorite ? true : undefined,
+              used: stateRecent ? true : undefined,
+              notIds: notIds[0] === undefined ? undefined : notIds
+            },
+            sorts: order
+          },
+          setNotIds
+        )
+      } catch {}
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
         setValidateContent("Nothing was found related to the filter entered")
       } else {
@@ -185,8 +193,15 @@ export default function Ilustrations() {
       })
       if (nameIllustration[0] !== "") {
         resolve.sort((a, b) => b.count_drawings - a.count_drawings)
-        const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "drawifierId")
-        setResourcesIllustration(validateResources)
+        const lastDraw = resolve.find(
+          (r) => r.drawifierId === resourcesIllustration[resourcesIllustration.length - 1]?.drawifierId
+        )
+        resourcesIllustration.map((r) => {
+          if (r.drawifierId === lastDraw.drawifierId) r.drawings = r.drawings.concat(lastDraw.drawings)
+        })
+        setResourcesIllustration(
+          resourcesIllustration.concat(resolve?.filter((r) => r?.drawifierId !== lastDraw?.drawifierId))
+        )
       } else {
         const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
         setResourcesIllustration(validateResources)
@@ -242,26 +257,8 @@ export default function Ilustrations() {
     setDisableTab(true)
 
     if (input) {
-      setOrderDrawifier([""])
-      const resolve = listDrawifiers.drawifiers.map((d) => {
-        const resolve = input[0].split(" ").filter((i) => {
-          if (i.toLocaleLowerCase() === d.first_name.toLocaleLowerCase()) {
-            setOrderDrawifier([d.id])
-            return d.first_name
-          } else if (i.toLocaleLowerCase() === d.last_name.toLocaleLowerCase()) {
-            setOrderDrawifier([d.id])
-            return d.last_name
-          }
-        })
-        if (resolve[0]) {
-          return resolve[0]
-        }
-      })
-      const param = resolve.find((r) => r !== undefined && r)
-      const value = input[0].split(" ").filter((i) => i !== param && i)
-      value[0] !== undefined
-        ? setNameIllustration(input[0].split(" ").filter((i) => i !== param && i))
-        : setNameIllustration([""])
+      setNameIllustration(input)
+      setNotIds([])
       setResourcesIllustration([])
       if (input[0] === "") {
         setListRecommend({ words: [] })

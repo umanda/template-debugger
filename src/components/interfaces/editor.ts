@@ -150,6 +150,7 @@ export interface SearchResourceDto {
     used?: boolean
     type?: any
     keywords?: string[]
+    notIds?: number[]
   }
   sorts?: string[]
 }
