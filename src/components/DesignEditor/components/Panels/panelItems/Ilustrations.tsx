@@ -176,7 +176,8 @@ export default function Ilustrations() {
             },
             sorts: order
           },
-          setNotIds
+          setNotIds,
+          notIds
         )
       } catch {}
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
@@ -185,19 +186,18 @@ export default function Ilustrations() {
         setValidateContent(null)
       }
       setPage(page + 1)
-      resolve[0] !== undefined ? setMore(true) : setMore(false)
       resolve.map((obj) => {
         resourcesIllustration.find((resource) => {
           obj.id === resource.id && setMore(false)
         })
       })
       if (nameIllustration[0] !== "") {
-        resolve.sort((a, b) => b.count_drawings - a.count_drawings)
+        resolve?.sort((a, b) => b.count_drawings - a.count_drawings)
         const lastDraw = resolve.find(
-          (r) => r.drawifierId === resourcesIllustration[resourcesIllustration.length - 1]?.drawifierId
+          (r) => r?.drawifierId === resourcesIllustration[resourcesIllustration.length - 1]?.drawifierId
         )
         resourcesIllustration.map((r) => {
-          if (r.drawifierId === lastDraw.drawifierId) r.drawings = r.drawings.concat(lastDraw.drawings)
+          if (r?.drawifierId === lastDraw?.drawifierId) r.drawings = r.drawings.concat(lastDraw.drawings)
         })
         setResourcesIllustration(
           resourcesIllustration.concat(resolve?.filter((r) => r?.drawifierId !== lastDraw?.drawifierId))
@@ -206,9 +206,10 @@ export default function Ilustrations() {
         const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
         setResourcesIllustration(validateResources)
       }
+      resolve[0] !== undefined ? setMore(true) : setMore(false)
     }
-    setLoad(true)
     setLoadMoreResources(false)
+    setLoad(true)
     setDisableTab(false)
   }
 
@@ -459,6 +460,7 @@ export default function Ilustrations() {
                 initialState()
                 setListRecommend({ words: [] })
                 setPage(0)
+                setNotIds([])
               }}
             >
               All
@@ -499,7 +501,7 @@ export default function Ilustrations() {
                             <Box sx={{ fontSize: "12px" }} fontWeight="bold">
                               {limitCharacters(r?.drawifier_name)}
                             </Box>
-                            <Box sx={{ fontSize: "12px" }}>{`Found ${r?.count_drawings} drawings`}</Box>
+                            <Box sx={{ fontSize: "12px" }}>{`Found ${r?.total_drawings ?? 0} drawings`}</Box>
                           </Center>
                         </Flex>
                         <Flex

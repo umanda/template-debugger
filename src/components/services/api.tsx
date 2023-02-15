@@ -576,13 +576,14 @@ export const resourceSearchShapes = (props: Partial<SearchResourceDto>): Promise
 
 export const searchResources = (
   props: Partial<SearchResourceDto>,
-  setState?: React.Dispatch<React.SetStateAction<number[]>>
+  setState?: React.Dispatch<React.SetStateAction<number[]>>,
+  state?: number[]
 ): Promise<IResource[]> => {
   return new Promise((resolve, reject) => {
     base
       .post("/es/resource", props)
       .then(({ data }) => {
-        if (data.notIds) setState(data.notIds)
+        if (data.notIds) setState(state.concat(data.notIds))
         resolve(data.resources)
       })
       .catch((err) => reject(err))
