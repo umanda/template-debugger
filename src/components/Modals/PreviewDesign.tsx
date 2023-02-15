@@ -11,7 +11,8 @@ import {
   ModalHeader,
   Button,
   Spacer,
-  Center
+  Center,
+  ModalFooter
 } from "@chakra-ui/react"
 import { useEditor, useScenes } from "@layerhub-pro/react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -91,7 +92,7 @@ function PreviewModal() {
         {/* <ModalCloseButton /> */}
         <ModalBody flexDir="column">
           <Center marginLeft="40px" draggable={false} w="90vw" marginRight="10vw">
-            <Flex h="80vh">
+            <Center h="80vh" w="100vw">
               <Flex h="full" boxShadow="rgba(0, 0, 0, 0.35) 0px 5px 15px">
                 <AnimatePresence initial={false} custom={direction}>
                   <motion.img
@@ -119,9 +120,9 @@ function PreviewModal() {
                   />
                 </AnimatePresence>
               </Flex>
-            </Flex>
+            </Center>
           </Center>
-          <Flex marginTop="10px" w="full" flexDir="row">
+          <ModalFooter marginTop="20px">
             <IconButton
               visibility={`${imageIndex === 0 ? "hidden" : "visible"}`}
               onClick={() => paginate(-1)}
@@ -140,7 +141,7 @@ function PreviewModal() {
               aria-label="right arrow"
               icon={<RightArrow size={20} />}
             />
-          </Flex>
+          </ModalFooter>
         </ModalBody>
       </ModalContent>
     </Modal>
