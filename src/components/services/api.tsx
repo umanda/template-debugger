@@ -596,6 +596,12 @@ export const recentResource = ({ project_id, resource_id }) => {
   })
 }
 
+export const useShapes = ({ project_id, resource_id }) => {
+  return new Promise(() => {
+    base.put(`/shapes/${resource_id}/use`, { project_id, resource_id })
+  })
+}
+
 export const favoriteResource = (id: string) => {
   return new Promise(() => {
     base.put("/resource/" + id + "/favorite")
@@ -615,10 +621,13 @@ export const getListResourcesImages = (props: Partial<SearchResourceDto>) => {
 
 export const listRecentResource = () => {
   return new Promise((resolve, reject) => {
-    base.get("/resource/used").then(({ data }: any) => {
-      data.listRecentResources as ListRecentDto[]
-      resolve(data.resources)
-    })
+    base
+      .get("/resource/used")
+      .then(({ data }: any) => {
+        data.listRecentResources as ListRecentDto[]
+        resolve(data.resources)
+      })
+      .catch((err) => reject(err))
   })
 }
 

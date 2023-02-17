@@ -97,12 +97,28 @@ export default function Upload() {
 
   const handleDropFiles = (files: FileList) => {
     const file = files[0]
-    handleUploadFile(file)
-    const reader = new FileReader()
-    reader.addEventListener("load", function () {}, false)
+    if (
+      file.type === "image/png" ||
+      file.type === "image/jpeg" ||
+      file.type === "image/svg+xml" ||
+      file.type === "image/svg" ||
+      file.type === "image/jpeg"
+    ) {
+      handleUploadFile(file)
+      const reader = new FileReader()
+      reader.addEventListener("load", function () {}, false)
 
-    if (file) {
-      reader.readAsDataURL(file)
+      if (file) {
+        reader.readAsDataURL(file)
+      }
+    } else {
+      toast({
+        title: "Please upload a valid resource.",
+        status: "error",
+        position: "top",
+        duration: 2000,
+        isClosable: true
+      })
     }
   }
 

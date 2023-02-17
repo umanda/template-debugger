@@ -268,23 +268,25 @@ export default function Pencil() {
           </Grid>
         )}
       </Box>
-      <Box>
-        <Flex sx={{ fontSize: "14px", color: "#A9A9B2", margin: "10px" }}>DEFAULT COLORS</Flex>
-        <Grid gap="10px" templateColumns="repeat(7, 1fr)" marginInline="10px">
-          {DEFAULT_COLORS.map((color) => (
-            <Box
-              onClick={() => setDraw({ ...draw, color })}
-              boxSize="34px"
-              borderRadius="4px"
-              borderWidth="1px"
-              borderColor="#A9A9B2"
-              _hover={{ cursor: "pointer" }}
-              key={color}
-              sx={{ backgroundColor: color, height: "34px", borderRadius: "4px", cursor: "pointer" }}
-            ></Box>
-          ))}
-        </Grid>
-      </Box>
+      {draw.type !== "EraserBrush" && (
+        <Box>
+          <Flex sx={{ fontSize: "14px", color: "#A9A9B2", margin: "10px" }}>DEFAULT COLORS</Flex>
+          <Grid gap="10px" templateColumns="repeat(7, 1fr)" marginInline="10px">
+            {DEFAULT_COLORS.map((color) => (
+              <Box
+                onClick={() => setDraw({ ...draw, color })}
+                boxSize="34px"
+                borderRadius="4px"
+                borderWidth="1px"
+                borderColor="#A9A9B2"
+                _hover={{ cursor: "pointer" }}
+                key={color}
+                sx={{ backgroundColor: color, height: "34px", borderRadius: "4px", cursor: "pointer" }}
+              ></Box>
+            ))}
+          </Grid>
+        </Box>
+      )}
     </Flex>
   )
 }

@@ -34,10 +34,12 @@ const Designer: any = () => {
       if (design && user) {
         const resolve: any = (await dispatch(getProjectByKey(id))).payload
         setTimeout(async () => {
-          await design.setDesign(resolve)
+          try {
+            await design.setDesign(resolve)
+          } catch {}
         }, 100)
         let sceneNames: string[] = []
-        for (const scn of resolve.scenes) {
+        for (const scn of resolve?.scenes) {
           scn.layers.map(async (layer) => {
             if (layer?.type === "StaticText") {
               const font = { name: layer.fontFamily, url: layer.fontURL }

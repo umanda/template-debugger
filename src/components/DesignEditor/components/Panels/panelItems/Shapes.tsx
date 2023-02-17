@@ -105,7 +105,7 @@ export default function Shapes() {
     (images: any) => {
       if (user && projectSelect.id) {
         const ctx = { id: images.id }
-        api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
+        api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
       }
       const options: any = {
         type: "StaticVector",

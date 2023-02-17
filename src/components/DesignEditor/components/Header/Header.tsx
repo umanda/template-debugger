@@ -743,10 +743,29 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const activeObject: any = useActiveObject()
 
   document.onkeydown = function (e) {
+    if (e.keyCode === 46) {
+      activeObject?.type !== "Frame" && activeScene.objects.remove(activeObject.id)
+      return false
+    }
+    if (e.keyCode === 37) {
+      activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left - 30 }, activeObject.id)
+      return false
+    }
+    if (e.keyCode === 38) {
+      activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top - 30 }, activeObject.id)
+      return false
+    }
+    if (e.keyCode === 39) {
+      activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left + 30 }, activeObject.id)
+      return false
+    }
+    if (e.keyCode === 40) {
+      activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top + 30 }, activeObject.id)
+      return false
+    }
     if (
       e.ctrlKey &&
-      (e.keyCode === 67 ||
-        e.keyCode === 85 ||
+      (e.keyCode === 85 ||
         e.keyCode === 117 ||
         e.keyCode === 107 ||
         e.keyCode === 109 ||

@@ -174,7 +174,7 @@ export default function Ilustrations() {
               used: stateRecent ? true : undefined,
               notIds: notIds[0] === undefined ? undefined : notIds
             },
-            sorts: order
+            sorts: stateRecent ? ["USED_AT"] : order
           },
           setNotIds,
           notIds
@@ -207,6 +207,7 @@ export default function Ilustrations() {
         setResourcesIllustration(validateResources)
       }
       resolve[0] !== undefined ? setMore(true) : setMore(false)
+      resolve[9] === undefined && setMore(false)
     }
     setLoadMoreResources(false)
     setLoad(true)

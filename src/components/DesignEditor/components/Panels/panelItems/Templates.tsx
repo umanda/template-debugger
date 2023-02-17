@@ -58,7 +58,7 @@ const initialQuery = {
   query: {
     visibility: "public"
   },
-  sorts: ["ALPHABETIC"]
+  sorts: []
 }
 
 export default function Template() {
@@ -67,7 +67,7 @@ export default function Template() {
   const [validateContent, setValidateContent] = useState<string | null>(null)
   let [nameTemplate, setNameTemplate] = useState<string[]>([""])
   let [nameTemplatePrev, setNameTemplatePrev] = useState<string[]>([""])
-  const [order, setOrder] = useState<string[]>(["ALPHABETIC"])
+  const [order, setOrder] = useState<string[]>([])
   const user = useAppSelector(selectUser)
   const { isOpen: isOpenInput, onOpen: onOpenInput, onClose: onCloseInput } = useDisclosure()
   const [resourcesTemplate, setResourcesTemplate] = useState<any[]>([])
@@ -124,7 +124,7 @@ export default function Template() {
       stateFavorite === false &&
       stateRecent === false &&
       orderDrawifier[0] === "" &&
-      order[0] === null
+      order[0] === undefined
     ) {
       let newQuery = initialQuery
       newQuery.page = resourcesTemplate.length / 10 + 1
@@ -136,7 +136,7 @@ export default function Template() {
             query: {
               visibility: "public"
             },
-            sorts: ["ALPHABETIC"]
+            sorts: []
           })
         )
       ).payload) as IDesign[]
@@ -260,7 +260,7 @@ export default function Template() {
         stateFavorite === false &&
         stateRecent === false &&
         orderDrawifier[0] === "" &&
-        order[0] === "ALPHABETIC"
+        order[0] === undefined
       ) {
         setResourcesTemplate(selectListTemplate)
         setListRecommend({ words: [] })
@@ -393,7 +393,7 @@ export default function Template() {
                 setStateRecent(false)
                 setValidateContent(null)
                 setMore(false)
-                setOrder(["ALPHABETIC"])
+                setOrder([])
                 setOrderDrawifier([])
                 initialState()
                 setListRecommend({ words: [] })
