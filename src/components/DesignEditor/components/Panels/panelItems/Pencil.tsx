@@ -1,6 +1,6 @@
-import { Box, Center, Flex, Grid, GridItem, Input, Text } from "@chakra-ui/react"
+import { Box, Button, Center, Flex, Grid, GridItem, Input, Text } from "@chakra-ui/react"
 import { Slider, SliderFilledTrack, SliderThumb, SliderTrack } from "@chakra-ui/react"
-import { useEditor, useIsFreeDrawing } from "@layerhub-pro/react"
+import { useEditor } from "@layerhub-pro/react"
 import { DEFAULT_COLORS } from "../../../../constants/consts"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
 import Pencil1 from "../../../../Icons/Pencil1"
@@ -8,19 +8,16 @@ import Pencil2 from "../../../../Icons/Pencil2"
 import Pencil3 from "../../../../Icons/Pencil3"
 import Pencil4 from "../../../../Icons/Pencil4"
 import Pencil5 from "../../../../Icons/Pencil5"
-import React, { useCallback } from "react"
+import React, { useCallback, useState } from "react"
 
 export default function Pencil() {
   const editor = useEditor()
   const { draw, setDraw } = useResourcesContext()
+  const [typeDraw, setTypeDraw] = useState<any>("")
 
   React.useEffect(() => {
     updateDrawing()
   }, [draw])
-
-  React.useEffect(() => {
-    editor?.freeDrawer?.canvas?.isDrawingMode === false && setDraw({ ...draw, type: null })
-  }, [editor?.freeDrawer?.canvas?.isDrawingMode])
 
   const updateDrawing = useCallback(() => {
     if (draw.type) {
@@ -89,8 +86,32 @@ export default function Pencil() {
     [draw]
   )
 
+  const toggleDrawing = useCallback(() => {
+    if (editor?.freeDrawer?.canvas?.isDrawingMode) {
+      editor.freeDrawer.disable()
+      setTypeDraw(draw.type)
+      setDraw({ ...draw, type: null })
+    } else {
+      if (typeDraw === "") {
+        editor.freeDrawer.enable(draw.type !== null ? draw.type : "PencilBrush", {
+          opacity: draw.opacity,
+          size: draw.size,
+          color: draw.color
+        })
+        draw.type === null && setDraw({ ...draw, type: "PencilBrush" })
+      } else {
+        editor.freeDrawer.enable(typeDraw, {
+          opacity: draw.opacity,
+          size: draw.size,
+          color: draw.color
+        })
+        setDraw({ ...draw, type: typeDraw })
+      }
+    }
+  }, [editor, draw, typeDraw])
+
   return (
-    <Flex flexDir="column" sx={{ width: "320px", borderRight: "1px solid #ebebeb" }}>
+    <Flex h="full" flexDir="column" sx={{ width: "full", borderRight: "1px solid #ebebeb" }}>
       <Box>
         <Text margin="10px" color="#A9A9B2">
           PENS & ERASER
@@ -101,11 +122,12 @@ export default function Pencil() {
             sx={{ cursor: "pointer", gap: "0.25rem" }}
             flexDir="column"
           >
-            <Box
+            <Center
+              marginX={"auto"}
               sx={{ border: `2px solid ${draw.type === "PencilBrush" ? "#5456F5" : "#DDDFE5"}`, borderRadius: "4px" }}
             >
-              <Pencil1 size={60} />
-            </Box>
+              <Pencil1 size={62} />
+            </Center>
             <Center>Marker</Center>
           </Flex>
           <Flex
@@ -113,12 +135,12 @@ export default function Pencil() {
             sx={{ cursor: "pointer", gap: "0.25rem" }}
             flexDir="column"
           >
-            <Box
+            <Center
+              marginX={"auto"}
               sx={{ border: `2px solid ${draw.type === "MarkerBrush" ? "#5456F5" : "#DDDFE5"}`, borderRadius: "4px" }}
             >
               <Pencil2 size={60} />
-            </Box>
-
+            </Center>
             <Center>Highlight</Center>
           </Flex>
           <Flex
@@ -126,12 +148,12 @@ export default function Pencil() {
             sx={{ cursor: "pointer", gap: "0.25rem" }}
             flexDir="column"
           >
-            <Box
+            <Center
+              marginX={"auto"}
               sx={{ border: `2px solid ${draw.type === "RibbonBrush" ? "#5456F5" : "#DDDFE5"}`, borderRadius: "4px" }}
             >
               <Pencil3 size={60} />
-            </Box>
-
+            </Center>
             <Center>Glow</Center>
           </Flex>
           <Flex
@@ -139,14 +161,15 @@ export default function Pencil() {
             sx={{ cursor: "pointer", gap: "0.25rem" }}
             flexDir="column"
           >
-            <Box
+            <Center
+              marginX={"auto"}
               sx={{
                 border: `2px solid ${draw.type === "SpraypaintBrush" ? "#5456F5" : "#DDDFE5"}`,
                 borderRadius: "4px"
               }}
             >
               <Pencil4 size={60} />
-            </Box>
+            </Center>
             <Center>Spray</Center>
           </Flex>
           <Flex
@@ -155,6 +178,7 @@ export default function Pencil() {
             flexDir="column"
           >
             <Box
+              marginX={"auto"}
               sx={{
                 border: `2px solid ${draw.type === "EraserBrush" ? "#5456F5" : "#DDDFE5"}`,
                 borderRadius: "4px"
@@ -166,7 +190,18 @@ export default function Pencil() {
           </Flex>
         </Grid>
       </Box>
-
+      <Center flexDir="row" marginRight="20px" marginLeft="20px" marginTop="10px">
+        <Button
+          _hover={{}}
+          colorScheme="brand"
+          variant={editor?.freeDrawer?.canvas?.isDrawingMode ? "solid" : "outline"}
+          //background={editor?.freeDrawer?.canvas?.isDrawingMode ? "brand.500" : "inherit"}
+          onClick={toggleDrawing}
+          w="full"
+        >
+          {editor?.freeDrawer?.canvas?.isDrawingMode ? "Disable pen" : "Enable pen"}
+        </Button>
+      </Center>
       <Box padding={"10px 0"}>
         <Grid marginInline="10px" templateColumns="repeat(6, 1fr)" gap="10px" marginTop="15px">
           <GridItem fontSize={"14px"} color="#545465" colSpan={2} alignItems="center">
@@ -188,6 +223,7 @@ export default function Pencil() {
               inputMode="decimal"
               pattern="[0-9]*(.[0-9]+)?"
               size={"xs"}
+              onKeyDown={(e) => e.key === "Enter" && makeChangeDraw("size", draw.sizePrev)}
               onChange={(e) => makeChangeInput("size", e.target.value)}
               onBlur={(e) => makeChangeDraw("size", e.target.value)}
             />
@@ -196,7 +232,7 @@ export default function Pencil() {
         {draw.type !== "EraserBrush" && (
           <Grid marginInline="10px" templateColumns="repeat(6, 1fr)" gap="10px" marginTop="15px">
             <GridItem fontSize={"14px"} color="#545465" colSpan={2} alignItems="center">
-              Transparency
+              Opacity
             </GridItem>
             <GridItem colSpan={3} alignItems="center" justifyItems="center">
               <Slider
@@ -224,6 +260,7 @@ export default function Pencil() {
                 inputMode="decimal"
                 pattern="[0-9]*(.[0-9]+)?"
                 size={"xs"}
+                onKeyDown={(e) => e.key === "Enter" && makeChangeDraw("transparency", draw.opacityPrev)}
                 onChange={(e) => makeChangeInput("transparency", e.target.value)}
                 onBlur={(e) => makeChangeDraw("transparency", e.target.value)}
               />
@@ -231,23 +268,25 @@ export default function Pencil() {
           </Grid>
         )}
       </Box>
-      <Box>
-        <Flex sx={{ fontSize: "14px", color: "#A9A9B2", margin: "10px" }}>DEFAULT COLORS</Flex>
-        <Grid gap="10px" templateColumns="repeat(7, 1fr)" marginInline="10px">
-          {DEFAULT_COLORS.map((color) => (
-            <Box
-              onClick={() => setDraw({ ...draw, color })}
-              boxSize="34px"
-              borderRadius="4px"
-              borderWidth="1px"
-              borderColor="#A9A9B2"
-              _hover={{ cursor: "pointer" }}
-              key={color}
-              sx={{ backgroundColor: color, height: "34px", borderRadius: "4px", cursor: "pointer" }}
-            ></Box>
-          ))}
-        </Grid>
-      </Box>
+      {draw.type !== "EraserBrush" && (
+        <Box>
+          <Flex sx={{ fontSize: "14px", color: "#A9A9B2", margin: "10px" }}>DEFAULT COLORS</Flex>
+          <Grid gap="10px" templateColumns="repeat(7, 1fr)" marginInline="10px">
+            {DEFAULT_COLORS.map((color) => (
+              <Box
+                onClick={() => setDraw({ ...draw, color })}
+                boxSize="34px"
+                borderRadius="4px"
+                borderWidth="1px"
+                borderColor="#A9A9B2"
+                _hover={{ cursor: "pointer" }}
+                key={color}
+                sx={{ backgroundColor: color, height: "34px", borderRadius: "4px", cursor: "pointer" }}
+              ></Box>
+            ))}
+          </Grid>
+        </Box>
+      )}
     </Flex>
   )
 }

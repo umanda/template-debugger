@@ -33,7 +33,7 @@ export const getUseFont = createAsyncThunk<void, IFont, any>("fonts/getUseFont",
     await api.getUseFont(font.id)
   } catch (err) {
     // null
-    console.log("ERROR GETTING FONTS")
+    console.log(err)
   }
 })
 

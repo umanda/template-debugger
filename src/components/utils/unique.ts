@@ -13,7 +13,7 @@ export function uniqueFilename(name: string) {
   return uniqueName
 }
 
-export function generateId(prefix: string): string {
-  const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 12)
-  return `${prefix}_${nanoid()}`
+export function generateId(prefix: string, character: number): string {
+  const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", character)
+  return `${prefix}${nanoid()}`
 }

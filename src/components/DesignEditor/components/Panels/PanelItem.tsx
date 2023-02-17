@@ -6,7 +6,9 @@ import ChevronLeft from "../../../Icons/ChevronLeft"
 
 export default function PanelItem() {
   const [state, setState] = React.useState({ selected: "Templates" })
-  const { activeMenu, activePanel, isSidebarVisible, setIsSidebarVisible } = useDesignEditorContext()
+  const { activeMenu, activePanel, isSidebarVisible, setIsSidebarVisible, setActivePanel } = useDesignEditorContext()
+  const filterResource = localStorage.getItem("drawing_filter")
+
   React.useEffect(() => {
     setState({ selected: activePanel })
   }, [activePanel])
@@ -14,6 +16,8 @@ export default function PanelItem() {
   React.useEffect(() => {
     if (activeMenu) {
       setState({ selected: activeMenu })
+    } else if (filterResource) {
+      setActivePanel("Illustrations")
     } else {
       setState({ selected: activePanel })
     }
@@ -41,7 +45,9 @@ export default function PanelItem() {
           {isSidebarVisible && (
             <Portal>
               <Box
-                onClick={() => setIsSidebarVisible(false)}
+                onClick={() => {
+                  setIsSidebarVisible(false)
+                }}
                 sx={{
                   position: "absolute",
                   height: "24px",
@@ -52,7 +58,6 @@ export default function PanelItem() {
                   transform: "translateY(-50%)",
                   left: "380px",
                   boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.04), 0px 4px 8px rgba(0, 0, 0, 0.06)",
-                  zIndex: 101,
                   display: ["none", "none", "grid", "grid"],
                   placeContent: "center",
                   cursor: "pointer",

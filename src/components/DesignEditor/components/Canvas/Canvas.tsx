@@ -1,7 +1,7 @@
-import React, { useCallback } from "react"
+import React, { useCallback, useRef } from "react"
 import {
   Flex,
-  Box,
+  Button,
   Center,
   Drawer,
   DrawerOverlay,
@@ -10,7 +10,7 @@ import {
   DrawerBody,
   useDisclosure
 } from "@chakra-ui/react"
-import { Canvas, fabric, useActiveScene, useEditor } from "@layerhub-pro/react"
+import { Canvas, fabric, useActiveObject, useActiveScene, useEditor, useZoomRatio } from "@layerhub-pro/react"
 import ContextMenu from "../ContextMenu"
 import { useSelector } from "react-redux"
 import * as api from "../../../services/api"
@@ -18,13 +18,17 @@ import { selectUser } from "../../../store/user/selector"
 import useResourcesContext from "../../../hooks/useResourcesContext"
 import Plus from "../../../Icons/Plus"
 import MobileModal from "../../../Modals/MobileModal"
+import { selectProject } from "../../../store/project/selector"
+const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
 export default function Canva() {
-  const { draw, resourceDrag } = useResourcesContext()
+  const { resourceDrag } = useResourcesContext()
   const editor = useEditor()
   const activeScene = useActiveScene()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const user = useSelector(selectUser)
+  const projectSelect = useSelector(selectProject)
+  const flexRef = React.useRef<any>()
 
   React.useEffect(() => {
     const deleteIcon =
@@ -137,38 +141,43 @@ export default function Canva() {
 
   const dropEvent = useCallback(
     (ev: React.DragEvent<HTMLDivElement>) => {
-      if (ev.dataTransfer.getData("resource")) {
+      if (ev.dataTransfer.getData("resource") === "image") {
         if (user) {
-          const ctx = { id: ev.dataTransfer.getData("id") }
-          api.recentResource(ctx.id)
+          const ctx = { id: ev.dataTransfer.getData("resource") }
+          api.recentResource({ project_id: projectSelect.id, resource_id: resourceDrag.id })
         }
-        const options = {
+        const options: any = {
           type: "StaticVector",
           name: "Shape",
           src: resourceDrag.url,
-          ...{ watermark: resourceDrag?.license === "paid" && "https://ik.imagekit.io/scenify/drawify-small.svg" },
-          metadata: {}
+          erasable: false,
+          watermark: resourceDrag.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
         }
         if (editor) {
-          activeScene.objects.add(options)
+          activeScene.objects.add(options, { desiredSize: 200 })
         }
+      } else if (ev.dataTransfer.getData("resource") === "text") {
+        activeScene.objects.add(resourceDrag)
       }
     },
     [activeScene, editor, user, resourceDrag]
   )
 
-  const makeClick = React.useCallback(() => {
-    if (editor?.freeDrawer?.canvas?.isDrawingMode && draw.type) {
-      editor.freeDrawer.disable()
-      editor.freeDrawer.enable(draw.type, { color: draw.color, opacity: draw.opacity / 100, size: draw.size })
-    }
-  }, [draw, activeScene, editor])
-
   return (
-    <Flex flex={1} position="relative" onClick={makeClick} onDrop={(ev) => dropEvent(ev)} id="app">
+    <Flex ref={flexRef} flex={1} position="relative" onDrop={(ev) => dropEvent(ev)} id="app">
       <ContextMenu />
-      <Flex w="full" h="full">
-        <Canvas />
+      <Flex flex={1}>
+        <Canvas
+          config={{
+            margin: 140,
+            outsideVisible: true,
+            guidelines: {
+              enabled: true,
+              color: ""
+            },
+            shortcuts: false
+          }}
+        />
       </Flex>
       <Center
         onClick={() => onOpen()}

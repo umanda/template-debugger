@@ -14,35 +14,23 @@ interface ToolboxState {
 
 export default function Toolbox() {
   const { setActiveMenu, activePanel } = useDesignEditorContext()
-  const [prevState, setPrevState] = React.useState<ToolboxState>({ toolbox: "Text" })
   const [state, setState] = React.useState<ToolboxState>({ toolbox: "Text" })
   const activeObject = useActiveObject() as ILayer
   const editor = useEditor()
 
   React.useEffect(() => {
-    if (activePanel !== "Pencil") {
-      const selectionType = getSelectionType(activeObject)
-      if (selectionType) {
-        if (selectionType.length > 1) {
-          setState({ toolbox: "Multiple" })
-        } else {
-          setState({ toolbox: selectionType[0] })
-        }
+    const selectionType = getSelectionType(activeObject)
+    if (selectionType) {
+      if (selectionType.length > 1) {
+        setState({ toolbox: "Multiple" })
       } else {
-        setState({ toolbox: DEFAULT_TOOLBOX })
-        setActiveMenu("")
+        setState({ toolbox: selectionType[0] })
       }
+    } else {
+      setState({ toolbox: DEFAULT_TOOLBOX })
+      setActiveMenu("")
     }
   }, [activeObject, activePanel])
-
-  React.useEffect(() => {
-    if (activePanel === "Pencil") {
-      setPrevState(state)
-      setState({ toolbox: "FreeDrawing" })
-    } else {
-      setState(prevState)
-    }
-  }, [activePanel])
 
   React.useEffect(() => {
     let watcher = async () => {

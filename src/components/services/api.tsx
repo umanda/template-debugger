@@ -16,9 +16,12 @@ import {
 } from "../interfaces/editor"
 import { IExportProjectNoLogin, listProjectsDTO, ShareTemplate } from "../interfaces/template"
 import { IListComments, SaveCommentDTO } from "../interfaces/comment"
+const baseURL = import.meta.env.VITE_API_CONNECTION
+const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
+const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
 const base = axios.create({
-  baseURL: "https://backend.drawify.net/v1/",
+  baseURL: baseURL,
   withCredentials: true
 })
 
@@ -47,7 +50,7 @@ export const signInByToken = (token: string): Promise<User> => {
     base
       .post("/signin/token", bodyParameters, config)
       .then(({ data }: any) => {
-        resolve(data.user)
+        resolve(data.customer)
       })
       .catch((err: any) => {
         reject(err)
@@ -275,7 +278,6 @@ export const getListUseFonts = (): Promise<IFont[]> => {
   })
 }
 
-//getListProjects
 export const getProjects = (props: Partial<listProjectsDTO>): Promise<IProject[]> => {
   return new Promise((resolve, reject) => {
     base
@@ -390,25 +392,20 @@ export const getUploads = (): Promise<interfaceUploads[]> => {
   })
 }
 
-export const getSignedURLForUpload = (props: {
-  filename: string
-  operation: string
-}): Promise<{ signed_url: string; url: string }> => {
+export const getSignedURLForUpload = (props: { filename: string; type: string }): Promise<{ signed_urls: [any] }> => {
   return new Promise((resolve, reject) => {
     base
       .post("/uploads/signed", props)
       .then(({ data }) => {
         resolve(data)
       })
-      .catch((err) => null)
+      .catch((err) => reject(err))
   })
 }
 
 export const getSave = (props: {
-  id: string
+  filename: string
   name: string
-  type: string
-  url: string
 }): Promise<{ image: { id: string; name: string; type: string; url: string } }> => {
   return new Promise((resolve, reject) => {
     base
@@ -436,7 +433,7 @@ export const userMe = (): Promise<User> => {
     base
       .get("/user/me")
       .then(({ data }: any) => {
-        resolve(data.user)
+        resolve(data.customer)
       })
       .catch((e) => reject(e))
   })
@@ -447,7 +444,6 @@ export const oldSignIn = (props: Partial<SigninDto>): Promise<User> => {
     base
       .post("/old/signIn", props)
       .then(({ data }) => {
-        console.log(data)
         resolve(data.user)
       })
       .catch((err) => reject(err))
@@ -459,7 +455,7 @@ export const signin = (props: Partial<SigninDto>): Promise<User> => {
     base
       .post("/signin", props)
       .then(({ data }) => {
-        resolve(data.user)
+        resolve(data.customer)
       })
       .catch((err) => reject(err))
   })
@@ -509,7 +505,7 @@ export const getListFavoritedTemplates = (): Promise<any> => {
   })
 }
 
-export const getProjectById = (props: { id: string; owner_id?: string }): Promise<IDesign> => {
+export const getProjectByKey = (props: { id: string; owner_id?: string }): Promise<IDesign> => {
   return new Promise((resolve, reject) => {
     if (props.owner_id) {
       base
@@ -522,7 +518,7 @@ export const getProjectById = (props: { id: string; owner_id?: string }): Promis
         })
     } else {
       base
-        .get("/projects/" + props.id)
+        .get("/projects/" + props.id + "/key")
         .then(({ data }: any) => {
           resolve(data.project)
         })
@@ -544,9 +540,9 @@ export const getTemplate = (props: string) => {
   })
 }
 
-export const getUseTemplate = (prop: string) => {
+export const getUseTemplate = ({ template_id, project_id }) => {
   return new Promise((resolve, reject) => {
-    base.put(`/templates/${prop}/use`).then(({ data }: any) => {
+    base.put(`/templates/use`, { template_id, project_id }).then(({ data }: any) => {
       resolve(data)
     })
   })
@@ -563,32 +559,46 @@ export const getTemplateById = (id: string): Promise<IDesign> => {
   })
 }
 
-export const resourceSearchShapes = (props: Partial<SearchResourceDto>) => {
+export const resourceSearchShapes = (props: Partial<SearchResourceDto>): Promise<any[]> => {
   return new Promise((resolve, reject) => {
     base
-      .post("/es/resource", props)
+      .post("/shapes/search", props)
       .then(({ data }: any) => {
-        const resources = data.resources as IResource[]
+        data.shapes.map((e) => {
+          e.url = e.url.replace(defaultPreviewTemplate, replacePreviewTemplate)
+        })
+        const resources = data.shapes as IResource[]
         resolve(resources)
       })
       .catch(null)
   })
 }
 
-export const searchResources = (props: Partial<SearchResourceDto>): Promise<IResource[]> => {
+export const searchResources = (
+  props: Partial<SearchResourceDto>,
+  setState?: React.Dispatch<React.SetStateAction<number[]>>,
+  state?: number[]
+): Promise<IResource[]> => {
   return new Promise((resolve, reject) => {
     base
       .post("/es/resource", props)
       .then(({ data }) => {
+        if (data.notIds) setState(state.concat(data.notIds))
         resolve(data.resources)
       })
-      .catch(null)
+      .catch((err) => reject(err))
   })
 }
 
-export const recentResource = (idResource: String) => {
+export const recentResource = ({ project_id, resource_id }) => {
   return new Promise(() => {
-    base.put("/resource/" + idResource + "/use")
+    base.put("/resource/use", { project_id, resource_id })
+  })
+}
+
+export const useShapes = ({ project_id, resource_id }) => {
+  return new Promise(() => {
+    base.put(`/shapes/${resource_id}/use`, { project_id, resource_id })
   })
 }
 
@@ -605,16 +615,19 @@ export const getListResourcesImages = (props: Partial<SearchResourceDto>) => {
       .then(({ data }) => {
         resolve(data.resources)
       })
-      .catch(reject)
+      .catch((err) => reject(err))
   })
 }
 
 export const listRecentResource = () => {
   return new Promise((resolve, reject) => {
-    base.get("/resource/used").then(({ data }: any) => {
-      data.listRecentResources as ListRecentDto[]
-      resolve(data.resources)
-    })
+    base
+      .get("/resource/used")
+      .then(({ data }: any) => {
+        data.listRecentResources as ListRecentDto[]
+        resolve(data.resources)
+      })
+      .catch((err) => reject(err))
   })
 }
 

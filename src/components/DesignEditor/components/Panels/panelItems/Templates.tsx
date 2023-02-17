@@ -16,10 +16,11 @@ import {
   Spinner,
   Text,
   Tooltip,
-  useDisclosure
+  useDisclosure,
+  useToast
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
-import { useActiveScene, useDesign } from "@layerhub-pro/react"
+import { useActiveScene, useDesign, useObjects } from "@layerhub-pro/react"
 import React, { useCallback, useRef, useState } from "react"
 import { useEffect } from "react"
 import { useSelector } from "react-redux"
@@ -35,7 +36,6 @@ import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
 import HorizontalScroll from "../../../../utils/HorizontaScroll"
 import Scrollable from "../../../../utils/Scrollable"
 import InfiniteScroll from "../../../../utils/InfiniteScroll"
-import { loadTemplateFonts, loadVideoEditorAssets } from "../../../../utils/fonts"
 import { IDesign, IResolveRecommend } from "../../../../interfaces/editor"
 import { selectListTemplates } from "../../../../store/templates/selector"
 import {
@@ -47,6 +47,10 @@ import { selectListRecommendTemplate } from "../../../../store/recommend/selecto
 import { getListRecommend } from "../../../../store/recommend/action"
 import Order from "../../../../Modals/Order"
 import LazyLoadImage from "../../../../utils/LazyLoadImage"
+import { selectProject } from "../../../../store/project/selector"
+const watermarkURL = import.meta.env.VITE_APP_WATERMARK
+const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
+const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
 const initialQuery = {
   page: 1,
@@ -54,7 +58,7 @@ const initialQuery = {
   query: {
     visibility: "public"
   },
-  sorts: ["ALPHABETIC"]
+  sorts: []
 }
 
 export default function Template() {
@@ -63,7 +67,7 @@ export default function Template() {
   const [validateContent, setValidateContent] = useState<string | null>(null)
   let [nameTemplate, setNameTemplate] = useState<string[]>([""])
   let [nameTemplatePrev, setNameTemplatePrev] = useState<string[]>([""])
-  const [order, setOrder] = useState<string[]>(["ALPHABETIC"])
+  const [order, setOrder] = useState<string[]>([])
   const user = useAppSelector(selectUser)
   const { isOpen: isOpenInput, onOpen: onOpenInput, onClose: onCloseInput } = useDisclosure()
   const [resourcesTemplate, setResourcesTemplate] = useState<any[]>([])
@@ -83,6 +87,9 @@ export default function Template() {
   const [toolTip, setToolTip] = useState(false)
   const design = useDesign()
   const activeScene = useActiveScene()
+  const projectSelector = useSelector(selectProject)
+  const toast = useToast()
+  const objects: any = useObjects()
 
   useEffect(() => {
     initialState()
@@ -101,13 +108,13 @@ export default function Template() {
       setResourcesTemplate(selectListTemplate)
     }
 
-    if (selectListFavoriteTemplates[0] === undefined && user) {
+    if (user) {
       dispatch(getListFavoriteTemplates({ query: { favorited: true } }))
     }
     setMore(true)
     setLoad(true)
     setDisableTab(false)
-  }, [selectListFavoriteTemplates, defaultRecommend])
+  }, [selectListFavoriteTemplates, user, defaultRecommend])
 
   const fetchDataResource = async () => {
     setMore(false)
@@ -117,7 +124,7 @@ export default function Template() {
       stateFavorite === false &&
       stateRecent === false &&
       orderDrawifier[0] === "" &&
-      order[0] === "ALPHABETIC"
+      order[0] === undefined
     ) {
       let newQuery = initialQuery
       newQuery.page = resourcesTemplate.length / 10 + 1
@@ -129,7 +136,7 @@ export default function Template() {
             query: {
               visibility: "public"
             },
-            sorts: ["ALPHABETIC"]
+            sorts: []
           })
         )
       ).payload) as IDesign[]
@@ -140,8 +147,8 @@ export default function Template() {
         page: resourcesTemplate.length / 10 + 1,
         limit: 10,
         query: {
-          drawifier_ids: orderDrawifier[0]?.length > 0 ? orderDrawifier : undefined,
-          suggested: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
+          drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
+          names: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
           visibility: "public",
           favorited: stateFavorite ? true : undefined,
           used: stateRecent ? true : undefined
@@ -167,32 +174,25 @@ export default function Template() {
     setLoadMoreResources(false)
   }
 
-  const loadGraphicTemplate = useCallback(async (payload: IDesign) => {
-    const { scenes } = payload
-    for (const scn of scenes) {
-      const scene: any = {
-        name: scn.name,
-        frame: payload.frame,
-        id: scn.id,
-        layers: scn.layers,
-        metadata: {}
-      }
-      const loadedScene = await loadVideoEditorAssets(scene)
-      await loadTemplateFonts(loadedScene)
-    }
-  }, [])
-
   const loadTemplateById = React.useCallback(
-    async (template: IDesign) => {
-      // @ts-ignore
-      setDesignEditorLoading({ isLoading: true, preview: template.preview })
-      user && api.getUseTemplate(template.id)
-      const designData: any = await api.getTemplateById(template.id)
-      await loadGraphicTemplate(designData)
-      designData.scenes[0].frame = designData.frame
-      await activeScene.setScene(designData.scenes[0])
+    async (template: any) => {
+      try {
+        setDesignEditorLoading({ isLoading: true, preview: template.preview })
+        let designData: any = await api.getTemplateById(template.id)
+        designData.scenes[0].frame = designData.frame
+        designData.scenes[0].layers.map((layer) => {
+          if (layer.src) {
+            if (layer.src.includes(defaultPreviewTemplate))
+              layer.src = layer.src.replace(defaultPreviewTemplate, replacePreviewTemplate)
+          }
+          if (template?.license === "paid" && user?.plan === "FREE" && layer.type === "StaticVector") {
+            layer.watermark = watermarkURL
+          }
+        })
+        await activeScene.setScene(designData.scenes[0])
+      } catch (err) {}
     },
-    [design, activeScene]
+    [design, activeScene, projectSelector, user, toast]
   )
 
   const makeFilter = async ({
@@ -260,7 +260,7 @@ export default function Template() {
         stateFavorite === false &&
         stateRecent === false &&
         orderDrawifier[0] === "" &&
-        order[0] === "ALPHABETIC"
+        order[0] === undefined
       ) {
         setResourcesTemplate(selectListTemplate)
         setListRecommend({ words: [] })
@@ -291,9 +291,9 @@ export default function Template() {
 
   return (
     <Box h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" display="flex" flexDirection="column">
-      <Flex padding={"0 1rem"} gap={"0.5rem"}>
+      <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
         <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
-          <HStack>
+          <HStack width={"100%"}>
             <PopoverAnchor>
               <Tooltip
                 isOpen={toolTip}
@@ -326,11 +326,11 @@ export default function Template() {
             <PopoverArrow />
             <PopoverBody id="input">
               <Flex id="input" flexDir="column" fontSize="12px" gap="5px">
-                <Flex id="input">
+                {/* <Flex id="input">
                   <Text id="input">Recent searches</Text>
                   <Spacer id="input" />
                   <Text id="input">Erase</Text>
-                </Flex>
+                </Flex> */}
                 <Flex id="input">Suggestion</Flex>
                 {contentInput?.words.map(
                   (obj, index) =>
@@ -393,8 +393,8 @@ export default function Template() {
                 setStateRecent(false)
                 setValidateContent(null)
                 setMore(false)
-                setOrder(["ALPHABETIC"])
-                setOrderDrawifier([""])
+                setOrder([])
+                setOrderDrawifier([])
                 initialState()
                 setListRecommend({ words: [] })
               }}
@@ -422,83 +422,85 @@ export default function Template() {
           </TabList>
         </Tabs>
       </Box>
-      {validateContent === null ? (
-        <Scrollable autoHide={true}>
-          <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
-            {load ? (
-              <Flex flexDir="column">
-                <Box display="grid" gridTemplateColumns="1fr" padding="0.5rem">
-                  {resourcesTemplate.map((template: any, index) => {
-                    return (
-                      <Box
-                        paddingTop={"5px"}
-                        borderRadius={"2px"}
-                        marginBottom={"10px"}
-                        alignItems={"center"}
-                        display={"flex"}
-                        flexDirection="column"
-                        key={index}
-                        _hover={{
-                          border: "3px solid #5456F5"
-                        }}
-                      >
-                        <Flex
-                          maxH="full"
-                          minH="150px"
-                          w="full"
-                          border="1px solid #d0d0d0"
-                          _hover={{ cursor: "pointer" }}
-                          onClick={() => loadTemplateById(template)}
+      <Flex w="full" h="full" flexDir="column">
+        {validateContent === null ? (
+          <Scrollable autoHide={true}>
+            <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
+              {load ? (
+                <Flex flexDir="column">
+                  <Box display="grid" gridTemplateColumns="1fr" padding="0.5rem">
+                    {resourcesTemplate.map((template: any, index) => {
+                      return (
+                        <Box
+                          paddingTop={"5px"}
+                          borderRadius={"2px"}
+                          marginBottom={"10px"}
+                          alignItems={"center"}
+                          display={"flex"}
+                          flexDirection="column"
+                          key={index}
+                          _hover={{
+                            border: "3px solid #5456F5"
+                          }}
                         >
-                          {/* @ts-ignore */}
-                          <LazyLoadImage url={template.preview} />
-                        </Flex>
-                        <Flex fontSize={"12px"} align="center" flexDirection={"row"} w="100%" padding="3px">
-                          <Text color="#545465" fontWeight={400}>
-                            {template.name}
-                          </Text>
-                          <Spacer />
-                          {template.license === "paid" && (
-                            <Center bg="#F6D056" color="white" borderRadius="4px" boxSize="21px">
-                              <Pro size={20} />
-                            </Center>
-                          )}
-                          {user && (
-                            <IconButtonLike
-                              listFavorite={selectListFavoriteTemplates}
-                              template={template}
-                              setListTemplates={setResourcesTemplate}
-                              listTemplates={resourcesTemplate}
-                              stateFavorite={stateFavorite}
-                            />
-                          )}
-                        </Flex>
-                      </Box>
-                    )
-                  })}
-                </Box>
-                <Button
-                  w="full"
-                  variant="outline"
-                  isLoading={loadMoreResources}
-                  disabled={!more}
-                  onClick={fetchDataResource}
-                >
-                  {more ? "Load more resources?" : "There are no more resources"}
-                </Button>
-              </Flex>
-            ) : (
-              <Center h="40rem" w="full">
-                <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-              </Center>
-            )}
-          </InfiniteScroll>
-        </Scrollable>
-      ) : (
-        <Center h="full" w="full" textAlign="center">
-          {validateContent}
-        </Center>
-      )}
+                          <Flex
+                            maxH="full"
+                            minH="150px"
+                            w="full"
+                            border="1px solid #d0d0d0"
+                            _hover={{ cursor: "pointer" }}
+                            onClick={() => loadTemplateById(template)}
+                          >
+                            {/* @ts-ignore */}
+                            <LazyLoadImage url={template.preview} />
+                          </Flex>
+                          <Flex fontSize={"12px"} align="center" flexDirection={"row"} w="100%" padding="3px">
+                            <Text color="#545465" fontWeight={400}>
+                              {template.name}
+                            </Text>
+                            <Spacer />
+                            {template.license === "paid" && (
+                              <Center bg="#F6D056" color="white" borderRadius="4px" boxSize="21px">
+                                <Pro size={20} />
+                              </Center>
+                            )}
+                            {user && (
+                              <IconButtonLike
+                                listFavorite={selectListFavoriteTemplates}
+                                template={template}
+                                setListTemplates={setResourcesTemplate}
+                                listTemplates={resourcesTemplate}
+                                stateFavorite={stateFavorite}
+                              />
+                            )}
+                          </Flex>
+                        </Box>
+                      )
+                    })}
+                  </Box>
+                  <Button
+                    w="full"
+                    variant="outline"
+                    isLoading={loadMoreResources}
+                    isDisabled={!more}
+                    onClick={fetchDataResource}
+                  >
+                    {more ? "Load more resources?" : "There are no more resources"}
+                  </Button>
+                </Flex>
+              ) : (
+                <Flex h="50%" w="full" align="end" justify="center">
+                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+                </Flex>
+              )}
+            </InfiniteScroll>
+          </Scrollable>
+        ) : (
+          <Center h="full" w="full" textAlign="center">
+            {validateContent}
+          </Center>
+        )}
+      </Flex>
     </Box>
   )
 }

@@ -31,7 +31,8 @@ export default function Order({
   setDrawifier,
   setSkeleton,
   setOrder,
-  drawifier
+  drawifier,
+  setPage
 }: {
   setResources: any
   setFetching: React.Dispatch<React.SetStateAction<boolean>>
@@ -40,6 +41,7 @@ export default function Order({
   setSkeleton: React.Dispatch<React.SetStateAction<boolean>>
   setOrder: React.Dispatch<React.SetStateAction<string[]>>
   drawifier: string[]
+  setPage?: React.Dispatch<React.SetStateAction<number>>
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { isOpen: isOpenDrawifier, onOpen: onOpenDrawifier, onClose: onCloseDrawifier } = useDisclosure()
@@ -48,7 +50,7 @@ export default function Order({
   const getListDraw = async () => {}
   const [id, setId] = useState<string>("")
   const [name, setName] = useState<string>("")
-  const [value, setValue] = useState<string>("A - Z")
+  const [value, setValue] = useState<string>("")
   const initialFocusRef = useRef<any>()
 
   useEffect(() => {
@@ -65,8 +67,9 @@ export default function Order({
     name === "" && onCloseDrawifier()
   }, [name])
 
-  const orderByStats = async () => {
+  const orderByStats = () => {
     setSkeleton(false)
+    setPage && setPage(0)
     id !== "" ? setDrawifier([id]) : setDrawifier([])
     if (value === "A - Z") {
       setOrder(["ALPHABETIC"])
@@ -96,10 +99,15 @@ export default function Order({
                 ORDER BY STATS
               </Text>
               <Grid templateColumns="repeat(1, 1fr)" gap="10px">
-                <RadioGroup onChange={setValue} value={value}>
+                <RadioGroup onChange={setValue}>
                   <Stack spacing={5}>
                     {DEFAULT_ORDER.map((value: any, index: number) => (
-                      <Radio size="sm" value={value} key={index}>
+                      <Radio
+                        size="sm"
+                        isDisabled={value === "Most downloads" || value === "A - Z" ? true : false}
+                        value={value}
+                        key={index}
+                      >
                         {value}
                       </Radio>
                     ))}
@@ -109,48 +117,62 @@ export default function Order({
               <Text color="#A9A9B2" fontSize="12px">
                 FILTER BY DRAWIFIER
               </Text>
-              <Flex flexDirection="column">
-                <Input
-                  ref={initialFocusRef}
-                  placeholder="Start typing..."
-                  value={name}
-                  w="full"
-                  onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
-                  onBlur={onCloseDrawifier}
-                  onChange={(e) => {
-                    onOpenDrawifier()
-                    setName(e.target.value)
+              {id !== "" ? (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setId("")
+                    setName("")
+                    setDrawifier([])
+                    setTimeout(() => initialFocusRef.current.focus(), 100)
                   }}
-                  zIndex={999}
-                ></Input>
-                <Popover
-                  initialFocusRef={initialFocusRef}
-                  isOpen={isOpenDrawifier}
-                  returnFocusOnClose={false}
-                  onClose={onCloseDrawifier}
-                  placement="right-start"
                 >
-                  <PopoverTrigger>
-                    <Flex w="95%" position="absolute">
-                      <Button w="full" visibility="hidden">
-                        Trigger
-                      </Button>
-                    </Flex>
-                  </PopoverTrigger>
-                  <PopoverContent position="relative">
-                    <PopoverArrow />
-                    <PopoverBody>
-                      <FilterByDrawifier
-                        setId={setId}
-                        onClose={onCloseDrawifier}
-                        listDrawifiers={drawifiers}
-                        setName={setName}
-                        name={name}
-                      />
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
-              </Flex>
+                  {name}
+                </Button>
+              ) : (
+                <Flex flexDirection="column">
+                  <Input
+                    ref={initialFocusRef}
+                    placeholder="Start typing..."
+                    value={name}
+                    w="full"
+                    onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
+                    onBlur={onCloseDrawifier}
+                    onChange={(e) => {
+                      onOpenDrawifier()
+                      setName(e.target.value)
+                    }}
+                    zIndex={999}
+                  ></Input>
+                  <Popover
+                    initialFocusRef={initialFocusRef}
+                    isOpen={isOpenDrawifier}
+                    returnFocusOnClose={false}
+                    onClose={onCloseDrawifier}
+                    placement="right-start"
+                  >
+                    <PopoverTrigger>
+                      <Flex w="95%" position="absolute">
+                        <Button w="full" visibility="hidden">
+                          Trigger
+                        </Button>
+                      </Flex>
+                    </PopoverTrigger>
+                    <PopoverContent position="relative">
+                      <PopoverArrow />
+                      <PopoverBody>
+                        <FilterByDrawifier
+                          setId={setId}
+                          onClose={onCloseDrawifier}
+                          listDrawifiers={drawifiers}
+                          setName={setName}
+                          name={name}
+                        />
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </Flex>
+              )}
               <Button
                 bg="#5456F5"
                 onClick={() => {

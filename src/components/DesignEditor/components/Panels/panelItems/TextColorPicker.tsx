@@ -62,7 +62,12 @@ export default function TextColorPicker() {
   }
 
   const applyTextChange = (e: any) => {
-    const value = e.target.value
+    let value: any
+    try {
+      value = e.target.value
+    } catch {
+      value = e
+    }
     if (editor) {
       setState({ ...state, opacity: value, opacityTemp: value })
       activeScene.objects.update({ opacity: value / 100 })
@@ -73,7 +78,6 @@ export default function TextColorPicker() {
     <Flex
       flexDir="column"
       sx={{ width: "320px", borderRight: "1px solid #ebebeb" }}
-      fontFamily="Outfit"
       textColor="#A9A9B2"
       padding="1rem"
       gap="1rem"
@@ -167,6 +171,7 @@ export default function TextColorPicker() {
           textColor="black"
           pattern="[0-9]*(.[0-9]+)?"
           size={"xs"}
+          onKeyDown={(e) => e.key === "Enter" && applyTextChange(state.opacityTemp)}
           onChange={(e) => onChange("sliderValueTemp", parseFloat(e.target.value))}
           onBlur={(e) => applyTextChange(e)}
         />

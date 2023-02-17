@@ -13,7 +13,7 @@ import {
   useToast
 } from "@chakra-ui/react"
 import { Popover, PopoverArrow, PopoverContent, PopoverTrigger } from "@chakra-ui/react"
-import { useActiveScene, useDesign, useEditor, useScenes } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useDesign, useEditor, useScenes, useZoomRatio } from "@layerhub-pro/react"
 import { useSelector } from "react-redux"
 import { useEffect, useState } from "react"
 import * as api from "../../../services/api"
@@ -39,7 +39,14 @@ import { updateProject } from "../../../store/project/action"
 import DesignName from "./DesignName"
 import Resize from "./Resize"
 import SigninModal from "../../../Modals/AuthModal"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
+import { useDebounce } from "use-debounce"
+import { generateId } from "../../../utils/unique"
+import { IDesign } from "@layerhub-pro/types"
+import { selectProject } from "../../../store/project/selector"
+import DrawifyD from "../../../Icons/DrawifyD"
+const redirectLogout = import.meta.env.VITE_LOGOUT
+const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -74,7 +81,12 @@ export default function Header() {
       <Flex alignItems="center">
         <Flex sx={{ width: ["auto", "72px"], alignItems: "center", justifyContent: "center" }}>
           {/* <Link href={`/`}> */}
-          <IconButton variant={"ghost"} aria-label="undo" icon={<Home size={24} />} />
+          <IconButton
+            variant={"ghost"}
+            aria-label=""
+            icon={<DrawifyD size={24} />}
+            onClick={() => (window.location.href = redirectUserProfilePage)}
+          />
           {/* </Link> */}
         </Flex>
         <Flex padding={"0 1rem"} gap={"1rem"} alignItems={"center"}>
@@ -87,7 +99,7 @@ export default function Header() {
                 aria-label="undo"
                 onClick={() => activeScene.history.undo()}
                 icon={<Undo size={24} />}
-                color={state.undo === 0 ? "#DDDFE5" : "black"}
+                color={state.undo === 0 ? "#DDDFE5" : "#5456F5"}
               />
             </Tooltip>
             <Tooltip label="Redo" fontSize="md">
@@ -96,7 +108,7 @@ export default function Header() {
                 onClick={() => activeScene.history.redo()}
                 aria-label="redo"
                 icon={<Redo size={24} />}
-                color={state.redo === 0 ? "#DDDFE5" : "black"}
+                color={state.redo === 0 ? "#DDDFE5" : "#5456F5"}
               />
             </Tooltip>
           </Flex>
@@ -117,14 +129,24 @@ export default function Header() {
       </Flex>
       <DesignName />
       <Flex gap={"1rem"} alignItems={"center"} paddingRight="1rem">
-        <Button className="usr-feedback" colorScheme={"orange"} onClick={() => {}}>
+        {/* <Button className="usr-feedback" colorScheme={"orange"} onClick={() => {}}>
           Feedback
-        </Button>
+        </Button> */}
 
         <ShareMenu />
-        <Tooltip label="Present" fontSize="md">
+
+        <Button
+          className="btn-preview"
+          colorScheme={"orange"}
+          onClick={() => onOpenPreview()}
+          rightIcon={<Play size={24} />}
+        >
+          Preview
+        </Button>
+
+        {/* <Tooltip label="Present" fontSize="md">
           <IconButton variant={"ghost"} aria-label="Play" onClick={() => onOpenPreview()} icon={<Play size={24} />} />
-        </Tooltip>
+        </Tooltip> */}
         {/* <Tooltip label="Notifications" fontSize="md">
           <IconButton variant={"ghost"} aria-label="Bell" icon={<Bell size={24} />} />
         </Tooltip> */}
@@ -137,6 +159,7 @@ export default function Header() {
 function ShareMenu() {
   const activeScene = useActiveScene()
   const editor = useEditor()
+  const scenes = useScenes()
   const dispatch = useAppDispatch()
   const { id } = useParams()
   const toast = useToast()
@@ -147,11 +170,36 @@ function ShareMenu() {
   const [valueInput, setValueInput] = useState<string>("")
   const [typeSign, setTypeSign] = useState("signin")
   const currentScene = useActiveScene()
+  const projectSelect = useSelector(selectProject)
+  const { namesPages } = useDesignEditorContext()
+
+  // const functionSave = useCallback(async () => {
+  //   try {
+  //     let designJSON: any = design?.toJSON()
+  //     designJSON.key = id
+  //     designJSON.scenes.map((e: any, index: number) => {
+  //       e.name = namesPages[index]
+  //       e.position = index
+  //       e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+  //       return e
+  //     })
+  //     user && (await dispatch(updateProject(designJSON))).payload
+  //   } catch {}
+  // }, [editor, scenes, currentScene, id, design, namesPages])
 
   const handleDownload = async (type: string) => {
     let resolve: any
+    let designJSON: any = design?.toJSON()
+    designJSON.key = id
+    designJSON.scenes.map((e: any, index: number) => {
+      e.name = namesPages[index]
+      e.position = index
+      e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+      return e
+    })
+    await dispatch(updateProject(designJSON))
     if (editor && user) {
-      resolve = await api.getExportProject({ id, scene_ids: [], type })
+      resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
     }
     const url = resolve.url
     const fileTypeParts = url.split(".")
@@ -173,10 +221,12 @@ function ShareMenu() {
     async (type: string) => {
       if (user) {
         try {
-          let designJSON: any = design.toJSON()
-          designJSON.id = id
+          let designJSON: any = design?.toJSON()
+          designJSON.key = id
           designJSON.scenes.map((e: any, index: number) => {
+            e.name = namesPages[index]
             e.position = index
+            e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
             return e
           })
           const resolve = (await dispatch(updateProject(designJSON))).payload
@@ -190,7 +240,7 @@ function ShareMenu() {
         } catch {}
       }
     },
-    [activeScene]
+    [activeScene, namesPages, id]
   )
 
   const makeMagicLink = useCallback(async () => {
@@ -297,7 +347,7 @@ function ShareMenu() {
               />
             </Center>
           </Box>
-          <Box>
+          {/* <Box>
             <Box color="#A9A9B2">MAGIC LINK</Box>
             <Flex sx={{ paddingY: "0.5rem" }}>
               <Button w="100%" leftIcon={<Magic size={24} />} variant="outline" onClick={() => makeMagicLink()}>
@@ -305,7 +355,7 @@ function ShareMenu() {
               </Button>
               <Input value={valueInput} position="absolute" onChange={() => {}} visibility={"hidden"} id="input" />
             </Flex>
-          </Box>
+          </Box> */}
           {/* <Box>
               <Box color="#A9A9B2">INVITE</Box>
               <Box sx={{ paddingY: "0.5rem" }}>
@@ -325,20 +375,28 @@ function ShareMenu() {
 
 function FileMenu() {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const {
-    isOpen: isOpenProject,
-    onToggle: onToggleProject,
-    onClose: onCloseProject,
-    onOpen: onOpenProject
-  } = useDisclosure()
-  const { isOpen: isOpenEdit, onToggle: onToggleEdit, onClose: onCloseEdit, onOpen: onOpenEdit } = useDisclosure()
-  const { isOpen: isOpenView, onToggle: onToggleView, onClose: onCloseView, onOpen: onOpenView } = useDisclosure()
+  const { isOpen: isOpenProject, onClose: onCloseProject, onOpen: onOpenProject } = useDisclosure()
+  const { isOpen: isOpenEdit, onClose: onCloseEdit, onOpen: onOpenEdit } = useDisclosure()
+  const { isOpen: isOpenView, onClose: onCloseView, onOpen: onOpenView } = useDisclosure()
+  const [state, setState] = useState<boolean>(false)
   const dispatch = useAppDispatch()
   const editor = useEditor()
-  const { id } = useParams()
   const toast = useToast()
   const activeScene = useActiveScene()
   const user = useSelector(selectUser)
+  const navigate = useNavigate()
+  const scenes = useScenes()
+  const design = useDesign()
+  const { setNamesPages } = useDesignEditorContext()
+  const initialFocusRef = React.useRef()
+  const inputFileRef = React.useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    onCloseEdit()
+    onCloseProject()
+    onCloseView()
+  }, [isOpen, state])
+
   const handleLogout = async () => {
     const resolve = await dispatch(logout())
     if (resolve?.payload) {
@@ -349,6 +407,7 @@ function FileMenu() {
         duration: 5000,
         isClosable: true
       })
+      window.location.href = redirectLogout
     } else {
       toast({
         title: "LOGOUT UNSUCCESSFULLY.",
@@ -361,8 +420,63 @@ function FileMenu() {
     }
   }
 
+  const makeDownload = (data: any) => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data))
+    const a = document.createElement("a")
+    a.href = dataStr
+    a.download = `${data.name}.drawify`
+    a.click()
+  }
+
+  const handleExport = useCallback(() => {
+    if (design) {
+      const data = design.toJSON()
+      makeDownload(data)
+    }
+  }, [design, makeDownload])
+
+  const handleNew = useCallback(async () => {
+    for (const scn of scenes) {
+      await design.deleteScene(scn.id)
+    }
+    setNamesPages(["Untitled design"])
+    navigate(`/composer/${generateId("", 10)}`)
+  }, [design, scenes, navigate, editor])
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files![0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (res) => {
+        const result = res.target!.result as string
+        const design = JSON.parse(result)
+        handleImportDesign(design)
+      }
+      reader.onerror = (err) => {}
+
+      reader.readAsText(file)
+    }
+  }
+
+  const handleImportDesign = React.useCallback(
+    async (data: IDesign) => {
+      editor?.design.setDesign(data)
+    },
+    [editor]
+  )
+
+  const handleInputFileRefClick = () => {
+    inputFileRef.current?.click()
+  }
+
   return (
-    <Popover isOpen={isOpen} onClose={onClose} onOpen={onOpen} placement="bottom-start">
+    <Popover
+      isOpen={isOpen}
+      initialFocusRef={initialFocusRef}
+      onClose={onClose}
+      onOpen={onOpen}
+      placement="bottom-start"
+    >
       <PopoverTrigger>
         <Button
           color={isOpen ? "#FFFFFF" : "inherit"}
@@ -374,46 +488,82 @@ function FileMenu() {
         </Button>
       </PopoverTrigger>
       {/* @ts-ignore */}
-      <PopoverContent w="250px" fontSize={"14px"} paddingY={"0.25rem"}>
+      <PopoverContent ref={initialFocusRef} w="250px" fontSize={"14px"} padding={"0.5rem"}>
         <PopoverArrow />
-        <Button
-          _hover={{ color: "#5456f5", bg: "var(--chakra-colors-gray-200)" }}
-          borderRadius="none"
-          // onClick={() => router.push("/")}
-          onMouseOver={() => {
-            onCloseProject()
-            onCloseEdit()
-            onCloseView()
-          }}
-          variant="ghost"
-          justifyContent="left"
+        {/* <MenuOption>
+          <Flex
+            w="full"
+            onMouseOver={() => {
+              setState(!state)
+            }}
+          >
+            Home
+          </Flex>
+        </MenuOption> */}
+        <Popover
+          isOpen={isOpenProject}
+          onClose={onCloseProject}
+          onOpen={onOpenProject}
+          placement="right"
+          initialFocusRef={initialFocusRef}
         >
-          Home
-        </Button>
-        <Popover isOpen={isOpenProject} onClose={onCloseProject} placement="right">
-          <PopoverContent w="96px">
+          <PopoverTrigger>
+            <MenuOption>
+              <Flex
+                w="full"
+                onClick={onOpenProject}
+                onMouseOver={() => {
+                  onOpenProject()
+                  onCloseEdit()
+                  onCloseView()
+                }}
+              >
+                Project
+                <Spacer />
+                <Right size={18} />
+              </Flex>
+            </MenuOption>
+          </PopoverTrigger>
+          <PopoverContent w="150px" fontSize={"14px"} padding={"0.5rem"}>
             <PopoverArrow />
+            <input
+              multiple={false}
+              onChange={handleFileInput}
+              type="file"
+              id="file"
+              ref={inputFileRef}
+              style={{ display: "none" }}
+            />
+            <MenuOption onClick={handleNew}>New</MenuOption>
+            <MenuOption onClick={handleExport}> Export</MenuOption>
+            <MenuOption onClick={handleInputFileRefClick}> Import</MenuOption>
           </PopoverContent>
         </Popover>
-        <Popover isOpen={isOpenEdit} onClose={onCloseEdit} placement="right">
+        <Popover
+          isOpen={isOpenEdit}
+          onClose={onCloseEdit}
+          initialFocusRef={initialFocusRef}
+          onOpen={onOpenEdit}
+          placement="right"
+        >
           <PopoverTrigger>
-            <Button
-              _hover={{ color: "#5456f5", bg: "var(--chakra-colors-gray-200)" }}
-              borderRadius="none"
-              variant="ghost"
-              onClick={onToggleEdit}
-              onMouseOver={() => {
-                onOpenEdit()
-                onCloseProject()
-                onCloseView()
-              }}
-            >
-              Edit
-              <Spacer />
-              <Right size={18} />
-            </Button>
+            <MenuOption>
+              <Flex
+                w="full"
+                onClick={onOpenEdit}
+                onMouseOver={() => {
+                  onOpenEdit()
+                  onCloseView()
+                  onCloseProject()
+                }}
+              >
+                Edit
+                <Spacer />
+                <Right size={18} />
+              </Flex>
+            </MenuOption>
           </PopoverTrigger>
-          <PopoverContent w="100px">
+          <PopoverContent w="150px" fontSize={"14px"} padding={"0.5rem"}>
             <PopoverArrow />
             <MenuOption onClick={() => activeScene.history.undo()}>Undo</MenuOption>
             <MenuOption onClick={() => activeScene.history.redo()}>Redo</MenuOption>
@@ -423,25 +573,31 @@ function FileMenu() {
             <MenuOption onClick={() => activeScene.objects.remove()}>Delete</MenuOption>
           </PopoverContent>
         </Popover>
-        <Popover isOpen={isOpenView} onClose={onCloseView} placement="right">
+        <Popover
+          isOpen={isOpenView}
+          onClose={onCloseView}
+          initialFocusRef={initialFocusRef}
+          onOpen={onOpenView}
+          placement="right"
+        >
           <PopoverTrigger>
-            <Button
-              _hover={{ color: "#5456f5", bg: "var(--chakra-colors-gray-200)" }}
-              borderRadius="none"
-              onClick={onToggleView}
-              variant="ghost"
-              onMouseOver={() => {
-                onOpenView()
-                onCloseEdit()
-                onCloseProject()
-              }}
-            >
-              View
-              <Spacer />
-              <Right size={18} />
-            </Button>
+            <MenuOption>
+              <Flex
+                w="full"
+                onClick={onOpenView}
+                onMouseOver={() => {
+                  onOpenView()
+                  onCloseEdit()
+                  onCloseProject()
+                }}
+              >
+                View
+                <Spacer />
+                <Right size={18} />
+              </Flex>
+            </MenuOption>
           </PopoverTrigger>
-          <PopoverContent w="100px">
+          <PopoverContent w="150px" fontSize={"14px"} padding={"0.5rem"}>
             <PopoverArrow />
             <MenuOption onClick={() => editor.zoom.zoomIn()}>Zoom in</MenuOption>
             <MenuOption onClick={() => editor.zoom.zoomOut()}> Zoom out</MenuOption>
@@ -461,7 +617,19 @@ function FileMenu() {
         >
           Help
         </Button> */}
-        {user && <MenuOption onClick={handleLogout}>Logout</MenuOption>}
+        {user && (
+          <MenuOption>
+            <Flex
+              w="full"
+              onMouseOver={() => {
+                setState(!state)
+              }}
+              onClick={handleLogout}
+            >
+              Logout
+            </Flex>
+          </MenuOption>
+        )}
       </PopoverContent>
     </Popover>
   )
@@ -507,6 +675,7 @@ function UserMenu() {
         duration: 5000,
         isClosable: true
       })
+      window.location.href = redirectLogout
     } else {
       toast({
         title: "LOGOUT UNSUCCESSFULLY.",
@@ -564,36 +733,104 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const { namesPages } = useDesignEditorContext()
   const dispatch = useAppDispatch()
   const editor = useEditor()
-  const scenes = useScenes()
+  const activeScene = useActiveScene()
   const currentScene = useActiveScene()
+  const scenes = useScenes()
   const [autoSave, setAutoSave] = useState<boolean>(true)
+  const [stateJson, setStateJson] = useState<any>("")
+  const [stateChange] = useDebounce(stateJson, 5000)
+  const zoom = useZoomRatio()
+  const activeObject: any = useActiveObject()
+
+  document.onkeydown = function (e) {
+    if (e.keyCode === 46) {
+      activeObject?.type !== "Frame" && activeScene.objects.remove(activeObject.id)
+      return false
+    }
+    if (e.keyCode === 37) {
+      activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left - 30 }, activeObject.id)
+      return false
+    }
+    if (e.keyCode === 38) {
+      activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top - 30 }, activeObject.id)
+      return false
+    }
+    if (e.keyCode === 39) {
+      activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left + 30 }, activeObject.id)
+      return false
+    }
+    if (e.keyCode === 40) {
+      activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top + 30 }, activeObject.id)
+      return false
+    }
+    if (
+      e.ctrlKey &&
+      (e.keyCode === 85 ||
+        e.keyCode === 117 ||
+        e.keyCode === 107 ||
+        e.keyCode === 109 ||
+        e.keyCode === 69 ||
+        e.keyCode === 68 ||
+        e.keyCode === 83 ||
+        e.keyCode === 65 ||
+        e.keyCode === 90 ||
+        e.keyCode === 46 ||
+        e.keyCode === 89 ||
+        e.keyCode === 64)
+    ) {
+      if (e.ctrlKey && e.keyCode === 107) editor.zoom.zoomToRatio(zoom + 0.05)
+      if (e.ctrlKey && e.keyCode === 109) editor.zoom.zoomToRatio(zoom - 0.05)
+      if (e.ctrlKey && e.keyCode === 68) activeScene.objects.clone()
+      if (e.ctrlKey && e.keyCode === 83) functionSave()
+      if (e.ctrlKey && e.keyCode === 65) activeScene.objects.select()
+      if (e.ctrlKey && e.keyCode === 69) {
+        activeScene.layers.map((e, index) => {
+          if (index > 1) activeScene.objects.remove(e.id)
+        })
+        editor.zoom.zoomToRatio(zoom - 0.0000000000001 + 0.0000000000001)
+      }
+      if (e.ctrlKey && e.keyCode === 90) activeScene.history.undo()
+      if (e.ctrlKey && e.keyCode === 89) activeScene.history.redo()
+      if (e.keyCode === 46) activeScene.objects.removeById(activeObject?.id)
+      return false
+    } else return true
+  }
+
+  useEffect(() => {
+    try {
+      if (activeScene && stateJson !== "") functionSave()
+    } catch {}
+  }, [stateChange, namesPages])
+
+  useEffect(() => {
+    stateJson !== "" && setAutoSave(false)
+  }, [scenes, namesPages])
 
   React.useEffect(() => {
-    functionSave()
-  }, [scenes, currentScene, user, namesPages])
+    let watcher = async () => {
+      setStateJson(JSON.stringify(editor.design.toJSON()))
+    }
+    if (editor) {
+      editor.on("history:updated", watcher)
+    }
+    return () => {
+      if (editor) {
+        editor.off("history:updated", watcher)
+      }
+    }
+  }, [editor, namesPages])
 
   const functionSave = useCallback(async () => {
     try {
-      if (autoSave === true && user) {
-        setAutoSave(false)
-        await save()
-        setAutoSave(true)
-      }
-    } catch {
-      setAutoSave(true)
-    }
-  }, [editor, scenes, currentScene, id, design, autoSave, namesPages])
-
-  const save = useCallback(async () => {
-    try {
       let designJSON: any = design?.toJSON()
-      designJSON.id = id
+      designJSON.key = id
       designJSON.scenes.map((e: any, index: number) => {
         e.name = namesPages[index]
         e.position = index
+        e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
         return e
       })
-      user && (await dispatch(updateProject(designJSON)))
+      user && (await dispatch(updateProject(designJSON))).payload
       setAutoSave(true)
     } catch {}
   }, [editor, scenes, currentScene, id, design, autoSave, namesPages])
@@ -607,7 +844,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
           _hover={{ color: "#15BE53" }}
           color={autoSave === false ? "#DDDFE5" : "#15BE53"}
           icon={<Sync size={24} />}
-          onClick={() => (!user ? onOpen() : save())}
+          onClick={() => (!user ? onOpen() : functionSave())}
         />
       </Tooltip>
     </Flex>

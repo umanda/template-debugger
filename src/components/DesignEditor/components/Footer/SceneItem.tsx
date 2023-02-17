@@ -16,16 +16,13 @@ import {
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { useDesign, useEditor, useFrame, useScenes } from "@layerhub-pro/react"
-// import Duplicate2 from "~/components/Icons/Duplicate2"
-// import Comments from "./Comments"
-// import { IListComments } from "~/interfaces/Comment"
 import { useSelector } from "react-redux"
 import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
 import { selectUser } from "../../../store/user/selector"
 import Trash from "../../../Icons/Trash"
 import OptionsScenes from "../../../Icons/OptionsScenes"
 import Rename from "../../../Icons/Rename"
-import Duplicate2 from "../../../Icons/Duplicate2"
+import Duplicate2 from "../../../Icons/Copy"
 
 interface Props {
   isCurrentScene: boolean
@@ -69,6 +66,7 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
     async (id: string) => {
       design.deleteScene(id)
       setNamesPages(namesPages.filter((e, i: number) => i !== index))
+      editor.design.activeScene.objects.deselect()
       onClose()
     },
     [namesPages, design, index]
@@ -83,10 +81,12 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
     async (id: string) => {
       if (editor?.freeDrawer?.canvas?.isDrawingMode) {
         editor.freeDrawer.disable()
+        editor.design.activeScene.objects.deselect()
       }
       namesPages.splice(index + 1, 0, namesPages[index])
       setNamesPages(namesPages)
       design.duplicateScene(id)
+      onClose()
     },
     [namesPages, design, index]
   )

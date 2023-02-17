@@ -3,7 +3,9 @@ import axios from "axios"
 import * as api from "../../services/api"
 import mime from "mime"
 import {
+  ICreateComponent,
   interfaceUploads,
+  IResolveComponent,
   IResource,
   IUpload,
   querySearchUpload,
@@ -22,6 +24,10 @@ export const setUploads = createAction<interfaceUploads[]>("uploads/setUploads")
 export const setUploading = createAction<Uploading>("uploads/setUploading")
 export const closeUploading = createAction("uploads/closeUploading")
 export const deleteResource = createAction<IUpload>("uploads/deleteResource")
+export const addResourceComposite = createAction<IResolveComponent>("resources/addResourceComposite")
+export const setIdDeleteResourceComposite = createAction<string>("resources/setIdDeleteResourceComposite")
+export const setListResourceComposite = createAction<IResolveComponent>("resources/setResourceComposite")
+export const addUpload = createAction<interfaceUploads[]>("resources/setAddUpload")
 
 export const getFavoritedResources = createAsyncThunk<void, SearchResourceDto, any>(
   "resources/getFavoritedResources",
@@ -40,7 +46,9 @@ export const getListResourcesImages = createAsyncThunk<void, SearchResourceDto, 
       const resources: any = await api.getListResourcesImages(args)
       dispatch(setResourcesImages(resources))
       return resources
-    } catch (err) {}
+    } catch (err) {
+      return err
+    }
   }
 )
 export const makeFavoriteResource = createAsyncThunk<any, IResource, { rejectValue: void }>(
@@ -86,12 +94,11 @@ export const uploadFile = createAsyncThunk<void, { file: File; nameFile: string 
     })
     const updatedFileName = uniqueFilename(file.name)
     const updatedFile = new File([file], updatedFileName)
-    const response = await api.getSignedURLForUpload({ filename: updatedFileName, operation: "upload" })
+    const response = await api.getSignedURLForUpload({ filename: updatedFileName, type: "IMAGE" })
     const contentType = mime.getType(updatedFileName) as string
-    const typeFile = updatedFileName.split(".")
-    const save: any = await api.getSave({ id: typeFile[0], name: args.nameFile, type: typeFile[1], url: response.url })
-    dispatch(setUploads([save.image]))
-    await axios.put(response.signed_url, updatedFile, {
+    const save: any = await api.getSave({ filename: updatedFileName, name: args.nameFile.split(".")[0] })
+    dispatch(addUpload([save.image]))
+    await axios.put(response.signed_urls[0].signed_url, updatedFile, {
       headers: { "Content-Type": contentType },
       onUploadProgress: (progressEvent: any) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -126,6 +133,45 @@ export const deleteUploadFile = createAsyncThunk<void, IUpload, any>(
       await api.deleteUploadFile(args.id)
     } catch (err) {
       alert(err)
+    }
+  }
+)
+
+export const createResourceComposite = createAsyncThunk<void, ICreateComponent, any>(
+  "resources/createResourceComposite",
+  async (props, { dispatch }) => {
+    try {
+      const resolve: any = await api.createResourceComposite(props)
+      dispatch(addResourceComposite(resolve))
+      return resolve
+    } catch (err) {
+      return err
+    }
+  }
+)
+
+export const getListResourcesComposite = createAsyncThunk<void, any, any>(
+  "resources/getListResourcesComposite",
+  async (props, { dispatch }) => {
+    try {
+      const resolve: any = await api.listResourceComposite(props)
+      dispatch(setListResourceComposite(resolve))
+      return resolve
+    } catch (err) {
+      return err
+    }
+  }
+)
+
+export const deleteResourceComposite = createAsyncThunk<void, string, any>(
+  "resources/setDeleteResourceComposite",
+  async (props, { dispatch }) => {
+    try {
+      dispatch(setIdDeleteResourceComposite(props))
+      const resolve: any = await api.deleteResourceComposite(props)
+      return resolve
+    } catch (err) {
+      return err
     }
   }
 )

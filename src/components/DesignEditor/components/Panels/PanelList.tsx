@@ -1,12 +1,11 @@
 import { Box, Flex } from "@chakra-ui/react"
 import Icons from "../../../Icons"
-import React from "react"
 import { useEditor } from "@layerhub-pro/react"
 import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
 import { PANEL_ITEMS } from "../../../constants/panel-items"
 
 export default function PaneList() {
-  const { setActivePanel, activePanel, setIsSidebarVisible } = useDesignEditorContext()
+  const { setActivePanel, activePanel, setIsSidebarVisible, activeMenu, setActiveMenu } = useDesignEditorContext()
   const editor = useEditor()
 
   return (
@@ -29,6 +28,7 @@ export default function PaneList() {
                 editor.freeDrawer.disable()
               }
               if (setActivePanel) {
+                setActiveMenu("")
                 setActivePanel(item.id)
               }
             }}
@@ -40,13 +40,13 @@ export default function PaneList() {
               height: "64px",
               gap: "4px",
               cursor: "pointer",
-              color: activePanel === item.id ? "#5456F5" : "#545465"
+              color: activePanel === item.id && activeMenu === "" ? "#5456F5" : "#545465"
             }}
             _hover={{
               color: "#5456F5"
             }}
           >
-            <Box background={activePanel === item.id ? "#EBEDFB" : "#FFFFFF"}>
+            <Box background={activePanel === item.id && activeMenu === "" ? "#EBEDFB" : "#FFFFFF"}>
               <Icon size={24} />
             </Box>
             <Box sx={{ fontSize: "12px" }}>{item.label}</Box>

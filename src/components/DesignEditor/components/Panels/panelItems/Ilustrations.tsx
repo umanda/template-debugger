@@ -5,6 +5,7 @@ import {
   Button,
   Center,
   Flex,
+  Grid,
   HStack,
   Input,
   Modal,
@@ -52,10 +53,12 @@ import FilterByTemplates from "../../../../Icons/FilterByTemplates"
 import FilterByTags from "../../../../Icons/FilterByTags"
 import { selectResourceImages } from "../../../../store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "../../../../store/resources/action"
+import { selectProject } from "../../../../store/project/selector"
+const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
 export const limitCharacters = (name: string) => {
-  const newName = name.substring(0, 15)
-  if (name.length > 15) {
+  const newName = name?.substring(0, 15)
+  if (name?.length > 15) {
     return `${newName}.`
   } else {
     return newName
@@ -63,18 +66,10 @@ export const limitCharacters = (name: string) => {
 }
 
 const initialQuery = {
-  page: 1,
+  page: 0,
   limit: 10,
   query: {
-    ids: [],
-    drawifier_ids: [],
-    names: [],
-    suggested: [],
-    categories: ["IMAGE"],
-    colors: [],
-    tags: [""],
     visibility: "public",
-    styles: [],
     favorited: false,
     used: false
   },
@@ -92,7 +87,7 @@ export default function Ilustrations() {
   const [order, setOrder] = useState<string[]>(["ALPHABETIC"])
   const user = useSelector(selectUser)
   const { isOpen: isOpenInput, onOpen: onOpenInput, onClose: onCloseInput } = useDisclosure()
-  const [resourcesIllustration, setResourcesIllustration] = useState<IResource[]>([])
+  const [resourcesIllustration, setResourcesIllustration] = useState<any[]>([])
   const [load, setLoad] = useState(false)
   const [more, setMore] = useState(true)
   const selectListResources = useSelector(selectResourceImages).resources
@@ -108,9 +103,22 @@ export default function Ilustrations() {
   const [toolTip, setToolTip] = useState(false)
   const activeScene = useActiveScene()
   const activeObject = useActiveObject()
+  const projectSelect = useSelector(selectProject)
+  const [page, setPage] = useState<number>(0)
+  const filterResource = localStorage.getItem("drawing_filter")
+  const [notIds, setNotIds] = useState<number[]>([])
+  const listDrawifiers: any = useSelector(selectListDrawifiers)
 
   useEffect(() => {
-    initialState()
+    if (filterResource !== undefined && filterResource !== null) {
+      setNameIllustration([filterResource])
+      setNameIllustrationPrev([filterResource])
+      localStorage.removeItem("drawing_filter")
+    }
+  }, [])
+
+  useEffect(() => {
+    filterResource === null && initialState()
   }, [user])
 
   const initialState = useCallback(async () => {
@@ -128,12 +136,12 @@ export default function Ilustrations() {
       setResourcesIllustration(selectListResources)
       setMore(true)
     }
-    if (selectListFavoriteResources[0] === undefined && user) {
-      dispatch(getFavoritedResources({ query: { favorited: true } }))
+    if (user) {
+      dispatch(getFavoritedResources({ query: { favorited: true }, sorts: [] }))
     }
     setLoad(true)
     setDisableTab(false)
-  }, [selectListResources])
+  }, [selectListResources, filterResource])
 
   const fetchDataResource = async () => {
     setMore(false)
@@ -151,64 +159,81 @@ export default function Ilustrations() {
       setResourcesIllustration(selectListResources.concat(resolve))
       resolve[0] !== undefined && setMore(true)
     } else {
-      const resolve: any[] = await api.searchResources({
-        page: resourcesIllustration.length / 10 + 1,
-        limit: 10,
-        query: {
-          drawifier_ids: orderDrawifier[0]?.length > 0 ? orderDrawifier : undefined,
-          visibility: "public",
-          tags: nameIllustration[0] === "" ? undefined : nameIllustration,
-          categories: ["IMAGE"],
-          favorited: stateFavorite ? true : undefined,
-          used: stateRecent ? true : undefined
-        },
-        sorts: order
-      })
+      let resolve = []
+      try {
+        resolve = await api.searchResources(
+          {
+            page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page,
+            limit: 10,
+            query: {
+              drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
+              visibility: "public",
+              keywords: nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
+              categories: [],
+              favorited: stateFavorite ? true : undefined,
+              used: stateRecent ? true : undefined,
+              notIds: notIds[0] === undefined ? undefined : notIds
+            },
+            sorts: stateRecent ? ["USED_AT"] : order
+          },
+          setNotIds,
+          notIds
+        )
+      } catch {}
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
         setValidateContent("Nothing was found related to the filter entered")
       } else {
         setValidateContent(null)
       }
-      resolve[0] !== undefined ? setMore(true) : setMore(false)
+      setPage(page + 1)
       resolve.map((obj) => {
         resourcesIllustration.find((resource) => {
           obj.id === resource.id && setMore(false)
         })
       })
-      const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
-      setResourcesIllustration(validateResources)
+      if (nameIllustration[0] !== "") {
+        resolve?.sort((a, b) => b.count_drawings - a.count_drawings)
+        const lastDraw = resolve.find(
+          (r) => r?.drawifierId === resourcesIllustration[resourcesIllustration.length - 1]?.drawifierId
+        )
+        resourcesIllustration.map((r) => {
+          if (r?.drawifierId === lastDraw?.drawifierId) r.drawings = r.drawings.concat(lastDraw.drawings)
+        })
+        setResourcesIllustration(
+          resourcesIllustration.concat(resolve?.filter((r) => r?.drawifierId !== lastDraw?.drawifierId))
+        )
+      } else {
+        const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
+        setResourcesIllustration(validateResources)
+      }
+      resolve[0] !== undefined ? setMore(true) : setMore(false)
+      resolve[9] === undefined && setMore(false)
     }
+    setLoadMoreResources(false)
     setLoad(true)
     setDisableTab(false)
-    setLoadMoreResources(false)
   }
 
   const addObject = useCallback(
     async (resource: IResource) => {
       try {
-        if (user) {
+        if (user && projectSelect) {
           const ctx = { id: resource.id }
-          api.recentResource(ctx.id)
+          api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
         }
-        const options = {
+        const options: any = {
           type: "StaticVector",
           name: "Shape",
           src: resource.url,
-          // left: 680,
-          // originX: "center",
-          ...{ watermark: resource.license === "paid" && "https://ik.imagekit.io/scenify/drawify-small.svg" },
-          metadata: {}
+          erasable: false,
+          watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
         }
-        // let resolve:any
         if (editor) {
-          await activeScene.objects.add(options)
-          // setTimeout(() => {
-          //   activeScene.objects.update({ left: 0, top: 0 })
-          // }, 200)
+          await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
         }
-      } catch {}
+      } catch (err) {}
     },
-    [activeScene, editor, user, activeObject]
+    [activeScene, editor, activeObject, projectSelect, user]
   )
 
   const onDragStart = React.useCallback(
@@ -219,50 +244,49 @@ export default function Ilustrations() {
     [activeScene, editor, setResourceDrag]
   )
 
-  const makeFilter = useCallback(
-    async ({
-      input,
-      stateFavorites,
-      stateRecents
-    }: {
-      input?: string[]
-      stateFavorites?: boolean
-      stateRecents?: boolean
-    }) => {
-      setMore(true)
-      setLoad(false)
-      setDisableTab(true)
+  const makeFilter = async ({
+    input,
+    stateFavorites,
+    stateRecents
+  }: {
+    input?: string[]
+    stateFavorites?: boolean
+    stateRecents?: boolean
+  }) => {
+    setPage(0)
+    setMore(true)
+    setLoad(false)
+    setDisableTab(true)
 
-      if (input) {
-        setNameIllustration(input)
-        setResourcesIllustration([])
-        if (input[0] === "") {
-          setListRecommend({ words: [] })
-        }
+    if (input) {
+      setNameIllustration(input)
+      setNotIds([])
+      setResourcesIllustration([])
+      if (input[0] === "") {
+        setListRecommend({ words: [] })
       }
+    }
 
-      if (stateFavorites || stateFavorite) {
-        setStateRecent(false)
-        setStateFavorite(true)
-      } else if (stateRecents || stateRecent) {
-        setStateRecent(true)
-        setStateFavorite(false)
-      }
+    if (stateFavorites || stateFavorite) {
+      setStateRecent(false)
+      setStateFavorite(true)
+    } else if (stateRecents || stateRecent) {
+      setStateRecent(true)
+      setStateFavorite(false)
+    }
 
-      try {
-        //@ts-ignore
-        if (!stateFavorite && !stateRecent && input[0] === undefined) {
-          setResourcesIllustration(selectListResources)
-        } else {
-          setResourcesIllustration([])
-        }
-      } catch {
+    try {
+      //@ts-ignore
+      if (!stateFavorite && !stateRecent && input[0] === undefined) {
+        setResourcesIllustration(selectListResources)
+      } else {
         setResourcesIllustration([])
       }
-      setValidateContent(null)
-    },
-    [selectListResources, stateFavorite, stateRecent]
-  )
+    } catch {
+      setResourcesIllustration([])
+    }
+    setValidateContent(null)
+  }
 
   const makeFavorite = useCallback(
     async (obj: IResource) => {
@@ -329,9 +353,9 @@ export default function Ilustrations() {
 
   return (
     <Box h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" display="flex" flexDirection="column">
-      <Flex padding={"0 1rem"} gap={"0.5rem"}>
+      <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
         <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
-          <HStack>
+          <HStack width={"100%"}>
             <PopoverAnchor>
               <Tooltip
                 isOpen={toolTip}
@@ -364,11 +388,11 @@ export default function Ilustrations() {
             <PopoverArrow />
             <PopoverBody id="input">
               <Flex id="input" flexDir="column" fontSize="12px" gap="5px">
-                <Flex id="input">
+                {/* <Flex id="input">
                   <Text id="input">Recent searches</Text>
                   <Spacer id="input" />
                   <Text id="input">Erase</Text>
-                </Flex>
+                </Flex> */}
                 <Flex id="input">Suggestion</Flex>
                 {contentInput?.words.map(
                   (obj, index) =>
@@ -400,6 +424,7 @@ export default function Ilustrations() {
           setDrawifier={setOrderDrawifier}
           order={order}
           drawifier={orderDrawifier}
+          setPage={setPage}
         />
       </Flex>
       <Box>
@@ -435,6 +460,8 @@ export default function Ilustrations() {
                 setOrderDrawifier([])
                 initialState()
                 setListRecommend({ words: [] })
+                setPage(0)
+                setNotIds([])
               }}
             >
               All
@@ -460,48 +487,113 @@ export default function Ilustrations() {
           </TabList>
         </Tabs>
       </Box>
-      {validateContent === null ? (
-        <Scrollable autoHide={true}>
-          <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
-            {load ? (
-              <Flex flexDir="column">
-                <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
-                  {resourcesIllustration.map(
-                    (illustration, index) =>
-                      illustration && (
-                        <IllustrationItem
-                          makeFavorite={makeFavorite}
-                          onDragStart={onDragStart}
-                          addObject={() => addObject(illustration)}
-                          illustration={illustration}
-                          key={index}
-                          listFavorite={selectListFavoriteResources}
-                        />
-                      )
-                  )}
-                </Box>
-                <Button
-                  w="full"
-                  variant="outline"
-                  isLoading={loadMoreResources}
-                  disabled={!more}
-                  onClick={fetchDataResource}
-                >
-                  {more ? "Load more resources?" : "There are no more resources"}
-                </Button>
-              </Flex>
-            ) : (
-              <Center h="40rem" w="full">
-                <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-              </Center>
-            )}
-          </InfiniteScroll>
-        </Scrollable>
-      ) : (
-        <Center h="full" w="full" textAlign="center">
-          {validateContent}
-        </Center>
-      )}
+      <Flex w="full" h="full" flexDir="column">
+        {validateContent === null ? (
+          <Scrollable autoHide={true}>
+            <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
+              {load ? (
+                nameIllustration[0] !== "" ? (
+                  <Flex marginTop="20px" marginInline="20px" flexDir="column">
+                    {resourcesIllustration?.map((r, index) => (
+                      <Flex flexDir="column" key={index} gap="5px" alignItems="center">
+                        <Flex w="full">
+                          <Avatar size="md" name={r?.drawifier_name} src={r?.avatar} />
+                          <Center marginLeft="20px" flexDirection="column">
+                            <Box sx={{ fontSize: "12px" }} fontWeight="bold">
+                              {limitCharacters(r?.drawifier_name)}
+                            </Box>
+                            <Box sx={{ fontSize: "12px" }}>{`Found ${r?.total_drawings ?? 0} drawings`}</Box>
+                          </Center>
+                        </Flex>
+                        <Flex
+                          h="1px"
+                          w="full"
+                          bg="linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5578606442577031) 27%, rgba(0,212,255,0) 100%)"
+                        ></Flex>
+                        <Grid gap="2px" templateColumns="repeat(2, 1fr)">
+                          {r?.drawings?.map(
+                            (illustration, index) =>
+                              illustration && (
+                                <IllustrationItem
+                                  makeFavorite={makeFavorite}
+                                  onDragStart={onDragStart}
+                                  addObject={() => addObject(illustration)}
+                                  illustration={illustration}
+                                  key={index}
+                                  listFavorite={selectListFavoriteResources}
+                                />
+                              )
+                          )}
+                        </Grid>
+                      </Flex>
+                    ))}
+                    {/* <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
+                    {resourcesIllustration.map(
+                      (illustration, index) =>
+                        illustration && (
+                          <IllustrationItem
+                            makeFavorite={makeFavorite}
+                            onDragStart={onDragStart}
+                            addObject={() => addObject(illustration)}
+                            illustration={illustration}
+                            key={index}
+                            listFavorite={selectListFavoriteResources}
+                          />
+                        )
+                    )}
+                  </Box> */}
+
+                    <Button
+                      w="full"
+                      variant="outline"
+                      isLoading={loadMoreResources}
+                      isDisabled={!more}
+                      onClick={fetchDataResource}
+                    >
+                      {more ? "Load more resources?" : "There are no more resources"}
+                    </Button>
+                  </Flex>
+                ) : (
+                  <Flex flexDir="column">
+                    <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
+                      {resourcesIllustration.map(
+                        (illustration, index) =>
+                          illustration && (
+                            <IllustrationItem
+                              makeFavorite={makeFavorite}
+                              onDragStart={onDragStart}
+                              addObject={() => addObject(illustration)}
+                              illustration={illustration}
+                              key={index}
+                              listFavorite={selectListFavoriteResources}
+                            />
+                          )
+                      )}
+                    </Box>
+                    <Button
+                      w="full"
+                      variant="outline"
+                      isLoading={loadMoreResources}
+                      isDisabled={!more}
+                      onClick={fetchDataResource}
+                    >
+                      {more ? "Load more resources?" : "There are no more resources"}
+                    </Button>
+                  </Flex>
+                )
+              ) : (
+                <Flex h="50%" w="full" align="end" justify="center">
+                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+                </Flex>
+              )}
+            </InfiniteScroll>
+          </Scrollable>
+        ) : (
+          <Center h="full" w="full" textAlign="center">
+            {validateContent}
+          </Center>
+        )}
+      </Flex>
     </Box>
   )
 }
@@ -580,7 +672,7 @@ function IllustrationItem({
         >
           <FilterByTags size={30} />
         </Flex>
-        <Flex
+        {/* <Flex
           onClick={() => OpenModalIllustration("id", illustration)}
           zIndex={5}
           visibility={isHovering ? "visible" : "hidden"}
@@ -593,7 +685,7 @@ function IllustrationItem({
           color="#545465"
         >
           <FilterByTemplates size={30} />
-        </Flex>
+        </Flex> */}
         <Flex opacity={isHovering ? "0.2" : "1"} w="full" h="full" onClick={addObject}>
           <LazyLoadImage url={illustration.preview} />
         </Flex>
@@ -605,28 +697,33 @@ function IllustrationItem({
           alignItems: "center"
         }}
       >
-        <Flex gap="5px" alignItems="center">
-          <Avatar size={"xs"} name={illustration.drawifier.name} src={illustration.drawifier.avatar} />
-          <Box sx={{ fontSize: "12px" }}>{limitCharacters(illustration.drawifier.name)}</Box>
-        </Flex>
-        <Center gap={"0.25rem"}>
-          {illustration.license === "paid" && (
-            <Center boxSize="21px" sx={{ background: "#F6D056", color: "#FFFFFF", borderRadius: "4px" }}>
-              <Pro size={40} />
+        {illustration?.drawifier?.name && (
+          <Flex>
+            <Flex gap="5px" alignItems="center">
+              <Avatar size={"xs"} name={illustration?.drawifier?.name} src={illustration?.drawifier?.avatar} />
+              <Box sx={{ fontSize: "12px" }}>{limitCharacters(illustration?.drawifier?.name)}</Box>
+            </Flex>
+            <Center gap={"0.25rem"}>
+              {illustration.license === "paid" && (
+                <Center boxSize="21px" sx={{ background: "#F6D056", color: "#FFFFFF", borderRadius: "4px" }}>
+                  <Pro size={40} />
+                </Center>
+              )}
+              {user && (
+                <Center
+                  onClick={() => {
+                    makeFavorite(illustration)
+                    setLike(!like)
+                  }}
+                  _hover={{ cursor: "pointer" }}
+                  boxSize="21px"
+                >
+                  <ValidateIcon />
+                </Center>
+              )}
             </Center>
-          )}
-          {user && (
-            <Center
-              onClick={() => {
-                makeFavorite(illustration)
-              }}
-              _hover={{ cursor: "pointer" }}
-              boxSize="21px"
-            >
-              <ValidateIcon />
-            </Center>
-          )}
-        </Center>
+          </Flex>
+        )}
       </Flex>
     </Flex>
   )
@@ -649,17 +746,19 @@ function ModalIllustration({
   const user = useSelector(selectUser)
   const editor = useEditor()
   const activeScene = useActiveScene()
-  const dispatch = useAppDispatch()
   const [resources, setResources] = useState<IResource[]>([])
   const [load, setLoad] = useState(false)
   const [sort, setSort] = useState<string>("ALPHABETIC")
   const [idDrawifier, setIdDrawifier] = useState<string>("")
   const initialFocusRef = useRef<any>()
+  const refInputName = useRef<any>()
   const [name, setName] = useState<string>("")
   const { isOpen: isOpenDrawifier, onOpen: onOpenDrawifier, onClose: onCloseDrawifier } = useDisclosure()
   const drawifiers = useSelector(selectListDrawifiers)
   const [resourcesPrev, setResourcesPrev] = useState<IResource[]>([])
   const [nameResource, setNameResource] = useState<string>("")
+  const projectSelect = useSelector(selectProject)
+  const activeObject = useActiveObject()
 
   useEffect(() => {
     setSort("ALPHABETIC")
@@ -679,10 +778,9 @@ function ModalIllustration({
         page: 1,
         limit: 10,
         query: {
-          drawifier_ids: type === "id" ? [typeFilter.drawifier.id] : idDrawifier !== "" ? [idDrawifier] : undefined,
-          visibility: "public",
-          tags: type === "tag" ? typeFilter.tags : undefined,
-          categories: ["IMAGE"]
+          drawifier_ids:
+            type === "id" ? [Number(typeFilter.drawifier.id)] : idDrawifier !== "" ? [idDrawifier] : undefined,
+          tags: type === "tag" ? typeFilter.tags : undefined
         },
         sorts: [sort]
       })
@@ -698,40 +796,53 @@ function ModalIllustration({
   }, [listFavorite, resources, resourcesPrev, typeFilter, type, idDrawifier, sort])
 
   const addObject = useCallback(
-    (resource: IResource) => {
+    async (resource: IResource) => {
       if (user) {
         const ctx = { id: resource.id }
-        api.recentResource(ctx.id)
+        api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
       }
-      const options = {
+      const options: any = {
         type: "StaticVector",
         name: "Shape",
         src: resource.url,
-        ...(resource.license === "paid" && { watermark: "https://ik.imagekit.io/scenify/drawify-small.svg" }),
-        metadata: {}
+        erasable: false,
+        watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
       }
       if (editor) {
-        activeScene.objects.add(options)
+        await activeScene.objects.add(options, { desiredSize: 200 })
       }
     },
-    [activeScene, editor]
+    [activeScene, editor, activeObject, projectSelect, user]
   )
 
   const filterByName = useCallback(
-    (e: string) => {
+    async (e: string) => {
+      setLoad(false)
       setNameResource(e)
-      setResources(resourcesPrev.filter((r) => r.name.includes(e)))
+      const resolve: any[] = await api.searchResources({
+        page: 1,
+        limit: 10,
+        query: {
+          drawifier_ids:
+            type === "id" ? [Number(typeFilter.drawifier.id)] : idDrawifier !== "" ? [idDrawifier] : undefined,
+          tags: type === "tag" ? typeFilter.tags : undefined,
+          names: [e]
+        },
+        sorts: [sort]
+      })
+      setResources(resolve)
+      setLoad(true)
     },
     [resourcesPrev, resources]
   )
 
-  const ValidateIcon = () => {
-    if (like) {
-      return <LikeClick size={20} />
-    } else {
-      return <Like size={20} />
-    }
-  }
+  // const ValidateIcon = () => {
+  //   if (like) {
+  //     return <LikeClick size={20} />
+  //   } else {
+  //     return <Like size={20} />
+  //   }
+  // }
 
   return (
     <Modal isOpen={isOpen} size={"full"} onClose={onClose}>
@@ -744,101 +855,107 @@ function ModalIllustration({
       >
         <ModalCloseButton />
         <ModalBody>
-          {load ? (
-            <Flex gap="10px" border="1px solid #DDDFE5" flexDir="column" bg="white" padding="20px">
-              <Center>
-                <Input
-                  w="40%"
-                  value={nameResource}
-                  onChange={(e) => {
-                    filterByName(e.target.value)
-                  }}
-                  placeholder="Search"
-                  bg="white"
-                />
-              </Center>
-              <Center gap="10px">
-                <Text color="#A9A9B2" fontSize="sm">
-                  FILTER BY STATS
-                </Text>
-                <RadioGroup onChange={setSort} value={sort}>
-                  <Stack direction="row" gap="10px">
-                    <Radio size="sm" value="ALPHABETIC">
-                      A - Z
-                    </Radio>
-                    <Radio size="sm" value="USED_AT">
-                      Most Recent
-                    </Radio>
-                    <Radio size="sm" value="LIKED">
-                      Most Favorite
-                    </Radio>
-                    <Radio size="sm" value="DOWNLOADED">
-                      Most Downloads
-                    </Radio>
-                  </Stack>
-                </RadioGroup>
-                <Text
-                  visibility={type === "tag" ? "visible" : "hidden"}
-                  position={type !== "tag" ? "absolute" : "relative"}
-                  color="#A9A9B2"
-                  fontSize="sm"
-                >
-                  FILTER BY DRAWIFIER
-                </Text>
-                <Popover
-                  initialFocusRef={initialFocusRef}
-                  isOpen={isOpenDrawifier}
-                  returnFocusOnClose={false}
-                  onClose={onCloseDrawifier}
-                  placement="right-start"
-                >
-                  <HStack>
-                    <PopoverAnchor>
-                      <Input
-                        ref={initialFocusRef}
-                        position={type !== "tag" ? "absolute" : "relative"}
-                        visibility={type === "tag" ? "visible" : "hidden"}
-                        placeholder="Start typing..."
-                        value={name}
-                        onFocus={() => {
-                          setName("")
-                          setIdDrawifier("")
-                        }}
-                        onBlur={onCloseDrawifier}
-                        onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
-                        onChange={(e) => {
-                          onOpenDrawifier()
-                          setName(e.target.value)
-                        }}
-                        zIndex={999}
-                      ></Input>
-                    </PopoverAnchor>
-                  </HStack>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverBody>
-                      <FilterByDrawifier
-                        setId={setIdDrawifier}
-                        onClose={onCloseDrawifier}
-                        listDrawifiers={drawifiers}
-                        setName={setName}
-                        name={name}
-                      />
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
-                <Button
-                  marginInline="10px"
-                  variant="outline"
-                  size="sm"
-                  bg="white"
-                  _hover={{ bg: "white" }}
-                  onClick={makeFilter}
-                >
-                  Filter
-                </Button>
-              </Center>
+          <Flex gap="10px" border="1px solid #DDDFE5" flexDir="column" bg="white" padding="20px">
+            <Center>
+              <Input
+                w="40%"
+                ref={refInputName}
+                value={nameResource}
+                onChange={(e) => setNameResource(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && refInputName.current.blur()}
+                onBlur={(e) => {
+                  filterByName(nameResource)
+                }}
+                placeholder="Search"
+                bg="white"
+              />
+            </Center>
+            <Center gap="10px">
+              <Text color="#A9A9B2" fontSize="sm">
+                FILTER BY STATS
+              </Text>
+              <RadioGroup onChange={setSort} value={sort}>
+                <Stack direction="row" gap="10px">
+                  <Radio size="sm" value="ALPHABETIC">
+                    A - Z
+                  </Radio>
+                  <Radio size="sm" value="USED_AT">
+                    Most Recent
+                  </Radio>
+                  <Radio size="sm" value="LIKED">
+                    Most Favorite
+                  </Radio>
+                  <Radio size="sm" value="DOWNLOADED">
+                    Most Downloads
+                  </Radio>
+                </Stack>
+              </RadioGroup>
+              <Text
+                visibility={type === "tag" ? "visible" : "hidden"}
+                position={type !== "tag" ? "absolute" : "relative"}
+                color="#A9A9B2"
+                fontSize="sm"
+              >
+                FILTER BY DRAWIFIER
+              </Text>
+              <Popover
+                initialFocusRef={initialFocusRef}
+                isOpen={isOpenDrawifier}
+                returnFocusOnClose={false}
+                onClose={onCloseDrawifier}
+                placement="right-start"
+              >
+                <HStack>
+                  <PopoverAnchor>
+                    <Input
+                      ref={initialFocusRef}
+                      position={type !== "tag" ? "absolute" : "relative"}
+                      visibility={type === "tag" ? "visible" : "hidden"}
+                      placeholder="Start typing..."
+                      value={name}
+                      onFocus={() => {
+                        setName("")
+                        setIdDrawifier("")
+                      }}
+                      onBlur={onCloseDrawifier}
+                      onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
+                      onChange={(e) => {
+                        onOpenDrawifier()
+                        setName(e.target.value)
+                      }}
+                      zIndex={999}
+                    ></Input>
+                  </PopoverAnchor>
+                </HStack>
+                <PopoverContent>
+                  <PopoverArrow />
+                  <PopoverBody>
+                    <FilterByDrawifier
+                      setId={setIdDrawifier}
+                      onClose={onCloseDrawifier}
+                      listDrawifiers={drawifiers}
+                      setName={setName}
+                      name={name}
+                    />
+                  </PopoverBody>
+                </PopoverContent>
+              </Popover>
+              <Button
+                marginInline="10px"
+                variant="outline"
+                size="sm"
+                bg="white"
+                _hover={{ bg: "white" }}
+                onClick={makeFilter}
+              >
+                Filter
+              </Button>
+            </Center>
+
+            {load ? (
               <Box
+                w="full"
+                h="full"
                 sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", gap: "2rem", paddingY: "0.5rem" }}
               >
                 {resources.map((e, index) => (
@@ -883,12 +1000,12 @@ function ModalIllustration({
                   </Flex>
                 ))}
               </Box>
-            </Flex>
-          ) : (
-            <Center h="500px">
-              <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-            </Center>
-          )}
+            ) : (
+              <Center h="500px">
+                <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+              </Center>
+            )}
+          </Flex>
         </ModalBody>
       </ModalContent>
     </Modal>

@@ -13,6 +13,7 @@ export default function Scenes() {
 
   const addScene = React.useCallback(() => {
     if (editor) {
+      editor.design.activeScene.objects.deselect()
       editor.design.addScene()
       setNamesPages(namesPages.concat(["Untitled design"]))
     }

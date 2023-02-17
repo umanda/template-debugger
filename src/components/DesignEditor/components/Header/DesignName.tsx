@@ -1,5 +1,6 @@
 import React from "react"
 import { Box, Flex, Input } from "@chakra-ui/react"
+import { useDesign, useScenes } from "@layerhub-pro/react"
 
 interface DesignNameState {
   name: string
@@ -8,9 +9,20 @@ interface DesignNameState {
 function DesignName() {
   const [state, setState] = React.useState<DesignNameState>({ name: "My first design.", width: 0 })
   const spanRef = React.useRef<HTMLDivElement | null>(null)
+  const design = useDesign()
+  const scenes = useScenes()
+
+  React.useEffect(() => {
+    design && setState({ ...state, name: design?.design?.name })
+  }, [scenes])
 
   const handleInputChange = (name: string) => {
     setState({ ...state, name: name, width: spanRef.current?.clientWidth! })
+    if (design) {
+      design?.updateDesign({
+        name
+      })
+    }
   }
 
   React.useEffect(() => {

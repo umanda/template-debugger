@@ -16,11 +16,11 @@ import { useCallback, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { SigninDto } from "../interfaces/user"
 import { useAppDispatch } from "../store/store"
-import { oldSignIn, signin } from "../store/user/action"
+import { signin } from "../store/user/action"
 import { generateId } from "../utils/unique"
 import { AuthType } from "./AuthModal"
 import * as api from "../services/api"
-import { useEditor, useScenes } from "@layerhub-pro/react"
+import { useEditor } from "@layerhub-pro/react"
 import useDesignEditorContext from "../hooks/useDesignEditorContext"
 
 export default function SignIn({
@@ -44,27 +44,21 @@ export default function SignIn({
 
   const makeJoin = async () => {
     try {
-      const response: any = await (await dispath(oldSignIn(options))).payload
-      if (response.name === "AxiosError") {
-        try {
-          const response: any = await dispath(signin(options))
-          if (!response?.error) {
-            lodaById()
-            onClose()
-          } else {
-            setErr("Authentication failed. Please check your credentials and try again.")
-          }
-        } catch {}
-      } else if (response.id) {
-        lodaById()
-        onClose()
-      }
+      try {
+        const response: any = await dispath(signin(options))
+        if (!response?.error) {
+          lodaById()
+          onClose()
+        } else {
+          setErr("Authentication failed. Please check your credentials and try again.")
+        }
+      } catch {}
     } catch {}
   }
 
   const lodaById = useCallback(async () => {
     try {
-      const resolve: any = await api.getProjectById({ id })
+      const resolve: any = await api.getProjectByKey({ id })
       editor.design.setDesign(resolve)
       let sceneNames: string[] = []
       for (const scn of resolve.scenes) {
@@ -72,7 +66,7 @@ export default function SignIn({
       }
       setNamesPages(sceneNames)
     } catch {
-      navigate(`/composer/${generateId("proj")}`)
+      navigate(`/composer/${generateId("", 10)}`)
     }
   }, [id, navigate])
 

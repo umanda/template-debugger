@@ -14,6 +14,7 @@ import LayerToBack from "../../../Icons/LayerToBack"
 import LayerBackward from "../../../Icons/LayerBackward"
 import FlipHorizontal from "../../../Icons/FlipHorizontal"
 import FlipVertical from "../../../Icons/FlipVertical"
+import useResourcesContext from "../../../hooks/useResourcesContext"
 
 export default function Common() {
   const [state, setState] = React.useState({ isGroup: false, isMultiple: false })
@@ -164,8 +165,9 @@ function CommonAlignment() {
 }
 
 function CommonOrder() {
-  const editor = useEditor()
+  const { setOrder, order } = useResourcesContext()
   const activeScene = useActiveScene()
+
   return (
     <Popover placement="bottom-end">
       <PopoverTrigger>
@@ -188,8 +190,11 @@ function CommonOrder() {
             variant={"outline"}
             justifyContent={"flex-start"}
             size="sm"
-            leftIcon={<LayerToFront size={24} />}
-            onClick={() => activeScene.objects.bringToFront()}
+            leftIcon={<LayerForward size={24} />}
+            onClick={() => {
+              setOrder(!order)
+              activeScene.objects.bringToFront()
+            }}
           >
             To Front
           </Button>
@@ -198,8 +203,11 @@ function CommonOrder() {
             variant={"outline"}
             justifyContent={"flex-start"}
             size="sm"
-            leftIcon={<LayerForward size={24} />}
-            onClick={() => activeScene.objects.bringForward()}
+            leftIcon={<LayerToFront size={24} />}
+            onClick={() => {
+              setOrder(!order)
+              activeScene.objects.bringForward()
+            }}
           >
             Forward
           </Button>
@@ -209,8 +217,11 @@ function CommonOrder() {
             variant={"outline"}
             justifyContent={"flex-start"}
             size="sm"
-            leftIcon={<LayerToBack size={24} />}
-            onClick={() => activeScene.objects.sendToBack()}
+            leftIcon={<LayerBackward size={24} />}
+            onClick={() => {
+              setOrder(!order)
+              activeScene.objects.sendToBack()
+            }}
           >
             To Back
           </Button>
@@ -218,8 +229,11 @@ function CommonOrder() {
             variant={"outline"}
             justifyContent={"flex-start"}
             size="sm"
-            leftIcon={<LayerBackward size={24} />}
-            onClick={() => activeScene.objects.sendBackwards()}
+            leftIcon={<LayerToBack size={24} />}
+            onClick={() => {
+              setOrder(!order)
+              activeScene.objects.sendBackwards()
+            }}
           >
             Backward
           </Button>

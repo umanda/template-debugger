@@ -1,17 +1,48 @@
-import { useActiveScene, useContextMenuRequest, useEditor } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useContextMenuRequest, useEditor } from "@layerhub-pro/react"
 import { Box } from "@chakra-ui/react"
 import Mail from "../../../Icons/Mail"
+import { useAppDispatch } from "../../../store/store"
+import { createResourceComposite } from "../../../store/resources/action"
+import { generateId } from "../../../utils/unique"
+import Lock from "../../../Icons/Lock"
+import LayerForward from "../../../Icons/LayerForward"
+import LayerToFront from "../../../Icons/LayerToFront"
+import LayerBackward from "../../../Icons/LayerBackward"
+import LayerToBack from "../../../Icons/LayerToBack"
+import Trash from "../../../Icons/Trash"
+import Unlock from "../../../Icons/Unlock"
+import Copy from "../../../Icons/Copy"
+import Paste from "../../../Icons/Paste"
 
 function ContextMenu() {
   const contextMenuRequest = useContextMenuRequest()
-  const editor = useEditor()
   const activeScene = useActiveScene()
+  const editor = useEditor()
+  const dispath = useAppDispatch()
+  const activeObject: any = useActiveObject()
 
-  if (!contextMenuRequest || !contextMenuRequest.target) {
+  const saveAsComponentHandler = async () => {
+    if (activeScene) {
+      const component: any = await activeScene.exportComponent()
+      if (component) {
+        dispath(
+          createResourceComposite({
+            id: generateId("", 10),
+            name: "",
+            category: "MIXED",
+            types: component.metadata.types,
+            component: component
+          })
+        )
+      }
+    }
+  }
+
+  if (!contextMenuRequest || !contextMenuRequest?.target) {
     return <></>
   }
 
-  if (contextMenuRequest.target.type === "Background") {
+  if (contextMenuRequest?.target?.type === "Background") {
     return (
       <div // @ts-ignore
         onContextMenu={(e: Event) => e.preventDefault()}
@@ -32,17 +63,17 @@ function ContextMenu() {
             activeScene.objects.copy()
             editor.cancelContextMenuRequest()
           }}
-          icon="FileIco"
+          icon="Copy"
           label="Copy"
           disabled={true}
         />
         <ContextMenuItem
-          disabled={!activeScene.objects.clipboard}
+          disabled={!activeScene.objects.paste}
           onClick={() => {
             activeScene.objects.paste()
             editor.cancelContextMenuRequest()
           }}
-          icon="FileIco"
+          icon="Paste"
           label="Paste"
         />
         <ContextMenuItem
@@ -102,6 +133,15 @@ function ContextMenu() {
           icon="Unlock"
           label="Lock"
         />
+        {/* <ContextMenuItem
+          disabled={true}
+          onClick={() => {
+            saveAsComponentHandler()
+            editor.cancelContextMenuRequest()
+          }}
+          icon="FileIco"
+          label="Save as component"
+        /> */}
       </div>
     )
   }
@@ -127,16 +167,18 @@ function ContextMenu() {
               activeScene.objects.copy()
               editor.cancelContextMenuRequest()
             }}
-            icon="FileIco"
+            icon="Copy"
             label="Copy"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           <ContextMenuItem
             onClick={() => {
               activeScene.objects.paste()
               editor.cancelContextMenuRequest()
             }}
-            icon="FileIco"
+            icon="Paste"
             label="Paste"
+            disabled={activeObject ? false : true}
           />
           <ContextMenuItem
             onClick={() => {
@@ -146,6 +188,7 @@ function ContextMenu() {
             }}
             icon="Trash"
             label="Delete"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           <div style={{ margin: "0.5rem 0" }} />
           <ContextMenuItem
@@ -155,6 +198,7 @@ function ContextMenu() {
             }}
             icon="BringToFront"
             label="Bring to front"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           <ContextMenuItem
             onClick={() => {
@@ -163,6 +207,7 @@ function ContextMenu() {
             }}
             icon="BringForward"
             label="Bring forward"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           <ContextMenuItem
             onClick={() => {
@@ -171,6 +216,7 @@ function ContextMenu() {
             }}
             icon="SendToBack"
             label="Send back"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           <ContextMenuItem
             onClick={() => {
@@ -178,7 +224,8 @@ function ContextMenu() {
               editor.cancelContextMenuRequest()
             }}
             icon="SendBackwards"
-            label="Send backward"
+            label="Send backwards"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
           <div style={{ margin: "0.5rem 0" }} />
           <ContextMenuItem
@@ -188,7 +235,16 @@ function ContextMenu() {
             }}
             icon="Unlock"
             label="Lock"
+            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
+          {/* <ContextMenuItem
+            onClick={() => {
+              saveAsComponentHandler()
+              editor.cancelContextMenuRequest()
+            }}
+            icon="FileIco"
+            label="Save as component"
+          /> */}
         </div>
       ) : (
         <div // @ts-ignore
@@ -212,6 +268,7 @@ function ContextMenu() {
             }}
             icon="Lock"
             label="Unlock"
+            disabled={activeObject ? false : true}
           />
         </div>
       )}
@@ -230,6 +287,18 @@ function ContextMenuItem({
   onClick: () => void
   disabled?: boolean
 }) {
+  const Icon = () => {
+    if (icon === "Lock") return <Lock size={24} />
+    if (icon === "BringToFront") return <LayerToFront size={24} />
+    if (icon === "SendBackwards") return <LayerBackward size={24} />
+    if (icon === "SendToBack") return <LayerToBack size={24} />
+    if (icon === "BringForward") return <LayerForward size={24} />
+    if (icon === "Trash") return <Trash size={24} />
+    if (icon === "Unlock") return <Unlock size={24} />
+    if (icon === "Copy") return <Copy size={24} />
+    if (icon === "Paste") return <Paste size={15} />
+  }
+
   return (
     <Box
       onClick={onClick}
@@ -245,7 +314,7 @@ function ContextMenuItem({
         opacity: disabled ? 0.4 : 1
       }}
     >
-      <Mail size={24} /> {label}
+      <Icon /> {label}
     </Box>
   )
 }

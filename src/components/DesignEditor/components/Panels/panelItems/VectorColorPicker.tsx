@@ -22,6 +22,7 @@ import { selectColors } from "../../../../store/colors/selector"
 import { useEffect, useState } from "react"
 import { HexColorPicker } from "react-colorful"
 import { useAppDispatch, useAppSelector } from "../../../../store/store"
+import { throttle } from "lodash"
 
 export default function VectorColorPicker() {
   const { indexColorPicker, setIndexColorPicker, colors, setColors, setActiveMenu } = useDesignEditorContext()
@@ -37,6 +38,8 @@ export default function VectorColorPicker() {
   const zoomRatio = useZoomRatio()
   const [colorHex, setColorHex] = useState<string>("")
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const [inputHex, setInputHex] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
+  const [inputHexPrev, setInputHexPrev] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
 
   useEffect(() => {
     if (activeObject) activeObject.type !== "StaticVector" && setActiveMenu("Illustrations")
@@ -46,7 +49,8 @@ export default function VectorColorPicker() {
     if (isOpen === false && colorHex !== "") dispatch(getRecentColor(colorHex))
   }, [isOpen])
 
-  const changeBackgroundColor = (prev: string, next: string) => {
+  const changeBackgroundColor = throttle((prev: string, next: string) => {
+    const objectRef = activeObject
     setColors({
       ...colors,
       colorMap: {
@@ -54,9 +58,13 @@ export default function VectorColorPicker() {
         [prev]: next
       }
     })
-    activeScene.objects.updateLayerColor(prev, next)
-    editor.zoom.zoomToRatio(zoomRatio - 0.000000000000001 + 0.000000000000001)
-  }
+
+    if (activeObject) {
+      objectRef.updateLayerColor(prev, next)
+    }
+    editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
+    editor.zoom.zoomToRatio(zoomRatio - 0.000000001)
+  }, 100)
 
   const applyTextChange = (value: number, id: string) => {
     if (editor) {
@@ -80,10 +88,20 @@ export default function VectorColorPicker() {
           : setSliderValue({ ...sliderValue, sliderValueTemp: value })
       }
     }
+    if (editor) {
+      if (type.includes("emp")) {
+        value >= 100
+          ? setSliderValue({ ...sliderValue, sliderValueTemp: 100 })
+          : setSliderValue({ ...sliderValue, sliderValueTemp: value })
+      } else {
+        setSliderValue({ ...sliderValue, sliderValue: value, sliderValueTemp: value })
+        activeScene.objects.update({ opacity: value / 100 })
+      }
+    }
   }
 
   return (
-    <Flex flexDir="column" fontFamily="Outfit" fontSize="12px" sx={{ width: "320px" }} padding="10px" gap="10px">
+    <Flex flexDir="column" fontSize="12px" sx={{ width: "320px" }} padding="10px" gap="10px">
       <Flex color="#A9A9B2">MORE COLORS</Flex>
       <GridItem>
         <Popover isOpen={isOpen} onClose={onClose} onOpen={onOpen} placement="bottom-start">
@@ -104,16 +122,33 @@ export default function VectorColorPicker() {
                   style={{ width: "100%" }}
                   onChange={(color) => {
                     setColorHex(color)
+                    setInputHex(color)
+                    setInputHexPrev(color)
                     changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], color)
                   }}
                 />
                 <Box sx={{ padding: "1rem 0", display: "grid", gridTemplateColumns: "40px 1fr", alignItems: "center" }}>
                   <Box sx={{ color: "#A9A9B2" }}>HEX</Box>
                   <Input
-                    onChange={(e) =>
-                      changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], e.target.value)
-                    }
-                    value={Object.keys(colors.colorMap)[indexColorPicker]}
+                    onBlur={(e) => {
+                      setColorHex(inputHex)
+                      changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        setColorHex(inputHex)
+                        changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
+                      }
+                    }}
+                    onChange={(e) => {
+                      setInputHex(e.target.value)
+                      setInputHexPrev(e.target.value)
+                      dispatch(getRecentColor(colorHex))
+                    }}
+                    // onChange={(e) =>
+                    //   changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], e.target.value)
+                    // }
+                    value={inputHexPrev}
                   />
                 </Box>
               </Box>
@@ -142,7 +177,7 @@ export default function VectorColorPicker() {
           )
         })}
       </Grid>
-      <Flex sx={{ fontSize: "14px" }} color="#A9A9B2">
+      <Flex sx={{ fontSize: "12px" }} color="#A9A9B2">
         RECENT COLORS
       </Flex>
       <Grid templateColumns="repeat(7, 44px)">
@@ -164,7 +199,7 @@ export default function VectorColorPicker() {
           )
         })}
       </Grid>
-      <Flex sx={{ fontSize: "14px" }} color="#A9A9B2">
+      <Flex sx={{ fontSize: "12px" }} color="#A9A9B2">
         DEFAULT COLORS
       </Flex>
       <Grid gap="10px" templateColumns="repeat(7, 1fr)">
@@ -183,7 +218,7 @@ export default function VectorColorPicker() {
       </Grid>
       <Grid templateColumns="repeat(6, 1fr)" gap="10px" marginTop="15px">
         <GridItem colSpan={1} alignItems="center">
-          Transparency
+          Opacity
         </GridItem>
         <GridItem colSpan={3} alignItems="center" justifyItems="center">
           <Slider
@@ -205,11 +240,8 @@ export default function VectorColorPicker() {
             inputMode="decimal"
             pattern="[0-9]*(.[0-9]+)?"
             size={"xs"}
-            onChange={(e) => {
-              e.target.value
-                ? handleChange("charSpacingTemp", 0)
-                : handleChange("charSpacingTemp", parseFloat(e.target.value))
-            }}
+            onKeyDown={(e) => e.key === "Enter" && applyTextChange(sliderValue.sliderValueTemp, activeObject.id)}
+            onChange={(e) => handleChange("charSpacingTemp", parseFloat(e.target.value))}
             onBlur={(e) => applyTextChange(parseFloat(e.target.value), activeObject.id)}
           />
         </GridItem>

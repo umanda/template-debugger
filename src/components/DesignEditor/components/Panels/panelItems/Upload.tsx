@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react"
-import { useActiveScene, useEditor } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
 import * as api from "../../../../services/api"
 import {
   Box,
@@ -9,6 +9,7 @@ import {
   Grid,
   GridItem,
   IconButton,
+  Image,
   Input,
   Popover,
   PopoverArrow,
@@ -31,12 +32,15 @@ import { selectUser } from "../../../../store/user/selector"
 import Scrollable from "../../../../utils/Scrollable"
 import InfiniteScroll from "../../../../utils/InfiniteScroll"
 import LazyLoadImage from "../../../../utils/LazyLoadImage"
+import LoadImageUpload from "../../../../utils/LoadImageUpload"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
 import { uniqueFilename } from "../../../../utils/unique"
 import { IUpload } from "../../../../interfaces/editor"
 import Trash from "../../../../Icons/Trash"
 import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "../../../../store/resources/action"
 import { selectUploads } from "../../../../store/resources/selector"
+const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
+const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
 const initialQuery = {
   page: 1,
@@ -65,10 +69,11 @@ export default function Upload() {
   let [stateFavorite, setStateFavorite] = useState<boolean>(false)
   let [stateRecent, setStateRecent] = useState<boolean>(false)
   const [disableTab, setDisableTab] = useState<boolean>(false)
-  const [loadMoreResources, setLoadMoreResources] = useState<boolean>(false)
+  const [loadMoreResources, setLoadMoreResources] = useState<boolean>(true)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const activeScene = useActiveScene()
   const { setResourceDrag } = useResourcesContext()
+  const activeObject = useActiveObject()
 
   useEffect(() => {
     user && initialState()
@@ -76,24 +81,44 @@ export default function Upload() {
 
   const initialState = async () => {
     if (selectResourcesUploads[0] === undefined) {
+      setLoadMoreResources(true)
       const resolveAction = await dispatch(uploadFiles(initialQuery))
       //@ts-ignore
       const resolve = resolveAction?.payload?.payload
       setResources(resolve)
+      setFetching(false)
+      setLoadMoreResources(false)
     } else {
       setResources(selectResourcesUploads)
-      setFetching(true)
+      setFetching(false)
+      setLoadMoreResources(false)
     }
   }
 
   const handleDropFiles = (files: FileList) => {
     const file = files[0]
-    handleUploadFile(file)
-    const reader = new FileReader()
-    reader.addEventListener("load", function () {}, false)
+    if (
+      file.type === "image/png" ||
+      file.type === "image/jpeg" ||
+      file.type === "image/svg+xml" ||
+      file.type === "image/svg" ||
+      file.type === "image/jpeg"
+    ) {
+      handleUploadFile(file)
+      const reader = new FileReader()
+      reader.addEventListener("load", function () {}, false)
 
-    if (file) {
-      reader.readAsDataURL(file)
+      if (file) {
+        reader.readAsDataURL(file)
+      }
+    } else {
+      toast({
+        title: "Please upload a valid resource.",
+        status: "error",
+        position: "top",
+        duration: 2000,
+        isClosable: true
+      })
     }
   }
 
@@ -136,7 +161,7 @@ export default function Upload() {
   }
 
   const fetchDataResource = async () => {
-    setLoadMoreResources(true)
+    setFetching(true)
     if (
       nameUpload[0] === "" &&
       stateFavorite === false &&
@@ -200,20 +225,24 @@ export default function Upload() {
   )
 
   const addImageToCanvas = useCallback(
-    async (url: any, id: string, type?: string) => {
-      await api.getUseUploads(id)
+    async (url: string, id: string, type?: string) => {
+      if (url.includes(defaultPreviewTemplate)) url = url.replace(defaultPreviewTemplate, replacePreviewTemplate)
+      try {
+        await api.getUseUploads(id)
+      } catch {}
       let typeURL = ""
       type === "svg" ? (typeURL = "StaticVector") : (typeURL = "StaticImage")
-      const options = {
+      const options: any = {
         type: typeURL,
         src: url,
+        erasable: false,
         metadata: {}
       }
       if (editor) {
         activeScene.objects.add(options)
       }
     },
-    [activeScene, editor]
+    [activeScene, editor, activeObject, user]
   )
 
   const handleFileInput = (e: any) => {
@@ -244,6 +273,7 @@ export default function Upload() {
     recent?: boolean
     name?: string
   }) => {
+    setLoadMoreResources(true)
     setDisableTab(true)
     if (name || name === "") {
       setNameUpload(nameUploadPrev)
@@ -446,7 +476,7 @@ export default function Upload() {
           variant="outline"
           size="sm"
         >
-          JPGE
+          JPG
         </Button>
       </Flex>
       <Flex margin={"0 1rem"} style={{ display: "flex" }}>
@@ -474,6 +504,8 @@ export default function Upload() {
                 setType({ png: false, jpg: false, svg: false })
                 setResources(selectResourcesUploads)
                 setValidateContent(null)
+                setLoadMoreResources(true)
+                initialState()
               }}
             >
               All
@@ -490,62 +522,65 @@ export default function Upload() {
           </TabList>
         </Tabs>
       </Box>
-      {validateContent === null ? (
-        <Flex h="full" w="full">
-          <Scrollable autoHide={true}>
-            <InfiniteScroll hasMore={!fetching} fetchData={fetchDataResource}>
-              {!loadMoreResources ? (
-                <Grid gap="0.5rem" padding="0 2rem 2rem" gridTemplateColumns="1fr 1fr">
-                  {resources?.map((upload: any, index: number) => (
-                    <GridItem
-                      key={index}
-                      border="1px solid #d0d0d0"
-                      _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
-                      boxSize="120px"
-                      onDragStart={(e) => onDragStart(e, upload)}
-                    >
-                      <IconButton
-                        position="absolute"
-                        marginTop="5.5rem"
-                        marginLeft="5.8rem"
-                        variant="ghost"
-                        aria-label="Like"
-                        size="xs"
-                        _hover={{ color: "#fd7e14" }}
+      <Flex w="full" h="full" flexDir="column">
+        {validateContent === null ? (
+          <Flex h="full" w="full" flexDir="column">
+            <Scrollable autoHide={true}>
+              <InfiniteScroll hasMore={!fetching} fetchData={fetchDataResource}>
+                {!loadMoreResources ? (
+                  <Grid gap="0.5rem" padding="0 2rem 2rem" gridTemplateColumns="1fr 1fr">
+                    {resources?.map((upload: any, index: number) => (
+                      <GridItem
+                        key={index}
                         border="1px solid #d0d0d0"
-                        onClick={() => handleDelete(upload)}
-                        icon={<Trash size={20} />}
-                      />
-                      <Flex w="full" h="full" onClick={() => addImageToCanvas(upload.url, upload.id, upload.type)}>
-                        <LazyLoadImage url={upload.url} />
-                      </Flex>
+                        _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
+                        boxSize="120px"
+                        onDragStart={(e) => onDragStart(e, upload)}
+                      >
+                        <IconButton
+                          position="absolute"
+                          marginTop="5.5rem"
+                          marginLeft="5.8rem"
+                          variant="ghost"
+                          aria-label="Like"
+                          size="xs"
+                          _hover={{ color: "#fd7e14" }}
+                          border="1px solid #d0d0d0"
+                          onClick={() => handleDelete(upload)}
+                          icon={<Trash size={20} />}
+                        />
+                        <Flex w="full" h="full" onClick={() => addImageToCanvas(upload.url, upload.id, upload.type)}>
+                          <LazyLoadImage url={upload?.url} />
+                          {/* <LoadImageUpload url={upload.new_url} urlBack={upload.old_url} /> */}
+                        </Flex>
+                      </GridItem>
+                    ))}
+                    <GridItem colSpan={2}>
+                      <Button
+                        w="full"
+                        variant="outline"
+                        isLoading={loadMoreResources}
+                        isDisabled={fetching}
+                        onClick={fetchDataResource}
+                      >
+                        {fetching ? "There are no more resources" : "Load more resources?"}
+                      </Button>
                     </GridItem>
-                  ))}
-                  <GridItem colSpan={2}>
-                    <Button
-                      w="full"
-                      variant="outline"
-                      isLoading={loadMoreResources}
-                      disabled={fetching}
-                      onClick={fetchDataResource}
-                    >
-                      {fetching ? "There are no more resources" : "Load more resources?"}
-                    </Button>
-                  </GridItem>
-                </Grid>
-              ) : (
-                <Center h="400px" w="full">
-                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-                </Center>
-              )}
-            </InfiniteScroll>
-          </Scrollable>
-        </Flex>
-      ) : (
-        <Center h="full" w="full" textAlign="center">
-          {validateContent}
-        </Center>
-      )}
+                  </Grid>
+                ) : (
+                  <Flex h="50%" w="full" align="end" justify="center">
+                    <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+                  </Flex>
+                )}
+              </InfiniteScroll>
+            </Scrollable>
+          </Flex>
+        ) : (
+          <Center h="full" w="full" textAlign="center">
+            {validateContent}
+          </Center>
+        )}
+      </Flex>
     </Box>
   )
 }

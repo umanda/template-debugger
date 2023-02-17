@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
 import { Box, Button, Center, Flex, Grid, GridItem, Spinner } from "@chakra-ui/react"
-import { useActiveScene, useEditor } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import Scrollable from "../../../../utils/Scrollable"
 import { useAppDispatch } from "../../../../store/store"
@@ -14,14 +14,15 @@ import LazyLoadImage from "../../../../utils/LazyLoadImage"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
 import { getListResourcesShapes } from "../../../../store/resources/action"
 import { selectResourceShapes } from "../../../../store/resources/selector"
+import { selectProject } from "../../../../store/project/selector"
+const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
+const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
 const initialQuery = {
   page: 1,
   limit: 40,
   query: {
-    categories: ["SHAPE"],
     used: false,
-    visibility: "public",
     favorited: false
   },
   sorts: ["ALPHABETIC"]
@@ -43,13 +44,16 @@ export default function Shapes() {
   const [loadMoreResources, setLoadMoreResources] = useState<boolean>(false)
   const [validateContent, setValidateContent] = useState<string | null>(null)
   const activeScene = useActiveScene()
+  const projectSelect = useSelector(selectProject)
+  const activeObject = useActiveObject()
+
   useEffect(() => {
     initialState()
   }, [user])
 
   const initialState = useCallback(async () => {
     if (selectShapes[0] === undefined) {
-      const resolve = (await dispatch(getListResourcesShapes(initialQuery))).payload as IResource[]
+      const resolve: any = (await dispatch(getListResourcesShapes(initialQuery))).payload
       resolve && setResources(resolve)
       resolve ? setFetching(false) : setFetching(true)
     } else {
@@ -66,20 +70,17 @@ export default function Shapes() {
     if (stateRecent === false && type.filled === false && type.outlined === false) {
       let newQuery = initialQuery
       newQuery.page = resources.length / 40 + 1
-      const resolve = (await (await dispatch(getListResourcesShapes(newQuery))).payload) as IResource[]
+      const resolve = (await dispatch(getListResourcesShapes(newQuery))).payload as IResource[]
       setResources(resources.concat(resolve))
       resolve[0] === undefined ? setFetching(true) : setFetching(false)
     } else {
-      const resolve: any[] = await api.searchResources({
+      const resolve: any[] = await api.resourceSearchShapes({
         page: resources.length / 40 + 1,
         limit: 40,
         query: {
           content: types,
-          visibility: "public",
-          categories: ["SHAPE"],
           used: stateRecent
-        },
-        sorts: ["ALPHABETIC"]
+        }
       })
       if (resolve[0] === undefined && resources[0] === undefined) {
         setValidateContent("Nothing was found related to the filter entered")
@@ -102,21 +103,22 @@ export default function Shapes() {
 
   const addObject = useCallback(
     (images: any) => {
-      if (user) {
+      if (user && projectSelect.id) {
         const ctx = { id: images.id }
-        api.recentResource(ctx.id)
+        api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
       }
-      const options = {
+      const options: any = {
         type: "StaticVector",
         name: "Shape",
         src: images.url,
+        erasable: false,
         metadata: {}
       }
       if (editor) {
-        activeScene.objects.add(options)
+        activeScene.objects.add(options, { desiredSize: 200 })
       }
     },
-    [activeScene, editor]
+    [activeScene, editor, activeObject, projectSelect, user]
   )
 
   const onDragStart = React.useCallback(
@@ -136,7 +138,7 @@ export default function Shapes() {
 
       if (outlined) {
         setType({ filled: false, outlined: true })
-        setTypes("OUTLINED")
+        setTypes("outlined")
       } else if (outlined === false) {
         setType({ ...type, outlined: false })
         setTypes(undefined)
@@ -144,7 +146,7 @@ export default function Shapes() {
 
       if (filled) {
         setType({ outlined: false, filled: true })
-        setTypes("FILLED")
+        setTypes("filled")
       } else if (filled === false) {
         setType({ ...type, filled: false })
         setTypes(undefined)
@@ -161,7 +163,7 @@ export default function Shapes() {
       }
       setFetching(false)
     },
-    [stateRecent, selectShapes]
+    [stateRecent, selectShapes, types, type]
   )
 
   return (
@@ -246,54 +248,56 @@ export default function Shapes() {
           </TabList>
         </Tabs>
       </Box>
-      {validateContent === null ? (
-        <Scrollable>
-          <InfiniteScroll hasMore={!fetching} fetchData={fetchDataResource}>
-            {load ? (
-              <Flex flexDir="column">
-                <Grid templateColumns="repeat(4, 72px)" gap="5px">
-                  {resources?.map((obj: any, index: number) => {
-                    return (
-                      <GridItem
-                        sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
-                        onClick={() => addObject(obj)}
-                        key={index}
-                        border="1px #DDDFE5 solid"
-                        padding="2px"
-                        h="70px"
-                        onDragStart={(e) => onDragStart(e, obj)}
-                        _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
-                      >
-                        <Flex w="full" h="full">
-                          <LazyLoadImage url={obj.preview} />
-                        </Flex>
-                      </GridItem>
-                    )
-                  })}
-                </Grid>
-                <Button
-                  w="full"
-                  marginBlock="5px"
-                  variant="outline"
-                  isLoading={loadMoreResources}
-                  disabled={fetching}
-                  onClick={fetchDataResource}
-                >
-                  {!fetching ? "Load more resources?" : "There are no more resources"}
-                </Button>
-              </Flex>
-            ) : (
-              <Center h="40rem" w="full">
-                <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-              </Center>
-            )}
-          </InfiniteScroll>
-        </Scrollable>
-      ) : (
-        <Center h="full" w="full" textAlign="center">
-          {validateContent}
-        </Center>
-      )}
+      <Flex w="full" h="full" flexDir="column">
+        {validateContent === null ? (
+          <Scrollable>
+            <InfiniteScroll hasMore={!fetching} fetchData={fetchDataResource}>
+              {load ? (
+                <Flex flexDir="column">
+                  <Grid templateColumns="repeat(4, 72px)" gap="5px">
+                    {resources?.map((obj: any, index: number) => {
+                      return (
+                        <GridItem
+                          sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+                          onClick={() => addObject(obj)}
+                          key={index}
+                          border="1px #DDDFE5 solid"
+                          padding="2px"
+                          h="70px"
+                          onDragStart={(e) => onDragStart(e, obj)}
+                          _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
+                        >
+                          <Flex w="full" h="full">
+                            <LazyLoadImage url={obj.url} />
+                          </Flex>
+                        </GridItem>
+                      )
+                    })}
+                  </Grid>
+                  <Button
+                    w="full"
+                    marginBlock="5px"
+                    variant="outline"
+                    isLoading={loadMoreResources}
+                    disabled={fetching}
+                    onClick={fetchDataResource}
+                  >
+                    {!fetching ? "Load more resources?" : "There are no more resources"}
+                  </Button>
+                </Flex>
+              ) : (
+                <Flex h="50%" w="full" align="end" justify="center">
+                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+                </Flex>
+              )}
+            </InfiniteScroll>
+          </Scrollable>
+        ) : (
+          <Center h="full" w="full" textAlign="center">
+            {validateContent}
+          </Center>
+        )}
+      </Flex>
     </Box>
   )
 }

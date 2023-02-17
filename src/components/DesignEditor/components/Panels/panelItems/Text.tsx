@@ -1,7 +1,7 @@
 import { Box, Center, Flex, Grid, GridItem, IconButton, Image, Spinner } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import { useActiveScene, useEditor } from "@layerhub-pro/react"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { nanoid } from "nanoid"
 import { useSelector } from "react-redux"
 // import { deleteResourceComposite, getListResourcesComposite } from "~/store/resources/action"
@@ -13,25 +13,30 @@ import Scrollable from "../../../../utils/Scrollable"
 import InfiniteScroll from "../../../../utils/InfiniteScroll"
 import LazyLoadImage from "../../../../utils/LazyLoadImage"
 import Trash from "../../../../Icons/Trash"
+import { selectListResourcesComposite } from "../../../../store/resources/selector"
+import { deleteResourceComposite, getListResourcesComposite } from "../../../../store/resources/action"
+import useResourcesContext from "../../../../hooks/useResourcesContext"
 
 const font = {
   name: "JustAnotherHand-Regular",
-  url: "https://fonts.gstatic.com/s/justanotherhand/v12/845CNN4-AJyIGvIou-6yJKyptyOpOcr_BmmlS5aw.ttf"
+  url: "https://fonts.gstatic.com/s/justanotherhand/v12/845CNN4-AJyIGvIou-6yJKyptyOpOcr_BmmlS5aw.ttf",
+  preview: "https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/fonts-v3/preview/JustAnotherHand-Regular.png"
 }
 
 export default function Text() {
+  const { setResourceDrag } = useResourcesContext()
   const user = useSelector(selectUser)
   const editor = useEditor()
   const dispatch = useAppDispatch()
   const [listResources, setListResources] = useState<any[]>([])
-  // const selectListResources = useSelector(selectListResourcesComposite)
+  const selectListResources = useSelector(selectListResourcesComposite)
   const [more, setMore] = useState(false)
   const [load, setLoad] = useState(true)
   const activeScene = useActiveScene()
 
-  // useEffect(() => {
-  //   // initialState()
-  // }, [user])
+  useEffect(() => {
+    initialState()
+  }, [user, selectListResources.length])
 
   const initialState = async () => {
     // if (user) {
@@ -42,7 +47,7 @@ export default function Text() {
     //     resolve.name !== "AxiosError" && setListResources(resolve)
     //     resolve[0] !== undefined ? setMore(true) : setMore(false)
     //   } else {
-    //     setListResources(selectListResources)
+    //     // setListResources(selectListResources)
     //     setMore(true)
     //   }
     // }
@@ -50,7 +55,7 @@ export default function Text() {
   }
 
   const fetchDataResource = async () => {
-    setMore(false)
+    // setMore(false)
     // const resolve = (
     //   await dispatch(getListResourcesComposite({ page: listResources.length / 10 + 1, limit: 10, query: {} }))
     // ).payload as any[]
@@ -78,7 +83,7 @@ export default function Text() {
   }, [activeScene, editor])
 
   const makeDeleteResource = async (id: string) => {
-    // dispatch(deleteResourceComposite(id))
+    dispatch(deleteResourceComposite(id))
   }
 
   const addObject = (images: any) => {}
@@ -119,10 +124,38 @@ export default function Text() {
     }
   }, [activeScene, editor])
 
+  const onDragStart = React.useCallback(
+    (ev: React.DragEvent<HTMLDivElement>, type: string) => {
+      loadFonts([font])
+      const options = {
+        id: nanoid(), //"Add header"
+        width: type === "header" ? 360 : type === "subHeader" ? 240 : 120,
+        type: "StaticText",
+        textAlign: "center",
+        text:
+          type === "header"
+            ? "Add Header"
+            : type === "subHeader"
+            ? "Add sub Header"
+            : "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+        fontFamily: font.name,
+        fontURL: font.url,
+        fontSize: type === "header" ? 120 : type === "subHeader" ? 80 : 40,
+        metadata: {}
+      }
+      setResourceDrag(options)
+      ev.dataTransfer.setData("resource", "text")
+    },
+    [editor, setResourceDrag]
+  )
+
   return (
     <Box h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" display="flex" flexDirection="column">
       <Flex flexDirection="column" alignItems="center" padding={"1rem 0"} textAlign="center">
         <Box
+          userSelect="none"
+          draggable={true}
+          onDragStart={(e) => onDragStart(e, "header")}
           sx={{
             cursor: "pointer",
             width: "240px",
@@ -150,6 +183,9 @@ export default function Text() {
           </Box>
         </Box>
         <Box
+          userSelect="none"
+          draggable={true}
+          onDragStart={(e) => onDragStart(e, "subHeader")}
           sx={{
             cursor: "pointer",
             width: "240px",
@@ -177,6 +213,9 @@ export default function Text() {
           </Box>
         </Box>
         <Box
+          userSelect="none"
+          draggable={true}
+          onDragStart={(e) => onDragStart(e, "paragraph")}
           sx={{
             cursor: "pointer",
             width: "240px",
@@ -204,13 +243,13 @@ export default function Text() {
           </Box>
         </Box>
       </Flex>
-      <Box sx={{ padding: "0 1rem" }}>
+      {/* <Box sx={{ padding: "0 1rem" }}>
         <Tabs size={"sm"}>
           <TabList>
             <Tab>All</Tab>
           </TabList>
         </Tabs>
-      </Box>
+      </Box> */}
       <Flex w="full" h="full">
         <Scrollable autoHide={true}>
           <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>

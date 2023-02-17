@@ -16,7 +16,7 @@ import {
   Center
 } from "@chakra-ui/react"
 import { Popover, PopoverTrigger, PopoverContent, PopoverArrow } from "@chakra-ui/react"
-import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useEditor, useScenes } from "@layerhub-pro/react"
 import { useSelector } from "react-redux"
 import { useAppDispatch } from "../../../../store/store"
 import { selectUser } from "../../../../store/user/selector"
@@ -28,6 +28,9 @@ import InfiniteScroll from "../../../../utils/InfiniteScroll"
 import MenuOption from "../../../../utils/MenuOption"
 import { getCategoryFonts, getListUseFonts, getUseFont } from "../../../../store/fonts/action"
 import { selectCategoryFonts, selectFonts, selectListUseFonts } from "../../../../store/fonts/selector"
+import { ILayer } from "@layerhub-pro/types"
+import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
+import { getTextProperties } from "../../../../utils/text"
 
 export default function FontSelector() {
   const [language, setLanguage] = React.useState("English")
@@ -44,6 +47,21 @@ export default function FontSelector() {
   const listUseFonts = useSelector(selectListUseFonts)
   const [content, setContent] = React.useState<string>("")
   const activeScene = useActiveScene()
+  const activeObject: any = useActiveObject()
+  const { setActiveMenu } = useDesignEditorContext()
+  const [typeFont, setTypeFont] = useState("4725")
+  const scenes = useScenes()
+
+  useEffect(() => {
+    if (activeObject) activeObject.type !== "StaticText" && setActiveMenu("")
+  }, [activeObject])
+
+  useEffect(() => {
+    if (activeObject) {
+      const textProperties = getTextProperties(activeObject, fonts)
+      setTypeFont(fonts.filter((e) => e.family === textProperties?.family)[0]?.id)
+    }
+  }, [editor, activeScene, activeObject, scenes])
 
   useEffect(() => {
     initialState()
@@ -54,18 +72,19 @@ export default function FontSelector() {
     if (selectCategoryFont === null) {
       await dispatch(getCategoryFonts())
     }
-    setCommonFonts(
-      currentFonts.filter((e) => {
-        if (e.category === style.toLowerCase() && e.language === language.toLowerCase()) {
-          return e
-        }
-      })
-    )
-    currentFonts.filter((e) => {
-      if (e.category === style.toLowerCase() && e.language === language.toLowerCase()) {
-        return e
-      }
-    })[0] === undefined && setContent("There are no resources.")
+    setCommonFonts(fonts)
+    // setCommonFonts(
+    //   currentFonts.filter((e) => {
+    //     if (e.category === style.toLowerCase() && e.language === language.toLowerCase()) {
+    //       return e
+    //     }
+    //   })
+    // )
+    // currentFonts.filter((e) => {
+    //   if (e.category === style.toLowerCase() && e.language === language.toLowerCase()) {
+    //     return e
+    //   }
+    // })[0] === undefined && setContent("There are no resources.")
   }
 
   const makeFilter = async ({ recent, all }: { recent?: boolean; all?: boolean }) => {
@@ -111,7 +130,7 @@ export default function FontSelector() {
       <Flex margin="10px" color="#A9A9B2">
         TEXT
       </Flex>
-      <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", padding: "10px" }}>
+      {/* <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", padding: "10px" }}>
         <Popover onOpen={onOpenLanguage} onClose={onCloseLanguage} isOpen={isOpenLanguage} placement="bottom-start">
           <PopoverTrigger>
             <Button justifyContent={"space-between"} rightIcon={<Down size={20} />} variant="outline">
@@ -174,7 +193,7 @@ export default function FontSelector() {
             </PopoverContent>
           </Portal>
         </Popover>
-      </Box>
+      </Box> */}
       <TextSpacing />
       <Box sx={{ padding: "0 1rem" }}>
         <Tabs size={"sm"}>
@@ -189,10 +208,11 @@ export default function FontSelector() {
       <Scrollable>
         <InfiniteScroll hasMore={false} fetchData={() => {}}>
           <Flex flexDir="column">
-            {commonFonts.map((font, index) => (
+            {commonFonts?.map((font: any, index) => (
               <Box
                 key={index}
                 onClick={() => handleFontFamilyChange(font)}
+                border={font.id === typeFont ? "3px solid #5456F5" : null}
                 sx={{
                   height: "full",
                   display: "flex",
@@ -274,9 +294,14 @@ function TextSpacing() {
       }
     }
   }
-  const applyTextChange = (type: string, e: any) => {
-    const value = e.target.value
 
+  const applyTextChange = (type: string, e: any) => {
+    let value: any
+    try {
+      value = e.target.value
+    } catch {
+      value = e
+    }
     if (editor) {
       if (type === "charSpacing") {
         if (value !== "") {
@@ -306,7 +331,6 @@ function TextSpacing() {
         <Box>Letter spacing</Box>
         <Slider value={state.charSpacing} onChange={(value: number) => handleChange("charSpacing", value)}>
           <SliderTrack>
-            RECENT COLORS
             <SliderFilledTrack />
           </SliderTrack>
           <SliderThumb />
@@ -318,6 +342,7 @@ function TextSpacing() {
           inputMode="decimal"
           pattern="[0-9]*(.[0-9]+)?"
           size="xs"
+          onKeyDown={(e) => e.key === "Enter" && applyTextChange("charSpacing", state.charSpacingTemp)}
           onChange={(e) => handleChange("charSpacingTemp", parseFloat(e.target.value))}
           onBlur={(e) => applyTextChange("charSpacing", e)}
         />
@@ -325,7 +350,7 @@ function TextSpacing() {
       <Box sx={{ display: "grid", gridTemplateColumns: "94px 1fr 50px", gap: "0.2rem" }}>
         <Box> Line spacing</Box>
 
-        <Slider value={state.lineHeight} onChange={(value: number) => handleChange("lineHeight", value)}>
+        <Slider min={1} value={state.lineHeight} onChange={(value: number) => handleChange("lineHeight", value)}>
           <SliderTrack>
             <SliderFilledTrack />
           </SliderTrack>
@@ -338,6 +363,7 @@ function TextSpacing() {
           inputMode="decimal"
           pattern="[0-9]*(.[0-9]+)?"
           size={"xs"}
+          onKeyDown={(e) => e.key === "Enter" && applyTextChange("lineHeight", state.lineHeightTemp)}
           onChange={(e) => handleChange("lineHeightTemp", parseFloat(e.target.value))}
           onBlur={(e) => applyTextChange("lineHeight", e)}
         />
