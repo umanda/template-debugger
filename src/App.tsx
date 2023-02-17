@@ -1,3 +1,4 @@
+import { useToast } from "@chakra-ui/react"
 import { useCallback, useEffect, useState } from "react"
 import { Route, Routes, useNavigate, useParams } from "react-router-dom"
 import Designer from "../src/designer/id"
@@ -25,6 +26,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
   const dispatch = useAppDispatch()
+  const toast = useToast()
 
   useEffect(() => {
     initialState()
@@ -40,7 +42,14 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
           resolve?.plan ? setState(!state) : (window.location.href = redirectHome)
         }
       } else {
-        // window.location.href = redirectHome
+        toast({
+          title: "PLEASE LOGIN.",
+          status: "warning",
+          position: "top",
+          duration: 3000,
+          isClosable: true
+        })
+        window.location.href = redirectHome
       }
     }
     id === undefined && navigate(`/composer/${generateId("", 10)}`)
