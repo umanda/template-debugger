@@ -216,7 +216,6 @@ export default function Upload() {
 
   const dragObject = useCallback(
     async (url: string, id: string, type?: string) => {
-      console.log(url)
       try {
         await api.getUseUploads(id)
       } catch {}
@@ -538,7 +537,7 @@ export default function Upload() {
         {validateContent === null ? (
           <Flex h="full" w="full" flexDir="column">
             <Scrollable autoHide={true}>
-              <InfiniteScroll hasMore={fetching} fetchData={fetchDataResource}>
+              <InfiniteScroll hasMore={!fetching} fetchData={fetchDataResource}>
                 {!loadMoreResources ? (
                   <Grid gap="0.5rem" padding="0 2rem 2rem" gridTemplateColumns="1fr 1fr">
                     {resources?.map((upload: any, index: number) => (

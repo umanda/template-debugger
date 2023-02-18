@@ -125,7 +125,6 @@ export default function Text() {
 
   const onDragStart = React.useCallback(
     (ev: React.DragEvent<HTMLDivElement>, type: string) => {
-      console.log(type)
       loadFonts([font])
       const options = {
         id: nanoid(), //"Add header"
