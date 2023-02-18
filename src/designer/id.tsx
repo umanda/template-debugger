@@ -12,9 +12,10 @@ import { getProjectByKey, updateProject } from "../components/store/project/acti
 import { getFonts } from "../components/store/fonts/action"
 import { getListDrawifiers } from "../components/store/user/action"
 import { loadFonts } from "../components/utils/fonts"
+import useResourcesContext from "../components/hooks/useResourcesContext"
 
 const Designer: any = () => {
-  const [state, setSate] = useState<boolean>(false)
+  const { setLoadCanva } = useResourcesContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [typeSign, setTypeSign] = useState("signin")
   const { id } = useParams()
@@ -50,11 +51,11 @@ const Designer: any = () => {
           sceneNames.push(scn.name)
         }
         setNamesPages(sceneNames)
-        setSate(true)
+        setLoadCanva(true)
       }
     } catch (err: any) {
       user && functionSave()
-      setSate(true)
+      setLoadCanva(true)
     }
   }, [id, editor, user, design])
 
@@ -76,7 +77,7 @@ const Designer: any = () => {
     <Flex sx={{ height: "100vh", width: "100vw" }}>
       <SigninModal setType={setTypeSign} type={typeSign} onClose={onClose} isOpen={isOpen} onOpen={onOpen} />
       <Flex flex={1}>
-        <DesignEditor state={state} />
+        <DesignEditor />
       </Flex>
     </Flex>
   )

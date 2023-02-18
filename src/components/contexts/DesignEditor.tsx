@@ -39,8 +39,6 @@ interface IDesignEditorContext {
   isOpenPreview: boolean
   onOpenPreview: () => void
   onClosePreview: () => void
-  designEditorLoading: DesignEditorState
-  setDesignEditorLoading: (props: DesignEditorState) => void
   indexColorPicker: number
   setIndexColorPicker: React.Dispatch<React.SetStateAction<number>>
   colorText: string
@@ -63,11 +61,6 @@ export const DesignEditorContext = React.createContext<IDesignEditorContext>({
   isOpenPreview: false,
   onOpenPreview: () => {},
   onClosePreview: () => {},
-  designEditorLoading: {
-    isLoading: true,
-    preview: ""
-  },
-  setDesignEditorLoading(props) {},
   indexColorPicker: 0,
   setIndexColorPicker: () => {},
   colorText: "",
@@ -83,10 +76,6 @@ export const DesignEditorProvider = ({ children }: { children: React.ReactNode }
   const [isScenesVisible, setIsScenesVisible] = React.useState(true)
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(true)
   const { isOpen: isOpenPreview, onOpen: onOpenPreview, onClose: onClosePreview } = useDisclosure()
-  const [designEditorLoading, setDesignEditorLoading] = React.useState<{ isLoading: boolean; preview: string }>({
-    isLoading: true,
-    preview: ""
-  })
   const [indexColorPicker, setIndexColorPicker] = React.useState<number>(-1)
   const [colorText, setColorText] = React.useState<string>("")
   const [colors, setColors] = React.useState<any>({ colorMap: {} })
@@ -103,8 +92,6 @@ export const DesignEditorProvider = ({ children }: { children: React.ReactNode }
     isOpenPreview,
     onOpenPreview,
     onClosePreview,
-    designEditorLoading,
-    setDesignEditorLoading,
     isSidebarVisible,
     setIsSidebarVisible,
     indexColorPicker,

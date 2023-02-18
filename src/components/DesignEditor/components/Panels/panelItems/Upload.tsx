@@ -9,7 +9,6 @@ import {
   Grid,
   GridItem,
   IconButton,
-  Image,
   Input,
   Popover,
   PopoverArrow,
@@ -71,8 +70,7 @@ export default function Upload() {
   const [disableTab, setDisableTab] = useState<boolean>(false)
   const [loadMoreResources, setLoadMoreResources] = useState<boolean>(true)
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const activeScene = useActiveScene()
-  const { setResourceDrag } = useResourcesContext()
+  const activeScene: any = useActiveScene()
   const activeObject = useActiveObject()
 
   useEffect(() => {
@@ -216,12 +214,26 @@ export default function Upload() {
     setLoadMoreResources(false)
   }
 
-  const onDragStart = React.useCallback(
-    (ev: React.DragEvent<HTMLDivElement>, resource: any) => {
-      // setResourceDrag(resource)
-      // ev.dataTransfer.setData("resource", "image")
+  const dragObject = useCallback(
+    async (url: string, id: string, type?: string) => {
+      console.log(url)
+      try {
+        await api.getUseUploads(id)
+      } catch {}
+      let typeURL = ""
+      type === "svg" ? (typeURL = "StaticVector") : (typeURL = "StaticImage")
+      const options: any = {
+        type: typeURL,
+        src: url,
+        erasable: false
+      }
+      let img = new Image()
+      img.src = url
+      if (editor) {
+        editor.dragger.onDragStart(options, { desiredSize: 300 })
+      }
     },
-    [activeScene, editor, setResourceDrag]
+    [editor, user]
   )
 
   const addImageToCanvas = useCallback(
@@ -526,16 +538,25 @@ export default function Upload() {
         {validateContent === null ? (
           <Flex h="full" w="full" flexDir="column">
             <Scrollable autoHide={true}>
-              <InfiniteScroll hasMore={!fetching} fetchData={fetchDataResource}>
+              <InfiniteScroll hasMore={fetching} fetchData={fetchDataResource}>
                 {!loadMoreResources ? (
                   <Grid gap="0.5rem" padding="0 2rem 2rem" gridTemplateColumns="1fr 1fr">
                     {resources?.map((upload: any, index: number) => (
                       <GridItem
+                        draggable={true}
+                        onDragStart={(e) =>
+                          dragObject(
+                            upload.url.includes(defaultPreviewTemplate)
+                              ? upload.url.replace(defaultPreviewTemplate, replacePreviewTemplate)
+                              : upload.url,
+                            upload.id,
+                            upload.type
+                          )
+                        }
                         key={index}
                         border="1px solid #d0d0d0"
                         _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
                         boxSize="120px"
-                        onDragStart={(e) => onDragStart(e, upload)}
                       >
                         <IconButton
                           position="absolute"

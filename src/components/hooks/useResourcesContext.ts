@@ -2,14 +2,17 @@ import { useContext } from "react"
 import { ResourcesContext } from "../contexts/ResourcesContext"
 
 export function useResourcesContext() {
-  const { draw, setDraw, resourceDrag, setResourceDrag, order, setOrder } = useContext(ResourcesContext)
+  const { draw, setDraw, order, setOrder, loadCanva, setLoadCanva, previewCanva, setPreviewCanva } =
+    useContext(ResourcesContext)
   return {
     draw,
     setDraw,
-    resourceDrag,
-    setResourceDrag,
     order,
-    setOrder
+    setOrder,
+    loadCanva,
+    setLoadCanva,
+    previewCanva,
+    setPreviewCanva
   }
 }
 

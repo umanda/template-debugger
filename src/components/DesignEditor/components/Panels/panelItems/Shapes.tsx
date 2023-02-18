@@ -29,7 +29,6 @@ const initialQuery = {
 }
 
 export default function Shapes() {
-  const { setResourceDrag } = useResourcesContext()
   const editor = useEditor()
   const [resources, setResources] = useState<IResource[]>([])
   const [fetching, setFetching] = React.useState(true)
@@ -50,6 +49,32 @@ export default function Shapes() {
   useEffect(() => {
     initialState()
   }, [user])
+
+  const dragObject = useCallback(
+    (e: React.DragEvent<HTMLDivElement>, resource: any) => {
+      if (user && projectSelect.id) {
+        const ctx = { id: resource.id }
+        api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
+      }
+      let img = new Image()
+      img.src = resource.preview
+      if (editor) {
+        e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
+        editor.dragger.onDragStart(
+          {
+            type: "StaticVector",
+            name: "Shape",
+            erasable: false,
+            // watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null,
+            preview: resource.url,
+            src: resource.url
+          },
+          { desiredSize: 300 }
+        )
+      }
+    },
+    [editor, user, projectSelect]
+  )
 
   const initialState = useCallback(async () => {
     if (selectShapes[0] === undefined) {
@@ -111,22 +136,13 @@ export default function Shapes() {
         type: "StaticVector",
         name: "Shape",
         src: images.url,
-        erasable: false,
-        metadata: {}
+        erasable: false
       }
       if (editor) {
         activeScene.objects.add(options, { desiredSize: 200 })
       }
     },
     [activeScene, editor, activeObject, projectSelect, user]
-  )
-
-  const onDragStart = React.useCallback(
-    (ev: React.DragEvent<HTMLDivElement>, resource: any) => {
-      setResourceDrag(resource)
-      ev.dataTransfer.setData("resource", "image")
-    },
-    [activeScene, editor, setResourceDrag]
   )
 
   const makeFilter = useCallback(
@@ -258,13 +274,13 @@ export default function Shapes() {
                     {resources?.map((obj: any, index: number) => {
                       return (
                         <GridItem
+                          onDragStart={(e) => dragObject(e, obj)}
                           sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
                           onClick={() => addObject(obj)}
                           key={index}
                           border="1px #DDDFE5 solid"
                           padding="2px"
                           h="70px"
-                          onDragStart={(e) => onDragStart(e, obj)}
                           _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
                         >
                           <Flex w="full" h="full">

@@ -77,7 +77,6 @@ const initialQuery = {
 }
 
 export default function Ilustrations() {
-  const { setResourceDrag } = useResourcesContext()
   const dispatch: any = useAppDispatch()
   const initialFocusRef = useRef<any>()
   const [validateContent, setValidateContent] = useState<string | null>(null)
@@ -234,14 +233,6 @@ export default function Ilustrations() {
       } catch (err) {}
     },
     [activeScene, editor, activeObject, projectSelect, user]
-  )
-
-  const onDragStart = React.useCallback(
-    (ev: React.DragEvent<HTMLDivElement>, resource: any) => {
-      setResourceDrag(resource)
-      ev.dataTransfer.setData("resource", "image")
-    },
-    [activeScene, editor, setResourceDrag]
   )
 
   const makeFilter = async ({
@@ -516,7 +507,6 @@ export default function Ilustrations() {
                               illustration && (
                                 <IllustrationItem
                                   makeFavorite={makeFavorite}
-                                  onDragStart={onDragStart}
                                   addObject={() => addObject(illustration)}
                                   illustration={illustration}
                                   key={index}
@@ -527,22 +517,6 @@ export default function Ilustrations() {
                         </Grid>
                       </Flex>
                     ))}
-                    {/* <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
-                    {resourcesIllustration.map(
-                      (illustration, index) =>
-                        illustration && (
-                          <IllustrationItem
-                            makeFavorite={makeFavorite}
-                            onDragStart={onDragStart}
-                            addObject={() => addObject(illustration)}
-                            illustration={illustration}
-                            key={index}
-                            listFavorite={selectListFavoriteResources}
-                          />
-                        )
-                    )}
-                  </Box> */}
-
                     <Button
                       w="full"
                       variant="outline"
@@ -561,7 +535,6 @@ export default function Ilustrations() {
                           illustration && (
                             <IllustrationItem
                               makeFavorite={makeFavorite}
-                              onDragStart={onDragStart}
                               addObject={() => addObject(illustration)}
                               illustration={illustration}
                               key={index}
@@ -601,13 +574,11 @@ export default function Ilustrations() {
 function IllustrationItem({
   illustration,
   addObject,
-  onDragStart,
   makeFavorite,
   listFavorite
 }: {
   illustration: IResource
   addObject: () => void
-  onDragStart: (a: any, b: any) => void
   makeFavorite: (obj: IResource) => void
   listFavorite: IResource[]
 }) {
@@ -617,6 +588,8 @@ function IllustrationItem({
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [type, setType] = useState("")
   const [typeFilter, setTypeFilter] = useState<any>()
+  const editor = useEditor()
+  const projectSelect = useSelector(selectProject)
 
   useEffect(() => {
     listFavorite.find((resource) => resource.id === illustration.id) ? setLike(true) : setLike(false)
@@ -628,6 +601,32 @@ function IllustrationItem({
     onOpen()
   }, [])
 
+  const dragObject = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      if (user && projectSelect) {
+        const ctx = { id: illustration.id }
+        api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
+      }
+      let img = new Image()
+      img.src = illustration.preview
+      if (editor) {
+        e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
+        editor.dragger.onDragStart(
+          {
+            type: "StaticImage",
+            name: "Shape",
+            erasable: false,
+            watermark: illustration.license === "paid" ? user.plan !== "HERO" && watermarkURL : null,
+            preview: illustration.url,
+            src: illustration.url
+          },
+          { desiredSize: 300 }
+        )
+      }
+    },
+    [editor, user, projectSelect, illustration]
+  )
+
   const ValidateIcon = () => {
     if (like) {
       return <LikeClick size={20} />
@@ -638,6 +637,9 @@ function IllustrationItem({
 
   return (
     <Flex
+      onDragStart={(e) => {
+        dragObject(e)
+      }}
       sx={{
         height: "180px",
         flexDirection: "column"
@@ -655,9 +657,9 @@ function IllustrationItem({
         overflow={"hidden"}
         _hover={{ cursor: "pointer" }}
         justifyContent={"center"}
-        onDragStart={(e) => onDragStart(e, illustration)}
-        onMouseOver={() => setIsHovering(true)}
-        onMouseOut={() => setIsHovering(false)}
+        // onDragStart={(e) => onDragStart(e, illustration)}
+        // onMouseOver={() => setIsHovering(true)}
+        // onMouseOut={() => setIsHovering(false)}
       >
         <Flex
           onClick={() => OpenModalIllustration("tag", illustration)}

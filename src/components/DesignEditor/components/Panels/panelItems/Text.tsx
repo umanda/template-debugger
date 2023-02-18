@@ -24,7 +24,6 @@ const font = {
 }
 
 export default function Text() {
-  const { setResourceDrag } = useResourcesContext()
   const user = useSelector(selectUser)
   const editor = useEditor()
   const dispatch = useAppDispatch()
@@ -126,6 +125,7 @@ export default function Text() {
 
   const onDragStart = React.useCallback(
     (ev: React.DragEvent<HTMLDivElement>, type: string) => {
+      console.log(type)
       loadFonts([font])
       const options = {
         id: nanoid(), //"Add header"
@@ -136,17 +136,16 @@ export default function Text() {
           type === "header"
             ? "Add Header"
             : type === "subHeader"
-            ? "Add sub Header"
+            ? "Sub Header"
             : "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
         fontFamily: font.name,
         fontURL: font.url,
         fontSize: type === "header" ? 120 : type === "subHeader" ? 80 : 40,
         metadata: {}
       }
-      setResourceDrag(options)
-      ev.dataTransfer.setData("resource", "text")
+      editor.dragger.onDragStart(options, { desiredSize: type === "header" ? 360 : type === "subHeader" ? 240 : 410 })
     },
-    [editor, setResourceDrag]
+    [editor]
   )
 
   return (
