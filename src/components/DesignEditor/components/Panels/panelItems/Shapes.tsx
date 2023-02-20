@@ -60,7 +60,7 @@ export default function Shapes() {
       let img = new Image()
       img.src = resource.preview
       if (editor) {
-        e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
+        e.dataTransfer.setDragImage(img, img.width, img.height)
         editor.dragger.onDragStart(
           {
             type: "StaticVector",
@@ -278,6 +278,7 @@ export default function Shapes() {
                       return (
                         <GridItem
                           onDragStart={(e) => dragObject(e, obj)}
+                          draggable={true}
                           sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
                           onClick={() => addObject(obj)}
                           key={index}

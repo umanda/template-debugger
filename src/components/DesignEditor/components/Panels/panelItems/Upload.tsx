@@ -79,7 +79,6 @@ export default function Upload() {
   }, [user])
 
   const initialState = async () => {
-    console.log("initial state")
     if (selectResourcesUploads[0] === undefined) {
       setLoadMoreResources(true)
       const resolveAction = await dispatch(uploadFiles(initialQuery))
@@ -147,6 +146,7 @@ export default function Upload() {
       )
       const resolve: any = await (await dispatch(uploadFile({ file: updatedFile, nameFile: file.name }))).payload
       setResources([resolve].concat(resources))
+      setValidateContent(null)
       toast({
         title: "The image was uploaded successfully.",
         status: "success",
@@ -166,7 +166,6 @@ export default function Upload() {
   }
 
   const fetchDataResource = async () => {
-    console.log("fetch resource")
     setFetching(true)
     if (
       nameUpload[0] === "" &&
@@ -209,15 +208,11 @@ export default function Upload() {
         query: newQuery
       })
 
-      console.log(resolve)
-
       if (resolve[0] === undefined && resources[0] === undefined) {
-        console.log("resolve")
         stateRecent === true
           ? setValidateContent("No recent shapes to display")
           : setValidateContent("Nothing was found related to the filter entered")
       } else {
-        console.log("else")
         setValidateContent(null)
       }
       resolve.map((obj) => selectResourcesUploads.find((resource: any) => obj.id === resource.id && setFetching(true)))
@@ -280,8 +275,11 @@ export default function Upload() {
   }
 
   const handleDelete = async (resource: IUpload) => {
-    await dispatch(deleteUploadFile(resource))
-    setResources(resources.filter((e) => e.id !== resource.id))
+    try {
+      await dispatch(deleteUploadFile(resource))
+      setResources(resources.filter((e) => e.id !== resource.id))
+      resources.length === 1 && setValidateContent("Start uploading your illustrations here.")
+    } catch {}
   }
 
   const makeFilter = ({
