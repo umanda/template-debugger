@@ -45,6 +45,7 @@ import { generateId } from "../../../utils/unique"
 import { IDesign } from "@layerhub-pro/types"
 import { selectProject } from "../../../store/project/selector"
 import DrawifyD from "../../../Icons/DrawifyD"
+import UserIcon from "../../../Icons/UserIcon"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 
@@ -665,6 +666,10 @@ function UserMenu() {
   const toast = useToast()
   const [typeSign, setTypeSign] = useState("signin")
 
+  const handleProfile = () => {
+    window.location.href = redirectUserProfilePage
+  }
+
   const handleLogout = async () => {
     const resolve = await dispatch(logout())
     if (resolve?.payload) {
@@ -698,6 +703,18 @@ function UserMenu() {
           </PopoverTrigger>
           <PopoverContent width={"200px"} padding={"0.5rem 0"}>
             <Box>
+            
+              <MenuOption
+                onClick={() => {
+                  handleProfile()
+                }}
+              >
+                <Flex gap="0.25rem" alignItems={"center"}>
+                  <UserIcon size={24} />
+                  Profile
+                </Flex>
+              </MenuOption>
+
               <MenuOption
                 onClick={() => {
                   handleLogout()
