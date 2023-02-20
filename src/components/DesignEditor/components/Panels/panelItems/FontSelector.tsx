@@ -58,8 +58,8 @@ export default function FontSelector() {
 
   useEffect(() => {
     if (activeObject) {
-      const textProperties = getTextProperties(activeObject, fonts)
-      setTypeFont(fonts.filter((e) => e.family === textProperties?.family)[0]?.id)
+      getTextProperties(activeObject, fonts)
+      setTypeFont(fonts.find((e) => e?.post_script_name === activeObject?.fontFamily)?.id)
     }
   }, [editor, activeScene, activeObject, scenes])
 

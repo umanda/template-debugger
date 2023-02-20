@@ -738,29 +738,34 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const scenes = useScenes()
   const [autoSave, setAutoSave] = useState<boolean>(true)
   const [stateJson, setStateJson] = useState<any>("")
-  const [stateChange] = useDebounce(stateJson, 5000)
+  const [stateChange] = useDebounce(stateJson, 2000)
   const zoom = useZoomRatio()
   const activeObject: any = useActiveObject()
 
   document.onkeydown = function (e) {
-    if (e.keyCode === 46) {
-      activeObject?.type !== "Frame" && activeScene.objects.remove(activeObject.id)
+    if (e.key === "Delete") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.remove(activeObject.id)
       return false
     }
-    if (e.keyCode === 37) {
-      activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left - 30 }, activeObject.id)
+    if (e.key === "ArrowLeft") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left - 30 }, activeObject.id)
       return false
     }
-    if (e.keyCode === 38) {
-      activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top - 30 }, activeObject.id)
+    if (e.key === "ArrowUp") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top - 30 }, activeObject.id)
       return false
     }
-    if (e.keyCode === 39) {
-      activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left + 30 }, activeObject.id)
+    if (e.key === "ArrowRight") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left + 30 }, activeObject.id)
       return false
     }
-    if (e.keyCode === 40) {
-      activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top + 30 }, activeObject.id)
+    if (e.key === "ArrowDown") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top + 30 }, activeObject.id)
       return false
     }
     if (
