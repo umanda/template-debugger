@@ -668,7 +668,7 @@ function UserMenu() {
   const [typeSign, setTypeSign] = useState("signin")
 
   const handleProfile = () => {
-    window.location.href = redirectProfile
+    window.location.href = redirectUserProfilePage
   }
 
   const handleLogout = async () => {

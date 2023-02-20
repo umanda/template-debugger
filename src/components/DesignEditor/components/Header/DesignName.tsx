@@ -60,7 +60,6 @@ function DesignName() {
           variant={"unstyled"}
           onChange={(e: any) => handleInputChange(e.target.value)}
           sx={{
-            padding: 0,
             fontSize: "14px",
             color: "#2D3748",
             borderBottom : "1px solid #e2e8f0",
