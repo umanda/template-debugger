@@ -743,55 +743,60 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const activeObject: any = useActiveObject()
 
   document.onkeydown = function (e) {
-    if (e.keyCode === 46) {
-      activeObject?.type !== "Frame" && activeScene.objects.remove(activeObject.id)
+    if (e.key === "Delete") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.remove(activeObject.id)
       return false
     }
-    if (e.keyCode === 37) {
-      activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left - 30 }, activeObject.id)
+    if (e.key === "ArrowLeft") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left - 30 }, activeObject.id)
       return false
     }
-    if (e.keyCode === 38) {
-      activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top - 30 }, activeObject.id)
+    if (e.key === "ArrowUp") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top - 30 }, activeObject.id)
       return false
     }
-    if (e.keyCode === 39) {
-      activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left + 30 }, activeObject.id)
+    if (e.key === "ArrowRight") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left + 30 }, activeObject.id)
       return false
     }
-    if (e.keyCode === 40) {
-      activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top + 30 }, activeObject.id)
+    if (e.key === "ArrowDown") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top + 30 }, activeObject.id)
       return false
     }
     if (
       e.ctrlKey &&
-      (e.keyCode === 85 ||
-        e.keyCode === 117 ||
-        e.keyCode === 107 ||
-        e.keyCode === 109 ||
-        e.keyCode === 69 ||
-        e.keyCode === 68 ||
-        e.keyCode === 83 ||
-        e.keyCode === 65 ||
-        e.keyCode === 90 ||
-        e.keyCode === 46 ||
-        e.keyCode === 89 ||
-        e.keyCode === 64)
+      (e.which === 85 ||
+        e.which === 117 ||
+        e.which === 107 ||
+        e.which === 109 ||
+        e.which === 69 ||
+        e.which === 68 ||
+        e.which === 83 ||
+        e.which === 65 ||
+        e.which === 90 ||
+        e.which === 46 ||
+        e.which === 89 ||
+        e.which === 64)
     ) {
-      if (e.ctrlKey && e.keyCode === 107) editor.zoom.zoomToRatio(zoom + 0.05)
-      if (e.ctrlKey && e.keyCode === 109) editor.zoom.zoomToRatio(zoom - 0.05)
-      if (e.ctrlKey && e.keyCode === 68) activeScene.objects.clone()
-      if (e.ctrlKey && e.keyCode === 83) functionSave()
-      if (e.ctrlKey && e.keyCode === 65) activeScene.objects.select()
-      if (e.ctrlKey && e.keyCode === 69) {
+      if (e.ctrlKey && e.which === 107) editor.zoom.zoomToRatio(zoom + 0.05)
+      if (e.ctrlKey && e.which === 109) editor.zoom.zoomToRatio(zoom - 0.05)
+      if (e.ctrlKey && e.which === 68) activeScene.objects.clone()
+      if (e.ctrlKey && e.which === 83) functionSave()
+      if (e.ctrlKey && e.which === 65) activeScene.objects.select()
+      if (e.ctrlKey && e.which === 69) {
         activeScene.layers.map((e, index) => {
           if (index > 1) activeScene.objects.remove(e.id)
         })
         editor.zoom.zoomToRatio(zoom - 0.0000000000001 + 0.0000000000001)
       }
-      if (e.ctrlKey && e.keyCode === 90) activeScene.history.undo()
-      if (e.ctrlKey && e.keyCode === 89) activeScene.history.redo()
-      if (e.keyCode === 46) activeScene.objects.removeById(activeObject?.id)
+      if (e.ctrlKey && e.which === 90) activeScene.history.undo()
+      if (e.ctrlKey && e.which === 89) activeScene.history.redo()
+      if (e.which === 46) activeScene.objects.removeById(activeObject?.id)
       return false
     } else return true
   }
