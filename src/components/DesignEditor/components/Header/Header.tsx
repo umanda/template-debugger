@@ -860,7 +860,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
 
   return (
     <Flex>
-      <Tooltip label="CLick here to Save" fontSize="md">
+      <Tooltip label="Click here to Save" fontSize="md">
         <Button
           variant={"ghost"}
           aria-label="sync status"
