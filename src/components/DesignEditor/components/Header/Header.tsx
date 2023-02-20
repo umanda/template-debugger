@@ -239,7 +239,7 @@ function ShareMenu() {
             })[0].preview
           })
           window.open(url.url, "_blank")
-        } catch { }
+        } catch {}
       }
     },
     [activeScene, namesPages, id]
@@ -454,7 +454,7 @@ function FileMenu() {
         const design = JSON.parse(result)
         handleImportDesign(design)
       }
-      reader.onerror = (err) => { }
+      reader.onerror = (err) => {}
 
       reader.readAsText(file)
     }
@@ -704,7 +704,6 @@ function UserMenu() {
           </PopoverTrigger>
           <PopoverContent width={"200px"} padding={"0.5rem 0"}>
             <Box>
-
               <MenuOption
                 onClick={() => {
                   handleProfile()
@@ -763,7 +762,9 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   document.onkeydown = function (e) {
     if (e.key === "Delete") {
       if (activeObject.locked === false || activeObject.locked === undefined)
-        activeObject?.type !== "Frame" && activeScene.objects.remove(activeObject.id)
+        activeObject.type === "StaticText"
+          ? activeObject.isEditing !== true && activeScene.objects.removeById(activeObject?.id)
+          : activeScene.objects.removeById(activeObject?.id)
       return false
     }
     if (e.key === "ArrowLeft") {
@@ -788,18 +789,15 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
     }
     if (
       e.ctrlKey &&
-      (e.keyCode === 85 ||
-        e.keyCode === 117 ||
-        e.keyCode === 107 ||
-        e.keyCode === 109 ||
-        e.keyCode === 69 ||
-        e.keyCode === 68 ||
-        e.keyCode === 83 ||
-        e.keyCode === 65 ||
-        e.keyCode === 90 ||
-        e.keyCode === 46 ||
-        e.keyCode === 89 ||
-        e.keyCode === 64)
+      (e.key === "u" ||
+        e.key === "k" ||
+        e.key === "m" ||
+        e.key === "e" ||
+        e.key === "d" ||
+        e.key === "s" ||
+        e.key === "a" ||
+        e.key === "z" ||
+        e.key === "y")
     ) {
       if (e.ctrlKey && e.keyCode === 107) editor.zoom.zoomToRatio(zoom + 0.05)
       if (e.ctrlKey && e.keyCode === 109) editor.zoom.zoomToRatio(zoom - 0.05)
@@ -814,7 +812,6 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       }
       if (e.ctrlKey && e.keyCode === 90) activeScene.history.undo()
       if (e.ctrlKey && e.keyCode === 89) activeScene.history.redo()
-      if (e.keyCode === 46) activeScene.objects.removeById(activeObject?.id)
       return false
     } else return true
   }
@@ -822,7 +819,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   useEffect(() => {
     try {
       if (activeScene && stateJson !== "") functionSave()
-    } catch { }
+    } catch {}
   }, [stateChange, namesPages])
 
   useEffect(() => {
@@ -855,7 +852,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       })
       user && (await dispatch(updateProject(designJSON))).payload
       setAutoSave(true)
-    } catch { }
+    } catch {}
   }, [editor, scenes, currentScene, id, design, autoSave, namesPages])
 
   return (
@@ -865,7 +862,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
           variant={"ghost"}
           aria-label="sync status"
           color={autoSave === false ? "#F56565" : "#15BE53"}
-          leftIcon={autoSave === false ? <NotSync size={18} /> :<Sync size={24} /> }
+          leftIcon={autoSave === false ? <NotSync size={18} /> : <Sync size={24} />}
           onClick={() => (!user ? onOpen() : functionSave())}
         >
           {autoSave === false ? "Changes not saved" : "Changes saved"}
