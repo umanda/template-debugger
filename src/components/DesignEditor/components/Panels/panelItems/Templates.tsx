@@ -49,6 +49,8 @@ import Order from "../../../../Modals/Order"
 import LazyLoadImage from "../../../../utils/LazyLoadImage"
 import { selectProject } from "../../../../store/project/selector"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
+import FavoriteClean from "../../../../Icons/FavoriteClean"
+import RecentClean from "../../../../Icons/RecentClean"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
@@ -156,7 +158,11 @@ export default function Template() {
         sorts: order
       })
       if (resolve[0] === undefined && resourcesTemplate[0] === undefined) {
-        setValidateContent("Nothing was found related to the filter entered")
+        stateFavorite === true
+          ? setValidateContent("No favorite templates to display")
+          : stateRecent === true
+          ? setValidateContent("No recent templates to display")
+          : setValidateContent("Nothing was found related to the filter entered")
       } else {
         setValidateContent(null)
       }
@@ -450,7 +456,7 @@ export default function Template() {
                             minH="150px"
                             w="full"
                             border="1px solid #e2e8f0"
-                            _hover={{ cursor: "pointer" ,border: "1px solid #5456F5" }}
+                            _hover={{ cursor: "pointer", border: "1px solid #5456F5" }}
                             onClick={() => loadTemplateById(template)}
                           >
                             {/* @ts-ignore */}
@@ -498,7 +504,12 @@ export default function Template() {
             </InfiniteScroll>
           </Scrollable>
         ) : (
-          <Center h="full" w="full" textAlign="center">
+          <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+            {stateFavorite === true ? (
+              <FavoriteClean size={200} />
+            ) : stateRecent === true ? (
+              <RecentClean size={200} />
+            ) : null}
             {validateContent}
           </Center>
         )}

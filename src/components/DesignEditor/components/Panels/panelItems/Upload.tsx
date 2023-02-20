@@ -38,6 +38,7 @@ import { IUpload } from "../../../../interfaces/editor"
 import Trash from "../../../../Icons/Trash"
 import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "../../../../store/resources/action"
 import { selectUploads } from "../../../../store/resources/selector"
+import RecentClean from "../../../../Icons/RecentClean"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
@@ -78,6 +79,7 @@ export default function Upload() {
   }, [user])
 
   const initialState = async () => {
+    console.log("initial state")
     if (selectResourcesUploads[0] === undefined) {
       setLoadMoreResources(true)
       const resolveAction = await dispatch(uploadFiles(initialQuery))
@@ -86,6 +88,11 @@ export default function Upload() {
       setResources(resolve)
       setFetching(false)
       setLoadMoreResources(false)
+      if (resolve[0] === undefined && resources[0] === undefined) {
+        setValidateContent("Start uploading your illustrations here.")
+      } else {
+        setValidateContent(null)
+      }
     } else {
       setResources(selectResourcesUploads)
       setFetching(false)
@@ -159,6 +166,7 @@ export default function Upload() {
   }
 
   const fetchDataResource = async () => {
+    console.log("fetch resource")
     setFetching(true)
     if (
       nameUpload[0] === "" &&
@@ -200,9 +208,16 @@ export default function Upload() {
         page: resources.length / 10 + 1,
         query: newQuery
       })
+
+      console.log(resolve)
+
       if (resolve[0] === undefined && resources[0] === undefined) {
-        setValidateContent("Nothing was found related to the filter entered")
+        console.log("resolve")
+        stateRecent === true
+          ? setValidateContent("No recent shapes to display")
+          : setValidateContent("Nothing was found related to the filter entered")
       } else {
+        console.log("else")
         setValidateContent(null)
       }
       resolve.map((obj) => selectResourcesUploads.find((resource: any) => obj.id === resource.id && setFetching(true)))
@@ -596,7 +611,8 @@ export default function Upload() {
             </Scrollable>
           </Flex>
         ) : (
-          <Center h="full" w="full" textAlign="center">
+          <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+            <RecentClean size={200} />
             {validateContent}
           </Center>
         )}
