@@ -25,6 +25,7 @@ import {
   Stack,
   Text,
   Tooltip,
+  border,
   useDisclosure
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
@@ -64,6 +65,12 @@ export const limitCharacters = (name: string) => {
     return newName
   }
 }
+
+export const splitName = (name: string) =>{
+  const nameArr = name.split(' ')
+  return nameArr;
+}
+
 
 const initialQuery = {
   page: 0,
@@ -688,7 +695,15 @@ function IllustrationItem({
         >
           <FilterByTemplates size={30} />
         </Flex> */}
-        <Flex opacity={isHovering ? "0.2" : "1"} w="full" h="full" onClick={addObject}>
+        <Flex opacity={isHovering ? "0.2" : "1"} w="full" h="full" onClick={addObject}
+        
+        sx={{
+          border : "1px",
+          borderColor : "#e2e8f0",
+          padding : "2px"
+        }}
+        _hover={{  borderColor : "#5456F5", }}
+        >
           <LazyLoadImage url={illustration.preview} />
         </Flex>
       </Flex>
@@ -700,10 +715,16 @@ function IllustrationItem({
         }}
       >
         {illustration?.drawifier?.name && (
-          <Flex>
+          <Flex sx={{
+            justifyContent: "space-between",
+            width: "100%",
+          }} >
             <Flex gap="5px" alignItems="center">
               <Avatar size={"xs"} name={illustration?.drawifier?.name} src={illustration?.drawifier?.avatar} />
-              <Box sx={{ fontSize: "12px" }}>{limitCharacters(illustration?.drawifier?.name)}</Box>
+              <Box sx={{ fontSize: "12px" }}>
+                {/* {limitCharacters(illustration?.drawifier?.name)} */}
+                {splitName(illustration?.drawifier?.name)[0]}
+                </Box>
             </Flex>
             <Center gap={"0.25rem"}>
               {illustration.license === "paid" && (
