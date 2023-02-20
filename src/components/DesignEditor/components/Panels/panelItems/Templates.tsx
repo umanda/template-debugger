@@ -444,16 +444,13 @@ export default function Template() {
                           display={"flex"}
                           flexDirection="column"
                           key={index}
-                          _hover={{
-                            border: "3px solid #5456F5"
-                          }}
                         >
                           <Flex
                             maxH="full"
                             minH="150px"
                             w="full"
-                            border="1px solid #d0d0d0"
-                            _hover={{ cursor: "pointer" }}
+                            border="1px solid #e2e8f0"
+                            _hover={{ cursor: "pointer" ,border: "1px solid #5456F5" }}
                             onClick={() => loadTemplateById(template)}
                           >
                             {/* @ts-ignore */}

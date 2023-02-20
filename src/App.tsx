@@ -6,6 +6,8 @@ import { getFonts } from "./components/store/fonts/action"
 import { useAppDispatch } from "./components/store/store"
 import { getListDrawifiers, signInByToken } from "./components/store/user/action"
 import { generateId } from "./components/utils/unique"
+import SplashLoader from "/public/loading.gif";
+
 const redirectHome: string = import.meta.env.VITE_REDIRECT_HOME
 
 function App() {
@@ -67,7 +69,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
         width: "100vw"
       }}
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width="100px" height="100px" viewBox="0 0 100 100">
+      {/* <svg xmlns="http://www.w3.org/2000/svg" width="100px" height="100px" viewBox="0 0 100 100">
         <circle cx="30" cy="50" fill="#000">
           <animate attributeName="r" values="0;5;0" dur="1.2s" repeatCount="indefinite" />
         </circle>
@@ -78,7 +80,25 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
           <animate attributeName="r" values="0;5;0" dur="1.2s" begin="0.8s" repeatCount="indefinite" />
         </circle>
       </svg>
-      {"LOADING"}
+      {"LOADING"} */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          height: "100vh",
+          width: "100vw"
+        }}>
+        <img src={SplashLoader}
+        style={{
+          height: "75px",
+          width: "75px"
+        }}></img>
+        <p>{"LOADING"}</p>
+      </div>
+
     </div>
   )
 }
