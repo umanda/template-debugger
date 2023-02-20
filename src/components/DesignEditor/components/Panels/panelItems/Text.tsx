@@ -116,8 +116,7 @@ export default function Text() {
         text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
         fontFamily: font.name,
         fontURL: font.url,
-        fontSize: 40,
-        metadata: {}
+        fontSize: 40
       }
       activeScene.objects.add(options)
     }
@@ -128,7 +127,7 @@ export default function Text() {
       loadFonts([font])
       const options = {
         id: nanoid(), //"Add header"
-        width: type === "header" ? 360 : type === "subHeader" ? 240 : 120,
+        width: type === "header" ? 360 : type === "subHeader" ? 240 : 360,
         type: "StaticText",
         textAlign: "center",
         text:
@@ -139,10 +138,9 @@ export default function Text() {
             : "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
         fontFamily: font.name,
         fontURL: font.url,
-        fontSize: type === "header" ? 120 : type === "subHeader" ? 80 : 40,
-        metadata: {}
+        fontSize: type === "header" ? 120 : type === "subHeader" ? 80 : 40
       }
-      editor.dragger.onDragStart(options, { desiredSize: type === "header" ? 360 : type === "subHeader" ? 240 : 410 })
+      editor.dragger.onDragStart(options, { desiredSize: type === "header" ? 360 : type === "subHeader" ? 240 : 360 })
     },
     [editor]
   )

@@ -47,6 +47,7 @@ import { selectProject } from "../../../store/project/selector"
 import DrawifyD from "../../../Icons/DrawifyD"
 import UserIcon from "../../../Icons/UserIcon"
 import NotSync from "../../../Icons/NotSync"
+import Linkedin from "../../../Icons/Linkedin"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 
@@ -355,14 +356,14 @@ function ShareMenu() {
                   aria-label="twitter"
                   icon={<Whatsapp size={20} />}
                 /> */}
-              {/* <IconButton
-                  onClick={() => {
-                    shareTemplate("INSTAGRAM")
-                  }}
-                  variant={"ghost"}
-                  aria-label="twitter"
-                  icon={<Twitter size={20} />}
-                /> */}
+              <IconButton
+                onClick={() => {
+                  shareTemplate("LINKEDIN")
+                }}
+                variant={"ghost"}
+                aria-label="twitter"
+                icon={<Linkedin size={20} />}
+              />
               <IconButton
                 onClick={() => {
                   shareTemplate("PINTEREST")
@@ -797,7 +798,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         activeObject.type === "StaticText"
           ? activeObject.isEditing !== true && activeScene.objects.removeById(activeObject?.id)
           : activeScene.objects.removeById(activeObject?.id)
-      return false
+      return true
     }
     if (e.key === "ArrowLeft") {
       if (activeObject.locked === false || activeObject.locked === undefined)
