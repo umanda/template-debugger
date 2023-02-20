@@ -738,7 +738,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const scenes = useScenes()
   const [autoSave, setAutoSave] = useState<boolean>(true)
   const [stateJson, setStateJson] = useState<any>("")
-  const [stateChange] = useDebounce(stateJson, 5000)
+  const [stateChange] = useDebounce(stateJson, 2000)
   const zoom = useZoomRatio()
   const activeObject: any = useActiveObject()
 
