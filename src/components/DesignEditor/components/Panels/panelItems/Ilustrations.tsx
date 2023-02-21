@@ -631,7 +631,7 @@ function IllustrationItem({
         editor.dragger.onDragStart(
           {
             type: "StaticImage",
-            name: "Shape",
+            name: "Illustration",
             erasable: false,
             watermark: illustration.license === "paid" ? user.plan !== "HERO" && watermarkURL : null,
             preview: illustration.url,
@@ -838,7 +838,7 @@ function ModalIllustration({
       }
       const options: any = {
         type: "StaticVector",
-        name: "Shape",
+        name: "Illustration",
         src: resource.url,
         erasable: false,
         watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
