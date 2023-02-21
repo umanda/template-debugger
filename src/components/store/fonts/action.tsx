@@ -32,7 +32,6 @@ export const getUseFont = createAsyncThunk<void, IFont, any>("fonts/getUseFont",
     dispatch(setUseFont(font))
     await api.getUseFont(font.id)
   } catch (err) {
-    // null
     console.log(err)
   }
 })
