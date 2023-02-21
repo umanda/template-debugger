@@ -40,8 +40,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
         dispatch(getListDrawifiers({}))
         if (token !== "") {
           const resolve = (await dispatch(signInByToken(token))).payload
-
-          // resolve?.plan ? setState(!state) : (window.location.href = redirectHome)
+          resolve?.plan ? setState(!state) : (window.location.href = redirectHome)
         }
       } else {
         toast({
@@ -51,7 +50,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
           duration: 3000,
           isClosable: true
         })
-        // window.location.href = redirectHome
+        window.location.href = redirectHome
       }
     }
     id === undefined && navigate(`/composer/${generateId("", 10)}`)
