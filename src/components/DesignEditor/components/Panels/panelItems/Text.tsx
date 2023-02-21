@@ -205,7 +205,7 @@ export default function Text() {
               color: "#A9A9B2"
             }}
           >
-            A hint is a helpful pice of advice
+            A hint is a helpful piece of advice
           </Box>
         </Box>
         <Box
@@ -235,7 +235,7 @@ export default function Text() {
               color: "#A9A9B2"
             }}
           >
-            A hint is a helpful pice of advice
+            A hint is a helpful piece of advice
           </Box>
         </Box>
       </Flex>

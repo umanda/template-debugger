@@ -228,10 +228,6 @@ export default function Ilustrations() {
   const addObject = useCallback(
     async (resource: IResource) => {
       try {
-        if (user && projectSelect) {
-          const ctx = { id: resource.id }
-          api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
-        }
         const options: any = {
           type: "StaticVector",
           name: "StaticVector",
@@ -242,7 +238,11 @@ export default function Ilustrations() {
         if (editor) {
           await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
         }
-      } catch (err) {}
+        if (user && projectSelect) {
+          const ctx = { id: resource.id }
+          api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
+        }
+      } catch {}
     },
     [activeScene, editor, activeObject, projectSelect, user]
   )
@@ -620,26 +620,28 @@ function IllustrationItem({
 
   const dragObject = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
-      if (user && projectSelect) {
-        const ctx = { id: illustration.id }
-        api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
-      }
-      let img = new Image()
-      img.src = illustration.preview
-      if (editor) {
-        e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
-        editor.dragger.onDragStart(
-          {
-            type: "StaticImage",
-            name: "Illustration",
-            erasable: false,
-            watermark: illustration.license === "paid" ? user.plan !== "HERO" && watermarkURL : null,
-            preview: illustration.url,
-            src: illustration.url
-          },
-          { desiredSize: 300 }
-        )
-      }
+      try {
+        let img = new Image()
+        img.src = illustration.preview
+        if (editor) {
+          e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
+          editor.dragger.onDragStart(
+            {
+              type: "StaticVector",
+              name: "Illustration",
+              erasable: false,
+              watermark: illustration.license === "paid" ? user.plan !== "HERO" && watermarkURL : null,
+              preview: illustration.url,
+              src: illustration.url
+            },
+            { desiredSize: 300 }
+          )
+        }
+        if (user && projectSelect) {
+          const ctx = { id: illustration.id }
+          api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
+        }
+      } catch {}
     },
     [editor, user, projectSelect, illustration]
   )

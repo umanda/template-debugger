@@ -53,28 +53,30 @@ export default function Shapes() {
 
   const dragObject = useCallback(
     (e: React.DragEvent<HTMLDivElement>, resource: any) => {
-      if (user && projectSelect.id) {
-        const ctx = { id: resource.id }
-        try {
-          api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
-        } catch {}
-      }
-      let img = new Image()
-      img.src = resource.preview
-      if (editor) {
-        e.dataTransfer.setDragImage(img, img.width, img.height)
-        editor.dragger.onDragStart(
-          {
-            type: "StaticVector",
-            name: "Shape",
-            erasable: false,
-            // watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null,
-            preview: resource.url,
-            src: resource.url
-          },
-          { desiredSize: 300 }
-        )
-      }
+      try {
+        let img = new Image()
+        img.src = resource.preview
+        if (editor) {
+          e.dataTransfer.setDragImage(img, img.width, img.height)
+          editor.dragger.onDragStart(
+            {
+              type: "StaticVector",
+              name: "Shape",
+              erasable: false,
+              // watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null,
+              preview: resource.url,
+              src: resource.url
+            },
+            { desiredSize: 300 }
+          )
+        }
+        if (user && projectSelect.id) {
+          const ctx = { id: resource.id }
+          try {
+            api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
+          } catch {}
+        }
+      } catch {}
     },
     [editor, user, projectSelect]
   )
@@ -133,19 +135,21 @@ export default function Shapes() {
 
   const addObject = useCallback(
     (images: any) => {
-      if (user && projectSelect.id) {
-        const ctx = { id: images.id }
-        api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
-      }
-      const options: any = {
-        type: "StaticVector",
-        name: "Shape",
-        src: images.url,
-        erasable: false
-      }
-      if (editor) {
-        activeScene.objects.add(options, { desiredSize: 200 })
-      }
+      try {
+        const options: any = {
+          type: "StaticVector",
+          name: "Shape",
+          src: images.url,
+          erasable: false
+        }
+        if (editor) {
+          activeScene.objects.add(options, { desiredSize: 200 })
+        }
+        if (user && projectSelect.id) {
+          const ctx = { id: images.id }
+          api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
+        }
+      } catch {}
     },
     [activeScene, editor, activeObject, projectSelect, user]
   )
