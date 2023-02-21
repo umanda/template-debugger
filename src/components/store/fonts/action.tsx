@@ -12,7 +12,6 @@ export const getFonts = createAsyncThunk<void, never, any>("fonts/getFonts", asy
     const fonts = await api.getFonts()
     dispatch(setFonts(fonts))
   } catch (err) {
-    // null
     console.log("ERROR GETTING FONTS")
   }
 })
