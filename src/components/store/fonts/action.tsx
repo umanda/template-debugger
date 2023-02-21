@@ -22,7 +22,6 @@ export const getListUseFonts = createAsyncThunk<void, never, any>("fonts/getUseF
     dispatch(setListUseFonts(fonts))
     return fonts
   } catch (err) {
-    // null
     console.log("ERROR GETTING FONTS")
   }
 })
