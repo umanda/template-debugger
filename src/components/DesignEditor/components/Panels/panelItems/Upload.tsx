@@ -38,6 +38,7 @@ import { IUpload } from "../../../../interfaces/editor"
 import Trash from "../../../../Icons/Trash"
 import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "../../../../store/resources/action"
 import { selectUploads } from "../../../../store/resources/selector"
+import RecentClean from "../../../../Icons/RecentClean"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
@@ -86,6 +87,11 @@ export default function Upload() {
       setResources(resolve)
       setFetching(false)
       setLoadMoreResources(false)
+      if (resolve[0] === undefined && resources[0] === undefined) {
+        setValidateContent("Start uploading your illustrations here.")
+      } else {
+        setValidateContent(null)
+      }
     } else {
       setResources(selectResourcesUploads)
       setFetching(false)
@@ -140,6 +146,7 @@ export default function Upload() {
       )
       const resolve: any = await (await dispatch(uploadFile({ file: updatedFile, nameFile: file.name }))).payload
       setResources([resolve].concat(resources))
+      setValidateContent(null)
       toast({
         title: "The image was uploaded successfully.",
         status: "success",
@@ -200,8 +207,11 @@ export default function Upload() {
         page: resources.length / 10 + 1,
         query: newQuery
       })
+
       if (resolve[0] === undefined && resources[0] === undefined) {
-        setValidateContent("Nothing was found related to the filter entered")
+        stateRecent === true
+          ? setValidateContent("No recent shapes to display")
+          : setValidateContent("Nothing was found related to the filter entered")
       } else {
         setValidateContent(null)
       }
@@ -265,8 +275,11 @@ export default function Upload() {
   }
 
   const handleDelete = async (resource: IUpload) => {
-    await dispatch(deleteUploadFile(resource))
-    setResources(resources.filter((e) => e.id !== resource.id))
+    try {
+      await dispatch(deleteUploadFile(resource))
+      setResources(resources.filter((e) => e.id !== resource.id))
+      resources.length === 1 && setValidateContent("Start uploading your illustrations here.")
+    } catch {}
   }
 
   const makeFilter = ({
@@ -596,7 +609,8 @@ export default function Upload() {
             </Scrollable>
           </Flex>
         ) : (
-          <Center h="full" w="full" textAlign="center">
+          <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+            <RecentClean size={200} />
             {validateContent}
           </Center>
         )}

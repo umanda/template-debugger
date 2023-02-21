@@ -47,6 +47,7 @@ import { selectProject } from "../../../store/project/selector"
 import DrawifyD from "../../../Icons/DrawifyD"
 import UserIcon from "../../../Icons/UserIcon"
 import NotSync from "../../../Icons/NotSync"
+import Linkedin from "../../../Icons/Linkedin"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 
@@ -190,39 +191,63 @@ function ShareMenu() {
   // }, [editor, scenes, currentScene, id, design, namesPages])
 
   const handleDownload = async (type: string) => {
-    let resolve: any
-    let designJSON: any = design?.toJSON()
-    designJSON.key = id
-    designJSON.scenes.map((e: any, index: number) => {
-      e.name = namesPages[index]
-      e.position = index
-      e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-      return e
-    })
-    await dispatch(updateProject(designJSON))
-    if (editor && user) {
-      resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
-    }
-    const url = resolve.url
-    const fileTypeParts = url.split(".")
-    fetch(url)
-      .then((result) => result.blob())
-      .then((blob) => {
-        if (blob != null) {
-          const url = window.URL.createObjectURL(blob)
-          const a = document.createElement("a")
-          a.href = url
-          a.download = "project." + fileTypeParts[fileTypeParts.length - 1]
-          document.body.appendChild(a)
-          a.click()
-        }
+    try {
+      toast({
+        title: "Please wait while the image loads",
+        status: "loading",
+        position: "top",
+        duration: 2000,
+        isClosable: true
       })
+      let resolve: any
+      let designJSON: any = design?.toJSON()
+      designJSON.key = id
+      designJSON.scenes.map((e: any, index: number) => {
+        e.name = namesPages[index]
+        e.position = index
+        e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+        return e
+      })
+      await dispatch(updateProject(designJSON))
+      if (editor && user) {
+        resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
+      }
+      const url = resolve.url
+      const fileTypeParts = url.split(".")
+      fetch(url)
+        .then((result) => result.blob())
+        .then((blob) => {
+          if (blob != null) {
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement("a")
+            a.href = url
+            a.download = "project." + fileTypeParts[fileTypeParts.length - 1]
+            document.body.appendChild(a)
+            a.click()
+          }
+        })
+    } catch {
+      toast({
+        title: "Oops, there was an error, try again.",
+        status: "error",
+        position: "top",
+        duration: 2000,
+        isClosable: true
+      })
+    }
   }
 
   const shareTemplate = useCallback(
     async (type: string) => {
       if (user) {
         try {
+          toast({
+            title: "Please wait while the image loads",
+            status: "loading",
+            position: "top",
+            duration: 2000,
+            isClosable: true
+          })
           let designJSON: any = design?.toJSON()
           designJSON.key = id
           designJSON.scenes.map((e: any, index: number) => {
@@ -239,7 +264,15 @@ function ShareMenu() {
             })[0].preview
           })
           window.open(url.url, "_blank")
-        } catch {}
+        } catch {
+          toast({
+            title: "Oops, there was an error, try again.",
+            status: "error",
+            position: "top",
+            duration: 2000,
+            isClosable: true
+          })
+        }
       }
     },
     [activeScene, namesPages, id]
@@ -323,14 +356,14 @@ function ShareMenu() {
                   aria-label="twitter"
                   icon={<Whatsapp size={20} />}
                 /> */}
-              {/* <IconButton
-                  onClick={() => {
-                    shareTemplate("INSTAGRAM")
-                  }}
-                  variant={"ghost"}
-                  aria-label="twitter"
-                  icon={<Twitter size={20} />}
-                /> */}
+              <IconButton
+                onClick={() => {
+                  shareTemplate("LINKEDIN")
+                }}
+                variant={"ghost"}
+                aria-label="twitter"
+                icon={<Linkedin size={20} />}
+              />
               <IconButton
                 onClick={() => {
                   shareTemplate("PINTEREST")
@@ -765,7 +798,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         activeObject.type === "StaticText"
           ? activeObject.isEditing !== true && activeScene.objects.removeById(activeObject?.id)
           : activeScene.objects.removeById(activeObject?.id)
-      return false
+      return true
     }
     if (e.key === "ArrowLeft") {
       if (activeObject.locked === false || activeObject.locked === undefined)

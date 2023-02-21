@@ -55,6 +55,8 @@ import FilterByTags from "../../../../Icons/FilterByTags"
 import { selectResourceImages } from "../../../../store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "../../../../store/resources/action"
 import { selectProject } from "../../../../store/project/selector"
+import FavoriteClean from "../../../../Icons/FavoriteClean"
+import RecentClean from "../../../../Icons/RecentClean"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
 export const limitCharacters = (name: string) => {
@@ -66,11 +68,10 @@ export const limitCharacters = (name: string) => {
   }
 }
 
-export const splitName = (name: string) =>{
-  const nameArr = name.split(' ')
-  return nameArr;
+export const splitName = (name: string) => {
+  const nameArr = name.split(" ")
+  return nameArr
 }
-
 
 const initialQuery = {
   page: 0,
@@ -187,7 +188,11 @@ export default function Ilustrations() {
         )
       } catch {}
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
-        setValidateContent("Nothing was found related to the filter entered")
+        stateFavorite === true
+          ? setValidateContent("No favorite illustrations to display")
+          : stateRecent === true
+          ? setValidateContent("No recent illustrations to display")
+          : setValidateContent("Nothing was found related to the filter entered")
       } else {
         setValidateContent(null)
       }
@@ -569,7 +574,12 @@ export default function Ilustrations() {
             </InfiniteScroll>
           </Scrollable>
         ) : (
-          <Center h="full" w="full" textAlign="center">
+          <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+            {stateFavorite === true ? (
+              <FavoriteClean size={200} />
+            ) : stateRecent === true ? (
+              <RecentClean size={200} />
+            ) : null}
             {validateContent}
           </Center>
         )}
@@ -695,14 +705,17 @@ function IllustrationItem({
         >
           <FilterByTemplates size={30} />
         </Flex> */}
-        <Flex opacity={isHovering ? "0.2" : "1"} w="full" h="full" onClick={addObject}
-        
-        sx={{
-          border : "1px",
-          borderColor : "#e2e8f0",
-          padding : "2px"
-        }}
-        _hover={{  borderColor : "#5456F5", }}
+        <Flex
+          opacity={isHovering ? "0.2" : "1"}
+          w="full"
+          h="full"
+          onClick={addObject}
+          sx={{
+            border: "1px",
+            borderColor: "#e2e8f0",
+            padding: "2px"
+          }}
+          _hover={{ borderColor: "#5456F5" }}
         >
           <LazyLoadImage url={illustration.preview} />
         </Flex>
@@ -715,16 +728,15 @@ function IllustrationItem({
         }}
       >
         {illustration?.drawifier?.name && (
-          <Flex sx={{
-            justifyContent: "space-between",
-            width: "100%",
-          }} >
+          <Flex
+            sx={{
+              justifyContent: "space-between",
+              width: "100%"
+            }}
+          >
             <Flex gap="5px" alignItems="center">
               <Avatar size={"xs"} name={illustration?.drawifier?.name} src={illustration?.drawifier?.avatar} />
-              <Box sx={{ fontSize: "12px" }}>
-                {/* {limitCharacters(illustration?.drawifier?.name)} */}
-                {splitName(illustration?.drawifier?.name)[0]}
-                </Box>
+              <Box sx={{ fontSize: "12px" }}>{splitName(illustration?.drawifier?.name)[0]}</Box>
             </Flex>
             <Center gap={"0.25rem"}>
               {illustration.license === "paid" && (

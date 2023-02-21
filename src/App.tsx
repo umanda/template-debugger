@@ -36,6 +36,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
 
   const initialState = useCallback(async () => {
     if (id) {
+      setState(!state)
       if (token) {
         await dispatch(getFonts())
         dispatch(getListDrawifiers({}))
