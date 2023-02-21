@@ -6,7 +6,7 @@ import { getFonts } from "./components/store/fonts/action"
 import { useAppDispatch } from "./components/store/store"
 import { getListDrawifiers, signInByToken } from "./components/store/user/action"
 import { generateId } from "./components/utils/unique"
-import SplashLoader from "/public/loading.gif"
+import SplashLoader from "./images/SplashLoader.gif"
 
 const redirectHome: string = import.meta.env.VITE_REDIRECT_HOME
 
