@@ -148,7 +148,7 @@ export default function Layer() {
     setIndexDrag?: React.Dispatch<React.SetStateAction<number | null>>
   }
 
-  interface State extends Props {}
+  interface State extends Props { }
 
   function LayerItem({ name, visible, id, locked, setObjects, index, indexDrag, setIndexDrag }: Props) {
     const { order, setOrder } = useResourcesContext()
@@ -221,7 +221,7 @@ export default function Layer() {
         visibility={name === "Custom" ? "hidden" : "visible"}
         position={name === "Custom" ? "relative" : "relative"}
         borderBottom="1px"
-        borderColor="linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5578606442577031) 27%, rgba(0,212,255,0) 100%)"
+        borderColor="#e2e8f0"
       >
         <Flex w="full">
           <IconButton
@@ -277,18 +277,26 @@ export default function Layer() {
               : name}
           </Center>
           <Spacer />
-          <IconButton onClick={handleFront} size="xs" aria-label="Up" variant={"ghost"} icon={<CircleUp size={15} />} />
+          <IconButton
+            onClick={handleFront}
+            size="xs"
+            aria-label="Up"
+            variant={"ghost"}
+            icon={<CircleUp size={15} />}
+            color={'#A0AEC0'}
+          />
           <IconButton
             onClick={handleBack}
             size="xs"
             aria-label="Up"
             variant={"ghost"}
             icon={<CircleDown size={15} />}
+            color={'#A0AEC0'}
           />
           <IconButton
             size="xs"
             onClick={handleLockLayer}
-            aria-label="Search database"
+            aria-label="Lock / Unlock"
             variant={"ghost"}
             icon={<IconLock />}
           />
@@ -296,9 +304,10 @@ export default function Layer() {
           <IconButton
             size="xs"
             onClick={handleRemoveLayer}
-            aria-label="Search database"
+            aria-label="Remove Element"
             variant={"ghost"}
             icon={<Trash size={24} />}
+            color={'red'}
           />
         </Flex>
       </Flex>

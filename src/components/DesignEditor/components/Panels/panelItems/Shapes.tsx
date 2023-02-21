@@ -15,6 +15,7 @@ import useResourcesContext from "../../../../hooks/useResourcesContext"
 import { getListResourcesShapes } from "../../../../store/resources/action"
 import { selectResourceShapes } from "../../../../store/resources/selector"
 import { selectProject } from "../../../../store/project/selector"
+import RecentClean from "../../../../Icons/RecentClean"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
@@ -61,7 +62,7 @@ export default function Shapes() {
       let img = new Image()
       img.src = resource.preview
       if (editor) {
-        e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
+        e.dataTransfer.setDragImage(img, img.width, img.height)
         editor.dragger.onDragStart(
           {
             type: "StaticVector",
@@ -110,7 +111,9 @@ export default function Shapes() {
         }
       })
       if (resolve[0] === undefined && resources[0] === undefined) {
-        setValidateContent("Nothing was found related to the filter entered")
+        stateRecent === true
+          ? setValidateContent("No recent shapes to display")
+          : setValidateContent("Nothing was found related to the filter entered")
       } else {
         setValidateContent(null)
       }
@@ -277,6 +280,8 @@ export default function Shapes() {
                       return (
                         <Flex
                           onDragStart={(e) => dragObject(e, obj)}
+                          draggable={true}
+                          sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
                           onClick={() => addObject(obj)}
                           key={index}
                           draggable={true}
@@ -311,7 +316,8 @@ export default function Shapes() {
             </InfiniteScroll>
           </Scrollable>
         ) : (
-          <Center h="full" w="full" textAlign="center">
+          <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+            {stateRecent === true ? <RecentClean size={200} /> : null}
             {validateContent}
           </Center>
         )}

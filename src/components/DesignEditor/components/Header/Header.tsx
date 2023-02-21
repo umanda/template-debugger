@@ -45,6 +45,9 @@ import { generateId } from "../../../utils/unique"
 import { IDesign } from "@layerhub-pro/types"
 import { selectProject } from "../../../store/project/selector"
 import DrawifyD from "../../../Icons/DrawifyD"
+import UserIcon from "../../../Icons/UserIcon"
+import NotSync from "../../../Icons/NotSync"
+import Linkedin from "../../../Icons/Linkedin"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 
@@ -188,39 +191,63 @@ function ShareMenu() {
   // }, [editor, scenes, currentScene, id, design, namesPages])
 
   const handleDownload = async (type: string) => {
-    let resolve: any
-    let designJSON: any = design?.toJSON()
-    designJSON.key = id
-    designJSON.scenes.map((e: any, index: number) => {
-      e.name = namesPages[index]
-      e.position = index
-      e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-      return e
-    })
-    await dispatch(updateProject(designJSON))
-    if (editor && user) {
-      resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
-    }
-    const url = resolve.url
-    const fileTypeParts = url.split(".")
-    fetch(url)
-      .then((result) => result.blob())
-      .then((blob) => {
-        if (blob != null) {
-          const url = window.URL.createObjectURL(blob)
-          const a = document.createElement("a")
-          a.href = url
-          a.download = "project." + fileTypeParts[fileTypeParts.length - 1]
-          document.body.appendChild(a)
-          a.click()
-        }
+    try {
+      toast({
+        title: "Please wait while the image loads",
+        status: "loading",
+        position: "top",
+        duration: 2000,
+        isClosable: true
       })
+      let resolve: any
+      let designJSON: any = design?.toJSON()
+      designJSON.key = id
+      designJSON.scenes.map((e: any, index: number) => {
+        e.name = namesPages[index]
+        e.position = index
+        e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+        return e
+      })
+      await dispatch(updateProject(designJSON))
+      if (editor && user) {
+        resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
+      }
+      const url = resolve.url
+      const fileTypeParts = url.split(".")
+      fetch(url)
+        .then((result) => result.blob())
+        .then((blob) => {
+          if (blob != null) {
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement("a")
+            a.href = url
+            a.download = "project." + fileTypeParts[fileTypeParts.length - 1]
+            document.body.appendChild(a)
+            a.click()
+          }
+        })
+    } catch {
+      toast({
+        title: "Oops, there was an error, try again.",
+        status: "error",
+        position: "top",
+        duration: 2000,
+        isClosable: true
+      })
+    }
   }
 
   const shareTemplate = useCallback(
     async (type: string) => {
       if (user) {
         try {
+          toast({
+            title: "Please wait while the image loads",
+            status: "loading",
+            position: "top",
+            duration: 2000,
+            isClosable: true
+          })
           let designJSON: any = design?.toJSON()
           designJSON.key = id
           designJSON.scenes.map((e: any, index: number) => {
@@ -237,7 +264,15 @@ function ShareMenu() {
             })[0].preview
           })
           window.open(url.url, "_blank")
-        } catch {}
+        } catch {
+          toast({
+            title: "Oops, there was an error, try again.",
+            status: "error",
+            position: "top",
+            duration: 2000,
+            isClosable: true
+          })
+        }
       }
     },
     [activeScene, namesPages, id]
@@ -321,14 +356,14 @@ function ShareMenu() {
                   aria-label="twitter"
                   icon={<Whatsapp size={20} />}
                 /> */}
-              {/* <IconButton
-                  onClick={() => {
-                    shareTemplate("INSTAGRAM")
-                  }}
-                  variant={"ghost"}
-                  aria-label="twitter"
-                  icon={<Twitter size={20} />}
-                /> */}
+              <IconButton
+                onClick={() => {
+                  shareTemplate("LINKEDIN")
+                }}
+                variant={"ghost"}
+                aria-label="twitter"
+                icon={<Linkedin size={20} />}
+              />
               <IconButton
                 onClick={() => {
                   shareTemplate("PINTEREST")
@@ -665,6 +700,10 @@ function UserMenu() {
   const toast = useToast()
   const [typeSign, setTypeSign] = useState("signin")
 
+  const handleProfile = () => {
+    window.location.href = redirectUserProfilePage
+  }
+
   const handleLogout = async () => {
     const resolve = await dispatch(logout())
     if (resolve?.payload) {
@@ -698,6 +737,17 @@ function UserMenu() {
           </PopoverTrigger>
           <PopoverContent width={"200px"} padding={"0.5rem 0"}>
             <Box>
+              <MenuOption
+                onClick={() => {
+                  handleProfile()
+                }}
+              >
+                <Flex gap="0.25rem" alignItems={"center"}>
+                  <UserIcon size={24} />
+                  Profile
+                </Flex>
+              </MenuOption>
+
               <MenuOption
                 onClick={() => {
                   handleLogout()
@@ -738,45 +788,49 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const scenes = useScenes()
   const [autoSave, setAutoSave] = useState<boolean>(true)
   const [stateJson, setStateJson] = useState<any>("")
-  const [stateChange] = useDebounce(stateJson, 5000)
+  const [stateChange] = useDebounce(stateJson, 2000)
   const zoom = useZoomRatio()
   const activeObject: any = useActiveObject()
 
   document.onkeydown = function (e) {
-    if (e.keyCode === 46) {
-      activeObject?.type !== "Frame" && activeScene.objects.remove(activeObject.id)
+    if (e.key === "Delete") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject.type === "StaticText"
+          ? activeObject.isEditing !== true && activeScene.objects.removeById(activeObject?.id)
+          : activeScene.objects.removeById(activeObject?.id)
+      return true
+    }
+    if (e.key === "ArrowLeft") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left - 30 }, activeObject.id)
       return false
     }
-    if (e.keyCode === 37) {
-      activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left - 30 }, activeObject.id)
+    if (e.key === "ArrowUp") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top - 30 }, activeObject.id)
       return false
     }
-    if (e.keyCode === 38) {
-      activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top - 30 }, activeObject.id)
+    if (e.key === "ArrowRight") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left + 30 }, activeObject.id)
       return false
     }
-    if (e.keyCode === 39) {
-      activeObject?.type !== "Frame" && activeScene.objects.update({ left: activeObject.left + 30 }, activeObject.id)
-      return false
-    }
-    if (e.keyCode === 40) {
-      activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top + 30 }, activeObject.id)
+    if (e.key === "ArrowDown") {
+      if (activeObject.locked === false || activeObject.locked === undefined)
+        activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject.top + 30 }, activeObject.id)
       return false
     }
     if (
       e.ctrlKey &&
-      (e.keyCode === 85 ||
-        e.keyCode === 117 ||
-        e.keyCode === 107 ||
-        e.keyCode === 109 ||
-        e.keyCode === 69 ||
-        e.keyCode === 68 ||
-        e.keyCode === 83 ||
-        e.keyCode === 65 ||
-        e.keyCode === 90 ||
-        e.keyCode === 46 ||
-        e.keyCode === 89 ||
-        e.keyCode === 64)
+      (e.key === "u" ||
+        e.key === "k" ||
+        e.key === "m" ||
+        e.key === "e" ||
+        e.key === "d" ||
+        e.key === "s" ||
+        e.key === "a" ||
+        e.key === "z" ||
+        e.key === "y")
     ) {
       if (e.ctrlKey && e.keyCode === 107) editor.zoom.zoomToRatio(zoom + 0.05)
       if (e.ctrlKey && e.keyCode === 109) editor.zoom.zoomToRatio(zoom - 0.05)
@@ -791,7 +845,6 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       }
       if (e.ctrlKey && e.keyCode === 90) activeScene.history.undo()
       if (e.ctrlKey && e.keyCode === 89) activeScene.history.redo()
-      if (e.keyCode === 46) activeScene.objects.removeById(activeObject?.id)
       return false
     } else return true
   }
@@ -837,15 +890,16 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
 
   return (
     <Flex>
-      <Tooltip label="Save" fontSize="md">
-        <IconButton
+      <Tooltip label="Click here to Save" fontSize="md">
+        <Button
           variant={"ghost"}
           aria-label="sync status"
-          _hover={{ color: "#15BE53" }}
-          color={autoSave === false ? "#DDDFE5" : "#15BE53"}
-          icon={<Sync size={24} />}
+          color={autoSave === false ? "#F56565" : "#15BE53"}
+          leftIcon={autoSave === false ? <NotSync size={18} /> : <Sync size={24} />}
           onClick={() => (!user ? onOpen() : functionSave())}
-        />
+        >
+          {autoSave === false ? "Changes not saved" : "Changes saved"}
+        </Button>
       </Tooltip>
     </Flex>
   )
