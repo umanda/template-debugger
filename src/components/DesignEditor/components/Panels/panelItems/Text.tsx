@@ -153,7 +153,6 @@ export default function Text() {
           draggable={true}
           onClick={addHeader}
           onDragStart={(e) => onDragStart(e, "header")}
-          onClick={addHeader}
           sx={{
             cursor: "pointer",
             width: "240px",
@@ -184,7 +183,6 @@ export default function Text() {
           draggable={true}
           onClick={addSubHeader}
           onDragStart={(e) => onDragStart(e, "subHeader")}
-          onClick={addSubHeader}
           sx={{
             cursor: "pointer",
             width: "240px",
@@ -215,7 +213,6 @@ export default function Text() {
           onClick={addParagraph}
           draggable={true}
           onDragStart={(e) => onDragStart(e, "paragraph")}
-          onClick={addParagraph}
           sx={{
             cursor: "pointer",
             width: "240px",

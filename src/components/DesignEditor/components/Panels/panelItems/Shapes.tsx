@@ -284,7 +284,6 @@ export default function Shapes() {
                           sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
                           onClick={() => addObject(obj)}
                           key={index}
-                          draggable={true}
                           border="1px #DDDFE5 solid"
                           padding="2px"
                           h="70px"
