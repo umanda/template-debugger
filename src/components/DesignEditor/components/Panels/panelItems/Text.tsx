@@ -153,6 +153,7 @@ export default function Text() {
         <Box
           userSelect="none"
           draggable={true}
+          onClick={addHeader}
           onDragStart={(e) => onDragStart(e, "header")}
           sx={{
             cursor: "pointer",
@@ -167,7 +168,6 @@ export default function Text() {
             sx={{
               fontSize: "36px"
             }}
-            onClick={addHeader}
           >
             Header
           </Box>
@@ -183,6 +183,7 @@ export default function Text() {
         <Box
           userSelect="none"
           draggable={true}
+          onClick={addSubHeader}
           onDragStart={(e) => onDragStart(e, "subHeader")}
           sx={{
             cursor: "pointer",
@@ -194,7 +195,6 @@ export default function Text() {
           }}
         >
           <Box
-            onClick={addSubHeader}
             sx={{
               fontSize: "24px"
             }}
@@ -212,6 +212,7 @@ export default function Text() {
         </Box>
         <Box
           userSelect="none"
+          onClick={addParagraph}
           draggable={true}
           onDragStart={(e) => onDragStart(e, "paragraph")}
           sx={{
@@ -224,7 +225,6 @@ export default function Text() {
           }}
         >
           <Box
-            onClick={addParagraph}
             sx={{
               fontSize: "18px"
             }}

@@ -54,7 +54,9 @@ export default function Shapes() {
     (e: React.DragEvent<HTMLDivElement>, resource: any) => {
       if (user && projectSelect.id) {
         const ctx = { id: resource.id }
-        api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
+        try {
+          api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
+        } catch {}
       }
       let img = new Image()
       img.src = resource.preview
@@ -273,11 +275,11 @@ export default function Shapes() {
                   <Grid templateColumns="repeat(4, 72px)" gap="5px">
                     {resources?.map((obj: any, index: number) => {
                       return (
-                        <GridItem
+                        <Flex
                           onDragStart={(e) => dragObject(e, obj)}
-                          sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
                           onClick={() => addObject(obj)}
                           key={index}
+                          draggable={true}
                           border="1px #DDDFE5 solid"
                           padding="2px"
                           h="70px"
@@ -286,7 +288,7 @@ export default function Shapes() {
                           <Flex w="full" h="full">
                             <LazyLoadImage url={obj.url} />
                           </Flex>
-                        </GridItem>
+                        </Flex>
                       )
                     })}
                   </Grid>
