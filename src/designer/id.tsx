@@ -52,6 +52,8 @@ const Designer: any = () => {
         }
         setNamesPages(sceneNames)
         setLoadCanva(true)
+      } else {
+        setLoadCanva(true)
       }
     } catch (err: any) {
       user && functionSave()

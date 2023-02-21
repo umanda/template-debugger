@@ -151,6 +151,7 @@ export default function Text() {
         <Box
           userSelect="none"
           draggable={true}
+          onClick={addHeader}
           onDragStart={(e) => onDragStart(e, "header")}
           onClick={addHeader}
           sx={{
@@ -181,6 +182,7 @@ export default function Text() {
         <Box
           userSelect="none"
           draggable={true}
+          onClick={addSubHeader}
           onDragStart={(e) => onDragStart(e, "subHeader")}
           onClick={addSubHeader}
           sx={{
@@ -210,6 +212,7 @@ export default function Text() {
         </Box>
         <Box
           userSelect="none"
+          onClick={addParagraph}
           draggable={true}
           onDragStart={(e) => onDragStart(e, "paragraph")}
           onClick={addParagraph}
