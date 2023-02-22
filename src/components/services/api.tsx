@@ -19,10 +19,12 @@ import { IListComments, SaveCommentDTO } from "../interfaces/comment"
 const baseURL = import.meta.env.VITE_API_CONNECTION
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
+const token = localStorage.getItem("token")
 
 const base = axios.create({
   baseURL: baseURL,
-  withCredentials: true
+  withCredentials: true,
+  headers: { Authorization: `Bearer ${token}` }
 })
 
 export const signup = (props: SignupDto): Promise<User> => {
@@ -41,14 +43,8 @@ export const signup = (props: SignupDto): Promise<User> => {
 
 export const signInByToken = (token: string): Promise<User> => {
   return new Promise((resolve, reject) => {
-    const bodyParameters = {
-      key: "value"
-    }
-    const config = {
-      headers: { Authorization: `Bearer ${token}` }
-    }
     base
-      .post("/signin/token", bodyParameters, config)
+      .post("/signin/token")
       .then(({ data }: any) => {
         resolve(data.customer)
       })

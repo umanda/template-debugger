@@ -48,7 +48,7 @@ export default function TextColorPicker() {
         value >= 100 ? setState({ ...state, opacityTemp: 100 }) : setState({ ...state, opacityTemp: value })
       } else {
         setState({ ...state, opacity: value, opacityTemp: value })
-        activeScene.objects.update({ opacity: value / 100 })
+        activeScene.objects.updateText({ opacity: value / 100 })
       }
     }
   }
@@ -56,7 +56,7 @@ export default function TextColorPicker() {
   const updateObjectFill = (color: string) => {
     if (editor) {
       setState({ ...state, color })
-      activeScene.objects.update({ fill: color })
+      activeScene.objects.updateText({ fill: color })
       setColorText(color)
     }
   }
@@ -70,7 +70,7 @@ export default function TextColorPicker() {
     }
     if (editor) {
       setState({ ...state, opacity: value, opacityTemp: value })
-      activeScene.objects.update({ opacity: value / 100 })
+      activeScene.objects.updateText({ opacity: value / 100 })
     }
   }
 

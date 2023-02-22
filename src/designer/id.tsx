@@ -33,6 +33,7 @@ const Designer: any = () => {
   const lodaTemplateById = useCallback(async () => {
     try {
       if (design && user) {
+        setLoadCanva(false)
         const resolve: any = (await dispatch(getProjectByKey(id))).payload
         setTimeout(async () => {
           try {
@@ -40,16 +41,25 @@ const Designer: any = () => {
           } catch {}
         }, 100)
         let sceneNames: string[] = []
+        let fonts: { name: string; url: string }[] = []
         for (const scn of resolve?.scenes) {
           scn.layers.map(async (layer) => {
             if (layer?.type === "StaticText") {
+              layer?.styles.map((f) => {
+                const name = f.style.fontFamily
+                const url = f.style.fontURL
+                name && url ? fonts.push({ name, url }) : null
+              })
               const font = { name: layer.fontFamily, url: layer.fontURL }
-              await loadFonts([font])
-              activeScene.objects.update({ fontFamily: layer.fontFamily, fontURL: layer.fontURL })
+              fonts = fonts.concat(font)
+              activeScene.objects.updateText({ fontFamily: layer.fontFamily, fontURL: layer.fontURL })
             }
           })
           sceneNames.push(scn.name)
         }
+        fonts.map(async (f) => {
+          await loadFonts([f])
+        })
         setNamesPages(sceneNames)
         setLoadCanva(true)
       } else {
