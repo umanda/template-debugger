@@ -54,7 +54,6 @@ function DesignName() {
         </Box>
       </Box>
       <Flex>
-        
         <Input
           id="DesignNameInput"
           variant={"unstyled"}
@@ -62,10 +61,10 @@ function DesignName() {
           sx={{
             fontSize: "14px",
             color: "#2D3748",
-            borderBottom : "1px solid #e2e8f0",
-            padding : '0px 5px'
+            borderBottom: "1px solid #e2e8f0",
+            padding: "0px 5px"
           }}
-          _hover={{  borderColor : "#5456F5", }}
+          _hover={{ borderColor: "#5456F5" }}
           value={state.name}
         />
       </Flex>

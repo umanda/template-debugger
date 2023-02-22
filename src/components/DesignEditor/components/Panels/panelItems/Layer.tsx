@@ -148,7 +148,7 @@ export default function Layer() {
     setIndexDrag?: React.Dispatch<React.SetStateAction<number | null>>
   }
 
-  interface State extends Props { }
+  interface State extends Props {}
 
   function LayerItem({ name, visible, id, locked, setObjects, index, indexDrag, setIndexDrag }: Props) {
     const { order, setOrder } = useResourcesContext()
@@ -283,7 +283,7 @@ export default function Layer() {
             aria-label="Up"
             variant={"ghost"}
             icon={<CircleUp size={15} />}
-            color={'#A0AEC0'}
+            color={"#A0AEC0"}
           />
           <IconButton
             onClick={handleBack}
@@ -291,7 +291,7 @@ export default function Layer() {
             aria-label="Up"
             variant={"ghost"}
             icon={<CircleDown size={15} />}
-            color={'#A0AEC0'}
+            color={"#A0AEC0"}
           />
           <IconButton
             size="xs"
@@ -307,7 +307,7 @@ export default function Layer() {
             aria-label="Remove Element"
             variant={"ghost"}
             icon={<Trash size={24} />}
-            color={'red'}
+            color={"red"}
           />
         </Flex>
       </Flex>

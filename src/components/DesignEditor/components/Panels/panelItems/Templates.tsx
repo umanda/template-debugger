@@ -199,6 +199,9 @@ export default function Template() {
         await activeScene.setScene(designData.scenes[0])
         setPreviewCanva(null)
         setLoadCanva(true)
+        if (user && projectSelector) {
+          api.getUseTemplate({ project_id: projectSelector.id, template_id: template.id })
+        }
       } catch (err) {
         setLoadCanva(true)
       }
