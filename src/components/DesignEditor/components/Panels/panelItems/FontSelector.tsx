@@ -109,7 +109,7 @@ export default function FontSelector() {
           url: x.url
         }
         await loadFonts([font])
-        activeScene.objects.update({
+        activeScene.objects.updateText({
           fontFamily: x.post_script_name,
           fontURL: font.url
         })
