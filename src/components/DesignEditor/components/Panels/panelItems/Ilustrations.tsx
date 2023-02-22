@@ -55,7 +55,6 @@ import FilterByTags from "../../../../Icons/FilterByTags"
 import { selectResourceImages } from "../../../../store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "../../../../store/resources/action"
 import { selectProject } from "../../../../store/project/selector"
-import FavoriteClean from "../../../../Icons/FavoriteClean"
 import NoIllustrationsImage from "../../../../../images/no-illustrations-to-display.svg"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
