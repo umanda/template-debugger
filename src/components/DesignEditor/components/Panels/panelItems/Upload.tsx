@@ -38,7 +38,7 @@ import { IUpload } from "../../../../interfaces/editor"
 import Trash from "../../../../Icons/Trash"
 import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "../../../../store/resources/action"
 import { selectUploads } from "../../../../store/resources/selector"
-import RecentClean from "../../../../Icons/RecentClean"
+import NoUploadsImage from "../../../../../images/no-uploads-to-display.svg"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
@@ -610,8 +610,8 @@ export default function Upload() {
           </Flex>
         ) : (
           <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
-            <RecentClean size={200} />
-            {validateContent}
+            <img src={NoUploadsImage} />
+            <p>{validateContent}</p>
           </Center>
         )}
       </Flex>

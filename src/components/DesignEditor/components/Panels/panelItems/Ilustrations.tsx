@@ -56,7 +56,7 @@ import { selectResourceImages } from "../../../../store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "../../../../store/resources/action"
 import { selectProject } from "../../../../store/project/selector"
 import FavoriteClean from "../../../../Icons/FavoriteClean"
-import RecentClean from "../../../../Icons/RecentClean"
+import NoIllustrationsImage from "../../../../../images/no-illustrations-to-display.svg"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
 export const limitCharacters = (name: string) => {
@@ -576,11 +576,11 @@ export default function Ilustrations() {
         ) : (
           <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
             {stateFavorite === true ? (
-              <FavoriteClean size={200} />
+              <img src={NoIllustrationsImage} />
             ) : stateRecent === true ? (
-              <RecentClean size={200} />
+              <img src={NoIllustrationsImage} />
             ) : null}
-            {validateContent}
+            <p>{validateContent}</p>
           </Center>
         )}
       </Flex>
