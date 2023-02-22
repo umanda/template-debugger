@@ -229,7 +229,7 @@ export default function Ilustrations() {
       try {
         const options: any = {
           type: "StaticVector",
-          name: "StaticVector",
+          name: "Illustration",
           src: resource.url,
           erasable: false,
           watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
