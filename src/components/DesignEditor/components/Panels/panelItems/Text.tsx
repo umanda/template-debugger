@@ -129,7 +129,6 @@ export default function Text() {
       const options = {
         id: nanoid(), //"Add header"
         type: "StaticText",
-        textAlign: "center",
         text: type === "header" ? "Add header" : type === "subHeader" ? "Add sub header" : "Add paragraph",
         fontFamily: font.name,
         fontURL: font.url,
