@@ -13,6 +13,7 @@ import { getFonts } from "../components/store/fonts/action"
 import { getListDrawifiers } from "../components/store/user/action"
 import { loadFonts } from "../components/utils/fonts"
 import useResourcesContext from "../components/hooks/useResourcesContext"
+import { useTokenInterceptor } from "../components/hooks/useTokenInterceptor"
 
 const Designer: any = () => {
   const { setLoadCanva } = useResourcesContext()
@@ -25,6 +26,8 @@ const Designer: any = () => {
   const dispatch = useAppDispatch()
   const user = useSelector(selectUser)
   const activeScene = useActiveScene()
+
+  useTokenInterceptor()
 
   useEffect(() => {
     design && lodaTemplateById()

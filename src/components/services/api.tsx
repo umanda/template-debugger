@@ -21,7 +21,7 @@ const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMP
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 const token = localStorage.getItem("token")
 
-const base = axios.create({
+export const base = axios.create({
   baseURL: baseURL,
   withCredentials: true,
   headers: { Authorization: `Bearer ${token}` }
