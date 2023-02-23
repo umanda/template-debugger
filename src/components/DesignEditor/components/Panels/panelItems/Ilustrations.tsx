@@ -25,6 +25,7 @@ import {
   Stack,
   Text,
   Tooltip,
+  border,
   useDisclosure
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
@@ -54,6 +55,7 @@ import FilterByTags from "../../../../Icons/FilterByTags"
 import { selectResourceImages } from "../../../../store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "../../../../store/resources/action"
 import { selectProject } from "../../../../store/project/selector"
+import NoIllustrationsImage from "../../../../../images/no-illustrations-to-display.svg"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
 export const limitCharacters = (name: string) => {
@@ -63,6 +65,11 @@ export const limitCharacters = (name: string) => {
   } else {
     return newName
   }
+}
+
+export const splitName = (name: string) => {
+  const nameArr = name.split(" ")
+  return nameArr
 }
 
 const initialQuery = {
@@ -77,7 +84,6 @@ const initialQuery = {
 }
 
 export default function Ilustrations() {
-  const { setResourceDrag } = useResourcesContext()
   const dispatch: any = useAppDispatch()
   const initialFocusRef = useRef<any>()
   const [validateContent, setValidateContent] = useState<string | null>(null)
@@ -181,7 +187,11 @@ export default function Ilustrations() {
         )
       } catch {}
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
-        setValidateContent("Nothing was found related to the filter entered")
+        stateFavorite === true
+          ? setValidateContent("No favorite illustrations to display")
+          : stateRecent === true
+          ? setValidateContent("No recent illustrations to display")
+          : setValidateContent("Nothing was found related to the filter entered")
       } else {
         setValidateContent(null)
       }
@@ -217,13 +227,9 @@ export default function Ilustrations() {
   const addObject = useCallback(
     async (resource: IResource) => {
       try {
-        if (user && projectSelect) {
-          const ctx = { id: resource.id }
-          api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
-        }
         const options: any = {
           type: "StaticVector",
-          name: "Shape",
+          name: "Illustration",
           src: resource.url,
           erasable: false,
           watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
@@ -231,17 +237,13 @@ export default function Ilustrations() {
         if (editor) {
           await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
         }
-      } catch (err) {}
+        if (user && projectSelect) {
+          const ctx = { id: resource.id }
+          api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
+        }
+      } catch {}
     },
     [activeScene, editor, activeObject, projectSelect, user]
-  )
-
-  const onDragStart = React.useCallback(
-    (ev: React.DragEvent<HTMLDivElement>, resource: any) => {
-      setResourceDrag(resource)
-      ev.dataTransfer.setData("resource", "image")
-    },
-    [activeScene, editor, setResourceDrag]
   )
 
   const makeFilter = async ({
@@ -516,7 +518,6 @@ export default function Ilustrations() {
                               illustration && (
                                 <IllustrationItem
                                   makeFavorite={makeFavorite}
-                                  onDragStart={onDragStart}
                                   addObject={() => addObject(illustration)}
                                   illustration={illustration}
                                   key={index}
@@ -527,22 +528,6 @@ export default function Ilustrations() {
                         </Grid>
                       </Flex>
                     ))}
-                    {/* <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
-                    {resourcesIllustration.map(
-                      (illustration, index) =>
-                        illustration && (
-                          <IllustrationItem
-                            makeFavorite={makeFavorite}
-                            onDragStart={onDragStart}
-                            addObject={() => addObject(illustration)}
-                            illustration={illustration}
-                            key={index}
-                            listFavorite={selectListFavoriteResources}
-                          />
-                        )
-                    )}
-                  </Box> */}
-
                     <Button
                       w="full"
                       variant="outline"
@@ -561,7 +546,6 @@ export default function Ilustrations() {
                           illustration && (
                             <IllustrationItem
                               makeFavorite={makeFavorite}
-                              onDragStart={onDragStart}
                               addObject={() => addObject(illustration)}
                               illustration={illustration}
                               key={index}
@@ -589,8 +573,13 @@ export default function Ilustrations() {
             </InfiniteScroll>
           </Scrollable>
         ) : (
-          <Center h="full" w="full" textAlign="center">
-            {validateContent}
+          <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+            {stateFavorite === true ? (
+              <img src={NoIllustrationsImage} />
+            ) : stateRecent === true ? (
+              <img src={NoIllustrationsImage} />
+            ) : null}
+            <p>{validateContent}</p>
           </Center>
         )}
       </Flex>
@@ -601,13 +590,11 @@ export default function Ilustrations() {
 function IllustrationItem({
   illustration,
   addObject,
-  onDragStart,
   makeFavorite,
   listFavorite
 }: {
   illustration: IResource
   addObject: () => void
-  onDragStart: (a: any, b: any) => void
   makeFavorite: (obj: IResource) => void
   listFavorite: IResource[]
 }) {
@@ -617,6 +604,8 @@ function IllustrationItem({
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [type, setType] = useState("")
   const [typeFilter, setTypeFilter] = useState<any>()
+  const editor = useEditor()
+  const projectSelect = useSelector(selectProject)
 
   useEffect(() => {
     listFavorite.find((resource) => resource.id === illustration.id) ? setLike(true) : setLike(false)
@@ -628,6 +617,34 @@ function IllustrationItem({
     onOpen()
   }, [])
 
+  const dragObject = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      try {
+        let img = new Image()
+        img.src = illustration.preview
+        if (editor) {
+          e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
+          editor.dragger.onDragStart(
+            {
+              type: "StaticVector",
+              name: "Illustration",
+              erasable: false,
+              watermark: illustration.license === "paid" ? user.plan !== "HERO" && watermarkURL : null,
+              preview: illustration.url,
+              src: illustration.url
+            },
+            { desiredSize: 400 }
+          )
+        }
+        if (user && projectSelect) {
+          const ctx = { id: illustration.id }
+          api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
+        }
+      } catch {}
+    },
+    [editor, user, projectSelect, illustration]
+  )
+
   const ValidateIcon = () => {
     if (like) {
       return <LikeClick size={20} />
@@ -638,6 +655,9 @@ function IllustrationItem({
 
   return (
     <Flex
+      onDragStart={(e) => {
+        dragObject(e)
+      }}
       sx={{
         height: "180px",
         flexDirection: "column"
@@ -655,9 +675,9 @@ function IllustrationItem({
         overflow={"hidden"}
         _hover={{ cursor: "pointer" }}
         justifyContent={"center"}
-        onDragStart={(e) => onDragStart(e, illustration)}
-        onMouseOver={() => setIsHovering(true)}
-        onMouseOut={() => setIsHovering(false)}
+        // onDragStart={(e) => onDragStart(e, illustration)}
+        // onMouseOver={() => setIsHovering(true)}
+        // onMouseOut={() => setIsHovering(false)}
       >
         <Flex
           onClick={() => OpenModalIllustration("tag", illustration)}
@@ -686,7 +706,18 @@ function IllustrationItem({
         >
           <FilterByTemplates size={30} />
         </Flex> */}
-        <Flex opacity={isHovering ? "0.2" : "1"} w="full" h="full" onClick={addObject}>
+        <Flex
+          opacity={isHovering ? "0.2" : "1"}
+          w="full"
+          h="full"
+          onClick={addObject}
+          sx={{
+            border: "1px",
+            borderColor: "#e2e8f0",
+            padding: "2px"
+          }}
+          _hover={{ borderColor: "#5456F5" }}
+        >
           <LazyLoadImage url={illustration.preview} />
         </Flex>
       </Flex>
@@ -698,10 +729,15 @@ function IllustrationItem({
         }}
       >
         {illustration?.drawifier?.name && (
-          <Flex>
+          <Flex
+            sx={{
+              justifyContent: "space-between",
+              width: "100%"
+            }}
+          >
             <Flex gap="5px" alignItems="center">
               <Avatar size={"xs"} name={illustration?.drawifier?.name} src={illustration?.drawifier?.avatar} />
-              <Box sx={{ fontSize: "12px" }}>{limitCharacters(illustration?.drawifier?.name)}</Box>
+              <Box sx={{ fontSize: "12px" }}>{splitName(illustration?.drawifier?.name)[0]}</Box>
             </Flex>
             <Center gap={"0.25rem"}>
               {illustration.license === "paid" && (
@@ -803,7 +839,7 @@ function ModalIllustration({
       }
       const options: any = {
         type: "StaticVector",
-        name: "Shape",
+        name: "Illustration",
         src: resource.url,
         erasable: false,
         watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null

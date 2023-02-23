@@ -15,6 +15,7 @@ import useResourcesContext from "../../../../hooks/useResourcesContext"
 import { getListResourcesShapes } from "../../../../store/resources/action"
 import { selectResourceShapes } from "../../../../store/resources/selector"
 import { selectProject } from "../../../../store/project/selector"
+import NoShapesImage from "../../../../../images/no-shapes-to-display.svg"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
@@ -29,7 +30,6 @@ const initialQuery = {
 }
 
 export default function Shapes() {
-  const { setResourceDrag } = useResourcesContext()
   const editor = useEditor()
   const [resources, setResources] = useState<IResource[]>([])
   const [fetching, setFetching] = React.useState(true)
@@ -50,6 +50,36 @@ export default function Shapes() {
   useEffect(() => {
     initialState()
   }, [user])
+
+  const dragObject = useCallback(
+    (e: React.DragEvent<HTMLDivElement>, resource: any) => {
+      try {
+        let img = new Image()
+        img.src = resource.preview
+        if (editor) {
+          e.dataTransfer.setDragImage(img, img.width, img.height)
+          editor.dragger.onDragStart(
+            {
+              type: "StaticVector",
+              name: "Shape",
+              erasable: false,
+              // watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null,
+              preview: resource.url,
+              src: resource.url
+            },
+            { desiredSize: 300 }
+          )
+        }
+        if (user && projectSelect.id) {
+          const ctx = { id: resource.id }
+          try {
+            api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
+          } catch {}
+        }
+      } catch {}
+    },
+    [editor, user, projectSelect]
+  )
 
   const initialState = useCallback(async () => {
     if (selectShapes[0] === undefined) {
@@ -83,7 +113,9 @@ export default function Shapes() {
         }
       })
       if (resolve[0] === undefined && resources[0] === undefined) {
-        setValidateContent("Nothing was found related to the filter entered")
+        stateRecent === true
+          ? setValidateContent("No recent shapes to display")
+          : setValidateContent("Nothing was found related to the filter entered")
       } else {
         setValidateContent(null)
       }
@@ -103,30 +135,23 @@ export default function Shapes() {
 
   const addObject = useCallback(
     (images: any) => {
-      if (user && projectSelect.id) {
-        const ctx = { id: images.id }
-        api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
-      }
-      const options: any = {
-        type: "StaticVector",
-        name: "Shape",
-        src: images.url,
-        erasable: false,
-        metadata: {}
-      }
-      if (editor) {
-        activeScene.objects.add(options, { desiredSize: 200 })
-      }
+      try {
+        const options: any = {
+          type: "StaticVector",
+          name: "Shape",
+          src: images.url,
+          erasable: false
+        }
+        if (editor) {
+          activeScene.objects.add(options, { desiredSize: 200 })
+        }
+        if (user && projectSelect.id) {
+          const ctx = { id: images.id }
+          api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
+        }
+      } catch {}
     },
     [activeScene, editor, activeObject, projectSelect, user]
-  )
-
-  const onDragStart = React.useCallback(
-    (ev: React.DragEvent<HTMLDivElement>, resource: any) => {
-      setResourceDrag(resource)
-      ev.dataTransfer.setData("resource", "image")
-    },
-    [activeScene, editor, setResourceDrag]
   )
 
   const makeFilter = useCallback(
@@ -257,20 +282,21 @@ export default function Shapes() {
                   <Grid templateColumns="repeat(4, 72px)" gap="5px">
                     {resources?.map((obj: any, index: number) => {
                       return (
-                        <GridItem
+                        <Flex
+                          onDragStart={(e) => dragObject(e, obj)}
+                          draggable={true}
                           sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
                           onClick={() => addObject(obj)}
                           key={index}
                           border="1px #DDDFE5 solid"
                           padding="2px"
                           h="70px"
-                          onDragStart={(e) => onDragStart(e, obj)}
                           _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
                         >
                           <Flex w="full" h="full">
                             <LazyLoadImage url={obj.url} />
                           </Flex>
-                        </GridItem>
+                        </Flex>
                       )
                     })}
                   </Grid>
@@ -293,8 +319,9 @@ export default function Shapes() {
             </InfiniteScroll>
           </Scrollable>
         ) : (
-          <Center h="full" w="full" textAlign="center">
-            {validateContent}
+          <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+            {stateRecent === true ?  <img src={NoShapesImage} /> : null}
+            <p>{validateContent}</p>
           </Center>
         )}
       </Flex>

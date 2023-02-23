@@ -20,7 +20,7 @@ import {
   useToast
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
-import { useActiveScene, useDesign, useObjects } from "@layerhub-pro/react"
+import { useActiveScene, useDesign } from "@layerhub-pro/react"
 import React, { useCallback, useRef, useState } from "react"
 import { useEffect } from "react"
 import { useSelector } from "react-redux"
@@ -48,6 +48,8 @@ import { getListRecommend } from "../../../../store/recommend/action"
 import Order from "../../../../Modals/Order"
 import LazyLoadImage from "../../../../utils/LazyLoadImage"
 import { selectProject } from "../../../../store/project/selector"
+import useResourcesContext from "../../../../hooks/useResourcesContext"
+import NoTemplateImage from "../../../../../images/no-templates-to-display.svg"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
@@ -62,6 +64,7 @@ const initialQuery = {
 }
 
 export default function Template() {
+  const { setLoadCanva, setPreviewCanva } = useResourcesContext()
   const dispatch = useAppDispatch()
   const initialFocusRef = useRef<any>()
   const [validateContent, setValidateContent] = useState<string | null>(null)
@@ -82,14 +85,12 @@ export default function Template() {
   const defaultRecommend = useSelector(selectListRecommendTemplate)
   const [listRecommend, setListRecommend] = useState<IResolveRecommend>({ words: [] })
   const [contentInput, setContentInput] = useState<IResolveRecommend>(defaultRecommend)
-  const { setDesignEditorLoading } = useDesignEditorContext()
   const [loadMoreResources, setLoadMoreResources] = useState<boolean>(false)
   const [toolTip, setToolTip] = useState(false)
   const design = useDesign()
   const activeScene = useActiveScene()
   const projectSelector = useSelector(selectProject)
   const toast = useToast()
-  const objects: any = useObjects()
 
   useEffect(() => {
     initialState()
@@ -156,7 +157,11 @@ export default function Template() {
         sorts: order
       })
       if (resolve[0] === undefined && resourcesTemplate[0] === undefined) {
-        setValidateContent("Nothing was found related to the filter entered")
+        stateFavorite === true
+          ? setValidateContent("No favorite templates to display")
+          : stateRecent === true
+          ? setValidateContent("No recent templates to display")
+          : setValidateContent("Nothing was found related to the filter entered")
       } else {
         setValidateContent(null)
       }
@@ -177,7 +182,8 @@ export default function Template() {
   const loadTemplateById = React.useCallback(
     async (template: any) => {
       try {
-        setDesignEditorLoading({ isLoading: true, preview: template.preview })
+        setLoadCanva(false)
+        setPreviewCanva(template.preview)
         let designData: any = await api.getTemplateById(template.id)
         designData.scenes[0].frame = designData.frame
         designData.scenes[0].layers.map((layer) => {
@@ -190,7 +196,14 @@ export default function Template() {
           }
         })
         await activeScene.setScene(designData.scenes[0])
-      } catch (err) {}
+        setPreviewCanva(null)
+        setLoadCanva(true)
+        if (user && projectSelector) {
+          api.getUseTemplate({ project_id: projectSelector.id, template_id: template.id })
+        }
+      } catch (err) {
+        setLoadCanva(true)
+      }
     },
     [design, activeScene, projectSelector, user, toast]
   )
@@ -439,16 +452,13 @@ export default function Template() {
                           display={"flex"}
                           flexDirection="column"
                           key={index}
-                          _hover={{
-                            border: "3px solid #5456F5"
-                          }}
                         >
                           <Flex
                             maxH="full"
                             minH="150px"
                             w="full"
-                            border="1px solid #d0d0d0"
-                            _hover={{ cursor: "pointer" }}
+                            border="1px solid #e2e8f0"
+                            _hover={{ cursor: "pointer", border: "1px solid #5456F5" }}
                             onClick={() => loadTemplateById(template)}
                           >
                             {/* @ts-ignore */}
@@ -496,8 +506,13 @@ export default function Template() {
             </InfiniteScroll>
           </Scrollable>
         ) : (
-          <Center h="full" w="full" textAlign="center">
-            {validateContent}
+          <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+            {stateFavorite === true ? (
+              <img src={NoTemplateImage} />
+            ) : stateRecent === true ? (
+              <img src={NoTemplateImage} />
+            ) : null}
+            <p>{validateContent}</p>
           </Center>
         )}
       </Flex>

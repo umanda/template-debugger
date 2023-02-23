@@ -9,7 +9,6 @@ import {
   Grid,
   GridItem,
   IconButton,
-  Image,
   Input,
   Popover,
   PopoverArrow,
@@ -39,6 +38,7 @@ import { IUpload } from "../../../../interfaces/editor"
 import Trash from "../../../../Icons/Trash"
 import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "../../../../store/resources/action"
 import { selectUploads } from "../../../../store/resources/selector"
+import NoUploadsImage from "../../../../../images/no-uploads-to-display.svg"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
@@ -71,8 +71,7 @@ export default function Upload() {
   const [disableTab, setDisableTab] = useState<boolean>(false)
   const [loadMoreResources, setLoadMoreResources] = useState<boolean>(true)
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const activeScene = useActiveScene()
-  const { setResourceDrag } = useResourcesContext()
+  const activeScene: any = useActiveScene()
   const activeObject = useActiveObject()
 
   useEffect(() => {
@@ -88,6 +87,11 @@ export default function Upload() {
       setResources(resolve)
       setFetching(false)
       setLoadMoreResources(false)
+      if (resolve[0] === undefined && resources[0] === undefined) {
+        setValidateContent("Start uploading your illustrations here.")
+      } else {
+        setValidateContent(null)
+      }
     } else {
       setResources(selectResourcesUploads)
       setFetching(false)
@@ -142,6 +146,7 @@ export default function Upload() {
       )
       const resolve: any = await (await dispatch(uploadFile({ file: updatedFile, nameFile: file.name }))).payload
       setResources([resolve].concat(resources))
+      setValidateContent(null)
       toast({
         title: "The image was uploaded successfully.",
         status: "success",
@@ -202,8 +207,11 @@ export default function Upload() {
         page: resources.length / 10 + 1,
         query: newQuery
       })
+
       if (resolve[0] === undefined && resources[0] === undefined) {
-        setValidateContent("Nothing was found related to the filter entered")
+        stateRecent === true
+          ? setValidateContent("No recent shapes to display")
+          : setValidateContent("Nothing was found related to the filter entered")
       } else {
         setValidateContent(null)
       }
@@ -216,12 +224,25 @@ export default function Upload() {
     setLoadMoreResources(false)
   }
 
-  const onDragStart = React.useCallback(
-    (ev: React.DragEvent<HTMLDivElement>, resource: any) => {
-      // setResourceDrag(resource)
-      // ev.dataTransfer.setData("resource", "image")
+  const dragObject = useCallback(
+    async (url: string, id: string, type?: string) => {
+      try {
+        await api.getUseUploads(id)
+      } catch {}
+      let typeURL = ""
+      type === "svg" ? (typeURL = "StaticVector") : (typeURL = "StaticImage")
+      const options: any = {
+        type: typeURL,
+        src: url,
+        erasable: false
+      }
+      let img = new Image()
+      img.src = url
+      if (editor) {
+        editor.dragger.onDragStart(options, { desiredSize: 300 })
+      }
     },
-    [activeScene, editor, setResourceDrag]
+    [editor, user]
   )
 
   const addImageToCanvas = useCallback(
@@ -254,8 +275,11 @@ export default function Upload() {
   }
 
   const handleDelete = async (resource: IUpload) => {
-    await dispatch(deleteUploadFile(resource))
-    setResources(resources.filter((e) => e.id !== resource.id))
+    try {
+      await dispatch(deleteUploadFile(resource))
+      setResources(resources.filter((e) => e.id !== resource.id))
+      resources.length === 1 && setValidateContent("Start uploading your illustrations here.")
+    } catch {}
   }
 
   const makeFilter = ({
@@ -531,11 +555,20 @@ export default function Upload() {
                   <Grid gap="0.5rem" padding="0 2rem 2rem" gridTemplateColumns="1fr 1fr">
                     {resources?.map((upload: any, index: number) => (
                       <GridItem
+                        draggable={true}
+                        onDragStart={(e) =>
+                          dragObject(
+                            upload.url.includes(defaultPreviewTemplate)
+                              ? upload.url.replace(defaultPreviewTemplate, replacePreviewTemplate)
+                              : upload.url,
+                            upload.id,
+                            upload.type
+                          )
+                        }
                         key={index}
                         border="1px solid #d0d0d0"
                         _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
                         boxSize="120px"
-                        onDragStart={(e) => onDragStart(e, upload)}
                       >
                         <IconButton
                           position="absolute"
@@ -576,8 +609,9 @@ export default function Upload() {
             </Scrollable>
           </Flex>
         ) : (
-          <Center h="full" w="full" textAlign="center">
-            {validateContent}
+          <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+            <img src={NoUploadsImage} />
+            <p>{validateContent}</p>
           </Center>
         )}
       </Flex>

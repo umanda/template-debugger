@@ -18,7 +18,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
 export default function Layer() {
   const [objects, setObjects] = useState<any[]>([])
   const activeScene = useActiveScene()
-  const activeObject = useActiveObject()
+  const activeObject: any = useActiveObject()
   const { order } = useResourcesContext()
   const [indexDrag, setIndexDrag] = useState<number | null>(null)
   const [changeOrder, setChangeOrder] = useState<{
@@ -221,7 +221,7 @@ export default function Layer() {
         visibility={name === "Custom" ? "hidden" : "visible"}
         position={name === "Custom" ? "relative" : "relative"}
         borderBottom="1px"
-        borderColor="linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5578606442577031) 27%, rgba(0,212,255,0) 100%)"
+        borderColor="#e2e8f0"
       >
         <Flex w="full">
           <IconButton
@@ -251,6 +251,16 @@ export default function Layer() {
               variant="ghost"
               icon={<LetterUpperCase size={24} />}
             />
+          ) : object[0]?.name === "group" ? (
+            <Button
+              onClick={() => activeScene.objects.select(id)}
+              _hover={{ cursor: "grab" }}
+              size="30px"
+              aria-label="Search database"
+              variant="ghost"
+            >
+              G
+            </Button>
           ) : (
             <IconButton
               onClick={() => activeScene.objects.select(id)}
@@ -269,6 +279,7 @@ export default function Layer() {
             fontSize="12px"
             _hover={{}}
             marginLeft="10px"
+            fontWeight={activeObject.id === object[0].id ? "bold" : "normal"}
           >
             {object[0]?.name === "StaticText"
               ? String(object[0]?.text).length <= 12
@@ -277,18 +288,26 @@ export default function Layer() {
               : name}
           </Center>
           <Spacer />
-          <IconButton onClick={handleFront} size="xs" aria-label="Up" variant={"ghost"} icon={<CircleUp size={15} />} />
+          <IconButton
+            onClick={handleFront}
+            size="xs"
+            aria-label="Up"
+            variant={"ghost"}
+            icon={<CircleUp size={15} />}
+            color={"#A0AEC0"}
+          />
           <IconButton
             onClick={handleBack}
             size="xs"
             aria-label="Up"
             variant={"ghost"}
             icon={<CircleDown size={15} />}
+            color={"#A0AEC0"}
           />
           <IconButton
             size="xs"
             onClick={handleLockLayer}
-            aria-label="Search database"
+            aria-label="Lock / Unlock"
             variant={"ghost"}
             icon={<IconLock />}
           />
@@ -296,9 +315,10 @@ export default function Layer() {
           <IconButton
             size="xs"
             onClick={handleRemoveLayer}
-            aria-label="Search database"
+            aria-label="Remove Element"
             variant={"ghost"}
             icon={<Trash size={24} />}
+            color={"red"}
           />
         </Flex>
       </Flex>

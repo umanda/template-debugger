@@ -16,10 +16,12 @@ interface IFont {
 interface IResourcesContext {
   draw: BrushOptions
   setDraw: React.Dispatch<React.SetStateAction<BrushOptions>>
-  resourceDrag: IResource
-  setResourceDrag: React.Dispatch<React.SetStateAction<IResource | IFont>>
   order: boolean
   setOrder: React.Dispatch<React.SetStateAction<boolean>>
+  loadCanva: boolean
+  setLoadCanva: React.Dispatch<React.SetStateAction<boolean>>
+  previewCanva: string | null
+  setPreviewCanva: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 export type BrushType =
@@ -54,27 +56,12 @@ export const ResourcesContext = React.createContext<IResourcesContext>({
     colorPrev: "#000000"
   },
   setDraw: () => {},
-  resourceDrag: {
-    drawifier: {
-      name: "",
-      avatar: "",
-      id: ""
-    },
-    id: "",
-    license: "",
-    name: "",
-    created_at: "",
-    url: "",
-    color: [],
-    updated_at: "",
-    category: "",
-    visibility: "",
-    preview: "",
-    tags: []
-  },
-  setResourceDrag: () => {},
   order: false,
-  setOrder: () => {}
+  setOrder: () => {},
+  loadCanva: false,
+  setLoadCanva: () => {},
+  previewCanva: null,
+  setPreviewCanva: () => {}
 })
 
 export const ResourcesContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -87,32 +74,18 @@ export const ResourcesContextProvider = ({ children }: { children: React.ReactNo
     sizePrev: 14,
     colorPrev: "#000000"
   })
-  const [resourceDrag, setResourceDrag] = React.useState<IResource>({
-    drawifier: {
-      name: "",
-      avatar: "",
-      id: ""
-    },
-    id: "",
-    license: "",
-    name: "",
-    created_at: "",
-    url: "",
-    color: [],
-    updated_at: "",
-    category: "",
-    visibility: "",
-    preview: "",
-    tags: []
-  })
   const [order, setOrder] = React.useState<boolean>(false)
+  const [loadCanva, setLoadCanva] = React.useState<boolean>(false)
+  const [previewCanva, setPreviewCanva] = React.useState<string | null>(null)
   const context = {
     draw,
     setDraw,
-    resourceDrag,
-    setResourceDrag,
     order,
-    setOrder
+    setOrder,
+    loadCanva,
+    setLoadCanva,
+    previewCanva,
+    setPreviewCanva
   }
   return <ResourcesContext.Provider value={context}>{children}</ResourcesContext.Provider>
 }

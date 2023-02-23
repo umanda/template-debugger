@@ -1,6 +1,6 @@
 import { Box, Center, Flex, Grid, GridItem, IconButton, Image, Spinner } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
-import { useActiveScene, useEditor } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
 import React, { useEffect, useState } from "react"
 import { nanoid } from "nanoid"
 import { useSelector } from "react-redux"
@@ -24,7 +24,6 @@ const font = {
 }
 
 export default function Text() {
-  const { setResourceDrag } = useResourcesContext()
   const user = useSelector(selectUser)
   const editor = useEditor()
   const dispatch = useAppDispatch()
@@ -33,6 +32,7 @@ export default function Text() {
   const [more, setMore] = useState(false)
   const [load, setLoad] = useState(true)
   const activeScene = useActiveScene()
+  const activeObject = useActiveObject()
 
   useEffect(() => {
     initialState()
@@ -69,7 +69,7 @@ export default function Text() {
       await loadFonts([font])
       const options = {
         id: nanoid(),
-        width: 340,
+        // width: 340,
         type: "StaticText",
         textAlign: "center",
         text: "Add header",
@@ -94,10 +94,10 @@ export default function Text() {
 
       const options = {
         id: nanoid(),
-        width: 240,
+        // width: 240,
         type: "StaticText",
         textAlign: "center",
-        text: "Sub header",
+        text: "Add sub header",
         fontFamily: font.name,
         fontURL: font.url,
         fontSize: 80,
@@ -112,13 +112,12 @@ export default function Text() {
       await loadFonts([font])
       const options = {
         id: nanoid(),
-        width: 360,
+        // width: 360,
         type: "StaticText",
-        text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+        text: "Add paragraph",
         fontFamily: font.name,
         fontURL: font.url,
-        fontSize: 40,
-        metadata: {}
+        fontSize: 40
       }
       activeScene.objects.add(options)
     }
@@ -129,24 +128,17 @@ export default function Text() {
       loadFonts([font])
       const options = {
         id: nanoid(), //"Add header"
-        width: type === "header" ? 360 : type === "subHeader" ? 240 : 120,
         type: "StaticText",
-        textAlign: "center",
-        text:
-          type === "header"
-            ? "Add Header"
-            : type === "subHeader"
-            ? "Add sub Header"
-            : "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+        text: type === "header" ? "Add header" : type === "subHeader" ? "Add sub header" : "Add paragraph",
         fontFamily: font.name,
         fontURL: font.url,
         fontSize: type === "header" ? 120 : type === "subHeader" ? 80 : 40,
-        metadata: {}
+        //@ts-ignore
+        textAlign: type === "paragraph" ? "left" : "center"
       }
-      setResourceDrag(options)
-      ev.dataTransfer.setData("resource", "text")
+      editor.dragger.onDragStart(options, { desiredSize: type === "header" ? 292 : type === "subHeader" ? 240 : 240 })
     },
-    [editor, setResourceDrag]
+    [editor]
   )
 
   return (
@@ -155,6 +147,7 @@ export default function Text() {
         <Box
           userSelect="none"
           draggable={true}
+          onClick={addHeader}
           onDragStart={(e) => onDragStart(e, "header")}
           sx={{
             cursor: "pointer",
@@ -169,7 +162,6 @@ export default function Text() {
             sx={{
               fontSize: "36px"
             }}
-            onClick={addHeader}
           >
             Header
           </Box>
@@ -185,6 +177,7 @@ export default function Text() {
         <Box
           userSelect="none"
           draggable={true}
+          onClick={addSubHeader}
           onDragStart={(e) => onDragStart(e, "subHeader")}
           sx={{
             cursor: "pointer",
@@ -196,7 +189,6 @@ export default function Text() {
           }}
         >
           <Box
-            onClick={addSubHeader}
             sx={{
               fontSize: "24px"
             }}
@@ -209,11 +201,12 @@ export default function Text() {
               color: "#A9A9B2"
             }}
           >
-            A hint is a helpful pice of advice
+            A hint is a helpful piece of advice
           </Box>
         </Box>
         <Box
           userSelect="none"
+          onClick={addParagraph}
           draggable={true}
           onDragStart={(e) => onDragStart(e, "paragraph")}
           sx={{
@@ -226,7 +219,6 @@ export default function Text() {
           }}
         >
           <Box
-            onClick={addParagraph}
             sx={{
               fontSize: "18px"
             }}
@@ -239,7 +231,7 @@ export default function Text() {
               color: "#A9A9B2"
             }}
           >
-            A hint is a helpful pice of advice
+            A hint is a helpful piece of advice
           </Box>
         </Box>
       </Flex>

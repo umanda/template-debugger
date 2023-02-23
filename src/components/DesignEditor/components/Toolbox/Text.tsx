@@ -1,4 +1,15 @@
-import { Box, Button, Flex, IconButton, Input, Spacer } from "@chakra-ui/react"
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  HStack,
+  IconButton,
+  Input,
+  PopoverArrow,
+  Spacer,
+  useDisclosure
+} from "@chakra-ui/react"
 import React from "react"
 import { useActiveObject, useActiveScene, useDesign, useEditor, useScenes } from "@layerhub-pro/react"
 import Common from "./Common"
@@ -114,7 +125,7 @@ export default function Text() {
       }
       await loadFonts([font])
 
-      activeScene.objects.update({
+      activeScene.objects.updateText({
         fontFamily: desiredFont.post_script_name,
         fontURL: font.url
       })
@@ -141,7 +152,7 @@ export default function Text() {
       }
       await loadFonts([font])
 
-      activeScene.objects.update({
+      activeScene.objects.updateText({
         fontFamily: desiredFont.post_script_name,
         fontURL: font.url
       })
@@ -200,7 +211,7 @@ export default function Text() {
       }
       await loadFonts([font])
 
-      activeScene.objects.update({
+      activeScene.objects.updateText({
         fontFamily: desiredFont.post_script_name,
         fontURL: font.url
       })
@@ -209,7 +220,7 @@ export default function Text() {
   }, [editor, state])
 
   const makeUnderline = React.useCallback(() => {
-    activeScene.objects.update({
+    activeScene.objects.updateText({
       underline: !state.underline
     })
     setState({ ...state, underline: !state.underline })
@@ -432,20 +443,24 @@ function TextAlign() {
 function TextFontSize() {
   const activeObject = useActiveObject()
   let [value, setValue] = React.useState(12)
-  const [isScrollOpen, setIsScrollOpen] = React.useState(false)
+  const [prevValue, setPrevValue] = React.useState(value)
+  const { isOpen, onToggle, onClose } = useDisclosure()
   const activeScene = useActiveScene()
   const scenes = useScenes()
+  const ref = React.useRef<any>()
 
   React.useEffect(() => {
     // @ts-ignore
     if (activeObject && activeObject.type === "StaticText") {
       // @ts-ignore
       setValue(Math.round(activeObject.fontSize))
+      // @ts-ignore
+      setPrevValue(Math.round(activeObject.fontSize))
     }
   }, [activeObject, scenes])
 
   const onChange = (size: number) => {
-    activeScene.objects.update({ fontSize: size })
+    activeScene.objects.updateText({ fontSize: size })
     setValue(size)
   }
 
@@ -471,40 +486,54 @@ function TextFontSize() {
         >
           <Minus size={24} />
         </Button>
-        <Input
-          onChange={(e: any) => onChange(e.target.value)}
-          onClick={() => setIsScrollOpen(true)}
-          textAlign={"center"}
-          variant={"unstyled"}
-          value={value}
-          type="number"
-          size={"sm"}
-        />
 
-        <Button
-          onClick={() => {
-            onChange((value += 1))
-          }}
-          display={"flex"}
-          alignItems={"center"}
-          size={"sm"}
-          variant="unstyled"
-        >
-          <Plus size={24} />
-        </Button>
-      </Box>
+        <Popover initialFocusRef={ref}>
+          <PopoverTrigger>
+            <HStack>
+              <Input
+                ref={ref}
+                onBlur={(e) => onChange(Number(e.target.value))}
+                onChange={(e: any) => setPrevValue(e.target.value)}
+                onClick={onToggle}
+                textAlign={"center"}
+                variant={"unstyled"}
+                value={prevValue}
+                type="number"
+                size={"sm"}
+              />
+            </HStack>
+          </PopoverTrigger>
+          <PopoverContent display="flex" w="auto">
+            <PopoverArrow />
+            <Scrollbar style={{ height: "320px", width: "90px" }}>
+              <Flex flexDir="column" marginRight="10px" backgroundColor={"#ffffff"}>
+                {FONT_SIZES.map((size: any, index: number) => (
+                  <Center
+                    onClick={() => {
+                      onChange(size.label)
+                      onClose()
+                    }}
+                    _hover={{
+                      background: "rgb(243,243,243)"
+                    }}
+                    style={{
+                      height: "32px",
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center"
+                    }}
+                    key={index}
+                  >
+                    {size.label}
+                  </Center>
+                ))}
+              </Flex>
+            </Scrollbar>
+          </PopoverContent>
+        </Popover>
 
-      <Box
-        sx={{
-          border: "1px solid #E2E8F0",
-          position: "absolute",
-          top: "107px",
-          marginLeft: "5px",
-          borderRadius: "0.375rem",
-          zIndex: "2"
-        }}
-      >
-        {isScrollOpen && (
+        {/* {isScrollOpen && (
           <Scrollbar style={{ height: "320px", width: "90px" }}>
             <Box backgroundColor={"#ffffff"} padding={"10px 0"}>
               {FONT_SIZES.map((size: any, index: number) => (
@@ -531,8 +560,31 @@ function TextFontSize() {
               ))}
             </Box>
           </Scrollbar>
-        )}
+        )} */}
+
+        <Button
+          onClick={() => {
+            onChange((value += 1))
+          }}
+          display={"flex"}
+          alignItems={"center"}
+          size={"sm"}
+          variant="unstyled"
+        >
+          <Plus size={24} />
+        </Button>
       </Box>
+
+      <Box
+        sx={{
+          border: "1px solid #E2E8F0",
+          position: "absolute",
+          top: "107px",
+          marginLeft: "5px",
+          borderRadius: "0.375rem",
+          zIndex: "2"
+        }}
+      ></Box>
     </Box>
   )
 }

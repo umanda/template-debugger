@@ -114,7 +114,7 @@ export default function Order({
                   </Stack>
                 </RadioGroup>
               </Grid>
-              <Text color="#A9A9B2" fontSize="12px">
+              {/* <Text color="#A9A9B2" fontSize="12px">
                 FILTER BY DRAWIFIER
               </Text>
               {id !== "" ? (
@@ -172,7 +172,7 @@ export default function Order({
                     </PopoverContent>
                   </Popover>
                 </Flex>
-              )}
+              )} */}
               <Button
                 bg="#5456F5"
                 onClick={() => {

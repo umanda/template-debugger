@@ -12,6 +12,8 @@ export const loadFonts = (fonts: { name: string; url: string }[]) => {
           }
         })
       })
-      .catch((err) => reject(err))
+      .catch((err) => {
+        reject(err)
+      })
   })
 }

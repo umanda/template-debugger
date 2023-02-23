@@ -56,8 +56,8 @@ export default function Scenes() {
           position: "relative",
           border: "1px solid #DDDFE5",
           borderRadius: "4px",
-          width: "90px",
-          height: "60px",
+          width: "74px",
+          height: "74px",
           alignItems: "center",
           justifyContent: "center"
         }}

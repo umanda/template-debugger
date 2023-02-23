@@ -22,7 +22,6 @@ import { selectProject } from "../../../store/project/selector"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
 export default function Canva() {
-  const { resourceDrag } = useResourcesContext()
   const editor = useEditor()
   const activeScene = useActiveScene()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -139,32 +138,8 @@ export default function Canva() {
     // app?.addEventListener
   } catch {}
 
-  const dropEvent = useCallback(
-    (ev: React.DragEvent<HTMLDivElement>) => {
-      if (ev.dataTransfer.getData("resource") === "image") {
-        if (user) {
-          const ctx = { id: ev.dataTransfer.getData("resource") }
-          api.recentResource({ project_id: projectSelect.id, resource_id: resourceDrag.id })
-        }
-        const options: any = {
-          type: "StaticVector",
-          name: "Shape",
-          src: resourceDrag.url,
-          erasable: false,
-          watermark: resourceDrag.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
-        }
-        if (editor) {
-          activeScene.objects.add(options, { desiredSize: 200 })
-        }
-      } else if (ev.dataTransfer.getData("resource") === "text") {
-        activeScene.objects.add(resourceDrag)
-      }
-    },
-    [activeScene, editor, user, resourceDrag]
-  )
-
   return (
-    <Flex ref={flexRef} flex={1} position="relative" onDrop={(ev) => dropEvent(ev)} id="app">
+    <Flex ref={flexRef} flex={1} position="relative" id="app">
       <ContextMenu />
       <Flex flex={1}>
         <Canvas

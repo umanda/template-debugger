@@ -12,7 +12,6 @@ export const getFonts = createAsyncThunk<void, never, any>("fonts/getFonts", asy
     const fonts = await api.getFonts()
     dispatch(setFonts(fonts))
   } catch (err) {
-    // null
     console.log("ERROR GETTING FONTS")
   }
 })
@@ -22,7 +21,6 @@ export const getListUseFonts = createAsyncThunk<void, never, any>("fonts/getUseF
     dispatch(setListUseFonts(fonts))
     return fonts
   } catch (err) {
-    // null
     console.log("ERROR GETTING FONTS")
   }
 })
@@ -32,7 +30,6 @@ export const getUseFont = createAsyncThunk<void, IFont, any>("fonts/getUseFont",
     dispatch(setUseFont(font))
     await api.getUseFont(font.id)
   } catch (err) {
-    // null
     console.log(err)
   }
 })

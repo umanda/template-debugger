@@ -1,6 +1,8 @@
 import React from "react"
 import { Box, Flex, Input } from "@chakra-ui/react"
 import { useDesign, useScenes } from "@layerhub-pro/react"
+import UserIcon from "../../../Icons/UserIcon"
+import Pencil from "../../../Icons/Pencil"
 
 interface DesignNameState {
   name: string
@@ -51,16 +53,18 @@ function DesignName() {
           {state.name}
         </Box>
       </Box>
-      <Flex width={`${state.width}px`}>
+      <Flex>
         <Input
           id="DesignNameInput"
           variant={"unstyled"}
           onChange={(e: any) => handleInputChange(e.target.value)}
           sx={{
-            padding: 0,
             fontSize: "14px",
-            color: "#A9A9B2"
+            color: "#2D3748",
+            borderBottom: "1px solid #e2e8f0",
+            padding: "0px 5px"
           }}
+          _hover={{ borderColor: "#5456F5" }}
           value={state.name}
         />
       </Flex>

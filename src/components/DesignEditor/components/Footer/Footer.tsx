@@ -7,7 +7,7 @@ import Scenes from "./Scenes"
 export default function Footer() {
   const { isScenesVisible, setIsScenesVisible } = useDesignEditorContext()
   return (
-    <Box sx={{ position: "relative", overflow: "hidden" }}>
+    <Box sx={{ position: "relative" }}>
       {isScenesVisible && (
         <Box
           onClick={() => setIsScenesVisible(false)}
