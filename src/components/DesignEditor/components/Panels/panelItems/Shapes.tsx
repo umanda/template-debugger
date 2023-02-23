@@ -15,7 +15,7 @@ import useResourcesContext from "../../../../hooks/useResourcesContext"
 import { getListResourcesShapes } from "../../../../store/resources/action"
 import { selectResourceShapes } from "../../../../store/resources/selector"
 import { selectProject } from "../../../../store/project/selector"
-import RecentClean from "../../../../Icons/RecentClean"
+import NoShapesImage from "../../../../../images/no-shapes-to-display.svg"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
@@ -320,8 +320,8 @@ export default function Shapes() {
           </Scrollable>
         ) : (
           <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
-            {stateRecent === true ? <RecentClean size={200} /> : null}
-            {validateContent}
+            {stateRecent === true ?  <img src={NoShapesImage} /> : null}
+            <p>{validateContent}</p>
           </Center>
         )}
       </Flex>

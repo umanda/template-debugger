@@ -49,8 +49,7 @@ import Order from "../../../../Modals/Order"
 import LazyLoadImage from "../../../../utils/LazyLoadImage"
 import { selectProject } from "../../../../store/project/selector"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
-import FavoriteClean from "../../../../Icons/FavoriteClean"
-import RecentClean from "../../../../Icons/RecentClean"
+import NoTemplateImage from "../../../../../images/no-templates-to-display.svg"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
@@ -80,7 +79,6 @@ export default function Template() {
   const selectListTemplate = useAppSelector(selectListTemplates).template
   const selectListFavoriteTemplates = useAppSelector(selectListTemplates).favorited
   let [stateFavorite, setStateFavorite] = useState<boolean>(false)
-  let [stateRecent, setStateRecent] = useState<boolean>(false)
   const [orderDrawifier, setOrderDrawifier] = useState<string[]>([""])
   const [disableTab, setDisableTab] = useState<boolean>(false)
   const defaultRecommend = useSelector(selectListRecommendTemplate)
@@ -158,7 +156,7 @@ export default function Template() {
         sorts: order
       })
       if (resolve[0] === undefined && resourcesTemplate[0] === undefined) {
-        stateFavorite === true
+            stateFavorite === true
           ? setValidateContent("No favorite templates to display")
           : stateRecent === true
           ? setValidateContent("No recent templates to display")
@@ -509,11 +507,11 @@ export default function Template() {
         ) : (
           <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
             {stateFavorite === true ? (
-              <FavoriteClean size={200} />
+              <img src={NoTemplateImage} />
             ) : stateRecent === true ? (
-              <RecentClean size={200} />
+              <img src={NoTemplateImage} />
             ) : null}
-            {validateContent}
+            <p>{validateContent}</p>
           </Center>
         )}
       </Flex>
