@@ -18,7 +18,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
 export default function Layer() {
   const [objects, setObjects] = useState<any[]>([])
   const activeScene = useActiveScene()
-  const activeObject = useActiveObject()
+  const activeObject: any = useActiveObject()
   const { order } = useResourcesContext()
   const [indexDrag, setIndexDrag] = useState<number | null>(null)
   const [changeOrder, setChangeOrder] = useState<{
@@ -279,6 +279,7 @@ export default function Layer() {
             fontSize="12px"
             _hover={{}}
             marginLeft="10px"
+            fontWeight={activeObject.id === object[0].id ? "bold" : "normal"}
           >
             {object[0]?.name === "StaticText"
               ? String(object[0]?.text).length <= 12
