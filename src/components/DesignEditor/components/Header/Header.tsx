@@ -48,6 +48,7 @@ import DrawifyD from "../../../Icons/DrawifyD"
 import UserIcon from "../../../Icons/UserIcon"
 import NotSync from "../../../Icons/NotSync"
 import Linkedin from "../../../Icons/Linkedin"
+import Share from "../../../Icons/Share"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 
@@ -313,6 +314,7 @@ function ShareMenu() {
       <PopoverTrigger>
         <Button
           colorScheme={"brand"}
+          rightIcon={<Share size={16} />}
           onClick={() => {
             user ? onToggle() : onOpenAunth()
           }}
