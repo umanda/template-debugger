@@ -79,6 +79,7 @@ export default function Template() {
   const selectListTemplate = useAppSelector(selectListTemplates).template
   const selectListFavoriteTemplates = useAppSelector(selectListTemplates).favorited
   let [stateFavorite, setStateFavorite] = useState<boolean>(false)
+  let [stateRecent, setStateRecent] = useState<boolean>(false)
   const [orderDrawifier, setOrderDrawifier] = useState<string[]>([""])
   const [disableTab, setDisableTab] = useState<boolean>(false)
   const defaultRecommend = useSelector(selectListRecommendTemplate)
@@ -156,7 +157,7 @@ export default function Template() {
         sorts: order
       })
       if (resolve[0] === undefined && resourcesTemplate[0] === undefined) {
-            stateFavorite === true
+        stateFavorite === true
           ? setValidateContent("No favorite templates to display")
           : stateRecent === true
           ? setValidateContent("No recent templates to display")
