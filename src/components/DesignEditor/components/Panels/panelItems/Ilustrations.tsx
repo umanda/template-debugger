@@ -633,7 +633,7 @@ function IllustrationItem({
               preview: illustration.url,
               src: illustration.url
             },
-            { desiredSize: 300 }
+            { desiredSize: 400 }
           )
         }
         if (user && projectSelect) {

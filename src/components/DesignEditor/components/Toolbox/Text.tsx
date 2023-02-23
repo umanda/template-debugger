@@ -125,7 +125,7 @@ export default function Text() {
       }
       await loadFonts([font])
 
-      activeScene.objects.update({
+      activeScene.objects.updateText({
         fontFamily: desiredFont.post_script_name,
         fontURL: font.url
       })
@@ -152,7 +152,7 @@ export default function Text() {
       }
       await loadFonts([font])
 
-      activeScene.objects.update({
+      activeScene.objects.updateText({
         fontFamily: desiredFont.post_script_name,
         fontURL: font.url
       })
@@ -211,7 +211,7 @@ export default function Text() {
       }
       await loadFonts([font])
 
-      activeScene.objects.update({
+      activeScene.objects.updateText({
         fontFamily: desiredFont.post_script_name,
         fontURL: font.url
       })
@@ -220,7 +220,7 @@ export default function Text() {
   }, [editor, state])
 
   const makeUnderline = React.useCallback(() => {
-    activeScene.objects.update({
+    activeScene.objects.updateText({
       underline: !state.underline
     })
     setState({ ...state, underline: !state.underline })
