@@ -251,6 +251,16 @@ export default function Layer() {
               variant="ghost"
               icon={<LetterUpperCase size={24} />}
             />
+          ) : object[0]?.name === "group" ? (
+            <Button
+              onClick={() => activeScene.objects.select(id)}
+              _hover={{ cursor: "grab" }}
+              size="30px"
+              aria-label="Search database"
+              variant="ghost"
+            >
+              G
+            </Button>
           ) : (
             <IconButton
               onClick={() => activeScene.objects.select(id)}
