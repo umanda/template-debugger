@@ -790,7 +790,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const activeScene = useActiveScene()
   const currentScene = useActiveScene()
   const scenes = useScenes()
-  const [autoSave, setAutoSave] = useState<boolean>(true)
+  const [autoSave, setAutoSave] = useState<boolean>(false)
   const [stateJson, setStateJson] = useState<any>("")
   const [stateChange] = useDebounce(stateJson, 2000)
   const zoom = useZoomRatio()
@@ -889,9 +889,11 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
         return e
       })
-      user && (await dispatch(updateProject(designJSON))).payload
-      setAutoSave(true)
-    } catch {}
+      if (user) {
+        const resolve = await dispatch(updateProject(designJSON))
+        resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
+      }
+    } catch (err: any) {}
   }, [editor, scenes, currentScene, id, design, autoSave, namesPages])
 
   return (
