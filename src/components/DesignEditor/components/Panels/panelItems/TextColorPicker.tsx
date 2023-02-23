@@ -24,7 +24,7 @@ export default function TextColorPicker() {
   const recentColors = useAppSelector(selectColors).color
   const editor = useEditor()
   const activeObject = useActiveObject() as any
-  const { setColorText, setActiveMenu } = useDesignEditorContext()
+  const { setColorText, setActiveMenu, setInputActive } = useDesignEditorContext()
   const activeScene = useActiveScene()
   const [colorHex, setColorHex] = useState<string>("")
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -107,7 +107,12 @@ export default function TextColorPicker() {
                 />
                 <Box sx={{ padding: "1rem 0", display: "grid", gridTemplateColumns: "40px 1fr", alignItems: "center" }}>
                   <Box sx={{ color: "#A9A9B2" }}>HEX</Box>
-                  <Input onChange={(e) => updateObjectFill(e.target.value)} value={state.color} />
+                  <Input
+                    onFocus={() => setInputActive(true)}
+                    onBlur={() => setInputActive(false)}
+                    onChange={(e) => updateObjectFill(e.target.value)}
+                    value={state.color}
+                  />
                 </Box>
               </Box>
             </PopoverContent>

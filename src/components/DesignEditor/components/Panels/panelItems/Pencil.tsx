@@ -9,10 +9,12 @@ import Pencil3 from "../../../../Icons/Pencil3"
 import Pencil4 from "../../../../Icons/Pencil4"
 import Pencil5 from "../../../../Icons/Pencil5"
 import React, { useCallback, useState } from "react"
+import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
 
 export default function Pencil() {
   const editor = useEditor()
   const { draw, setDraw } = useResourcesContext()
+  const { setInputActive } = useDesignEditorContext()
   const [typeDraw, setTypeDraw] = useState<any>("")
 
   React.useEffect(() => {
@@ -55,6 +57,7 @@ export default function Pencil() {
           sizePrev: e
         })
       }
+      setInputActive(false)
     },
     [draw]
   )
@@ -223,6 +226,7 @@ export default function Pencil() {
               inputMode="decimal"
               pattern="[0-9]*(.[0-9]+)?"
               size={"xs"}
+              onFocus={() => setInputActive(true)}
               onKeyDown={(e) => e.key === "Enter" && makeChangeDraw("size", draw.sizePrev)}
               onChange={(e) => makeChangeInput("size", e.target.value)}
               onBlur={(e) => makeChangeDraw("size", e.target.value)}
@@ -255,6 +259,7 @@ export default function Pencil() {
             >
               <Input
                 textAlign={"center"}
+                onFocus={() => setInputActive(true)}
                 value={draw.opacityPrev}
                 type={"number"}
                 inputMode="decimal"

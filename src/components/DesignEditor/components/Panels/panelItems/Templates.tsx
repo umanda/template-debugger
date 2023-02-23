@@ -66,6 +66,7 @@ const initialQuery = {
 
 export default function Template() {
   const { setLoadCanva, setPreviewCanva } = useResourcesContext()
+  const { setInputActive } = useDesignEditorContext()
   const dispatch = useAppDispatch()
   const initialFocusRef = useRef<any>()
   const [validateContent, setValidateContent] = useState<string | null>(null)
@@ -300,6 +301,7 @@ export default function Template() {
         setToolTip(false)
       }, 3000)
     }
+    setInputActive(false)
     setTimeout(() => {
       onCloseInput()
     }, 100)
@@ -332,7 +334,10 @@ export default function Template() {
                   ref={initialFocusRef}
                   value={nameTemplatePrev}
                   placeholder="Search"
-                  onFocus={onOpenInput}
+                  onFocus={() => {
+                    onOpenInput()
+                    setInputActive(true)
+                  }}
                   onBlur={makeBlur}
                   onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
                   onChange={(e) => makeChangeInput(e.target.value)}

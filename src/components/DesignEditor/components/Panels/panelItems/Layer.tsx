@@ -285,6 +285,8 @@ export default function Layer() {
               ? String(object[0]?.text).length <= 12
                 ? object[0]?.text
                 : `${object[0]?.text.substr(0, 12)}...`
+              : object[0]?.name === "StaticVector"
+              ? "Illustration"
               : name}
           </Center>
           <Spacer />

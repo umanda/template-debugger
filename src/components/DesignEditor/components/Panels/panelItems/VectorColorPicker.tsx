@@ -25,7 +25,8 @@ import { useAppDispatch, useAppSelector } from "../../../../store/store"
 import { throttle } from "lodash"
 
 export default function VectorColorPicker() {
-  const { indexColorPicker, setIndexColorPicker, colors, setColors, setActiveMenu } = useDesignEditorContext()
+  const { setInputActive, indexColorPicker, setIndexColorPicker, colors, setColors, setActiveMenu } =
+    useDesignEditorContext()
   const editor = useEditor()
   const activeObject = useActiveObject() as any
   const [sliderValue, setSliderValue] = useState({
@@ -78,6 +79,7 @@ export default function VectorColorPicker() {
         )
       }
     }
+    setInputActive(false)
   }
 
   const handleChange = (type: string, value: number) => {
@@ -131,6 +133,7 @@ export default function VectorColorPicker() {
                   <Box sx={{ color: "#A9A9B2" }}>HEX</Box>
                   <Input
                     onBlur={(e) => {
+                      setInputActive(false)
                       setColorHex(inputHex)
                       changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
                     }}
@@ -145,6 +148,7 @@ export default function VectorColorPicker() {
                       setInputHexPrev(e.target.value)
                       dispatch(getRecentColor(colorHex))
                     }}
+                    onFocus={() => setInputActive(true)}
                     // onChange={(e) =>
                     //   changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], e.target.value)
                     // }
@@ -243,6 +247,7 @@ export default function VectorColorPicker() {
             onKeyDown={(e) => e.key === "Enter" && applyTextChange(sliderValue.sliderValueTemp, activeObject.id)}
             onChange={(e) => handleChange("charSpacingTemp", parseFloat(e.target.value))}
             onBlur={(e) => applyTextChange(parseFloat(e.target.value), activeObject.id)}
+            onFocus={() => setInputActive(true)}
           />
         </GridItem>
       </Grid>

@@ -39,6 +39,7 @@ import Trash from "../../../../Icons/Trash"
 import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "../../../../store/resources/action"
 import { selectUploads } from "../../../../store/resources/selector"
 import NoUploadsImage from "../../../../../images/no-uploads-to-display.svg"
+import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
@@ -52,6 +53,7 @@ const initialQuery = {
 }
 
 export default function Upload() {
+  const { setInputActive } = useDesignEditorContext()
   const user = useSelector(selectUser)
   const toast = useToast()
   const [fetching, setFetching] = useState(true)
@@ -359,6 +361,7 @@ export default function Upload() {
       }
     }
     nameUpload[0] !== nameUploadPrev[0] && makeFilter({ name: nameUploadPrev[0] })
+    setInputActive(false)
     onClose()
   }
 
@@ -385,7 +388,10 @@ export default function Upload() {
           size="sm"
           ref={initialFocusRef}
           placeholder="Search"
-          onFocus={onOpen}
+          onFocus={() => {
+            onOpen()
+            setInputActive(true)
+          }}
           onBlur={makeBlur}
           onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
           onChange={(e) => setNameUploadPrev([e.target.value])}
