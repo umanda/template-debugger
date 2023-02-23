@@ -10,20 +10,20 @@ import {
   Portal,
   useDisclosure
 } from "@chakra-ui/react"
-import { useActiveScene, useEditor, useZoomRatio } from "@layerhub-pro/react"
+import { useEditor } from "@layerhub-pro/react"
 import { DEFAULT_COLORS } from "../../../../constants/consts"
 import { getRecentColor } from "../../../../store/colors/action"
 import { selectColors } from "../../../../store/colors/selector"
 import { useAppDispatch, useAppSelector } from "../../../../store/store"
 import React, { useEffect, useState } from "react"
 import { HexColorPicker } from "react-colorful"
+import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
 
 export default function Backogrund() {
   const dispatch = useAppDispatch()
+  const { setInputActive } = useDesignEditorContext()
   const recentColors = useAppSelector(selectColors).color
-  const activeScene = useActiveScene()
   const editor = useEditor()
-  const zoomRatio = useZoomRatio()
   const [colorHex, setColorHex] = useState<string>("")
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [state, setState] = React.useState<{
@@ -36,8 +36,7 @@ export default function Backogrund() {
 
   const setBackgroundColor = (color: string) => {
     setState({ color })
-    activeScene.background.updateCurrentBackground({ fill: color })
-    editor.zoom.zoomToRatio(zoomRatio - 0.000000000000001 + 0.000000000000001)
+    editor.design.activeScene.background.update({ fill: color })
   }
 
   return (
@@ -76,7 +75,12 @@ export default function Backogrund() {
                 />
                 <Box sx={{ padding: "1rem 0", display: "grid", gridTemplateColumns: "40px 1fr", alignItems: "center" }}>
                   <Box sx={{ color: "#A9A9B2" }}>HEX</Box>
-                  <Input onChange={(e) => setBackgroundColor(e.target.value)} value={state.color} />
+                  <Input
+                    onBlur={() => setInputActive(false)}
+                    onFocus={() => setInputActive(true)}
+                    onChange={(e) => setBackgroundColor(e.target.value)}
+                    value={state.color}
+                  />
                 </Box>
               </Box>
             </PopoverContent>

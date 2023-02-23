@@ -424,7 +424,7 @@ function FileMenu() {
   const navigate = useNavigate()
   const scenes = useScenes()
   const design = useDesign()
-  const { setNamesPages } = useDesignEditorContext()
+  const { setNamesPages, setInputActive } = useDesignEditorContext()
   const initialFocusRef = React.useRef()
   const inputFileRef = React.useRef<HTMLInputElement>(null)
 
@@ -566,6 +566,8 @@ function FileMenu() {
             <input
               multiple={false}
               onChange={handleFileInput}
+              onBlur={() => setInputActive(false)}
+              onFocus={() => setInputActive(true)}
               type="file"
               id="file"
               ref={inputFileRef}
@@ -782,7 +784,7 @@ function UserMenu() {
 function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const design = useDesign()
   const { id } = useParams()
-  const { namesPages } = useDesignEditorContext()
+  const { namesPages, inputActive } = useDesignEditorContext()
   const dispatch = useAppDispatch()
   const editor = useEditor()
   const activeScene = useActiveScene()
@@ -795,31 +797,31 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const activeObject: any = useActiveObject()
 
   document.onkeydown = function (e) {
-    if (e.key === "Delete") {
+    if (e.key === "Delete" && inputActive === false) {
       if (activeObject?.locked === false || activeObject?.locked === undefined)
         activeObject?.type === "StaticText"
           ? activeObject?.isEditing !== true && activeScene.objects.remove()
           : activeScene.objects.remove()
       return true
     }
-    if (e.key === "ArrowLeft") {
+    if (e.key === "ArrowLeft" && inputActive === false) {
       if (activeObject?.locked === false || activeObject?.locked === undefined)
         activeObject?.type !== "Frame" &&
           activeScene.objects.update({ left: activeObject?.left - 30 }, activeObject?.id)
       return false
     }
-    if (e.key === "ArrowUp") {
+    if (e.key === "ArrowUp" && inputActive === false) {
       if (activeObject?.locked === false || activeObject?.locked === undefined)
         activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject?.top - 30 }, activeObject?.id)
       return false
     }
-    if (e.key === "ArrowRight") {
+    if (e.key === "ArrowRight" && inputActive === false) {
       if (activeObject?.locked === false || activeObject?.locked === undefined)
         activeObject?.type !== "Frame" &&
           activeScene.objects.update({ left: activeObject?.left + 30 }, activeObject?.id)
       return false
     }
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown" && inputActive === false) {
       if (activeObject?.locked === false || activeObject?.locked === undefined)
         activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject?.top + 30 }, activeObject?.id)
       return false

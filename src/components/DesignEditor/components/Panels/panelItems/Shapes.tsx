@@ -320,7 +320,7 @@ export default function Shapes() {
           </Scrollable>
         ) : (
           <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
-            {stateRecent === true ?  <img src={NoShapesImage} /> : null}
+            {stateRecent === true ? <img src={NoShapesImage} /> : null}
             <p>{validateContent}</p>
           </Center>
         )}

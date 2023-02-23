@@ -33,7 +33,7 @@ interface Props {
 }
 
 export default function SceneItem({ index, isCurrentScene, preview, setActiveScene, scene }: Props) {
-  const { setNamesPages, namesPages } = useDesignEditorContext()
+  const { setNamesPages, namesPages, setInputActive } = useDesignEditorContext()
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: scene.id! })
   const { onOpen, onClose, isOpen } = useDisclosure()
   const [nameInput, setNameInput] = useState<string>("")
@@ -75,6 +75,7 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
   const blurInput = useCallback(() => {
     setNamesPages(Object.values({ ...namesPages, [index]: nameInput }) as string[])
     onClose()
+    setInputActive(false)
   }, [nameInput, namesPages])
 
   const handleDuplicateScene = useCallback(
@@ -145,6 +146,7 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
                       onKeyDown={(e) => e.key === "Enter" && inputRef.current.blur()}
                       onChange={(e) => setNameInput(e.target.value)}
                       onBlur={blurInput}
+                      onFocus={() => setInputActive(true)}
                       value={nameInput}
                     />
                   ) : (

@@ -18,7 +18,9 @@ function useDesignEditorContext() {
     colorText,
     setColorText,
     colors,
-    setColors
+    setColors,
+    inputActive,
+    setInputActive
   } = useContext(DesignEditorContext)
   return {
     namesPages,
@@ -36,7 +38,9 @@ function useDesignEditorContext() {
     colorText,
     setColorText,
     colors,
-    setColors
+    setColors,
+    inputActive,
+    setInputActive
   }
 }
 
