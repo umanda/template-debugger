@@ -72,7 +72,7 @@ export default function Text() {
         // width: 340,
         type: "StaticText",
         textAlign: "center",
-        text: "Add header",
+        text: "Add Header",
         fontFamily: font.name,
         fontURL: font.url,
         fontSize: 120,
@@ -97,7 +97,7 @@ export default function Text() {
         // width: 240,
         type: "StaticText",
         textAlign: "center",
-        text: "Add sub header",
+        text: "Add Sub Header",
         fontFamily: font.name,
         fontURL: font.url,
         fontSize: 80,
@@ -131,9 +131,9 @@ export default function Text() {
         type: "StaticText",
         text:
           type === "header"
-            ? "Add header"
+            ? "Add Header"
             : type === "subHeader"
-            ? "Add sub header"
+            ? "Add Sub Header"
             : "Use this sample paragraph to add multiple lines of text and provide additional information for your visual story.",
         fontFamily: font.name,
         fontURL: font.url,
