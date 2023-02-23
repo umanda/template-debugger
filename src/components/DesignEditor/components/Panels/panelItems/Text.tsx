@@ -114,7 +114,7 @@ export default function Text() {
         id: nanoid(),
         // width: 360,
         type: "StaticText",
-        text: "Add paragraph",
+        text: "Use this sample paragraph to add multiple lines of text and provide additional information for your visual story.",
         fontFamily: font.name,
         fontURL: font.url,
         fontSize: 40
@@ -129,14 +129,19 @@ export default function Text() {
       const options = {
         id: nanoid(), //"Add header"
         type: "StaticText",
-        text: type === "header" ? "Add header" : type === "subHeader" ? "Add sub header" : "Add paragraph",
+        text:
+          type === "header"
+            ? "Add header"
+            : type === "subHeader"
+            ? "Add sub header"
+            : "Use this sample paragraph to add multiple lines of text and provide additional information for your visual story.",
         fontFamily: font.name,
         fontURL: font.url,
         fontSize: type === "header" ? 120 : type === "subHeader" ? 80 : 40,
         //@ts-ignore
         textAlign: type === "paragraph" ? "left" : "center"
       }
-      editor.dragger.onDragStart(options, { desiredSize: type === "header" ? 292 : type === "subHeader" ? 240 : 240 })
+      editor.dragger.onDragStart(options, { desiredSize: type === "header" ? 292 : type === "subHeader" ? 240 : 255 })
     },
     [editor]
   )

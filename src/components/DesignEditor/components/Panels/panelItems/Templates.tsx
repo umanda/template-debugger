@@ -50,6 +50,7 @@ import LazyLoadImage from "../../../../utils/LazyLoadImage"
 import { selectProject } from "../../../../store/project/selector"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
 import NoTemplateImage from "../../../../../images/no-templates-to-display.svg"
+import { loadFonts } from "../../../../utils/fonts"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
@@ -184,7 +185,16 @@ export default function Template() {
       try {
         setLoadCanva(false)
         setPreviewCanva(template.preview)
+        let fonts: { name: string; url: string }[] = []
         let designData: any = await api.getTemplateById(template.id)
+        designData?.scenes[0]?.layers.map((l) => {
+          const name = l.fontFamily
+          const url = l.fontURL
+          name && url ? fonts.push({ name, url }) : null
+        })
+        fonts.map(async (f) => {
+          await loadFonts([f])
+        })
         designData.scenes[0].frame = designData.frame
         designData.scenes[0].layers.map((layer) => {
           if (layer.src) {
