@@ -55,7 +55,7 @@ const Designer: any = () => {
               })
               const font = { name: layer.fontFamily, url: layer.fontURL }
               fonts = fonts.concat(font)
-              activeScene.objects.updateText({ fontFamily: layer.fontFamily, fontURL: layer.fontURL })
+              activeScene?.objects?.updateText({ fontFamily: layer.fontFamily, fontURL: layer.fontURL })
             }
           })
           sceneNames.push(scn.name)

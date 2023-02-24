@@ -318,7 +318,9 @@ export const updateProject = (props: any) => {
       .then(({ data }) => {
         resolve(data.project)
       })
-      .catch((err) => reject(err))
+      .catch((err) => {
+        reject(err)
+      })
   })
 }
 

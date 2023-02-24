@@ -56,6 +56,7 @@ import { selectResourceImages } from "../../../../store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "../../../../store/resources/action"
 import { selectProject } from "../../../../store/project/selector"
 import NoIllustrationsImage from "../../../../../images/no-illustrations-to-display.svg"
+import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
 export const limitCharacters = (name: string) => {
@@ -85,6 +86,7 @@ const initialQuery = {
 
 export default function Ilustrations() {
   const dispatch: any = useAppDispatch()
+  const { setInputActive } = useDesignEditorContext()
   const initialFocusRef = useRef<any>()
   const [validateContent, setValidateContent] = useState<string | null>(null)
   let [nameIllustration, setNameIllustration] = useState<string[]>([""])
@@ -113,7 +115,7 @@ export default function Ilustrations() {
   const [page, setPage] = useState<number>(0)
   const filterResource = localStorage.getItem("drawing_filter")
   const [notIds, setNotIds] = useState<number[]>([])
-  const listDrawifiers: any = useSelector(selectListDrawifiers)
+  // const listDrawifiers: any = useSelector(selectListDrawifiers)
 
   useEffect(() => {
     if (filterResource !== undefined && filterResource !== null) {
@@ -341,6 +343,7 @@ export default function Ilustrations() {
         setToolTip(false)
       }, 3000)
     }
+    setInputActive(false)
     setTimeout(() => {
       onCloseInput()
     }, 100)
@@ -373,7 +376,10 @@ export default function Ilustrations() {
                   ref={initialFocusRef}
                   value={nameIllustrationPrev}
                   placeholder="Search"
-                  onFocus={onOpenInput}
+                  onFocus={() => {
+                    onOpenInput()
+                    setInputActive(true)
+                  }}
                   onBlur={makeBlur}
                   onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
                   onChange={(e) => makeChangeInput(e.target.value)}
@@ -778,6 +784,7 @@ function ModalIllustration({
   typeFilter: any
   listFavorite: IResource[]
 }) {
+  const { setInputActive } = useDesignEditorContext()
   const [like, setLike] = React.useState(false)
   const user = useSelector(selectUser)
   const editor = useEditor()
@@ -900,8 +907,10 @@ function ModalIllustration({
                 onChange={(e) => setNameResource(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && refInputName.current.blur()}
                 onBlur={(e) => {
+                  setInputActive(false)
                   filterByName(nameResource)
                 }}
+                onFocus={() => setInputActive(true)}
                 placeholder="Search"
                 bg="white"
               />
@@ -951,9 +960,13 @@ function ModalIllustration({
                       value={name}
                       onFocus={() => {
                         setName("")
+                        setInputActive(true)
                         setIdDrawifier("")
                       }}
-                      onBlur={onCloseDrawifier}
+                      onBlur={() => {
+                        onCloseDrawifier()
+                        setInputActive(false)
+                      }}
                       onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
                       onChange={(e) => {
                         onOpenDrawifier()

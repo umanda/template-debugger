@@ -5,6 +5,7 @@ import { useDesign, useObjects } from "@layerhub-pro/react"
 import { IFrame } from "@layerhub-pro/types"
 import Lock from "../../../Icons/Lock"
 import Unlock from "../../../Icons/Unlock"
+import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
 
 type ResizeMode =
   | "LANDSCAPE"
@@ -64,6 +65,7 @@ const Resize = () => {
   const [size, setSize] = useState<any>()
   const objects = useObjects() as any[]
   const design = useDesign()
+  const { setInputActive } = useDesignEditorContext()
   const [mode, setMode] = React.useState<ResizeMode>("LANDSCAPE")
   const [inputLocked, setInputLocked] = React.useState<boolean>(false)
   const [displayFrame, setDisplayFrame] = React.useState<IFrame>({
@@ -93,6 +95,7 @@ const Resize = () => {
         setDisplayFrame({ ...displayFrame, width: size.width * change })
       }
     }
+    setInputActive(false)
   }
 
   const onChange = React.useCallback(
@@ -215,6 +218,7 @@ const Resize = () => {
                       <Input
                         disabled={mode !== "CUSTOM"}
                         placeholder="width"
+                        onFocus={() => setInputActive(true)}
                         value={displayFrame.width}
                         onChange={(e) => onChange("width", (e.target as any).value)}
                         onBlur={() => handleOnBlur("width")}
@@ -224,6 +228,7 @@ const Resize = () => {
                       <Input
                         disabled={mode !== "CUSTOM"}
                         placeholder="Height"
+                        onFocus={() => setInputActive(true)}
                         value={displayFrame.height}
                         onChange={(e) => onChange("height", (e.target as any).value)}
                         onBlur={() => handleOnBlur("height")}

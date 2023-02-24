@@ -45,6 +45,8 @@ interface IDesignEditorContext {
   setColorText: React.Dispatch<React.SetStateAction<string>>
   colors: { colorMap: any }
   setColors: React.Dispatch<React.SetStateAction<any>>
+  inputActive: boolean
+  setInputActive: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export const DesignEditorContext = React.createContext<IDesignEditorContext>({
@@ -66,7 +68,9 @@ export const DesignEditorContext = React.createContext<IDesignEditorContext>({
   colorText: "",
   setColorText: () => {},
   colors: { colorMap: {} },
-  setColors: () => {}
+  setColors: () => {},
+  inputActive: false,
+  setInputActive: () => {}
 })
 
 export const DesignEditorProvider = ({ children }: { children: React.ReactNode }) => {
@@ -79,6 +83,7 @@ export const DesignEditorProvider = ({ children }: { children: React.ReactNode }
   const [indexColorPicker, setIndexColorPicker] = React.useState<number>(-1)
   const [colorText, setColorText] = React.useState<string>("")
   const [colors, setColors] = React.useState<any>({ colorMap: {} })
+  const [inputActive, setInputActive] = React.useState<boolean>(false)
 
   const context = {
     namesPages,
@@ -99,7 +104,9 @@ export const DesignEditorProvider = ({ children }: { children: React.ReactNode }
     colorText,
     setColorText,
     colors,
-    setColors
+    setColors,
+    inputActive,
+    setInputActive
   }
   return <DesignEditorContext.Provider value={context}>{children}</DesignEditorContext.Provider>
 }

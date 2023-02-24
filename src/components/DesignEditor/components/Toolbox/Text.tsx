@@ -448,6 +448,7 @@ function TextFontSize() {
   const activeScene = useActiveScene()
   const scenes = useScenes()
   const ref = React.useRef<any>()
+  const { setInputActive } = useDesignEditorContext()
 
   React.useEffect(() => {
     // @ts-ignore
@@ -462,6 +463,7 @@ function TextFontSize() {
   const onChange = (size: number) => {
     activeScene.objects.updateText({ fontSize: size })
     setValue(size)
+    setInputActive(false)
   }
 
   return (
@@ -495,6 +497,7 @@ function TextFontSize() {
                 onBlur={(e) => onChange(Number(e.target.value))}
                 onChange={(e: any) => setPrevValue(e.target.value)}
                 onClick={onToggle}
+                onFocus={() => setInputActive(true)}
                 textAlign={"center"}
                 variant={"unstyled"}
                 value={prevValue}

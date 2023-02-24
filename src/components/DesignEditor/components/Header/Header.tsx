@@ -48,6 +48,7 @@ import DrawifyD from "../../../Icons/DrawifyD"
 import UserIcon from "../../../Icons/UserIcon"
 import NotSync from "../../../Icons/NotSync"
 import Linkedin from "../../../Icons/Linkedin"
+import Share from "../../../Icons/Share"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 
@@ -313,6 +314,7 @@ function ShareMenu() {
       <PopoverTrigger>
         <Button
           colorScheme={"brand"}
+          rightIcon={<Share size={16} />}
           onClick={() => {
             user ? onToggle() : onOpenAunth()
           }}
@@ -422,7 +424,7 @@ function FileMenu() {
   const navigate = useNavigate()
   const scenes = useScenes()
   const design = useDesign()
-  const { setNamesPages } = useDesignEditorContext()
+  const { setNamesPages, setInputActive } = useDesignEditorContext()
   const initialFocusRef = React.useRef()
   const inputFileRef = React.useRef<HTMLInputElement>(null)
 
@@ -564,6 +566,8 @@ function FileMenu() {
             <input
               multiple={false}
               onChange={handleFileInput}
+              onBlur={() => setInputActive(false)}
+              onFocus={() => setInputActive(true)}
               type="file"
               id="file"
               ref={inputFileRef}
@@ -780,44 +784,44 @@ function UserMenu() {
 function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const design = useDesign()
   const { id } = useParams()
-  const { namesPages } = useDesignEditorContext()
+  const { namesPages, inputActive } = useDesignEditorContext()
   const dispatch = useAppDispatch()
   const editor = useEditor()
   const activeScene = useActiveScene()
   const currentScene = useActiveScene()
   const scenes = useScenes()
-  const [autoSave, setAutoSave] = useState<boolean>(true)
+  const [autoSave, setAutoSave] = useState<boolean>(false)
   const [stateJson, setStateJson] = useState<any>("")
   const [stateChange] = useDebounce(stateJson, 2000)
   const zoom = useZoomRatio()
   const activeObject: any = useActiveObject()
 
   document.onkeydown = function (e) {
-    if (e.key === "Delete") {
+    if (e.key === "Delete" && inputActive === false) {
       if (activeObject?.locked === false || activeObject?.locked === undefined)
         activeObject?.type === "StaticText"
           ? activeObject?.isEditing !== true && activeScene.objects.remove()
           : activeScene.objects.remove()
       return true
     }
-    if (e.key === "ArrowLeft") {
+    if (e.key === "ArrowLeft" && inputActive === false) {
       if (activeObject?.locked === false || activeObject?.locked === undefined)
         activeObject?.type !== "Frame" &&
           activeScene.objects.update({ left: activeObject?.left - 30 }, activeObject?.id)
       return false
     }
-    if (e.key === "ArrowUp") {
+    if (e.key === "ArrowUp" && inputActive === false) {
       if (activeObject?.locked === false || activeObject?.locked === undefined)
         activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject?.top - 30 }, activeObject?.id)
       return false
     }
-    if (e.key === "ArrowRight") {
+    if (e.key === "ArrowRight" && inputActive === false) {
       if (activeObject?.locked === false || activeObject?.locked === undefined)
         activeObject?.type !== "Frame" &&
           activeScene.objects.update({ left: activeObject?.left + 30 }, activeObject?.id)
       return false
     }
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown" && inputActive === false) {
       if (activeObject?.locked === false || activeObject?.locked === undefined)
         activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject?.top + 30 }, activeObject?.id)
       return false
@@ -885,9 +889,11 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
         return e
       })
-      user && (await dispatch(updateProject(designJSON))).payload
-      setAutoSave(true)
-    } catch {}
+      if (user) {
+        const resolve = await dispatch(updateProject(designJSON))
+        resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
+      }
+    } catch (err: any) {}
   }, [editor, scenes, currentScene, id, design, autoSave, namesPages])
 
   return (

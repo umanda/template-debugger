@@ -248,6 +248,7 @@ function TextSpacing() {
   const editor = useEditor()
   const activeObject = useActiveObject()
   const activeScene = useActiveScene()
+  const { setInputActive } = useDesignEditorContext()
   const [state, setState] = React.useState<{
     charSpacing: number
     lineHeight: number
@@ -324,6 +325,7 @@ function TextSpacing() {
         }
       }
     }
+    setInputActive(false)
   }
   return (
     <Flex flexDirection="column" gap="20px" fontSize={"14px"} padding={"1rem"}>
@@ -342,6 +344,7 @@ function TextSpacing() {
           inputMode="decimal"
           pattern="[0-9]*(.[0-9]+)?"
           size="xs"
+          onFocus={() => setInputActive(true)}
           onKeyDown={(e) => e.key === "Enter" && applyTextChange("charSpacing", state.charSpacingTemp)}
           onChange={(e) => handleChange("charSpacingTemp", parseFloat(e.target.value))}
           onBlur={(e) => applyTextChange("charSpacing", e)}
@@ -357,6 +360,7 @@ function TextSpacing() {
           <SliderThumb />
         </Slider>
         <Input
+          onFocus={() => setInputActive(true)}
           textAlign={"center"}
           value={state.lineHeightTemp}
           type={"number"}
