@@ -185,11 +185,13 @@ export default function Template() {
   const loadTemplateById = React.useCallback(
     async (template: any) => {
       try {
-        if (user?.plan !== "FREE") {
+        if (user?.plan !== "FREE" || template.license !== "paid") {
           setLoadCanva(false)
           setPreviewCanva(template.preview)
           let fonts: { name: string; url: string }[] = []
           let designData: any = await api.getTemplateById(template.id)
+          designData.frame.height = Number(designData.frame.height)
+          designData.frame.width = Number(designData.frame.width)
           designData?.scenes[0]?.layers.map((l) => {
             const name = l.fontFamily
             const url = l.fontURL
