@@ -40,6 +40,7 @@ import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "../../.
 import { selectUploads } from "../../../../store/resources/selector"
 import NoUploadsImage from "../../../../../images/no-uploads-to-display.svg"
 import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
+import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
@@ -75,6 +76,7 @@ export default function Upload() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const activeScene: any = useActiveScene()
   const activeObject = useActiveObject()
+  const { isOpen: isOpenUpgradeUser, onOpen: onOpenUpgradeUser, onClose: onCloseUpgradeUser } = useDisclosure()
 
   useEffect(() => {
     user && initialState()
@@ -273,7 +275,11 @@ export default function Upload() {
   }
 
   const handleInputFileRefClick = () => {
-    inputFileRef.current?.click()
+    if (user.plan !== "FREE") {
+      inputFileRef.current?.click()
+    } else {
+      onOpenUpgradeUser()
+    }
   }
 
   const handleDelete = async (resource: IUpload) => {
@@ -510,6 +516,12 @@ export default function Upload() {
         </Button>
       </Flex>
       <Flex margin={"0 1rem"} style={{ display: "flex" }}>
+        <ModalUpgradePlan
+          type="Upload"
+          isOpen={isOpenUpgradeUser}
+          onOpen={onOpenUpgradeUser}
+          onClose={onCloseUpgradeUser}
+        />
         <Button variant="outline" w="100%" onClick={handleInputFileRefClick}>
           Upload
         </Button>

@@ -28,6 +28,20 @@ export default function Canva() {
   const user = useSelector(selectUser)
   const projectSelect = useSelector(selectProject)
   const flexRef = React.useRef<any>()
+  const activeObject: any = useActiveObject()
+
+  React.useEffect(() => {
+    fabric.Object.prototype.setControlsVisibility({
+      tl: true,
+      mt: activeObject?.type !== "StaticText" ? true : false,
+      tr: true,
+      ml: true,
+      mr: true,
+      bl: true,
+      mb: activeObject?.type !== "StaticText" ? true : false,
+      br: true
+    })
+  }, [activeObject])
 
   React.useEffect(() => {
     const deleteIcon =
