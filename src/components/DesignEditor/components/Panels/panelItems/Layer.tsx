@@ -222,6 +222,7 @@ export default function Layer() {
         position={name === "Custom" ? "relative" : "relative"}
         borderBottom="1px"
         borderColor="#e2e8f0"
+        backgroundColor={activeObject?.id === object[0]?.id ? "#EDF2F7" : ""}
       >
         <Flex w="full">
           <IconButton
