@@ -441,7 +441,7 @@ function TextAlign() {
 }
 
 function TextFontSize() {
-  const activeObject = useActiveObject()
+  const activeObject: any = useActiveObject()
   let [value, setValue] = React.useState(12)
   const [prevValue, setPrevValue] = React.useState(value)
   const { isOpen, onToggle, onClose } = useDisclosure()
@@ -478,6 +478,7 @@ function TextFontSize() {
         }}
       >
         <Button
+          isDisabled={activeObject?.isEditing == false || activeObject?.isEditing === undefined ? false : true}
           onClick={() => {
             onChange((value -= 1))
           }}
@@ -497,6 +498,7 @@ function TextFontSize() {
                 onBlur={(e) => onChange(Number(e.target.value))}
                 onChange={(e: any) => setPrevValue(e.target.value)}
                 onClick={onToggle}
+                onKeyDown={(e) => e.code === "Enter" && ref.current.blur()}
                 onFocus={() => setInputActive(true)}
                 textAlign={"center"}
                 variant={"unstyled"}
@@ -566,6 +568,7 @@ function TextFontSize() {
         )} */}
 
         <Button
+          isDisabled={activeObject?.isEditing == false || activeObject?.isEditing === undefined ? false : true}
           onClick={() => {
             onChange((value += 1))
           }}

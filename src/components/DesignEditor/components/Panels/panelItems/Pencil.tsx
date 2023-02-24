@@ -47,14 +47,14 @@ export default function Pencil() {
       if (type === "transparency") {
         setDraw({
           ...draw,
-          opacity: e,
-          opacityPrev: e
+          opacity: Number(e),
+          opacityPrev: Number(e)
         })
       } else if (type === "size") {
         setDraw({
           ...draw,
-          size: e,
-          sizePrev: e
+          size: Number(e),
+          sizePrev: Number(e)
         })
       }
       setInputActive(false)

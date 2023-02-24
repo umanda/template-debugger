@@ -1,11 +1,20 @@
 import {
+  Avatar,
   Box,
   Button,
   Center,
   Flex,
   HStack,
   IconButton,
+  Image,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Popover,
   PopoverAnchor,
   PopoverArrow,
@@ -51,7 +60,7 @@ import { selectProject } from "../../../../store/project/selector"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
 import NoTemplateImage from "../../../../../images/no-templates-to-display.svg"
 import { loadFonts } from "../../../../utils/fonts"
-const watermarkURL = import.meta.env.VITE_APP_WATERMARK
+import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
@@ -74,6 +83,8 @@ export default function Template() {
   let [nameTemplatePrev, setNameTemplatePrev] = useState<string[]>([""])
   const [order, setOrder] = useState<string[]>([])
   const user = useAppSelector(selectUser)
+  const { isOpen: isOpenLoadTemplate, onOpen: onOpenLoadTemplate, onClose: onCloseLoadTemplate } = useDisclosure()
+  const { isOpen: isOpenUpgradeUser, onOpen: onOpenUpgradeUser, onClose: onCloseUpgradeUser } = useDisclosure()
   const { isOpen: isOpenInput, onOpen: onOpenInput, onClose: onCloseInput } = useDisclosure()
   const [resourcesTemplate, setResourcesTemplate] = useState<any[]>([])
   const [load, setLoad] = useState(false)
@@ -90,6 +101,7 @@ export default function Template() {
   const [loadMoreResources, setLoadMoreResources] = useState<boolean>(false)
   const [toolTip, setToolTip] = useState(false)
   const design = useDesign()
+  const [loadTemplate, setLoadTemplate] = useState<any>()
   const activeScene = useActiveScene()
   const projectSelector = useSelector(selectProject)
   const toast = useToast()
@@ -184,33 +196,22 @@ export default function Template() {
   const loadTemplateById = React.useCallback(
     async (template: any) => {
       try {
-        setLoadCanva(false)
-        setPreviewCanva(template.preview)
-        let fonts: { name: string; url: string }[] = []
-        let designData: any = await api.getTemplateById(template.id)
-        designData?.scenes[0]?.layers.map((l) => {
-          const name = l.fontFamily
-          const url = l.fontURL
-          name && url ? fonts.push({ name, url }) : null
-        })
-        fonts.map(async (f) => {
-          await loadFonts([f])
-        })
-        designData.scenes[0].frame = designData.frame
-        designData.scenes[0].layers.map((layer) => {
-          if (layer.src) {
-            if (layer.src.includes(defaultPreviewTemplate))
-              layer.src = layer.src.replace(defaultPreviewTemplate, replacePreviewTemplate)
-          }
-          if (template?.license === "paid" && user?.plan === "FREE" && layer.type === "StaticVector") {
-            layer.watermark = watermarkURL
-          }
-        })
-        await activeScene.setScene(designData.scenes[0])
-        setPreviewCanva(null)
-        setLoadCanva(true)
-        if (user && projectSelector) {
-          api.getUseTemplate({ project_id: projectSelector.id, template_id: template.id })
+        if (user?.plan !== "FREE" || template.license !== "paid") {
+          let designData: any = await api.getTemplateById(template.id)
+          designData.frame.height = Number(designData.frame.height)
+          designData.frame.width = Number(designData.frame.width)
+          designData.scenes[0].frame = designData.frame
+          designData.scenes[0].layers.map((layer) => {
+            if (layer.src) {
+              if (layer.src.includes(defaultPreviewTemplate))
+                layer.src = layer.src.replace(defaultPreviewTemplate, replacePreviewTemplate)
+            }
+          })
+          setLoadTemplate({ designData, template })
+          onOpenLoadTemplate()
+          // }
+        } else {
+          onOpenUpgradeUser()
         }
       } catch (err) {
         setLoadCanva(true)
@@ -260,6 +261,27 @@ export default function Template() {
     setDisableTab(true)
     setValidateContent(null)
   }
+
+  const handleCustomize = useCallback(async () => {
+    onCloseLoadTemplate()
+    setLoadCanva(false)
+    setPreviewCanva(loadTemplate?.template?.preview)
+    let fonts: { name: string; url: string }[] = []
+    loadTemplate?.designData?.scenes[0]?.layers.map((l) => {
+      const name = l.fontFamily
+      const url = l.fontURL
+      name && url ? fonts.push({ name, url }) : null
+    })
+    fonts.map(async (f) => {
+      await loadFonts([f])
+    })
+    await activeScene.setScene(loadTemplate?.designData.scenes[0])
+    setPreviewCanva(null)
+    setLoadCanva(true)
+    if (user && projectSelector) {
+      api.getUseTemplate({ project_id: projectSelector.id, template_id: loadTemplate?.template.id })
+    }
+  }, [loadTemplate, projectSelector, user])
 
   const makeChangeInput = useCallback(async (valueInput: string) => {
     setNameTemplatePrev([valueInput])
@@ -316,6 +338,37 @@ export default function Template() {
 
   return (
     <Box h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" display="flex" flexDirection="column">
+      <ModalUpgradePlan
+        type={"Template"}
+        isOpen={isOpenUpgradeUser}
+        onClose={onCloseUpgradeUser}
+        onOpen={onOpenUpgradeUser}
+      />
+      <Modal size="4xl" isCentered onClose={onCloseLoadTemplate} isOpen={isOpenLoadTemplate}>
+        <ModalOverlay />
+        <ModalContent display="flex">
+          <ModalHeader>OPEN A NEW TEMPLATE</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody display="flex">
+            <Flex w="full">
+              <Image w="70%" src={loadTemplate?.designData?.preview} />
+              <Flex w="full" flexDir="column" gap="15px">
+                <Flex align="center" gap="10px">
+                  <Avatar src={loadTemplate?.template?.user?.avatar} name={loadTemplate?.template?.user?.name} />
+                  <Flex fontWeight="bold">{loadTemplate?.template?.user?.name}</Flex>
+                </Flex>
+                <Flex fontWeight="bold" fontSize="23px">
+                  {loadTemplate?.designData?.name}
+                </Flex>
+                <Flex>{loadTemplate?.designData?.description}</Flex>
+                <Button colorScheme={"brand"} onClick={handleCustomize}>
+                  Customize this template
+                </Button>
+              </Flex>
+            </Flex>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
       <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
         <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
           <HStack width={"100%"}>
