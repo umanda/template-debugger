@@ -176,7 +176,7 @@ export default function Text() {
               color: "#A9A9B2"
             }}
           >
-            A hint is a helpful piece of advice
+             Captivate with a strong title
           </Box>
         </Box>
         <Box
@@ -206,7 +206,7 @@ export default function Text() {
               color: "#A9A9B2"
             }}
           >
-            A hint is a helpful piece of advice
+            Clear and short, with juicy keywords
           </Box>
         </Box>
         <Box
@@ -236,7 +236,7 @@ export default function Text() {
               color: "#A9A9B2"
             }}
           >
-            A hint is a helpful piece of advice
+            Regular text, extraordinary content
           </Box>
         </Box>
       </Flex>
