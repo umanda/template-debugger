@@ -49,6 +49,7 @@ import UserIcon from "../../../Icons/UserIcon"
 import NotSync from "../../../Icons/NotSync"
 import Linkedin from "../../../Icons/Linkedin"
 import Share from "../../../Icons/Share"
+import ModalUpgradePlan from "../../../Modals/UpgradePlan"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 
@@ -169,6 +170,7 @@ function ShareMenu() {
   const toast = useToast()
   const design = useDesign()
   const { isOpen, onToggle, onClose } = useDisclosure()
+  const { isOpen: isOpenUpgradeUser, onOpen: onOpenUpgradeUser, onClose: onCloseUpgradeUser } = useDisclosure()
   const { isOpen: isOpenAunth, onOpen: onOpenAunth, onClose: onCloseAunth } = useDisclosure()
   const user = useSelector(selectUser)
   const [valueInput, setValueInput] = useState<string>("")
@@ -176,6 +178,7 @@ function ShareMenu() {
   const currentScene = useActiveScene()
   const projectSelect = useSelector(selectProject)
   const { namesPages } = useDesignEditorContext()
+  const [typeModal, setTypeModal] = useState<string>("")
 
   // const functionSave = useCallback(async () => {
   //   try {
@@ -193,40 +196,45 @@ function ShareMenu() {
 
   const handleDownload = async (type: string) => {
     try {
-      toast({
-        title: "Please wait while the image loads",
-        status: "loading",
-        position: "top",
-        duration: 2000,
-        isClosable: true
-      })
-      let resolve: any
-      let designJSON: any = design?.toJSON()
-      designJSON.key = id
-      designJSON.scenes.map((e: any, index: number) => {
-        e.name = namesPages[index]
-        e.position = index
-        e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-        return e
-      })
-      await dispatch(updateProject(designJSON))
-      if (editor && user) {
-        resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
-      }
-      const url = resolve.url
-      const fileTypeParts = url.split(".")
-      fetch(url)
-        .then((result) => result.blob())
-        .then((blob) => {
-          if (blob != null) {
-            const url = window.URL.createObjectURL(blob)
-            const a = document.createElement("a")
-            a.href = url
-            a.download = "project." + fileTypeParts[fileTypeParts.length - 1]
-            document.body.appendChild(a)
-            a.click()
-          }
+      if (user?.plan !== "FREE") {
+        toast({
+          title: "Please wait while the image loads",
+          status: "loading",
+          position: "top",
+          duration: 2000,
+          isClosable: true
         })
+        let resolve: any
+        let designJSON: any = design?.toJSON()
+        designJSON.key = id
+        designJSON.scenes.map((e: any, index: number) => {
+          e.name = namesPages[index]
+          e.position = index
+          e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          return e
+        })
+        await dispatch(updateProject(designJSON))
+        if (editor && user) {
+          resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
+        }
+        const url = resolve.url
+        const fileTypeParts = url.split(".")
+        fetch(url)
+          .then((result) => result.blob())
+          .then((blob) => {
+            if (blob != null) {
+              const url = window.URL.createObjectURL(blob)
+              const a = document.createElement("a")
+              a.href = url
+              a.download = "project." + fileTypeParts[fileTypeParts.length - 1]
+              document.body.appendChild(a)
+              a.click()
+            }
+          })
+      } else {
+        setTypeModal(type.toLocaleUpperCase())
+        onOpenUpgradeUser()
+      }
     } catch {
       toast({
         title: "Oops, there was an error, try again.",
@@ -324,6 +332,12 @@ function ShareMenu() {
       </PopoverTrigger>
       <PopoverContent padding="1rem">
         <PopoverArrow />
+        <ModalUpgradePlan
+          type={typeModal}
+          isOpen={isOpenUpgradeUser}
+          onClose={onCloseUpgradeUser}
+          onOpen={onOpenUpgradeUser}
+        />
         <Box>
           <Box>
             <Box color="#A9A9B2">DOWNLOAD</Box>
@@ -415,6 +429,7 @@ function FileMenu() {
   const { isOpen: isOpenProject, onClose: onCloseProject, onOpen: onOpenProject } = useDisclosure()
   const { isOpen: isOpenEdit, onClose: onCloseEdit, onOpen: onOpenEdit } = useDisclosure()
   const { isOpen: isOpenView, onClose: onCloseView, onOpen: onOpenView } = useDisclosure()
+  const { isOpen: isOpenUpgradeUser, onOpen: onOpenUpgradeUser, onClose: onCloseUpgradeUser } = useDisclosure()
   const [state, setState] = useState<boolean>(false)
   const dispatch = useAppDispatch()
   const editor = useEditor()
@@ -427,6 +442,7 @@ function FileMenu() {
   const { setNamesPages, setInputActive } = useDesignEditorContext()
   const initialFocusRef = React.useRef()
   const inputFileRef = React.useRef<HTMLInputElement>(null)
+  const [typeModal, setTypeModal] = useState<string>("")
 
   useEffect(() => {
     onCloseEdit()
@@ -466,9 +482,14 @@ function FileMenu() {
   }
 
   const handleExport = useCallback(() => {
-    if (design) {
-      const data = design.toJSON()
-      makeDownload(data)
+    if (user?.plan !== "FREE") {
+      if (design) {
+        const data = design.toJSON()
+        makeDownload(data)
+      }
+    } else {
+      setTypeModal("Export")
+      onOpenUpgradeUser()
     }
   }, [design, makeDownload])
 
@@ -482,16 +503,26 @@ function FileMenu() {
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files![0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (res) => {
-        const result = res.target!.result as string
-        const design = JSON.parse(result)
-        handleImportDesign(design)
-      }
-      reader.onerror = (err) => {}
+    if (file?.name?.includes(".drawify")) {
+      if (file) {
+        const reader = new FileReader()
+        reader.onload = (res) => {
+          const result = res.target!.result as string
+          const design = JSON.parse(result)
+          handleImportDesign(design)
+        }
+        reader.onerror = (err) => {}
 
-      reader.readAsText(file)
+        reader.readAsText(file)
+      }
+    } else {
+      toast({
+        title: "Only Drawify formats are allowed",
+        status: "error",
+        position: "top",
+        duration: 3000,
+        isClosable: true
+      })
     }
   }
 
@@ -503,7 +534,12 @@ function FileMenu() {
   )
 
   const handleInputFileRefClick = () => {
-    inputFileRef.current?.click()
+    if (user?.plan !== "FREE") {
+      inputFileRef.current?.click()
+    } else {
+      setTypeModal("Import")
+      onOpenUpgradeUser()
+    }
   }
 
   return (
@@ -526,6 +562,12 @@ function FileMenu() {
       </PopoverTrigger>
       {/* @ts-ignore */}
       <PopoverContent ref={initialFocusRef} w="250px" fontSize={"14px"} padding={"0.5rem"}>
+        <ModalUpgradePlan
+          type={typeModal}
+          isOpen={isOpenUpgradeUser}
+          onClose={onCloseUpgradeUser}
+          onOpen={onOpenUpgradeUser}
+        />
         <PopoverArrow />
         {/* <MenuOption>
           <Flex
