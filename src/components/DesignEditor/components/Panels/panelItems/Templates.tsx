@@ -353,10 +353,10 @@ export default function Template() {
             <Flex w="full">
               <Image w="70%" src={loadTemplate?.designData?.preview} />
               <Flex w="full" flexDir="column" gap="15px">
-                <Flex align="center" gap="10px">
+                {/* <Flex align="center" gap="10px">
                   <Avatar src={loadTemplate?.template?.user?.avatar} name={loadTemplate?.template?.user?.name} />
                   <Flex fontWeight="bold">{loadTemplate?.template?.user?.name}</Flex>
-                </Flex>
+                </Flex> */}
                 <Flex fontWeight="bold" fontSize="23px">
                   {loadTemplate?.designData?.name}
                 </Flex>
