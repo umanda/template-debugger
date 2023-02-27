@@ -50,6 +50,7 @@ import NotSync from "../../../Icons/NotSync"
 import Linkedin from "../../../Icons/Linkedin"
 import Share from "../../../Icons/Share"
 import ModalUpgradePlan from "../../../Modals/UpgradePlan"
+import useResourcesContext from "../../../hooks/useResourcesContext"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 
@@ -426,6 +427,7 @@ function ShareMenu() {
 
 function FileMenu() {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { setLoadCanva } = useResourcesContext()
   const { isOpen: isOpenProject, onClose: onCloseProject, onOpen: onOpenProject } = useDisclosure()
   const { isOpen: isOpenEdit, onClose: onCloseEdit, onOpen: onOpenEdit } = useDisclosure()
   const { isOpen: isOpenView, onClose: onCloseView, onOpen: onOpenView } = useDisclosure()
@@ -443,6 +445,8 @@ function FileMenu() {
   const initialFocusRef = React.useRef()
   const inputFileRef = React.useRef<HTMLInputElement>(null)
   const [typeModal, setTypeModal] = useState<string>("")
+  const projectSelect = useSelector(selectProject)
+  const { id } = useParams()
 
   useEffect(() => {
     onCloseEdit()
@@ -474,18 +478,35 @@ function FileMenu() {
   }
 
   const makeDownload = (data: any) => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data))
+    const dataStr = "data:text/json;charset=utf-8," + data
     const a = document.createElement("a")
     a.href = dataStr
-    a.download = `${data.name}.drawify`
+    a.download = `${projectSelect.name}.drawify`
     a.click()
   }
 
-  const handleExport = useCallback(() => {
+  const handleExport = useCallback(async () => {
     if (user?.plan !== "FREE") {
-      if (design) {
-        const data = design.toJSON()
-        makeDownload(data)
+      try {
+        toast({
+          title: "Exporting project.",
+          status: "info",
+          position: "top",
+          duration: 3000,
+          isClosable: true
+        })
+        if (design) {
+          const data = await api.getExportProjectJSON(projectSelect.id)
+          makeDownload(data.body)
+        }
+      } catch {
+        toast({
+          title: "There was an error exporting the project, please try again later.",
+          status: "error",
+          position: "top",
+          duration: 3000,
+          isClosable: true
+        })
       }
     } else {
       setTypeModal("Export")
@@ -502,14 +523,14 @@ function FileMenu() {
   }, [design, scenes, navigate, editor])
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoadCanva(false)
     const file = e.target.files![0]
     if (file?.name?.includes(".drawify")) {
       if (file) {
         const reader = new FileReader()
         reader.onload = (res) => {
           const result = res.target!.result as string
-          const design = JSON.parse(result)
-          handleImportDesign(design)
+          handleImportDesign(result)
         }
         reader.onerror = (err) => {}
 
@@ -527,8 +548,29 @@ function FileMenu() {
   }
 
   const handleImportDesign = React.useCallback(
-    async (data: IDesign) => {
-      editor?.design.setDesign(data)
+    async (data: string) => {
+      try {
+        toast({
+          title: "Loading project.",
+          status: "info",
+          position: "top",
+          duration: 3000,
+          isClosable: true
+        })
+        const props = { key: id, data: data }
+        const resolve: any = await api.makeImportProject(props)
+        await editor?.design.setDesign(resolve.project)
+        setLoadCanva(true)
+      } catch {
+        setLoadCanva(true)
+        toast({
+          title: "Error loading project, please try again later.",
+          status: "error",
+          position: "top",
+          duration: 3000,
+          isClosable: true
+        })
+      }
     },
     [editor]
   )

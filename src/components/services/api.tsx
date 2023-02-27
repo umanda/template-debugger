@@ -349,7 +349,29 @@ export const deleteProject = (props: any) => {
 export const getExportProject = (props: any): Promise<{ url: string }> => {
   return new Promise((resolve, reject) => {
     base
-      .post("/projects/export", props)
+      .post("/projects/export-preview", props)
+      .then(({ data }) => {
+        resolve(data)
+      })
+      .catch((err) => reject(err))
+  })
+}
+
+export const getExportProjectJSON = (id: string): Promise<{ body: string; is_generated: boolean }> => {
+  return new Promise((resolve, reject) => {
+    base
+      .post(`/projects/${id}/export-json`)
+      .then(({ data }) => {
+        resolve(data.project)
+      })
+      .catch((err) => reject(err))
+  })
+}
+
+export const makeImportProject = (props: { key: string; data: string }): Promise<IDesign> => {
+  return new Promise((resolve, reject) => {
+    base
+      .post(`/projects/import-json`, props)
       .then(({ data }) => {
         resolve(data)
       })
@@ -360,7 +382,7 @@ export const getExportProject = (props: any): Promise<{ url: string }> => {
 export const makeExportProjectNoLogin = (props: IExportProjectNoLogin): Promise<{ url: string }> => {
   return new Promise((resolve, reject) => {
     base
-      .post("/projects/download", props)
+      .post("/projects/import-json", props)
       .then(({ data }) => {
         resolve(data)
       })
