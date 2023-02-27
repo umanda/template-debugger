@@ -59,7 +59,7 @@ import LazyLoadImage from "../../../../utils/LazyLoadImage"
 import { selectProject } from "../../../../store/project/selector"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
 import NoTemplateImage from "../../../../../images/no-templates-to-display.svg"
-import { loadFonts } from "../../../../utils/fonts"
+import { loadFonts, loadGraphicTemplate, loadTemplateFonts } from "../../../../utils/fonts"
 import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
@@ -265,23 +265,14 @@ export default function Template() {
   const handleCustomize = useCallback(async () => {
     onCloseLoadTemplate()
     setLoadCanva(false)
-    setPreviewCanva(loadTemplate?.template?.preview)
-    let fonts: { name: string; url: string }[] = []
-    loadTemplate?.designData?.scenes[0]?.layers.map((l) => {
-      const name = l.fontFamily
-      const url = l.fontURL
-      name && url ? fonts.push({ name, url }) : null
-    })
-    fonts.map(async (f) => {
-      await loadFonts([f])
-    })
+    await loadGraphicTemplate(loadTemplate?.designData)
     await activeScene.setScene(loadTemplate?.designData.scenes[0])
     setPreviewCanva(null)
     setLoadCanva(true)
     if (user && projectSelector) {
       api.getUseTemplate({ project_id: projectSelector.id, template_id: loadTemplate?.template.id })
     }
-  }, [loadTemplate, projectSelector, user])
+  }, [loadTemplate, projectSelector, user, activeScene])
 
   const makeChangeInput = useCallback(async (valueInput: string) => {
     setNameTemplatePrev([valueInput])

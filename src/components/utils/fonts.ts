@@ -1,3 +1,5 @@
+import { IScene, ILayer, IStaticText, IDesign } from "@layerhub-pro/types"
+
 export const loadFonts = (fonts: { name: string; url: string }[]) => {
   const promisesList = fonts.map((font) => {
     return new FontFace(font.name!, `url(${font.url})`).load().catch((err) => err)
@@ -12,8 +14,46 @@ export const loadFonts = (fonts: { name: string; url: string }[]) => {
           }
         })
       })
-      .catch((err) => {
-        reject(err)
-      })
+      .catch((err) => reject(err))
   })
+}
+
+const getFontsFromObjects = (objects: Partial<ILayer>[]) => {
+  let fonts: any[] = []
+  for (const object of objects) {
+    if (object.type === "StaticText" || object.type === "DynamicText") {
+      fonts.push({
+        name: (object as Required<IStaticText>).fontFamily,
+        url: (object as Required<IStaticText>).fontURL
+      })
+    }
+    if (object.type === "Group" || object.type === "group") {
+      // @ts-ignore
+      let groupFonts = getFontsFromObjects(object.objects)
+
+      fonts = fonts.concat(groupFonts)
+    }
+  }
+  return fonts
+}
+
+export const loadTemplateFonts = async (design: IScene) => {
+  const fonts = getFontsFromObjects(design.layers)
+  if (fonts.length > 0) {
+    await loadFonts(fonts)
+  }
+}
+
+export const loadGraphicTemplate = async (payload: IDesign): Promise<void> => {
+  const { scenes } = payload
+  for (const scn of scenes) {
+    const scene: IScene = {
+      name: scn.name,
+      frame: payload.frame,
+      id: scn.id,
+      layers: scn.layers,
+      metadata: {}
+    }
+    await loadTemplateFonts(scene)
+  }
 }
