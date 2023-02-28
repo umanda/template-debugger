@@ -910,6 +910,14 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject?.top + 30 }, activeObject?.id)
       return false
     }
+    if (e.ctrlKey && e.key === "c") {
+      if (activeObject) activeScene.objects.copy()
+      return true
+    }
+    if (e.ctrlKey && e.key === "v") {
+      if (activeObject) activeScene.objects.paste()
+      return true
+    }
     if (
       e.ctrlKey &&
       (e.key === "u" ||
@@ -936,7 +944,13 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       if (e.ctrlKey && e.keyCode === 90) activeScene.history.undo()
       if (e.ctrlKey && e.keyCode === 89) activeScene.history.redo()
       return false
-    } else return true
+    }
+    // else if (e.ctrlKey &&
+    //     (e.key === "c" ||
+    //     e.key === "v")){
+    //       if()
+    //     }
+    else return true
   }
 
   useEffect(() => {
