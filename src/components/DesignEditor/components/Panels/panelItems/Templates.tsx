@@ -104,6 +104,7 @@ export default function Template() {
   const [loadTemplate, setLoadTemplate] = useState<any>()
   const activeScene = useActiveScene()
   const projectSelector = useSelector(selectProject)
+  const [loadModal, setLoadModal] = useState<boolean>(false)
   const toast = useToast()
 
   useEffect(() => {
@@ -196,6 +197,8 @@ export default function Template() {
   const loadTemplateById = React.useCallback(
     async (template: any) => {
       try {
+        setLoadModal(false)
+        onOpenLoadTemplate()
         if (user?.plan !== "FREE" || template.license !== "paid") {
           let designData: any = await api.getTemplateById(template.id)
           designData.frame.height = Number(designData.frame.height)
@@ -208,13 +211,13 @@ export default function Template() {
             }
           })
           setLoadTemplate({ designData, template })
-          onOpenLoadTemplate()
-          // }
+          setLoadModal(true)
         } else {
           onOpenUpgradeUser()
         }
       } catch (err) {
-        setLoadCanva(true)
+        onCloseUpgradeUser()
+        onCloseLoadTemplate()
       }
     },
     [design, activeScene, projectSelector, user, toast]
@@ -338,26 +341,34 @@ export default function Template() {
       <Modal size="4xl" isCentered onClose={onCloseLoadTemplate} isOpen={isOpenLoadTemplate}>
         <ModalOverlay />
         <ModalContent display="flex">
-          <ModalHeader>OPEN A NEW TEMPLATE</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody display="flex">
-            <Flex w="full">
-              <Image w="70%" src={loadTemplate?.designData?.preview} />
-              <Flex w="full" flexDir="column" gap="15px">
-                <Flex align="center" gap="10px">
-                  <Avatar src={loadTemplate?.template?.user?.avatar} name={loadTemplate?.template?.user?.name} />
-                  <Flex fontWeight="bold">{loadTemplate?.template?.user?.name}</Flex>
+          {loadModal ? (
+            <>
+              <ModalHeader>OPEN A NEW TEMPLATE</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody display="flex" marginBottom="10px">
+                <Flex w="full" gap="20px">
+                  <LazyLoadImage url={loadTemplate?.designData?.preview} />
+                  <Flex w="full" flexDir="column" gap="15px">
+                    <Flex align="center" gap="10px">
+                      <Avatar src={loadTemplate?.template?.user?.avatar} name={loadTemplate?.template?.user?.name} />
+                      <Flex fontWeight="bold">{loadTemplate?.template?.user?.name}</Flex>
+                    </Flex>
+                    <Flex fontWeight="bold" fontSize="23px">
+                      {loadTemplate?.designData?.name}
+                    </Flex>
+                    <Flex>{loadTemplate?.designData?.description}</Flex>
+                    <Button w="min-content" colorScheme="brand" onClick={handleCustomize}>
+                      Customize this template
+                    </Button>
+                  </Flex>
                 </Flex>
-                <Flex fontWeight="bold" fontSize="23px">
-                  {loadTemplate?.designData?.name}
-                </Flex>
-                <Flex>{loadTemplate?.designData?.description}</Flex>
-                <Button colorScheme={"brand"} onClick={handleCustomize}>
-                  Customize this template
-                </Button>
-              </Flex>
+              </ModalBody>
+            </>
+          ) : (
+            <Flex h="20vh" w="full" align="center" justify="center">
+              <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
             </Flex>
-          </ModalBody>
+          )}
         </ModalContent>
       </Modal>
       <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
