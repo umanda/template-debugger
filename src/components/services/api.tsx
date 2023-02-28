@@ -187,20 +187,6 @@ export const getDeleteComment = (props: string): Promise<any> => {
   })
 }
 
-export const listFonts = (props: any): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    base
-      .post("/fonts/search", props)
-      .then(({ data }) => {
-        const response = data
-        resolve(response)
-      })
-      .catch((err: any) => {
-        null
-      })
-  })
-}
-
 export const createResourceComposite = (props: ICreateComponent): Promise<any> => {
   return new Promise((resolve, reject) => {
     base
@@ -264,7 +250,11 @@ export const getFonts = (): Promise<IFont[]> => {
 export const getListUseFonts = (): Promise<IFont[]> => {
   return new Promise((resolve, reject) => {
     base
-      .get("/fonts/used")
+      .post("/fonts/search", {
+        query: {
+          used: true
+        }
+      })
       .then(({ data }) => {
         resolve(data.fonts)
       })

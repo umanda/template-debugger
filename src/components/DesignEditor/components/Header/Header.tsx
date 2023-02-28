@@ -178,7 +178,8 @@ function ShareMenu() {
   const [typeSign, setTypeSign] = useState("signin")
   const currentScene = useActiveScene()
   const projectSelect = useSelector(selectProject)
-  const { namesPages } = useDesignEditorContext()
+  const { namesPages, setInputActive } = useDesignEditorContext()
+  const [email, setEmail] = useState<{ text: string; state: boolean }>({ text: "", state: true })
   const [typeModal, setTypeModal] = useState<string>("")
 
   // const functionSave = useCallback(async () => {
@@ -287,6 +288,51 @@ function ShareMenu() {
     },
     [activeScene, namesPages, id]
   )
+
+  const makeChangeEmail = useCallback(
+    async (e: string) => {
+      const validEmail = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/
+      if (validEmail.test(e)) {
+        setEmail({ ...email, text: e, state: false })
+      } else {
+        setEmail({ ...email, text: e, state: true })
+      }
+    },
+    [email]
+  )
+
+  const sendEmail = useCallback(async () => {
+    try {
+      toast({
+        title: "Please wait the mail is being sent.",
+        status: "loading",
+        position: "top",
+        duration: 3000,
+        isClosable: true
+      })
+      await api.getShareTemplate({
+        type: "EMAIL",
+        image: projectSelect.scenes.find((e) => e.id === currentScene.id).preview,
+        email: email.text
+      })
+      toast({
+        title: "Email sent successfully.",
+        status: "success",
+        position: "top",
+        duration: 3000,
+        isClosable: true
+      })
+      setEmail({ text: "", state: false })
+    } catch {
+      toast({
+        title: "Email sending failed, please check email address and try again.",
+        status: "error",
+        position: "top",
+        duration: 3000,
+        isClosable: true
+      })
+    }
+  }, [email])
 
   const makeMagicLink = useCallback(async () => {
     try {
@@ -398,6 +444,20 @@ function ShareMenu() {
                 icon={<Facebook size={20} />}
               />
             </Center>
+          </Box>
+          <Box>
+            <Box color="#A9A9B2">INVITE</Box>
+            <Flex>
+              <Input
+                onFocus={() => setInputActive(true)}
+                value={email.text}
+                onBlur={() => setInputActive(false)}
+                onChange={(e) => makeChangeEmail(e.target.value)}
+              />
+              <Button onClick={sendEmail} isDisabled={email.state} variant="outline">
+                Invite
+              </Button>
+            </Flex>
           </Box>
           {/* <Box>
             <Box color="#A9A9B2">MAGIC LINK</Box>
