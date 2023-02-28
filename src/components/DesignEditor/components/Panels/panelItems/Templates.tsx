@@ -268,6 +268,7 @@ export default function Template() {
   const handleCustomize = useCallback(async () => {
     onCloseLoadTemplate()
     setLoadCanva(false)
+    setPreviewCanva(loadTemplate?.designData?.preview)
     await loadGraphicTemplate(loadTemplate?.designData)
     await activeScene.setScene(loadTemplate?.designData.scenes[0])
     setPreviewCanva(null)
