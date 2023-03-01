@@ -333,8 +333,6 @@ export default function Template() {
     onCloseInput()
   }, [])
 
-  console.log(resourcesTemplate)
-
   return (
     <Box h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" display="flex" flexDirection="column">
       <ModalUpgradePlan
@@ -518,7 +516,6 @@ export default function Template() {
                 <Flex flexDir="column">
                   <Box display="grid" gridTemplateColumns="1fr" padding="0.5rem">
                     {resourcesTemplate.map((template: any, index) => {
-                      console.log(template)
                       return (
                         <Box
                           paddingTop={"5px"}
