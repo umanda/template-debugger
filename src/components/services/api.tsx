@@ -187,20 +187,6 @@ export const getDeleteComment = (props: string): Promise<any> => {
   })
 }
 
-export const listFonts = (props: any): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    base
-      .post("/fonts/search", props)
-      .then(({ data }) => {
-        const response = data
-        resolve(response)
-      })
-      .catch((err: any) => {
-        null
-      })
-  })
-}
-
 export const createResourceComposite = (props: ICreateComponent): Promise<any> => {
   return new Promise((resolve, reject) => {
     base
@@ -264,7 +250,11 @@ export const getFonts = (): Promise<IFont[]> => {
 export const getListUseFonts = (): Promise<IFont[]> => {
   return new Promise((resolve, reject) => {
     base
-      .get("/fonts/used")
+      .post("/fonts/search", {
+        query: {
+          used: true
+        }
+      })
       .then(({ data }) => {
         resolve(data.fonts)
       })
@@ -349,7 +339,29 @@ export const deleteProject = (props: any) => {
 export const getExportProject = (props: any): Promise<{ url: string }> => {
   return new Promise((resolve, reject) => {
     base
-      .post("/projects/export", props)
+      .post("/projects/export-preview", props)
+      .then(({ data }) => {
+        resolve(data)
+      })
+      .catch((err) => reject(err))
+  })
+}
+
+export const getExportProjectJSON = (id: string): Promise<{ body: string; is_generated: boolean }> => {
+  return new Promise((resolve, reject) => {
+    base
+      .post(`/projects/${id}/export-json`)
+      .then(({ data }) => {
+        resolve(data.project)
+      })
+      .catch((err) => reject(err))
+  })
+}
+
+export const makeImportProject = (props: { key: string; data: string }): Promise<IDesign> => {
+  return new Promise((resolve, reject) => {
+    base
+      .post(`/projects/import-json`, props)
       .then(({ data }) => {
         resolve(data)
       })
@@ -360,7 +372,7 @@ export const getExportProject = (props: any): Promise<{ url: string }> => {
 export const makeExportProjectNoLogin = (props: IExportProjectNoLogin): Promise<{ url: string }> => {
   return new Promise((resolve, reject) => {
     base
-      .post("/projects/download", props)
+      .post("/projects/import-json", props)
       .then(({ data }) => {
         resolve(data)
       })

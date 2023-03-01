@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react"
 import {
-  Button,
   Flex,
   Slider,
   SliderFilledTrack,
@@ -10,12 +9,10 @@ import {
   Tabs,
   TabList,
   Tab,
-  Portal,
   Input,
   useDisclosure,
   Center
 } from "@chakra-ui/react"
-import { Popover, PopoverTrigger, PopoverContent, PopoverArrow } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useEditor, useScenes } from "@layerhub-pro/react"
 import { useSelector } from "react-redux"
 import { useAppDispatch } from "../../../../store/store"
@@ -25,10 +22,8 @@ import { loadFonts } from "../../../../utils/fonts"
 import Down from "../../../../Icons/Down"
 import Scrollable from "../../../../utils/Scrollable"
 import InfiniteScroll from "../../../../utils/InfiniteScroll"
-import MenuOption from "../../../../utils/MenuOption"
 import { getCategoryFonts, getListUseFonts, getUseFont } from "../../../../store/fonts/action"
 import { selectCategoryFonts, selectFonts, selectListUseFonts } from "../../../../store/fonts/selector"
-import { ILayer } from "@layerhub-pro/types"
 import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
 import { getTextProperties } from "../../../../utils/text"
 
@@ -42,7 +37,6 @@ export default function FontSelector() {
   const { isOpen: isOpenLanguage, onOpen: onOpenLanguage, onClose: onCloseLanguage } = useDisclosure()
   const { isOpen: isOpenStyle, onOpen: onOpenStyle, onClose: onCloseStyle } = useDisclosure()
   const fonts = useSelector(selectFonts)
-  const [currentFonts, setCurrentFonts] = useState<IFont[]>(fonts)
   const [commonFonts, setCommonFonts] = React.useState<any[]>([])
   const listUseFonts = useSelector(selectListUseFonts)
   const [content, setContent] = React.useState<string>("")
@@ -65,7 +59,7 @@ export default function FontSelector() {
 
   useEffect(() => {
     initialState()
-  }, [style, currentFonts, language])
+  }, [style, language])
 
   const initialState = async () => {
     setContent("")
@@ -73,30 +67,14 @@ export default function FontSelector() {
       await dispatch(getCategoryFonts())
     }
     setCommonFonts(fonts)
-    // setCommonFonts(
-    //   currentFonts.filter((e) => {
-    //     if (e.category === style.toLowerCase() && e.language === language.toLowerCase()) {
-    //       return e
-    //     }
-    //   })
-    // )
-    // currentFonts.filter((e) => {
-    //   if (e.category === style.toLowerCase() && e.language === language.toLowerCase()) {
-    //     return e
-    //   }
-    // })[0] === undefined && setContent("There are no resources.")
   }
 
   const makeFilter = async ({ recent, all }: { recent?: boolean; all?: boolean }) => {
     if (recent) {
-      if (listUseFonts[0] === undefined) {
-        const resolve = (await (await dispatch(getListUseFonts())).payload) as any[]
-        setCurrentFonts(resolve)
-      } else {
-        setCurrentFonts(listUseFonts)
-      }
+      const resolve = (await (await dispatch(getListUseFonts())).payload) as any[]
+      setCommonFonts(resolve)
     } else if (all) {
-      setCurrentFonts(fonts)
+      setCommonFonts(fonts)
     }
   }
 

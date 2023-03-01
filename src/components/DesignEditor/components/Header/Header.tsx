@@ -50,6 +50,7 @@ import NotSync from "../../../Icons/NotSync"
 import Linkedin from "../../../Icons/Linkedin"
 import Share from "../../../Icons/Share"
 import ModalUpgradePlan from "../../../Modals/UpgradePlan"
+import useResourcesContext from "../../../hooks/useResourcesContext"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 
@@ -177,7 +178,8 @@ function ShareMenu() {
   const [typeSign, setTypeSign] = useState("signin")
   const currentScene = useActiveScene()
   const projectSelect = useSelector(selectProject)
-  const { namesPages } = useDesignEditorContext()
+  const { namesPages, setInputActive } = useDesignEditorContext()
+  const [email, setEmail] = useState<{ text: string; state: boolean }>({ text: "", state: true })
   const [typeModal, setTypeModal] = useState<string>("")
 
   // const functionSave = useCallback(async () => {
@@ -286,6 +288,51 @@ function ShareMenu() {
     },
     [activeScene, namesPages, id]
   )
+
+  const makeChangeEmail = useCallback(
+    async (e: string) => {
+      const validEmail = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/
+      if (validEmail.test(e)) {
+        setEmail({ ...email, text: e, state: false })
+      } else {
+        setEmail({ ...email, text: e, state: true })
+      }
+    },
+    [email]
+  )
+
+  const sendEmail = useCallback(async () => {
+    try {
+      toast({
+        title: "Please wait the mail is being sent.",
+        status: "loading",
+        position: "top",
+        duration: 3000,
+        isClosable: true
+      })
+      await api.getShareTemplate({
+        type: "EMAIL",
+        image: projectSelect.scenes.find((e) => e.id === currentScene.id).preview,
+        email: email.text
+      })
+      toast({
+        title: "Email sent successfully.",
+        status: "success",
+        position: "top",
+        duration: 3000,
+        isClosable: true
+      })
+      setEmail({ text: "", state: false })
+    } catch {
+      toast({
+        title: "Email sending failed, please check email address and try again.",
+        status: "error",
+        position: "top",
+        duration: 3000,
+        isClosable: true
+      })
+    }
+  }, [email])
 
   const makeMagicLink = useCallback(async () => {
     try {
@@ -398,6 +445,20 @@ function ShareMenu() {
               />
             </Center>
           </Box>
+          <Box>
+            <Box color="#A9A9B2">INVITE</Box>
+            <Flex>
+              <Input
+                onFocus={() => setInputActive(true)}
+                value={email.text}
+                onBlur={() => setInputActive(false)}
+                onChange={(e) => makeChangeEmail(e.target.value)}
+              />
+              <Button onClick={sendEmail} isDisabled={email.state} variant="outline">
+                Invite
+              </Button>
+            </Flex>
+          </Box>
           {/* <Box>
             <Box color="#A9A9B2">MAGIC LINK</Box>
             <Flex sx={{ paddingY: "0.5rem" }}>
@@ -426,6 +487,7 @@ function ShareMenu() {
 
 function FileMenu() {
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { setLoadCanva } = useResourcesContext()
   const { isOpen: isOpenProject, onClose: onCloseProject, onOpen: onOpenProject } = useDisclosure()
   const { isOpen: isOpenEdit, onClose: onCloseEdit, onOpen: onOpenEdit } = useDisclosure()
   const { isOpen: isOpenView, onClose: onCloseView, onOpen: onOpenView } = useDisclosure()
@@ -443,6 +505,8 @@ function FileMenu() {
   const initialFocusRef = React.useRef()
   const inputFileRef = React.useRef<HTMLInputElement>(null)
   const [typeModal, setTypeModal] = useState<string>("")
+  const projectSelect = useSelector(selectProject)
+  const { id } = useParams()
 
   useEffect(() => {
     onCloseEdit()
@@ -474,18 +538,35 @@ function FileMenu() {
   }
 
   const makeDownload = (data: any) => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data))
+    const dataStr = "data:text/json;charset=utf-8," + data
     const a = document.createElement("a")
     a.href = dataStr
-    a.download = `${data.name}.drawify`
+    a.download = `${projectSelect.name}.drawify`
     a.click()
   }
 
-  const handleExport = useCallback(() => {
+  const handleExport = useCallback(async () => {
     if (user?.plan !== "FREE") {
-      if (design) {
-        const data = design.toJSON()
-        makeDownload(data)
+      try {
+        toast({
+          title: "Exporting project.",
+          status: "info",
+          position: "top",
+          duration: 3000,
+          isClosable: true
+        })
+        if (design) {
+          const data = await api.getExportProjectJSON(projectSelect.id)
+          makeDownload(data.body)
+        }
+      } catch {
+        toast({
+          title: "There was an error exporting the project, please try again later.",
+          status: "error",
+          position: "top",
+          duration: 3000,
+          isClosable: true
+        })
       }
     } else {
       setTypeModal("Export")
@@ -502,14 +583,14 @@ function FileMenu() {
   }, [design, scenes, navigate, editor])
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoadCanva(false)
     const file = e.target.files![0]
     if (file?.name?.includes(".drawify")) {
       if (file) {
         const reader = new FileReader()
         reader.onload = (res) => {
           const result = res.target!.result as string
-          const design = JSON.parse(result)
-          handleImportDesign(design)
+          handleImportDesign(result)
         }
         reader.onerror = (err) => {}
 
@@ -527,8 +608,29 @@ function FileMenu() {
   }
 
   const handleImportDesign = React.useCallback(
-    async (data: IDesign) => {
-      editor?.design.setDesign(data)
+    async (data: string) => {
+      try {
+        toast({
+          title: "Loading project.",
+          status: "info",
+          position: "top",
+          duration: 3000,
+          isClosable: true
+        })
+        const props = { key: id, data: data }
+        const resolve: any = await api.makeImportProject(props)
+        await editor?.design.setDesign(resolve.project)
+        setLoadCanva(true)
+      } catch {
+        setLoadCanva(true)
+        toast({
+          title: "Error loading project, please try again later.",
+          status: "error",
+          position: "top",
+          duration: 3000,
+          isClosable: true
+        })
+      }
     },
     [editor]
   )
@@ -868,6 +970,14 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject?.top + 30 }, activeObject?.id)
       return false
     }
+    if (e.ctrlKey && e.key === "c") {
+      if (activeObject) activeScene.objects.copy()
+      return true
+    }
+    if (e.ctrlKey && e.key === "v") {
+      if (activeObject) activeScene.objects.paste()
+      return true
+    }
     if (
       e.ctrlKey &&
       (e.key === "u" ||
@@ -894,7 +1004,13 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       if (e.ctrlKey && e.keyCode === 90) activeScene.history.undo()
       if (e.ctrlKey && e.keyCode === 89) activeScene.history.redo()
       return false
-    } else return true
+    }
+    // else if (e.ctrlKey &&
+    //     (e.key === "c" ||
+    //     e.key === "v")){
+    //       if()
+    //     }
+    else return true
   }
 
   useEffect(() => {

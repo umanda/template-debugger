@@ -4,6 +4,7 @@ import {
   Image,
   Modal,
   ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -30,6 +31,7 @@ export default function ModalUpgradePlan({
     <Modal isCentered onClose={onClose} isOpen={isOpen} motionPreset="slideInBottom">
       <ModalOverlay />
       <ModalContent>
+        <ModalCloseButton />
         <ModalHeader>UPGRADE</ModalHeader>
         <ModalBody>
           <Flex flexDir="column">
