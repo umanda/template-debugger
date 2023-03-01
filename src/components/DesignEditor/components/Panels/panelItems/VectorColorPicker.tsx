@@ -184,8 +184,8 @@ export default function VectorColorPicker() {
       <Flex sx={{ fontSize: "12px" }} color="#A9A9B2">
         RECENT COLORS
       </Flex>
-      <Grid templateColumns="repeat(7, 44px)">
-        {recentColors?.map((color, index) => {
+      <Grid gridGap="8px" templateColumns="repeat(7, 1fr)">
+        {recentColors.map((color, index) => {
           return (
             <GridItem
               boxSize="34px"
