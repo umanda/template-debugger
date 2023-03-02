@@ -4,7 +4,6 @@ import { useActiveScene, useEditor, useScenes } from "@layerhub-pro/react"
 import SceneItem from "./SceneItem"
 import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
 import Plus from "../../../Icons/Plus"
-import { ScrollableHorizontal } from "../../../utils/Scrollable"
 import HorizontalScroll from "../../../utils/HorizontaScroll"
 
 export default function Scenes() {
@@ -31,7 +30,7 @@ export default function Scenes() {
   )
 
   return (
- <Flex w="78vw" gap="10px" padding="1rem 0" flexDirection="column">
+    <Flex w="78vw" gap="10px" padding="1rem 0" flexDirection="column">
       <HorizontalScroll scrolls={true}>
         {scenes.map((scene, index) => (
           <Flex key={index} onFocus={() => makeActiveScene(true)} onBlur={() => makeActiveScene(false)}>
