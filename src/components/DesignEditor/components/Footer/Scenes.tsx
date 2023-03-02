@@ -31,15 +31,32 @@ export default function Scenes() {
   return (
     <Flex
       sx={{
-        overflow: "hidden",
+        overflowX: "auto",
+        overflowY: "hidden",
         padding: "0.5rem",
         gap: "0.5rem",
         borderTop: "1px solid #DDDFE5",
-        position: "relative"
+        position: "relative",
+        flexWrap: "nowrap",
+        width: "100%",
+        '::-webkit-scrollbar': {
+          height: '4px',
+          
+        },
+        '::-webkit-scrollbar-track': {
+          height: '4px',
+        },
+        '::-webkit-scrollbar-thumb': {
+          background: "#DDDFE5",
+          borderRadius: '2px',
+        },
       }}
     >
       {scenes.map((scene, index) => (
-        <Flex key={index} position="relative">
+        <Flex key={index} position="relative"
+          sx={{
+            width: "70px",
+          }}>
           <SceneItem
             key={index}
             isCurrentScene={activeScene && activeScene.id === scene.id}
@@ -54,7 +71,7 @@ export default function Scenes() {
         sx={{
           cursor: "pointer",
           position: "relative",
-          border: "1px solid #DDDFE5",
+          border: "2px solid #DDDFE5",
           borderRadius: "4px",
           width: "74px",
           height: "74px",
@@ -63,7 +80,13 @@ export default function Scenes() {
         }}
         onClick={addScene}
       >
-        <Plus size={32} />
+        <Flex position="relative"
+          sx={{
+            width: "70px",
+            justifyContent : "center"
+          }}>
+          <Plus size={32} />
+        </Flex>
       </Flex>
     </Flex>
   )
