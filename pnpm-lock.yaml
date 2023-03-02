@@ -34,6 +34,7 @@ specifiers:
   react-beautiful-dnd: ^13.1.1
   react-colorful: ^5.5.1
   react-cropper: ^2.1.8
+  react-custom-scrollbars: ^4.2.1
   react-dom: ^18.2.0
   react-image-crop: ^10.0.6
   react-redux: ^8.0.2
@@ -72,6 +73,7 @@ dependencies:
   react-beautiful-dnd: 13.1.1_biqbaboplfbrettd7655fr4n2y
   react-colorful: 5.6.1_biqbaboplfbrettd7655fr4n2y
   react-cropper: 2.1.8_react@18.2.0
+  react-custom-scrollbars: 4.2.1_biqbaboplfbrettd7655fr4n2y
   react-dom: 18.2.0_react@18.2.0
   react-image-crop: 10.0.9_react@18.2.0
   react-redux: 8.0.5_sfvtgtw6zg4uu5uf4vg7hgzorm
@@ -3573,6 +3575,19 @@ packages:
     dependencies:
       cropperjs: 1.5.13
       react: 18.2.0
+    dev: false
+
+  /react-custom-scrollbars/4.2.1_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-VtJTUvZ7kPh/auZWIbBRceGPkE30XBYe+HktFxuMWBR2eVQQ+Ur6yFJMoaYcNpyGq22uYJ9Wx4UAEcC0K+LNPQ==}
+    peerDependencies:
+      react: ^0.14.0 || ^15.0.0 || ^16.0.0
+      react-dom: ^0.14.0 || ^15.0.0 || ^16.0.0
+    dependencies:
+      dom-css: 2.1.0
+      prop-types: 15.8.1
+      raf: 3.4.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /react-dom/18.2.0_react@18.2.0:

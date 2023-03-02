@@ -101,10 +101,10 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
   return (
     <Box ref={setNodeRef} key={`scene${index}`} position="relative" {...attributes} {...listeners} sx={style}>
       <Box
+        bottom="1vb"
         sx={{
           position: "absolute",
           fontSize: "13px",
-          bottom: "8px",
           right: "12px",
           zIndex: 100
         }}
@@ -113,7 +113,8 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
           ? index + 1
           : namesPages[index]?.substring(0, 4)}
       </Box>
-      <Box
+      <Flex
+        w="70px"
         sx={{
           cursor: "pointer",
           position: "relative",
@@ -135,7 +136,7 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
             height: "70px"
           }}
         />
-      </Box>
+      </Flex>
       <Box position="absolute" top="5px" right="8px">
         <Popover placement="top-start" isOpen={isOpen} onOpen={onOpen} onClose={onClose} initialFocusRef={inputRef}>
           <PopoverTrigger>
