@@ -65,6 +65,7 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    width : "70px",
     cursor: "pointer"
   }
 
