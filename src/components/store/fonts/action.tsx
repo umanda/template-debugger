@@ -25,14 +25,17 @@ export const getListUseFonts = createAsyncThunk<void, never, any>("fonts/getUseF
   }
 })
 
-export const getUseFont = createAsyncThunk<void, IFont, any>("fonts/getUseFont", async (font, { dispatch }) => {
-  try {
-    dispatch(setUseFont(font))
-    await api.getUseFont(font.id)
-  } catch (err) {
-    console.log(err)
+export const getUseFont = createAsyncThunk<void, IFont, any>(
+  "fonts/getUseFont",
+  async (font, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(setUseFont(font))
+      await api.getUseFont(font.id)
+    } catch (err) {
+      rejectWithValue(err)
+    }
   }
-})
+)
 
 export const getCategoryFonts = createAsyncThunk<void, never, any>("fonts/getUseFont", async (font, { dispatch }) => {
   try {
