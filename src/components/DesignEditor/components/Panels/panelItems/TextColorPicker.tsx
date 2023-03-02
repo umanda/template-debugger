@@ -120,7 +120,7 @@ export default function TextColorPicker() {
         </Popover>
       </Flex>
       <Flex sx={{ fontSize: "14px" }}>RECENT COLORS</Flex>
-      <Grid gap="8px" templateColumns="repeat(7, 1fr)">
+      <Grid gridGap="8px" templateColumns="repeat(7, 1fr)">
         {recentColors.map((color, index) => {
           return (
             <GridItem

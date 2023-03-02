@@ -321,7 +321,6 @@ export default function Layer() {
             aria-label="Remove Element"
             variant={"ghost"}
             icon={<Trash size={24} />}
-            color={"red"}
           />
         </Flex>
       </Flex>

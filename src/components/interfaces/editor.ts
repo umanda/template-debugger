@@ -182,6 +182,7 @@ export interface SearchTemplateDto {
     favorited?: boolean
     used?: boolean
     resource_ids?: string[]
+    plans?: string[]
   }
   sorts?: string[]
 }

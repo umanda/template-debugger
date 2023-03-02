@@ -1,3 +1,4 @@
+import { Flex } from "@chakra-ui/react"
 import React from "react"
 
 const makeScroll = (element: HTMLDivElement, speed: number, distance: number, step: number) => {
@@ -26,6 +27,7 @@ interface HorizontalScrollConfig {
 interface HorizontalScrollProps {
   children: React.ReactNode
   config?: Partial<HorizontalScrollConfig>
+  scrolls?: boolean
 }
 
 const RightControl = () => {
@@ -58,7 +60,8 @@ const LeftControl = () => {
   )
 }
 
-function HorizontalScroll({ children, config }: HorizontalScrollProps) {
+function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) {
+  const [stateScroll, setStateScroll] = React.useState<boolean>(false)
   const [state, setState] = React.useState({
     left: 0,
     requestScrollLeft: true,
@@ -68,7 +71,7 @@ function HorizontalScroll({ children, config }: HorizontalScrollProps) {
     speed: 10,
     baseWidth: 360
   })
-
+  const contentFlex = React.useRef<HTMLDivElement>(null)
   const contentWrapper = React.useRef<HTMLDivElement>(null)
 
   const handleScrollToLeft = async () => {
@@ -84,6 +87,10 @@ function HorizontalScroll({ children, config }: HorizontalScrollProps) {
         requestScrollLeft = false
       }
       if (contentWrapper.current.scrollLeft + state.baseWidth >= contentWrapper.current.scrollWidth) {
+        requestScrollRight = false
+      }
+      if (scrolls) {
+        requestScrollLeft = false
         requestScrollRight = false
       }
       setState({ ...state, requestScrollLeft, requestScrollRight })
@@ -106,10 +113,17 @@ function HorizontalScroll({ children, config }: HorizontalScrollProps) {
       })
       updateScroll()
     }
-  }, [contentWrapper, config, children])
+  }, [contentWrapper, config, children, stateScroll])
 
   return (
-    <div style={{ position: "relative", paddingBlock: "10px", paddingInline: "20px" }}>
+    <Flex
+      ref={contentFlex}
+      style={{
+        position: "relative",
+        paddingBlock: "10px",
+        paddingInline: "20px"
+      }}
+    >
       {state.requestScrollLeft && (
         <div
           onClick={handleScrollToLeft}
@@ -130,17 +144,29 @@ function HorizontalScroll({ children, config }: HorizontalScrollProps) {
           <LeftControl />
         </div>
       )}
-      <div
+      <Flex
+        w="full"
+        id="scrolling"
+        gap="1rem"
         ref={contentWrapper}
-        style={{
-          display: "flex",
-          overflow: "hidden",
-          width: "100%",
-          gap: "1rem"
+        overflow={scrolls ? "auto" : "hidden"}
+        onScroll={() => setStateScroll(!stateScroll)}
+        css={{
+          "&::-webkit-scrollbar": {
+            width: "4px",
+            height: "10px"
+          },
+          "&::-webkit-scrollbar-track": {
+            width: "6px"
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "#5456F5",
+            borderRadius: "24px"
+          }
         }}
       >
         {children}
-      </div>
+      </Flex>
       {state.requestScrollRight && (
         <div
           onClick={handleScrollToRight}
@@ -161,7 +187,7 @@ function HorizontalScroll({ children, config }: HorizontalScrollProps) {
           <RightControl />
         </div>
       )}
-    </div>
+    </Flex>
   )
 }
 

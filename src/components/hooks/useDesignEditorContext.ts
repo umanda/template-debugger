@@ -20,7 +20,9 @@ function useDesignEditorContext() {
     colors,
     setColors,
     inputActive,
-    setInputActive
+    setInputActive,
+    activeScene,
+    setActiveScene
   } = useContext(DesignEditorContext)
   return {
     namesPages,
@@ -40,7 +42,9 @@ function useDesignEditorContext() {
     colors,
     setColors,
     inputActive,
-    setInputActive
+    setInputActive,
+    activeScene,
+    setActiveScene
   }
 }
 

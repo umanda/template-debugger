@@ -88,10 +88,10 @@ export default function Backogrund() {
         </Popover>
       </Flex>
       <Flex sx={{ fontSize: "14px" }}>RECENT COLORS</Flex>
-      <Grid gap="9px" templateColumns="repeat(7, 1fr)">
+      <Grid gridGap="8px" templateColumns="repeat(7, 1fr)">
         {recentColors.map((color, index) => {
           return (
-            <GridItem
+            <Flex
               boxSize="34px"
               borderRadius="4px"
               borderWidth="1px"
@@ -103,7 +103,7 @@ export default function Backogrund() {
                 setBackgroundColor(color)
               }}
               key={index}
-            ></GridItem>
+            ></Flex>
           )
         })}
       </Grid>
