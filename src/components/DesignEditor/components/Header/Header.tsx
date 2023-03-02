@@ -928,7 +928,7 @@ function UserMenu() {
 function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const design = useDesign()
   const { id } = useParams()
-  const { namesPages, inputActive } = useDesignEditorContext()
+  const { namesPages, inputActive, setActiveScene, activeScene: booleanScene } = useDesignEditorContext()
   const dispatch = useAppDispatch()
   const editor = useEditor()
   const activeScene = useActiveScene()
@@ -941,11 +941,14 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const activeObject: any = useActiveObject()
 
   document.onkeydown = function (e) {
-    if (e.key === "Delete" && inputActive === false) {
-      if (activeObject?.locked === false || activeObject?.locked === undefined)
+    if ((e.key === "Delete" || e.key === "Backspace") && inputActive === false) {
+      if (activeObject !== null && (activeObject?.locked === false || activeObject?.locked === undefined)) {
         activeObject?.type === "StaticText"
           ? activeObject?.isEditing !== true && activeScene.objects.remove()
           : activeScene.objects.remove()
+      } else if (booleanScene) {
+        design.deleteScene(currentScene.id)
+      }
       return true
     }
     if (e.key === "ArrowLeft" && inputActive === false) {

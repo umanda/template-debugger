@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { useDesign, useEditor, useFrame, useScenes } from "@layerhub-pro/react"
+import { useActiveScene, useDesign, useEditor, useFrame, useScenes } from "@layerhub-pro/react"
 import { useSelector } from "react-redux"
 import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
 import { selectUser } from "../../../store/user/selector"
@@ -33,15 +33,21 @@ interface Props {
 }
 
 export default function SceneItem({ index, isCurrentScene, preview, setActiveScene, scene }: Props) {
-  const { setNamesPages, namesPages, setInputActive } = useDesignEditorContext()
+  const {
+    setNamesPages,
+    namesPages,
+    setInputActive,
+    setActiveScene: makeActiveScene,
+    activeScene
+  } = useDesignEditorContext()
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: scene.id! })
   const { onOpen, onClose, isOpen } = useDisclosure()
+  const currentScene = useActiveScene()
   const [nameInput, setNameInput] = useState<string>("")
   const [disableDelete, setDisableDelete] = useState(false)
   const [viewInput, setViewInput] = useState<boolean>(false)
   const inputRef = React.useRef<any>()
   const editor = useEditor()
-  const user = useSelector(selectUser)
   //@ts-ignore
   const frame = useFrame()
   const design = useDesign()
@@ -94,12 +100,12 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
   )
 
   return (
-    <Box ref={setNodeRef} key={index} position="relative" {...attributes} {...listeners} sx={style}>
+    <Box ref={setNodeRef} key={`scene${index}`} position="relative" {...attributes} {...listeners} sx={style}>
       <Box
+        bottom="1vb"
         sx={{
           position: "absolute",
           fontSize: "13px",
-          bottom: "8px",
           right: "12px",
           zIndex: 100
         }}
@@ -108,11 +114,17 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
           ? index + 1
           : namesPages[index]?.substring(0, 4)}
       </Box>
-      <Box
+      <Flex
+        w="70px"
         sx={{
           cursor: "pointer",
           position: "relative",
-          border: isCurrentScene ? "2px solid #5456F5" : "2px solid #DDDFE5",
+          border:
+            activeScene && currentScene.id === scene.id
+              ? "2px solid #DD6B20"
+              : isCurrentScene
+              ? "2px solid #5456F5"
+              : "2px solid #DDDFE5",
           borderRadius: "4px"
         }}
         onClick={() => setActiveScene(scene.id)}
@@ -125,7 +137,7 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
             height: "70px"
           }}
         />
-      </Box>
+      </Flex>
       <Box position="absolute" top="5px" right="8px">
         <Popover placement="top-start" isOpen={isOpen} onOpen={onOpen} onClose={onClose} initialFocusRef={inputRef}>
           <PopoverTrigger>

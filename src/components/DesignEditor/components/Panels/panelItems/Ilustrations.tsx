@@ -234,7 +234,7 @@ export default function Ilustrations() {
           name: "Illustration",
           src: resource.url,
           erasable: false,
-          watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
+          watermark: resource.license === "paid" && user.plan === "FREE" ? watermarkURL : null
         }
         if (editor) {
           await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
@@ -357,7 +357,7 @@ export default function Ilustrations() {
   }, [])
 
   return (
-    <Box h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" display="flex" flexDirection="column">
+    <Flex h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" flexDirection="column">
       <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
         <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
           <HStack width={"100%"}>
@@ -435,7 +435,7 @@ export default function Ilustrations() {
           setPage={setPage}
         />
       </Flex>
-      <Box>
+      <Flex padding="1rem 0" flexDirection="column">
         <HorizontalScroll>
           {listRecommend.words.map((obj, index) => (
             <Box key={index}>
@@ -450,7 +450,7 @@ export default function Ilustrations() {
             </Box>
           ))}
         </HorizontalScroll>
-      </Box>
+      </Flex>
       <Box sx={{ padding: "0 1rem" }}>
         <Tabs size={"sm"}>
           <TabList>
@@ -589,7 +589,7 @@ export default function Ilustrations() {
           </Center>
         )}
       </Flex>
-    </Box>
+    </Flex>
   )
 }
 
@@ -635,7 +635,7 @@ function IllustrationItem({
               type: "StaticVector",
               name: "Illustration",
               erasable: false,
-              watermark: illustration.license === "paid" ? user.plan !== "HERO" && watermarkURL : null,
+              watermark: illustration.license === "paid" && user.plan === "FREE" ? watermarkURL : null,
               preview: illustration.url,
               src: illustration.url
             },

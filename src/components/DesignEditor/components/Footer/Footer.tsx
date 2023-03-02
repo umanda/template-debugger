@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react"
+import { Box, Flex } from "@chakra-ui/react"
 import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
 import ChevronDown from "../../../Icons/ChevronDown"
 import Common from "./Common"
@@ -33,7 +33,7 @@ export default function Footer() {
       )}
       <Box
         sx={{
-          height: isScenesVisible ? "104px" : "0px",
+          height: isScenesVisible ? "110px" : "0px",
           overflow: "hidden",
           transition: "height 0.15s ease"
         }}

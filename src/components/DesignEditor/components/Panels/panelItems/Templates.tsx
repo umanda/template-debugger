@@ -64,15 +64,6 @@ import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
-const initialQuery = {
-  page: 1,
-  limit: 10,
-  query: {
-    visibility: "public"
-  },
-  sorts: []
-}
-
 export default function Template() {
   const { setLoadCanva, setPreviewCanva } = useResourcesContext()
   const { setInputActive } = useDesignEditorContext()
@@ -106,6 +97,15 @@ export default function Template() {
   const projectSelector = useSelector(selectProject)
   const [loadModal, setLoadModal] = useState<boolean>(false)
   const toast = useToast()
+  const initialQuery = {
+    page: 1,
+    limit: 10,
+    query: {
+      plans: user.plan === "FREE" ? ["FREE"] : user.plan === "HERO" ? ["FREE", "HERO"] : undefined,
+      visibility: "public"
+    },
+    sorts: []
+  }
 
   useEffect(() => {
     initialState()
@@ -150,6 +150,7 @@ export default function Template() {
             page: resourcesTemplate.length / 10 + 1,
             limit: 10,
             query: {
+              plans: user.plan === "FREE" ? ["FREE"] : user.plan === "HERO" ? ["FREE", "HERO"] : undefined,
               visibility: "public"
             },
             sorts: []
@@ -166,6 +167,7 @@ export default function Template() {
           drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
           names: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
           visibility: "public",
+          plans: user.plan === "FREE" ? ["FREE"] : user.plan === "HERO" ? ["FREE", "HERO"] : undefined,
           favorited: stateFavorite ? true : undefined,
           used: stateRecent ? true : undefined
         },
@@ -540,7 +542,7 @@ export default function Template() {
                               {template.name}
                             </Text>
                             <Spacer />
-                            {template.license === "paid" && (
+                            {template.plan !== "FREE" && (
                               <Center bg="#F6D056" color="white" borderRadius="4px" boxSize="21px">
                                 <Pro size={20} />
                               </Center>

@@ -175,7 +175,6 @@ export default function Canva() {
         position="absolute"
         bottom="30px"
         left="20px"
-        bg="red"
         sx={{
           height: "50px",
           width: "50px",
