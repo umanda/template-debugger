@@ -584,7 +584,9 @@ export default function Template() {
               <img src={NoTemplateImage} />
             ) : stateRecent === true ? (
               <img src={NoTemplateImage} />
-            ) : null}
+            ) : (
+              <img src={NoTemplateImage} />
+            )}
             <p>{validateContent}</p>
           </Center>
         )}
