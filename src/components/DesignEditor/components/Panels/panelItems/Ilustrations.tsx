@@ -59,7 +59,6 @@ import { selectProject } from "../../../../store/project/selector"
 import NoIllustrationsImage from "../../../../../images/no-illustrations-to-display.svg"
 import NoRequestImage from "../../../../../images/NoRequestImage.png"
 import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
-import NoSearchFound from "../../../../Modals/NoSearchFound"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 const redirectPayments = import.meta.env.VITE_PAYMENTS
 
@@ -365,7 +364,6 @@ export default function Ilustrations() {
 
   return (
     <Flex h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" flexDirection="column">
-      <NoSearchFound isOpen={isOpenSearchFound} onClose={onCloseSearchFound} onOpen={onOpenSearchFound} />
       <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
         <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
           <HStack width={"100%"}>
