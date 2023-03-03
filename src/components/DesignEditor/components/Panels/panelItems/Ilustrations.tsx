@@ -224,7 +224,7 @@ export default function Ilustrations() {
         setResourcesIllustration(validateResources)
       }
       resolve[0] !== undefined ? setMore(true) : setMore(false)
-      resolve[9] === undefined && setMore(false)
+      resolve[9] === undefined && nameIllustration[0] === "" && setMore(false)
     }
     setLoadMoreResources(false)
     setLoad(true)
