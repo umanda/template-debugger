@@ -1,15 +1,4 @@
-import {
-  Button,
-  Flex,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Textarea
-} from "@chakra-ui/react"
+import { Modal, ModalBody, ModalContent, ModalOverlay } from "@chakra-ui/react"
 
 export default function NoInternet({ isOpen, onClose }: { isOpen: boolean; onOpen: () => void; onClose: () => void }) {
   return (
