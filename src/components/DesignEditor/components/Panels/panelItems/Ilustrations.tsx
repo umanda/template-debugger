@@ -26,7 +26,8 @@ import {
   Text,
   Tooltip,
   border,
-  useDisclosure
+  useDisclosure,
+  Textarea
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
@@ -56,8 +57,10 @@ import { selectResourceImages } from "../../../../store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "../../../../store/resources/action"
 import { selectProject } from "../../../../store/project/selector"
 import NoIllustrationsImage from "../../../../../images/no-illustrations-to-display.svg"
+import NoRequestImage from "../../../../../images/NoRequestImage.png"
 import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
+const redirectPayments = import.meta.env.VITE_PAYMENTS
 
 export const limitCharacters = (name: string) => {
   const newName = name?.substring(0, 15)
@@ -95,6 +98,7 @@ export default function Ilustrations() {
   const [order, setOrder] = useState<string[]>(["ALPHABETIC"])
   const user = useSelector(selectUser)
   const { isOpen: isOpenInput, onOpen: onOpenInput, onClose: onCloseInput } = useDisclosure()
+  const { isOpen: isOpenSearchFound, onOpen: onOpenSearchFound, onClose: onCloseSearchFound } = useDisclosure()
   const [resourcesIllustration, setResourcesIllustration] = useState<any[]>([])
   const [load, setLoad] = useState(false)
   const [more, setMore] = useState(true)
@@ -189,11 +193,12 @@ export default function Ilustrations() {
         )
       } catch {}
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
+        // stateFavorite !== true && stateRecent !== true && nameIllustration[0] !== "" && onOpenSearchFound()
         stateFavorite === true
           ? setValidateContent("No favorite illustrations to display")
           : stateRecent === true
           ? setValidateContent("No recent illustrations to display")
-          : setValidateContent("Nothing was found related to the filter entered")
+          : setValidateContent("noResult")
       } else {
         setValidateContent(null)
       }
@@ -219,7 +224,7 @@ export default function Ilustrations() {
         setResourcesIllustration(validateResources)
       }
       resolve[0] !== undefined ? setMore(true) : setMore(false)
-      resolve[9] === undefined && setMore(false)
+      resolve[9] === undefined && nameIllustration[0] === "" && setMore(false)
     }
     setLoadMoreResources(false)
     setLoad(true)
@@ -316,6 +321,7 @@ export default function Ilustrations() {
   }, [])
 
   const makeBlur = useCallback(() => {
+    setValidateContent(null)
     if (nameIllustrationPrev[0]?.length > 2) {
       nameIllustrationPrev[0] !== nameIllustration[0] && makeFilter({ input: nameIllustrationPrev })
       setDisableTab(false)
@@ -435,7 +441,7 @@ export default function Ilustrations() {
           setPage={setPage}
         />
       </Flex>
-      <Flex padding="1rem 0" flexDirection="column">
+      <Box>
         <HorizontalScroll>
           {listRecommend.words.map((obj, index) => (
             <Box key={index}>
@@ -450,7 +456,7 @@ export default function Ilustrations() {
             </Box>
           ))}
         </HorizontalScroll>
-      </Flex>
+      </Box>
       <Box sx={{ padding: "0 1rem" }}>
         <Tabs size={"sm"}>
           <TabList>
@@ -580,12 +586,60 @@ export default function Ilustrations() {
           </Scrollable>
         ) : (
           <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+            {stateFavorite !== true && stateRecent !== true && (
+              <Text fontSize="18px" fontWeight="700" color="#545465">
+                REQUEST A IMAGE
+              </Text>
+            )}
             {stateFavorite === true ? (
               <img src={NoIllustrationsImage} />
             ) : stateRecent === true ? (
               <img src={NoIllustrationsImage} />
-            ) : null}
-            <p>{validateContent}</p>
+            ) : (
+              user.plan !== "Hero" && <img src={NoRequestImage} />
+            )}
+            <Flex w="full" padding="10px">
+              {validateContent === "noResult" ? (
+                user.plan !== "HERO" ? (
+                  <Flex flexDir="column" gap="20px" align="center">
+                    <Text>Sorry! Your current plan does not support this feature.</Text>
+                    <Text>
+                      To send your request for an image, <u>upgrade to Drawify Hero.</u>
+                    </Text>
+                    <Button
+                      w="-webkit-fit-content"
+                      onClick={() => (window.location.href = redirectPayments)}
+                      colorScheme={"brand"}
+                    >
+                      Upgrade
+                    </Button>
+                  </Flex>
+                ) : (
+                  <Flex flexDir="column" w="full" align="center" gap="20px">
+                    <Textarea
+                      onFocus={() => setInputActive(true)}
+                      onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
+                      onChange={(e) => setNameIllustrationPrev([e.target.value])}
+                      w="full"
+                      id="textArea"
+                      placeholder="Describe the image you would like"
+                    />
+                    <Button
+                      w="-webkit-fit-content"
+                      //@ts-ignore
+                      onClick={() => document.getElementById("textArea")?.value !== "" && makeBlur()}
+                      colorScheme={"brand"}
+                    >
+                      Send Image Request
+                    </Button>
+                  </Flex>
+                )
+              ) : (
+                <Flex w="full" justify="center">
+                  {validateContent}
+                </Flex>
+              )}
+            </Flex>
           </Center>
         )}
       </Flex>

@@ -59,7 +59,7 @@ import LazyLoadImage from "../../../../utils/LazyLoadImage"
 import { selectProject } from "../../../../store/project/selector"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
 import NoTemplateImage from "../../../../../images/no-templates-to-display.svg"
-import { loadFonts, loadGraphicTemplate, loadTemplateFonts } from "../../../../utils/fonts"
+import { loadGraphicTemplate } from "../../../../utils/fonts"
 import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
@@ -584,7 +584,9 @@ export default function Template() {
               <img src={NoTemplateImage} />
             ) : stateRecent === true ? (
               <img src={NoTemplateImage} />
-            ) : null}
+            ) : (
+              <img src={NoTemplateImage} />
+            )}
             <p>{validateContent}</p>
           </Center>
         )}

@@ -51,6 +51,7 @@ import Linkedin from "../../../Icons/Linkedin"
 import Share from "../../../Icons/Share"
 import ModalUpgradePlan from "../../../Modals/UpgradePlan"
 import useResourcesContext from "../../../hooks/useResourcesContext"
+import NoInternet from "../../../Modals/NoInternet"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 
@@ -446,7 +447,7 @@ function ShareMenu() {
             </Center>
           </Box>
           <Box>
-            <Box color="#A9A9B2">INVITE</Box>
+            <Box color="#A9A9B2">SHARE VIA EMAIL</Box>
             <Flex>
               <Input
                 onFocus={() => setInputActive(true)}
@@ -455,7 +456,7 @@ function ShareMenu() {
                 onChange={(e) => makeChangeEmail(e.target.value)}
               />
               <Button onClick={sendEmail} isDisabled={email.state} variant="outline">
-                Invite
+                Send
               </Button>
             </Flex>
           </Box>
@@ -939,6 +940,10 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const [stateChange] = useDebounce(stateJson, 2000)
   const zoom = useZoomRatio()
   const activeObject: any = useActiveObject()
+  const { isOpen: isOpenNoInternet, onOpen: onOpenNoInternet, onClose: onCloseNoInternet } = useDisclosure()
+
+  window.addEventListener("offline", onOpenNoInternet)
+  window.addEventListener("online", onCloseNoInternet)
 
   document.onkeydown = function (e) {
     if ((e.key === "Delete" || e.key === "Backspace") && inputActive === false) {
@@ -1007,13 +1012,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       if (e.ctrlKey && e.keyCode === 90) activeScene.history.undo()
       if (e.ctrlKey && e.keyCode === 89) activeScene.history.redo()
       return false
-    }
-    // else if (e.ctrlKey &&
-    //     (e.key === "c" ||
-    //     e.key === "v")){
-    //       if()
-    //     }
-    else return true
+    } else return true
   }
 
   useEffect(() => {
@@ -1059,6 +1058,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
 
   return (
     <Flex>
+      <NoInternet isOpen={isOpenNoInternet} onClose={onCloseNoInternet} onOpen={onOpenNoInternet} />
       <Tooltip label="Click here to Save" fontSize="md">
         <Button
           variant={"ghost"}
