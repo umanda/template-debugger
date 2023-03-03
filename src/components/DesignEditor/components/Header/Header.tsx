@@ -67,6 +67,7 @@ export default function Header() {
     undo: 0,
     redo: 0
   })
+  const editor = useEditor()
 
   useEffect(() => {
     let undoPrev: any[] = activeScene?.history.undos
@@ -144,7 +145,10 @@ export default function Header() {
         <Button
           className="btn-preview"
           colorScheme={"orange"}
-          onClick={() => onOpenPreview()}
+          onClick={() => {
+            editor.design.activeScene.objects.deselect()
+            onOpenPreview()
+          }}
           rightIcon={<Play size={24} />}
         >
           Preview
@@ -940,6 +944,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const zoom = useZoomRatio()
   const activeObject: any = useActiveObject()
   const { isOpen: isOpenNoInternet, onOpen: onOpenNoInternet, onClose: onCloseNoInternet } = useDisclosure()
+  const { isOpenPreview, switchPage, setSwitchPage } = useIsOpenPreview()
 
   window.addEventListener("offline", onOpenNoInternet)
   window.addEventListener("online", onCloseNoInternet)
@@ -956,25 +961,35 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       return true
     }
     if (e.key === "ArrowLeft" && inputActive === false) {
-      if (activeObject?.locked === false || activeObject?.locked === undefined)
+      console.log(isOpenPreview)
+      if (isOpenPreview === true) {
+        setSwitchPage({ ...switchPage, left: !switchPage.left })
+      } else if (activeObject?.locked === false || activeObject?.locked === undefined) {
         activeObject?.type !== "Frame" &&
           activeScene.objects.update({ left: activeObject?.left - 30 }, activeObject?.id)
+      }
       return false
     }
     if (e.key === "ArrowUp" && inputActive === false) {
-      if (activeObject?.locked === false || activeObject?.locked === undefined)
+      if (activeObject?.locked === false || activeObject?.locked === undefined) {
         activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject?.top - 30 }, activeObject?.id)
+      }
       return false
     }
     if (e.key === "ArrowRight" && inputActive === false) {
-      if (activeObject?.locked === false || activeObject?.locked === undefined)
+      console.log(isOpenPreview)
+      if (isOpenPreview === true) {
+        setSwitchPage({ ...switchPage, right: !switchPage.right })
+      } else if (activeObject?.locked === false || activeObject?.locked === undefined) {
         activeObject?.type !== "Frame" &&
           activeScene.objects.update({ left: activeObject?.left + 30 }, activeObject?.id)
+      }
       return false
     }
     if (e.key === "ArrowDown" && inputActive === false) {
-      if (activeObject?.locked === false || activeObject?.locked === undefined)
+      if (activeObject?.locked === false || activeObject?.locked === undefined) {
         activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject?.top + 30 }, activeObject?.id)
+      }
       return false
     }
     if (e.ctrlKey && e.key === "c") {
