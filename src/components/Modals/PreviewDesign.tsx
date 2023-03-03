@@ -55,7 +55,7 @@ const swipePower = (offset: number, velocity: number) => {
 
 function PreviewModal() {
   const [[page, direction], setPage] = React.useState([0, 0])
-  const { isOpenPreview, onClosePreview } = useIsOpenPreview()
+  const { isOpenPreview, onClosePreview, switchPage } = useIsOpenPreview()
   const scenes = useScenes()
   const [images, setImages] = React.useState<string[]>([])
   const [options, setOptions] = React.useState<{ imageIndex: number; maxIndex: number }>({
@@ -75,6 +75,14 @@ function PreviewModal() {
     setImages(previews)
     setOptions({ ...options, maxIndex: previews.length })
   }, [])
+
+  useEffect(() => {
+    isOpenPreview && paginate(-1)
+  }, [switchPage.left])
+
+  useEffect(() => {
+    isOpenPreview && paginate(1)
+  }, [switchPage.right])
 
   return (
     <Modal size="full" isOpen={isOpenPreview} onClose={onClosePreview}>

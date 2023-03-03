@@ -49,6 +49,8 @@ interface IDesignEditorContext {
   setInputActive: React.Dispatch<React.SetStateAction<boolean>>
   activeScene: boolean
   setActiveScene: React.Dispatch<React.SetStateAction<boolean>>
+  switchPage: { right: boolean; left: boolean }
+  setSwitchPage: React.Dispatch<React.SetStateAction<{ right: boolean; left: boolean }>>
 }
 
 export const DesignEditorContext = React.createContext<IDesignEditorContext>({
@@ -74,7 +76,9 @@ export const DesignEditorContext = React.createContext<IDesignEditorContext>({
   inputActive: false,
   setInputActive: () => {},
   activeScene: false,
-  setActiveScene: () => {}
+  setActiveScene: () => {},
+  switchPage: { right: false, left: false },
+  setSwitchPage: () => {}
 })
 
 export const DesignEditorProvider = ({ children }: { children: React.ReactNode }) => {
@@ -89,6 +93,10 @@ export const DesignEditorProvider = ({ children }: { children: React.ReactNode }
   const [colors, setColors] = React.useState<any>({ colorMap: {} })
   const [inputActive, setInputActive] = React.useState<boolean>(false)
   const [activeScene, setActiveScene] = React.useState<boolean>(false)
+  const [switchPage, setSwitchPage] = React.useState<{ right: boolean; left: boolean }>({
+    right: false,
+    left: false
+  })
 
   const context = {
     namesPages,
@@ -113,7 +121,9 @@ export const DesignEditorProvider = ({ children }: { children: React.ReactNode }
     inputActive,
     setInputActive,
     activeScene,
-    setActiveScene
+    setActiveScene,
+    switchPage,
+    setSwitchPage
   }
   return <DesignEditorContext.Provider value={context}>{children}</DesignEditorContext.Provider>
 }

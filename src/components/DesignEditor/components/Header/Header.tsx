@@ -54,6 +54,7 @@ import useResourcesContext from "../../../hooks/useResourcesContext"
 import NoInternet from "../../../Modals/NoInternet"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
+const redirectDefaultPage: string = import.meta.env.VITE_REDIRECT_HOME
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -66,6 +67,7 @@ export default function Header() {
     undo: 0,
     redo: 0
   })
+  const editor = useEditor()
 
   useEffect(() => {
     let undoPrev: any[] = activeScene?.history.undos
@@ -87,14 +89,12 @@ export default function Header() {
       {/* <AuthModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} type={typeSign} setType={setTypeSign} /> */}
       <Flex alignItems="center">
         <Flex sx={{ width: ["auto", "72px"], alignItems: "center", justifyContent: "center" }}>
-          {/* <Link href={`/`}> */}
           <IconButton
             variant={"ghost"}
             aria-label=""
             icon={<DrawifyD size={24} />}
-            onClick={() => (window.location.href = redirectUserProfilePage)}
+            onClick={() => (window.location.href = redirectDefaultPage)}
           />
-          {/* </Link> */}
         </Flex>
         <Flex padding={"0 1rem"} gap={"1rem"} alignItems={"center"}>
           <FileMenu />
@@ -145,7 +145,10 @@ export default function Header() {
         <Button
           className="btn-preview"
           colorScheme={"orange"}
-          onClick={() => onOpenPreview()}
+          onClick={() => {
+            editor.design.activeScene.objects.deselect()
+            onOpenPreview()
+          }}
           rightIcon={<Play size={24} />}
         >
           Preview
@@ -941,6 +944,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const zoom = useZoomRatio()
   const activeObject: any = useActiveObject()
   const { isOpen: isOpenNoInternet, onOpen: onOpenNoInternet, onClose: onCloseNoInternet } = useDisclosure()
+  const { isOpenPreview, switchPage, setSwitchPage } = useIsOpenPreview()
 
   window.addEventListener("offline", onOpenNoInternet)
   window.addEventListener("online", onCloseNoInternet)
@@ -957,25 +961,35 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       return true
     }
     if (e.key === "ArrowLeft" && inputActive === false) {
-      if (activeObject?.locked === false || activeObject?.locked === undefined)
+      console.log(isOpenPreview)
+      if (isOpenPreview === true) {
+        setSwitchPage({ ...switchPage, left: !switchPage.left })
+      } else if (activeObject?.locked === false || activeObject?.locked === undefined) {
         activeObject?.type !== "Frame" &&
           activeScene.objects.update({ left: activeObject?.left - 30 }, activeObject?.id)
+      }
       return false
     }
     if (e.key === "ArrowUp" && inputActive === false) {
-      if (activeObject?.locked === false || activeObject?.locked === undefined)
+      if (activeObject?.locked === false || activeObject?.locked === undefined) {
         activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject?.top - 30 }, activeObject?.id)
+      }
       return false
     }
     if (e.key === "ArrowRight" && inputActive === false) {
-      if (activeObject?.locked === false || activeObject?.locked === undefined)
+      console.log(isOpenPreview)
+      if (isOpenPreview === true) {
+        setSwitchPage({ ...switchPage, right: !switchPage.right })
+      } else if (activeObject?.locked === false || activeObject?.locked === undefined) {
         activeObject?.type !== "Frame" &&
           activeScene.objects.update({ left: activeObject?.left + 30 }, activeObject?.id)
+      }
       return false
     }
     if (e.key === "ArrowDown" && inputActive === false) {
-      if (activeObject?.locked === false || activeObject?.locked === undefined)
+      if (activeObject?.locked === false || activeObject?.locked === undefined) {
         activeObject?.type !== "Frame" && activeScene.objects.update({ top: activeObject?.top + 30 }, activeObject?.id)
+      }
       return false
     }
     if (e.ctrlKey && e.key === "c") {
