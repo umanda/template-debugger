@@ -447,7 +447,7 @@ function ShareMenu() {
             </Center>
           </Box>
           <Box>
-            <Box color="#A9A9B2">INVITE</Box>
+            <Box color="#A9A9B2">SHARE VIA EMAIL</Box>
             <Flex>
               <Input
                 onFocus={() => setInputActive(true)}
@@ -456,7 +456,7 @@ function ShareMenu() {
                 onChange={(e) => makeChangeEmail(e.target.value)}
               />
               <Button onClick={sendEmail} isDisabled={email.state} variant="outline">
-                Invite
+                Send
               </Button>
             </Flex>
           </Box>
