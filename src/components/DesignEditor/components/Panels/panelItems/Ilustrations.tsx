@@ -635,7 +635,9 @@ export default function Ilustrations() {
                   </Flex>
                 )
               ) : (
-                validateContent
+                <Flex w="full" justify="center">
+                  {validateContent}
+                </Flex>
               )}
             </Flex>
           </Center>
