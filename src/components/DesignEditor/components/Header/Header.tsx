@@ -54,6 +54,7 @@ import useResourcesContext from "../../../hooks/useResourcesContext"
 import NoInternet from "../../../Modals/NoInternet"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
+const redirectDefaultPage: string = import.meta.env.VITE_REDIRECT_HOME
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -87,14 +88,12 @@ export default function Header() {
       {/* <AuthModal isOpen={isOpen} onOpen={onOpen} onClose={onClose} type={typeSign} setType={setTypeSign} /> */}
       <Flex alignItems="center">
         <Flex sx={{ width: ["auto", "72px"], alignItems: "center", justifyContent: "center" }}>
-          {/* <Link href={`/`}> */}
           <IconButton
             variant={"ghost"}
             aria-label=""
             icon={<DrawifyD size={24} />}
-            onClick={() => (window.location.href = redirectUserProfilePage)}
+            onClick={() => (window.location.href = redirectDefaultPage)}
           />
-          {/* </Link> */}
         </Flex>
         <Flex padding={"0 1rem"} gap={"1rem"} alignItems={"center"}>
           <FileMenu />
