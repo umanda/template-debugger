@@ -961,7 +961,6 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       return true
     }
     if (e.key === "ArrowLeft" && inputActive === false) {
-      console.log(isOpenPreview)
       if (isOpenPreview === true) {
         setSwitchPage({ ...switchPage, left: !switchPage.left })
       } else if (activeObject?.locked === false || activeObject?.locked === undefined) {
@@ -977,7 +976,6 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       return false
     }
     if (e.key === "ArrowRight" && inputActive === false) {
-      console.log(isOpenPreview)
       if (isOpenPreview === true) {
         setSwitchPage({ ...switchPage, right: !switchPage.right })
       } else if (activeObject?.locked === false || activeObject?.locked === undefined) {

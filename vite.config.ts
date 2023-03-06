@@ -11,6 +11,6 @@ export default defineConfig({
   },
   base: "/composer/",
   build: {
-    chunkSizeWarningLimit: 1600
+    chunkSizeWarningLimit: 2000
   }
 })

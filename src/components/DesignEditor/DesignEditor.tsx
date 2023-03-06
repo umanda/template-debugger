@@ -17,20 +17,24 @@ export default function DesignEditor() {
       <PreviewDesign />
       <Flex flex={1}>
         <Panels />
-        <Flex flex={1} position="relative" flexDirection="column"
+        <Flex
+          flex={1}
+          position="relative"
+          flexDirection="column"
           sx={{
             width: "calc(100vw - 392px)",
-            '::-webkit-scrollbar': {
-              width: '4px',
+            "::-webkit-scrollbar": {
+              width: "4px"
             },
-            '::-webkit-scrollbar-track': {
-              width: '6px',
+            "::-webkit-scrollbar-track": {
+              width: "6px"
             },
-            '::-webkit-scrollbar-thumb': {
+            "::-webkit-scrollbar-thumb": {
               background: "red",
-              borderRadius: '24px',
-            },
-          }}>
+              borderRadius: "24px"
+            }
+          }}
+        >
           {loadCanva && <Toolbox />}
           <Flex flex={1}>
             <Canvas />

@@ -35,9 +35,10 @@ import Tutorials from "../../../Icons/Tutorials"
 import FAQ from "../../../Icons/FAQ"
 import Chat from "../../../Icons/Chat"
 import Bug from "../../../Icons/Bug"
+import LiveChat from "./LiveChat"
 
-const redirectFaq: string = import.meta.env.VITE_APP_DOMAIN + '/faq'
-const redirectTutorals: string = import.meta.env.VITE_APP_DOMAIN + '/tutorials'
+const redirectFaq: string = import.meta.env.VITE_APP_DOMAIN + "/faq"
+const redirectTutorals: string = import.meta.env.VITE_APP_DOMAIN + "/tutorials"
 
 export default function Common() {
   const { setActivePanel, isScenesVisible, setIsScenesVisible, activePanel } = useDesignEditorContext()
@@ -61,13 +62,12 @@ export default function Common() {
     [activePanel, setActivePanel, editor]
   )
 
-  const onOpenTutorals = () =>{
-    window.open(redirectTutorals,'_blank')
+  const onOpenTutorals = () => {
+    window.open(redirectTutorals, "_blank")
   }
-  const onOpenFaq = () =>{
-    window.open(redirectFaq,'_blank')
+  const onOpenFaq = () => {
+    window.open(redirectFaq, "_blank")
   }
-
 
   return (
     <Flex
@@ -179,30 +179,38 @@ export default function Common() {
                                 Basic Actions
                               </Text>
                               <Text padding={"10px"}>
-                                Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>A</label>-
+                                Ctrl +
+                                <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>A</label>-
                                 Select All Objects
                               </Text>
                               <Text padding={"10px"}>
-                                Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>D</label>-
+                                Ctrl +
+                                <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>D</label>-
                                 Duplicate Selection
                               </Text>
                               <Text padding={"10px"}>
-                                Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>E</label>-
+                                Ctrl +
+                                <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>E</label>-
                                 Clear All Objects
                               </Text>
                               <Text padding={"10px"}>
-                                Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>S</label>- Save
-                                Project
+                                Ctrl +
+                                <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>S</label>-
+                                Save Project
                               </Text>
                               <Text padding={"10px"}>
-                                Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>Z</label>- Undo
+                                Ctrl +
+                                <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>Z</label>-
+                                Undo
                               </Text>
                               <Text padding={"10px"}>
-                                Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>Y</label>- Redo
+                                Ctrl +
+                                <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>Y</label>-
+                                Redo
                               </Text>
                               <Text padding={"10px"}>
-                                <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>Del</label> - Delete
-                                Object
+                                <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>Del</label>{" "}
+                                - Delete Object
                               </Text>
                             </Box>
                             <Flex flexDir="column" paddingLeft={"10px"} borderLeft={"2px solid rgb(232, 232, 232)"}>
@@ -210,16 +218,19 @@ export default function Common() {
                                 Text Formatting
                               </Text>
                               <Text padding={"10px"}>
-                                Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>B</label>- Text
-                                Bold
+                                Ctrl +
+                                <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>B</label>-
+                                Text Bold
                               </Text>
                               <Text padding={"10px"}>
-                                Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>I</label>- Text
-                                Italic
+                                Ctrl +
+                                <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>I</label>-
+                                Text Italic
                               </Text>
                               <Text padding={"10px"}>
-                                Ctrl +<label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>U</label>- Text
-                                Underline
+                                Ctrl +
+                                <label style={{ background: "#e4e4e4", padding: "5px", fontWeight: "bold" }}>U</label>-
+                                Text Underline
                               </Text>
                               <Spacer />
                               <Text paddingTop={"10px"} fontWeight={"bold"} paddingLeft="10px">
@@ -302,20 +313,24 @@ export default function Common() {
                 </MenuOption>
 
                 <MenuOption>
-                  <Flex  onClick={onOpenFaq} gap="0.25rem" alignItems={"center"}>
+                  <Flex onClick={onOpenFaq} gap="0.25rem" alignItems={"center"}>
                     <FAQ size={20} /> FAQ
                   </Flex>
                 </MenuOption>
-                {/* <MenuOption>
-                  <Flex  onClick={onOpenLiveChat} gap="0.25rem" alignItems={"center"}>
-                    <Chat size={20} /> Chat with Us
-                  </Flex>
-                </MenuOption> */}
-                {/* <MenuOption>
-                  <Flex onClick={onOpenLiveChat} gap="0.25rem" alignItems={"center"}>
-                    <Bug size={20} /> Report a Bug
-                  </Flex>
-                </MenuOption> */}
+                <MenuOption>
+                  <LiveChat>
+                    <Flex gap="0.25rem" alignItems={"center"}>
+                      <Chat size={20} /> Chat with Us
+                    </Flex>
+                  </LiveChat>
+                </MenuOption>
+                <MenuOption>
+                  <LiveChat>
+                    <Flex gap="0.25rem" alignItems="center">
+                      <Bug size={20} /> Report a Bug
+                    </Flex>
+                  </LiveChat>
+                </MenuOption>
               </PopoverBody>
             </PopoverContent>
           </Portal>
