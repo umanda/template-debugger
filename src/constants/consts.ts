@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid"
 import { IFrame, IScene } from "@layerhub-pro/types"
-import { IDesign } from "../interfaces/editor"
+import { IDesign } from "~/interfaces/editor"
 
 export const FONT_SIZES = [
   { label: 8 },

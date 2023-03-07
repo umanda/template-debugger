@@ -3,7 +3,7 @@ import { useActiveObject, useActiveScene } from "@layerhub-pro/react"
 import { useEffect, useRef } from "react"
 import Common from "./Common"
 import groupBy from "lodash/groupBy"
-import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 
 export default function Vector() {
   const { setActiveMenu, indexColorPicker, setIndexColorPicker, colors, setColors, activeMenu } =

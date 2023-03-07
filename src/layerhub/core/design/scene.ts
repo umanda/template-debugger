@@ -137,14 +137,14 @@ class Scene {
       layers: [],
       frame: frame,
       metadata: {
-        animated,
-      },
+        animated
+      }
     }
     const objects = this.layers.map((layer) => layer.toJSON(this.config.properties))
     const layers = objects.filter((object: any) => object.type !== LayerType.FRAME)
 
     const objectExporter = new ObjectExporter()
-
+    // @ts-ignore
     layers.forEach((layer: ILayer) => {
       if (layer.type !== LayerType.BACKGROUND_CONTAINER) {
         // @ts-ignore
@@ -155,7 +155,7 @@ class Scene {
 
     template.metadata = {
       ...template.metadata,
-      animated,
+      animated
     }
     return template
   }
@@ -187,6 +187,7 @@ class Scene {
         }
 
         const group = new fabric.Group(clonedObjects)
+        // @ts-ignore
         const component = objectExporter.export(group.toJSON(this.config.properties), frame) as any
         const metadata = component.metadata ? component.metadata : {}
 
@@ -197,10 +198,11 @@ class Scene {
           metadata: {
             ...metadata,
             category: isMixed ? "mixed" : "single",
-            types: selectionType,
-          },
+            types: selectionType
+          }
         }
       } else {
+        // @ts-ignore
         const component = objectExporter.export(activeObject.toJSON(this.config.properties), frame)
         const metadata = component.metadata ? component.metadata : {}
         return {
@@ -210,8 +212,8 @@ class Scene {
           metadata: {
             ...metadata,
             category: isMixed ? "mixed" : "single",
-            types: selectionType,
-          },
+            types: selectionType
+          }
         }
       }
     }
@@ -221,7 +223,7 @@ class Scene {
     const currentLayers = [...this.scene.layers]
     const backgroundContainer = {
       ...currentLayers[0],
-      type: "BackgroundContainer",
+      type: "BackgroundContainer"
     }
 
     const updatedLayers = [...currentLayers].map((layer) => {
@@ -232,7 +234,7 @@ class Scene {
           top: 0,
           left: 0,
           width: this.frame.width,
-          height: this.frame.height,
+          height: this.frame.height
         }
       }
       return layer
@@ -244,7 +246,7 @@ class Scene {
     this.frame = new fabric.Frame({
       id: nanoid(),
       name: "Frame",
-      ...this.scene.frame,
+      ...this.scene.frame
     })
     this.canvas.add(this.frame)
     this.frame.center()
@@ -257,7 +259,7 @@ class Scene {
       const importedObject = objectimporter.import({
         item: layer as Required<ILayer>,
         isInGroup: false,
-        options: this.frame as any,
+        options: this.frame as any
       })
       promiseObjects.push(importedObject as any)
     }
@@ -288,7 +290,7 @@ class Scene {
       const importedObject = objectimporter.import({
         item: layer as Required<ILayer>,
         isInGroup: false,
-        options: this.frame as any,
+        options: this.frame as any
       })
       promiseObjects.push(importedObject as any)
     }
@@ -320,13 +322,13 @@ class Scene {
           duration: layer.duration,
           display: {
             from: 0,
-            to: layer.duration,
+            to: layer.duration
           },
           cut: layer.cut
             ? layer.cut
             : {
                 from: 0,
-                to: layer.duration,
+                to: layer.duration
               },
           position: {
             x: layer.left,
@@ -335,9 +337,9 @@ class Scene {
             width: layer.width,
             height: layer.height,
             scaleX: layer.scaleX,
-            scaleY: layer.scaleY,
+            scaleY: layer.scaleY
           },
-          objectId: layer.id,
+          objectId: layer.id
         })
       } else {
         const objectURL = base64ImageToFile(preview)
@@ -348,11 +350,11 @@ class Scene {
           duration: 5000,
           display: {
             from: 0,
-            to: 5000,
+            to: 5000
           },
           cut: {
             from: 0,
-            to: 0,
+            to: 0
           },
           position: {
             x: layer.left,
@@ -361,9 +363,9 @@ class Scene {
             width: layer.width,
             height: layer.height,
             scaleX: layer.scaleX,
-            scaleY: layer.scaleY,
+            scaleY: layer.scaleY
           },
-          objectId: layer.id,
+          objectId: layer.id
         })
       }
     }

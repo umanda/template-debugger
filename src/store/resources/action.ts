@@ -12,7 +12,7 @@ import {
   SearchResourceDto,
   Uploading
 } from "../../interfaces/editor"
-import { uniqueFilename } from "../../utils/unique"
+import { uniqueFilename } from "~/utils/unique"
 
 export const clearResourceComposite = createAction<[]>("resources/clearResourceComposite")
 export const clearResourceUpload = createAction<[]>("uploads/clearResourceUpload")

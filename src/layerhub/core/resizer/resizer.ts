@@ -3,14 +3,11 @@ import { IConfig, ILayer, IScene } from "@layerhub-pro/types"
 import ObjectImporter from "../utils/objects-importer"
 import { createFrame } from "../utils/design"
 import ObjectsExporter from "../design/objects-exporter"
+import { BackgroundOptions } from "~/layerhub/objects"
 
 class Resizer {
   private canvas: fabric.Canvas
-  constructor(
-    public scene: IScene,
-    public options: { width: number; height: number },
-    public config: IConfig
-  ) {}
+  constructor(public scene: IScene, public options: { width: number; height: number }, public config: IConfig) {}
 
   public async resize() {
     this.initCanvas()
@@ -30,7 +27,7 @@ class Resizer {
   public group() {
     const objects = this.canvas.getObjects()
     const selection = new fabric.ActiveSelection(objects, {
-      canvas: this.canvas,
+      canvas: this.canvas
     }) as fabric.Object
     // @ts-ignore
     const grouped = selection.toGroup() as fabric.Group
@@ -61,7 +58,7 @@ class Resizer {
 
     object.set({
       top: newTop,
-      left: newLeft,
+      left: newLeft
     })
     object.setCoords()
     this.canvas.requestRenderAll()
@@ -72,14 +69,15 @@ class Resizer {
     // @ts-ignore
     if (background.type === "Background") {
       const backgroundOptions = background.toJSON()
-      const updatedOptions = {
+      // @ts-ignore
+      const updatedOptions: BackgroundOptions = {
         ...backgroundOptions,
         width: this.options.width,
         height: this.options.height,
         scaleX: 1,
         scaleY: 1,
         top: 0,
-        left: 0,
+        left: 0
       }
       const backgroundScaled = new fabric.Background(updatedOptions)
       this.canvas.insertAt(backgroundScaled, 0, true)
@@ -105,8 +103,8 @@ class Resizer {
   private toJSON() {
     const frame = createFrame({
       frame: {
-        ...this.options,
-      },
+        ...this.options
+      }
     })
     const layers = this.exportObjects()
 
@@ -115,7 +113,7 @@ class Resizer {
       name: this.scene.name,
       layers: layers,
       frame: frame,
-      metadata: {},
+      metadata: {}
     }
     return scene
   }
@@ -132,11 +130,12 @@ class Resizer {
     const layers = objects.map((layer) => layer.toJSON(this.config.properties))
 
     let exportedLayers: any[] = []
+    // @ts-ignore
     layers.forEach((layer: ILayer) => {
       // @ts-ignore
       const exportedObject = objectExporter.export(layer, {
         top: 0,
-        left: 0,
+        left: 0
       })
       exportedLayers = exportedLayers.concat(exportedObject)
     })
@@ -153,8 +152,8 @@ class Resizer {
         isInGroup: false,
         options: {
           top: 0,
-          left: 0,
-        } as any,
+          left: 0
+        } as any
       })
       promiseObjects.push(importedObject as any)
     }

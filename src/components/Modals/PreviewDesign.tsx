@@ -17,12 +17,10 @@ import {
 import { useEditor, useScenes } from "@layerhub-pro/react"
 import { motion, AnimatePresence } from "framer-motion"
 import { wrap } from "popmotion"
-import useIsOpenPreview from "../hooks/useIsOpenPreview"
+import useIsOpenPreview from "~/hooks/useIsOpenPreview"
 import Home from "../Icons/Home"
 import LeftArrow from "../Icons/LeftArrow"
 import RightArrow from "../Icons/RightArrow"
-import Pencil from "../Icons/Pencil"
-import Eraser from "../Icons/Eraser"
 
 export default function PreviewDesign() {
   const { isOpenPreview } = useIsOpenPreview()

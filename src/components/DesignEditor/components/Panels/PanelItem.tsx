@@ -1,7 +1,7 @@
 import React from "react"
 import { Box, Portal } from "@chakra-ui/react"
 import * as PanelItems from "./panelItems"
-import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import ChevronLeft from "../../../Icons/ChevronLeft"
 
 export default function PanelItem() {

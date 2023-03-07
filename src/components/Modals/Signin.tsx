@@ -14,14 +14,14 @@ import {
 } from "@chakra-ui/react"
 import { useCallback, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { SigninDto } from "../interfaces/user"
-import { useAppDispatch } from "../store/store"
-import { signin } from "../store/user/action"
-import { generateId } from "../utils/unique"
+import { SigninDto } from "../../interfaces/user"
+import { useAppDispatch } from "~/store/store"
+import { signin } from "~/store/user/action"
+import { generateId } from "../../utils/unique"
 import { AuthType } from "./AuthModal"
-import * as api from "../services/api"
+import * as api from "../../services/api"
 import { useEditor } from "@layerhub-pro/react"
-import useDesignEditorContext from "../hooks/useDesignEditorContext"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 
 export default function SignIn({
   setAuthtype,

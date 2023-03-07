@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
-import * as api from "../../../../services/api"
+import * as api from "~/services/api"
 import {
   Box,
   Button,
@@ -25,21 +25,19 @@ import {
   useToast
 } from "@chakra-ui/react"
 import lodash from "lodash"
-import { useAppDispatch } from "../../../../store/store"
+import { useAppDispatch } from "~/store/store"
 import { useSelector } from "react-redux"
-import { selectUser } from "../../../../store/user/selector"
-import Scrollable from "../../../../utils/Scrollable"
-import InfiniteScroll from "../../../../utils/InfiniteScroll"
-import LazyLoadImage from "../../../../utils/LazyLoadImage"
-import LoadImageUpload from "../../../../utils/LoadImageUpload"
-import useResourcesContext from "../../../../hooks/useResourcesContext"
-import { uniqueFilename } from "../../../../utils/unique"
-import { IUpload } from "../../../../interfaces/editor"
+import { selectUser } from "~/store/user/selector"
+import Scrollable from "~/components/Scrollable/Scrollable"
+import InfiniteScroll from "~/utils/InfiniteScroll"
+import LazyLoadImage from "~/utils/LazyLoadImage"
+import { uniqueFilename } from "~/utils/unique"
+import { IUpload } from "~/interfaces/editor"
 import Trash from "../../../../Icons/Trash"
-import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "../../../../store/resources/action"
-import { selectUploads } from "../../../../store/resources/selector"
+import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "~/store/resources/action"
+import { selectUploads } from "~/store/resources/selector"
 import NoUploadsImage from "~/assets/images/no-uploads-to-display.svg"
-import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE

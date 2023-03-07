@@ -10,15 +10,13 @@ import {
   DrawerBody,
   useDisclosure
 } from "@chakra-ui/react"
-import { Canvas, fabric, useActiveObject, useActiveScene, useEditor, useZoomRatio } from "@layerhub-pro/react"
+import { Canvas, fabric, useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
 import ContextMenu from "../ContextMenu"
 import { useSelector } from "react-redux"
-import * as api from "../../../services/api"
-import { selectUser } from "../../../store/user/selector"
-import useResourcesContext from "../../../hooks/useResourcesContext"
+import { selectUser } from "~/store/user/selector"
 import Plus from "../../../Icons/Plus"
 import MobileModal from "../../../Modals/MobileModal"
-import { selectProject } from "../../../store/project/selector"
+import { selectProject } from "~/store/project/selector"
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
 export default function Canva() {
@@ -68,6 +66,7 @@ export default function Canva() {
     fabric.Object.prototype.borderColor = "#5456F5"
     fabric.Object.prototype.borderScaleFactor = 2.25
     fabric.Object.prototype.borderOpacityWhenMoving = 1
+    // @ts-ignore
     fabric.Object.prototype.borderOpacity = 1
 
     function renderIcon(icon: any) {
@@ -97,6 +96,7 @@ export default function Canva() {
       offsetY: 0,
       offsetX: -24,
       cursorStyle: "pointer",
+      // @ts-ignore
       mouseUpHandler: deleteObject,
       render: renderIcon(deleteImg),
       cornerSize: 36,
@@ -111,6 +111,7 @@ export default function Canva() {
       offsetY: 0,
       offsetX: 24,
       cursorStyle: "pointer",
+      // @ts-ignore
       mouseUpHandler: cloneObject,
       render: renderIcon(cloneImg),
       cornerSize: 36,
@@ -124,11 +125,14 @@ export default function Canva() {
       x: 0,
       y: 0.5,
       offsetY: 30,
+      // @ts-ignore
       actionHandler: fabric.controlsUtils.rotationWithSnapping,
+      // @ts-ignore
       cursorStyleHandler: fabric.controlsUtils.rotationStyleHandler,
       actionName: "rotate",
       render: renderIcon(rotateImg),
       withConnection: false,
+      // @ts-ignore
       cornerSize: 36,
       touchSizeX: 36,
       touchSizeY: 36,

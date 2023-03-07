@@ -1,5 +1,5 @@
 import axios from "axios"
-import { IDrawifier, ISearchDrawifier, SigninDto, SignupDto, User } from "../interfaces/user"
+import { IDrawifier, ISearchDrawifier, SigninDto, SignupDto, User } from "~/interfaces/user"
 import {
   IDesign,
   IFont,
@@ -13,9 +13,9 @@ import {
   querySearchUpload,
   ICreateComponent,
   ISubscriptionMe
-} from "../interfaces/editor"
-import { IExportProjectNoLogin, listProjectsDTO, ShareTemplate } from "../interfaces/template"
-import { IListComments, SaveCommentDTO } from "../interfaces/comment"
+} from "~/interfaces/editor"
+import { IExportProjectNoLogin, listProjectsDTO, ShareTemplate } from "~/interfaces/template"
+import { IListComments, SaveCommentDTO } from "~/interfaces/comment"
 const baseURL = import.meta.env.VITE_API_CONNECTION
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE

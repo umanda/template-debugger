@@ -1,5 +1,4 @@
 import React from "react"
-import { IResource } from "../interfaces/editor"
 
 interface IFont {
   id: string

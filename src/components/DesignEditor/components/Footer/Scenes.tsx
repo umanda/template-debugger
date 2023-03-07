@@ -2,9 +2,9 @@ import React from "react"
 import { Box, Button, Flex, Text } from "@chakra-ui/react"
 import { useActiveScene, useEditor, useScenes } from "@layerhub-pro/react"
 import SceneItem from "./SceneItem"
-import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import Plus from "../../../Icons/Plus"
-import HorizontalScroll from "../../../utils/HorizontaScroll"
+import HorizontalScroll from "../../../../utils/HorizontaScroll"
 
 export default function Scenes() {
   const scenes = useScenes()

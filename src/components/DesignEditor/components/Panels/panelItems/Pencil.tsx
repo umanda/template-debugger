@@ -1,15 +1,15 @@
 import { Box, Button, Center, Flex, Grid, GridItem, Input, Text } from "@chakra-ui/react"
 import { Slider, SliderFilledTrack, SliderThumb, SliderTrack } from "@chakra-ui/react"
 import { useEditor } from "@layerhub-pro/react"
-import { DEFAULT_COLORS } from "../../../../constants/consts"
-import useResourcesContext from "../../../../hooks/useResourcesContext"
+import { DEFAULT_COLORS } from "~/constants/consts"
+import useResourcesContext from "~/hooks/useResourcesContext"
 import Pencil1 from "../../../../Icons/Pencil1"
 import Pencil2 from "../../../../Icons/Pencil2"
 import Pencil3 from "../../../../Icons/Pencil3"
 import Pencil4 from "../../../../Icons/Pencil4"
 import Pencil5 from "../../../../Icons/Pencil5"
 import React, { useCallback, useState } from "react"
-import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 
 export default function Pencil() {
   const editor = useEditor()

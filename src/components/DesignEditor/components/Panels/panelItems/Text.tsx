@@ -1,21 +1,18 @@
 import { Box, Center, Flex, Grid, GridItem, IconButton, Image, Spinner } from "@chakra-ui/react"
-import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
 import React, { useEffect, useState } from "react"
 import { nanoid } from "nanoid"
 import { useSelector } from "react-redux"
-// import { deleteResourceComposite, getListResourcesComposite } from "~/store/resources/action"
-// import { selectListResourcesComposite } from "~/store/resources/selector"
-import { selectUser } from "../../../../store/user/selector"
-import { useAppDispatch } from "../../../../store/store"
-import { loadFonts } from "../../../../utils/fonts"
-import Scrollable from "../../../../utils/Scrollable"
-import InfiniteScroll from "../../../../utils/InfiniteScroll"
-import LazyLoadImage from "../../../../utils/LazyLoadImage"
+
+import { selectUser } from "~/store/user/selector"
+import { useAppDispatch } from "~/store/store"
+import { loadFonts } from "~/utils/fonts"
+import Scrollable from "~/components/Scrollable/Scrollable"
+import InfiniteScroll from "~/utils/InfiniteScroll"
+import LazyLoadImage from "~/utils/LazyLoadImage"
 import Trash from "../../../../Icons/Trash"
-import { selectListResourcesComposite } from "../../../../store/resources/selector"
-import { deleteResourceComposite, getListResourcesComposite } from "../../../../store/resources/action"
-import useResourcesContext from "../../../../hooks/useResourcesContext"
+import { selectListResourcesComposite } from "~/store/resources/selector"
+import { deleteResourceComposite } from "~/store/resources/action"
 
 const font = {
   name: "JustAnotherHand-Regular",
@@ -176,7 +173,7 @@ export default function Text() {
               color: "#A9A9B2"
             }}
           >
-             Captivate with a strong title
+            Captivate with a strong title
           </Box>
         </Box>
         <Box

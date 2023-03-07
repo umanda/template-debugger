@@ -13,11 +13,11 @@ import { Grid, Popover, PopoverContent, PopoverTrigger, Portal } from "@chakra-u
 import { HexColorPicker } from "react-colorful"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
 import React, { useEffect, useState } from "react"
-import { useAppDispatch, useAppSelector } from "../../../../store/store"
-import { selectColors } from "../../../../store/colors/selector"
-import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
-import { getRecentColor } from "../../../../store/colors/action"
-import { DEFAULT_COLORS } from "../../../../constants/consts"
+import { useAppDispatch, useAppSelector } from "~/store/store"
+import { selectColors } from "~/store/colors/selector"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
+import { getRecentColor } from "~/store/colors/action"
+import { DEFAULT_COLORS } from "~/constants/consts"
 
 export default function TextColorPicker() {
   const dispatch = useAppDispatch()

@@ -1,8 +1,8 @@
 import { Box, Flex } from "@chakra-ui/react"
-import Icons from "../../../Icons"
+import Icons from "~/components/Icons"
 import { useEditor } from "@layerhub-pro/react"
-import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
-import { PANEL_ITEMS } from "../../../constants/panel-items"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
+import { PANEL_ITEMS } from "~/constants/panel-items"
 
 export default function PaneList() {
   const { setActivePanel, activePanel, setIsSidebarVisible, activeMenu, setActiveMenu } = useDesignEditorContext()

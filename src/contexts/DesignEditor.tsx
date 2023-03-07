@@ -1,7 +1,7 @@
 import { useDisclosure } from "@chakra-ui/react"
 import { IFrame, IScene } from "@layerhub-pro/types"
 import React from "react"
-import { IResource } from "../interfaces/editor"
+import { IResource } from "~/interfaces/editor"
 
 export interface IDesign {
   id: string
