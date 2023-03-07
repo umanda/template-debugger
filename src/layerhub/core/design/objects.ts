@@ -206,6 +206,16 @@ class Objects {
       this.scene.history.save()
     }
   }
+  public moveTo = (index: number, id?: string) => {
+    const canvas = this.scene.canvas
+    let refObject = canvas.getActiveObject()
+    if (id) {
+      refObject = this.findOneById(id)
+    }
+    if (refObject) {
+      refObject.moveTo(index)
+    }
+  }
 
   public updateText = (options: Partial<IStaticText>, id?: string) => {
     const canvas = this.scene.canvas
