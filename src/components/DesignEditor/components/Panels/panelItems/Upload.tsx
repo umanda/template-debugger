@@ -38,7 +38,7 @@ import { IUpload } from "../../../../interfaces/editor"
 import Trash from "../../../../Icons/Trash"
 import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "../../../../store/resources/action"
 import { selectUploads } from "../../../../store/resources/selector"
-import NoUploadsImage from "../../../../../images/no-uploads-to-display.svg"
+import NoUploadsImage from "~/assets/images/no-uploads-to-display.svg"
 import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
 import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE

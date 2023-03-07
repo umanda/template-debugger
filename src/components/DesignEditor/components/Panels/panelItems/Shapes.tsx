@@ -15,7 +15,7 @@ import useResourcesContext from "../../../../hooks/useResourcesContext"
 import { getListResourcesShapes } from "../../../../store/resources/action"
 import { selectResourceShapes } from "../../../../store/resources/selector"
 import { selectProject } from "../../../../store/project/selector"
-import NoShapesImage from "../../../../../images/no-shapes-to-display.svg"
+import NoShapesImage from "~/assets/images/no-shapes-to-display.svg"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 

@@ -58,7 +58,7 @@ import Order from "../../../../Modals/Order"
 import LazyLoadImage from "../../../../utils/LazyLoadImage"
 import { selectProject } from "../../../../store/project/selector"
 import useResourcesContext from "../../../../hooks/useResourcesContext"
-import NoTemplateImage from "../../../../../images/no-templates-to-display.svg"
+import NoTemplateImage from "~/assets/images/no-templates-to-display.svg"
 import { loadGraphicTemplate } from "../../../../utils/fonts"
 import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
