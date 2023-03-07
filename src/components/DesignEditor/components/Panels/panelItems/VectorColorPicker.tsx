@@ -15,13 +15,13 @@ import {
   useDisclosure
 } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useEditor, useZoomRatio } from "@layerhub-pro/react"
-import { DEFAULT_COLORS } from "../../../../constants/consts"
-import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
-import { getRecentColor } from "../../../../store/colors/action"
-import { selectColors } from "../../../../store/colors/selector"
+import { DEFAULT_COLORS } from "~/constants/consts"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
+import { getRecentColor } from "~/store/colors/action"
+import { selectColors } from "~/store/colors/selector"
 import { useEffect, useState } from "react"
 import { HexColorPicker } from "react-colorful"
-import { useAppDispatch, useAppSelector } from "../../../../store/store"
+import { useAppDispatch, useAppSelector } from "~/store/store"
 import { throttle } from "lodash"
 
 export default function VectorColorPicker() {

@@ -1,6 +1,6 @@
 import { Button, Flex } from "@chakra-ui/react"
 import { useEditor } from "@layerhub-pro/react"
-import useResourcesContext from "../../../hooks/useResourcesContext"
+import useResourcesContext from "~/hooks/useResourcesContext"
 
 export default function FreeDrawing() {
   const { draw } = useResourcesContext()

@@ -16,9 +16,7 @@ import {
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { useActiveScene, useDesign, useEditor, useFrame, useScenes } from "@layerhub-pro/react"
-import { useSelector } from "react-redux"
-import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
-import { selectUser } from "../../../store/user/selector"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import Trash from "../../../Icons/Trash"
 import OptionsScenes from "../../../Icons/OptionsScenes"
 import Rename from "../../../Icons/Rename"
@@ -65,7 +63,7 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    width : "70px",
+    width: "70px",
     cursor: "pointer"
   }
 

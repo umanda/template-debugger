@@ -1,5 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react"
-import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import ChevronDown from "../../../Icons/ChevronDown"
 import Common from "./Common"
 import Scenes from "./Scenes"

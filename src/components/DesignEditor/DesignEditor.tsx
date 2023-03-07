@@ -5,8 +5,8 @@ import Panels from "./components/Panels"
 import Toolbox from "./components/Toolbox"
 import Canvas from "./components/Canvas"
 import Footer from "./components/Footer/Footer"
-import useResourcesContext from "../hooks/useResourcesContext"
-import CanvasLoader from "./../../images/CanvasLoader.gif"
+import useResourcesContext from "~/hooks/useResourcesContext"
+import CanvasLoader from "~/assets/images/CanvasLoader.gif"
 
 export default function DesignEditor() {
   const { loadCanva } = useResourcesContext()

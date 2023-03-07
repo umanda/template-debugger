@@ -3,8 +3,8 @@ import { Flex } from "@chakra-ui/react"
 import { useActiveObject, useEditor } from "@layerhub-pro/react"
 import { ILayer } from "@layerhub-pro/types"
 import Items from "./Items"
-import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
-import getSelectionType from "../../../utils/get-selection-type"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
+import getSelectionType from "../../../../utils/get-selection-type"
 
 const DEFAULT_TOOLBOX = "NONE"
 

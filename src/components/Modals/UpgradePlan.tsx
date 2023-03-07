@@ -10,11 +10,12 @@ import {
   ModalHeader,
   ModalOverlay
 } from "@chakra-ui/react"
-import ModalDownloadPNG from "../../images/ModalDownloadPNG.png"
-import ModalDownloadPDF from "../../images/ModalDownloadPDF.png"
-import ModalExport from "../../images/ModalExport.png"
-import ModalImport from "../../images/ModalImport.png"
-import ModalUpload from "../../images/ModalUpload.png"
+import ModalDownloadPNG from "~/assets/images/ModalDownloadPNG.png"
+import ModalDownloadPDF from "~/assets/images/ModalDownloadPDF.png"
+import ModalExport from "~/assets/images/ModalExport.png"
+import ModalImport from "~/assets/images/ModalImport.png"
+import ModalUpload from "~/assets/images/ModalUpload.png"
+
 const redirectPayments = import.meta.env.VITE_PAYMENTS
 
 export default function ModalUpgradePlan({
