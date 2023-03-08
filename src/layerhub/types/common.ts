@@ -9,3 +9,5 @@ export interface TimeRange {
 }
 
 export type RotationControlPosition = "TOP" | "BOTTOM"
+
+export type DragMode = "IDLE" | "PANNING"

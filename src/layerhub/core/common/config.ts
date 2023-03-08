@@ -8,6 +8,7 @@ class Config implements IConfig {
   public margin: number
   public shortcuts: boolean
   public properties: string[]
+  public zoomToMode: "POINT" | "CENTER"
   public frame: IFrame
   public guidelines: { enabled: boolean; color: string }
   public background: {

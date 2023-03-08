@@ -8,6 +8,7 @@ export interface IConfig {
     enabled: boolean
     color: string
   }
+  zoomToMode: "POINT" | "CENTER"
   margin: number
   shortcuts: boolean
   properties: string[]

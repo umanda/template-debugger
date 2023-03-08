@@ -73,6 +73,7 @@ export interface ShadowOptions extends fabric.IShadowOptions {
   enabled: boolean
 }
 
+type DragMode = "IDLE" | "PANNING"
 export interface IState {
   frame: any
   background: any
@@ -88,6 +89,7 @@ export interface IState {
   isFreeDrawing: boolean
   template: IDesign | null
   isCropping: boolean
+  dragMode: DragMode
   setFrame: (o: any) => void
   setIsCropping: (o: any) => void
   setBackground: (o: any) => void
@@ -102,4 +104,5 @@ export interface IState {
   setParamMenuRequest: (o: any) => void
   setIsFreeDrawing: (o: boolean) => void
   setTemplate: (o: any) => void
+  setDragMode: (o: DragMode) => void
 }

@@ -1,5 +1,6 @@
 import * as React from "react"
 import { IState, Scene } from "@layerhub-pro/core"
+import { DragMode } from "@layerhub-pro/types"
 
 const Context = React.createContext<IState>({
   zoomRatio: 1,
@@ -30,6 +31,8 @@ const Context = React.createContext<IState>({
   setParamMenuRequest: () => {},
   setIsFreeDrawing: () => {},
   setIsCropping: () => {},
+  dragMode: "IDLE",
+  setDragMode(o) {},
 })
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
@@ -47,7 +50,7 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
   const [objects, setObjects] = React.useState([])
   const [scenes, setScenes] = React.useState([])
   const [paramMenuRequest, setParamMenuRequest] = React.useState(null)
-
+  const [dragMode, setDragMode] = React.useState<DragMode>("IDLE")
   return (
     <Context.Provider
       value={{
@@ -79,6 +82,8 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
         setTemplate,
         isCropping,
         setIsCropping,
+        dragMode,
+        setDragMode,
       }}
     >
       {children}
