@@ -9,10 +9,8 @@ specifiers:
   '@emotion/react': ^11.9.3
   '@emotion/styled': ^11.9.3
   '@layerhub-io/react-custom-scrollbar': ^0.0.1
-  '@layerhub-pro/core': ^2.0.2
-  '@layerhub-pro/react': ^2.0.2
-  '@layerhub-pro/types': ^2.0.2
   '@reduxjs/toolkit': ^1.8.3
+  '@types/fabric': ^5.3.0
   '@types/js-cookie': ^3.0.2
   '@types/lodash': ^4.14.182
   '@types/mime': ^2.0.3
@@ -25,6 +23,7 @@ specifiers:
   cookie: ^0.5.0
   cropperjs: ^1.5.12
   eslint: ^8.24.0
+  fabric: ^5.3.0
   framer-motion: ^6.4.2
   lodash: ^4.17.21
   mime: ^3.0.0
@@ -41,9 +40,12 @@ specifiers:
   redux: ^4.2.0
   redux-persist: ^6.0.0
   redux-thunk: ^2.4.1
+  resize-observer-polyfill: ^1.5.1
+  tinycolor2: ^1.6.0
   typescript: ^4.9.3
   use-debounce: ^8.0.4
   vite: ^4.0.0
+  vite-tsconfig-paths: ^4.0.5
 
 dependencies:
   '@chakra-ui/react': 2.4.9_7h642ehufk2ayekpx246qipqne
@@ -54,15 +56,14 @@ dependencies:
   '@emotion/react': 11.10.5_3stiutgnnbnfnf3uowm5cip22i
   '@emotion/styled': 11.10.5_jrh5enlbqfbnumycmktdqgd6se
   '@layerhub-io/react-custom-scrollbar': 0.0.1_react@18.2.0
-  '@layerhub-pro/core': 2.0.2
-  '@layerhub-pro/react': 2.0.2
-  '@layerhub-pro/types': 2.0.2
   '@reduxjs/toolkit': 1.9.1_k4ae6lp43ej6mezo3ztvx6pykq
+  '@types/fabric': 5.3.0
   '@types/lodash': 4.14.191
   '@types/react-beautiful-dnd': 13.1.3
   axios: 0.27.2
   cookie: 0.5.0
   cropperjs: 1.5.13
+  fabric: 5.3.0
   framer-motion: 6.5.1_biqbaboplfbrettd7655fr4n2y
   lodash: 4.17.21
   mime: 3.0.0
@@ -79,6 +80,8 @@ dependencies:
   redux: 4.2.0
   redux-persist: 6.0.0_react@18.2.0+redux@4.2.0
   redux-thunk: 2.4.2_redux@4.2.0
+  resize-observer-polyfill: 1.5.1
+  tinycolor2: 1.6.0
   use-debounce: 8.0.4_react@18.2.0
 
 devDependencies:
@@ -91,6 +94,7 @@ devDependencies:
   eslint: 8.32.0
   typescript: 4.9.4
   vite: 4.0.4_@types+node@18.0.3
+  vite-tsconfig-paths: 4.0.5_typescript@4.9.4
 
 packages:
 
@@ -1867,50 +1871,6 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@layerhub-pro/core/2.0.2:
-    resolution: {integrity: sha512-VM/ABYyqr8ynIPi5Q7jP/A2xtREZptKxGqsYF+fmelENjYD7gCb59eVueEX9JNZdjpI6ovVhDaxBKZalJsoVUA==}
-    dependencies:
-      '@layerhub-pro/objects': 2.0.2_fabric@5.3.0
-      '@layerhub-pro/types': 2.0.2
-      fabric: 5.3.0
-      lodash: 4.17.21
-      nanoid: 3.3.4
-      resize-observer-polyfill: 1.5.1
-      tinycolor2: 1.5.2
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    dev: false
-
-  /@layerhub-pro/objects/2.0.2_fabric@5.3.0:
-    resolution: {integrity: sha512-/HXpItk6V+fIUg1FRIBn4u5K7BUcmdcskZuuvSkI+/vnCILqrtU1RYc6CPT5q2ZqrQDL3YFrsrDw+/Htf13LSA==}
-    peerDependencies:
-      fabric: ^5.3.0
-    dependencies:
-      fabric: 5.3.0
-      lodash: 4.17.21
-    dev: false
-
-  /@layerhub-pro/react/2.0.2:
-    resolution: {integrity: sha512-QF16KBB+H5S0l0jQ2eZxXePjVmtcyEjFZ0cfRPq+TKfCOG/WcRksAcgYyTN9inQjzt2jCtcaNyd8ugw99/JD0A==}
-    dependencies:
-      '@layerhub-pro/core': 2.0.2
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      resize-observer-polyfill: 1.5.1
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    dev: false
-
-  /@layerhub-pro/types/2.0.2:
-    resolution: {integrity: sha512-MV57o6TqtogEuBtRMkCRe2zijNT+em4uIkpZfDeYMY7VuFPRTCD/t6uhNFj9v6I2WgqYd9CVoT12uZ70rrYuIA==}
-    dev: false
-
   /@mapbox/node-pre-gyp/1.0.10:
     resolution: {integrity: sha512-4ySo4CjzStuprMwk35H5pPbkymjv1SF3jGLj6rAHp/xT/RF7TL7bd9CTm1xDY49K2qF7jmR/g7k+SkLETP6opA==}
     hasBin: true
@@ -2031,6 +1991,10 @@ packages:
     engines: {node: '>= 10'}
     dev: false
     optional: true
+
+  /@types/fabric/5.3.0:
+    resolution: {integrity: sha512-HIsNsuvyQmsNi0+bT8Q7t5sC8g6e8xAdgZfO7S4HpeFKn0XK1BKrgdRjocM0hsB/vVVT/4M7IBPqqyvbF3Kl5g==}
+    dev: false
 
   /@types/hoist-non-react-statics/3.3.1:
     resolution: {integrity: sha512-iMIqiko6ooLrTh1joXodJK5X9xeEALT1kM5G3ZLhD3hszxBdIEd5C75U834D9mLcINgD4OyZf5uQXjkuYydWvA==}
@@ -2912,6 +2876,10 @@ packages:
       type-fest: 0.20.2
     dev: true
 
+  /globrex/0.1.2:
+    resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
+    dev: true
+
   /grapheme-splitter/1.0.4:
     resolution: {integrity: sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==}
     dev: true
@@ -3298,6 +3266,7 @@ packages:
     resolution: {integrity: sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
+    dev: true
 
   /nanoid/4.0.0:
     resolution: {integrity: sha512-IgBP8piMxe/gf73RTQx7hmnhwz0aaEXYakvqZyE302IXW3HyVNhdNGC+O2MwMAVhLEnvXlvKtGbtJf6wvHihCg==}
@@ -4047,8 +4016,8 @@ packages:
     resolution: {integrity: sha512-AD5ih2NlSssTCwsMznbvwMZpJ1cbhkGd2uueNxzv2jDlEeZdU04JQfRnggJQ8DrcVBGjAsCKwFBbDlVNtEMlzw==}
     dev: false
 
-  /tinycolor2/1.5.2:
-    resolution: {integrity: sha512-h80m9GPFGbcLzZByXlNSEhp1gf8Dy+VX/2JCGUZsWLo7lV1mnE/XlxGYgRBoMLJh1lIDXP0EMC4RPTjlRaV+Bg==}
+  /tinycolor2/1.6.0:
+    resolution: {integrity: sha512-XPaBkWQJdsf3pLKJV9p4qN/S+fm2Oj8AIPo1BTUhg5oxkvm9+SVEGFdhyOz7tTdUTfvxMiAs4sp6/eZO2Ew+pw==}
     dev: false
 
   /to-camel-case/1.0.0:
@@ -4098,6 +4067,19 @@ packages:
       punycode: 2.2.0
     dev: false
     optional: true
+
+  /tsconfck/2.0.3_typescript@4.9.4:
+    resolution: {integrity: sha512-o3DsPZO1+C98KqHMdAbWs30zpxD30kj8r9OLA4ML1yghx4khNDzaaShNalfluh8ZPPhzKe3qyVCP1HiZszSAsw==}
+    engines: {node: ^14.13.1 || ^16 || >=18}
+    hasBin: true
+    peerDependencies:
+      typescript: ^4.3.5
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      typescript: 4.9.4
+    dev: true
 
   /tslib/2.4.0:
     resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
@@ -4224,6 +4206,17 @@ packages:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: false
     optional: true
+
+  /vite-tsconfig-paths/4.0.5_typescript@4.9.4:
+    resolution: {integrity: sha512-/L/eHwySFYjwxoYt1WRJniuK/jPv+WGwgRGBYx3leciR5wBeqntQpUE6Js6+TJemChc+ter7fDBKieyEWDx4yQ==}
+    dependencies:
+      debug: 4.3.4
+      globrex: 0.1.2
+      tsconfck: 2.0.3_typescript@4.9.4
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+    dev: true
 
   /vite/4.0.4_@types+node@18.0.3:
     resolution: {integrity: sha512-xevPU7M8FU0i/80DMR+YhgrzR5KS2ORy1B4xcX/cXLsvnUWvfHuqMmVU6N0YiJ4JWGRJJsLCgjEzKjG9/GKoSw==}

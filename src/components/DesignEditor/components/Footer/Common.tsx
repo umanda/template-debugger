@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react"
 import { Popover, PopoverTrigger, PopoverContent } from "@chakra-ui/react"
 import { useEditor, useZoomRatio } from "@layerhub-pro/react"
-import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import LeftArrow from "../../../Icons/LeftArrow"
 import RightArrow from "../../../Icons/RightArrow"
 import DownArrow from "../../../Icons/DownArrow"

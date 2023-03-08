@@ -2,7 +2,6 @@ import {
   Box,
   Flex,
   Grid,
-  GridItem,
   Input,
   Popover,
   PopoverContent,
@@ -11,13 +10,13 @@ import {
   useDisclosure
 } from "@chakra-ui/react"
 import { useEditor } from "@layerhub-pro/react"
-import { DEFAULT_COLORS } from "../../../../constants/consts"
-import { getRecentColor } from "../../../../store/colors/action"
-import { selectColors } from "../../../../store/colors/selector"
-import { useAppDispatch, useAppSelector } from "../../../../store/store"
+import { DEFAULT_COLORS } from "~/constants/consts"
+import { getRecentColor } from "~/store/colors/action"
+import { selectColors } from "~/store/colors/selector"
+import { useAppDispatch, useAppSelector } from "~/store/store"
 import React, { useEffect, useState } from "react"
 import { HexColorPicker } from "react-colorful"
-import useDesignEditorContext from "../../../../hooks/useDesignEditorContext"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 
 export default function Backogrund() {
   const dispatch = useAppDispatch()

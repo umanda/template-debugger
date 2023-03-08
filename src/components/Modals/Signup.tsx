@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react"
 import { Box, Button, FormControl, Input, InputGroup, InputRightElement, FormLabel, Flex, Text } from "@chakra-ui/react"
 import { AuthType } from "./AuthModal"
-import { SignupDto } from "../interfaces/user"
-import { useAppDispatch } from "../store/store"
-import { signup } from "../store/user/action"
+import { SignupDto } from "../../interfaces/user"
+import { useAppDispatch } from "~/store/store"
+import { signup } from "~/store/user/action"
 
 interface Props {
   setAuthtype: React.Dispatch<React.SetStateAction<AuthType>>

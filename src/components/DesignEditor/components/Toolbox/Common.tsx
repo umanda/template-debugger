@@ -14,7 +14,7 @@ import LayerToBack from "../../../Icons/LayerToBack"
 import LayerBackward from "../../../Icons/LayerBackward"
 import FlipHorizontal from "../../../Icons/FlipHorizontal"
 import FlipVertical from "../../../Icons/FlipVertical"
-import useResourcesContext from "../../../hooks/useResourcesContext"
+import useResourcesContext from "~/hooks/useResourcesContext"
 
 export default function Common() {
   const [state, setState] = React.useState({ isGroup: false, isMultiple: false })

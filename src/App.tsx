@@ -2,11 +2,11 @@ import { useToast } from "@chakra-ui/react"
 import { useCallback, useEffect, useState } from "react"
 import { Route, Routes, useNavigate, useParams } from "react-router-dom"
 import Designer from "../src/designer/id"
-import { getFonts } from "./components/store/fonts/action"
-import { useAppDispatch } from "./components/store/store"
-import { getListDrawifiers, signInByToken } from "./components/store/user/action"
-import { generateId } from "./components/utils/unique"
-import SplashLoader from "./images/SplashLoader.gif"
+import { getFonts } from "./store/fonts/action"
+import { useAppDispatch } from "./store/store"
+import { getListDrawifiers, signInByToken } from "./store/user/action"
+import { generateId } from "./utils/unique"
+import SplashLoader from "./assets/images/SplashLoader.gif"
 
 const redirectHome: string = import.meta.env.VITE_REDIRECT_HOME
 

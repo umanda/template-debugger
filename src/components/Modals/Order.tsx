@@ -4,7 +4,6 @@ import {
   Flex,
   Grid,
   IconButton,
-  Input,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -19,9 +18,9 @@ import {
 } from "@chakra-ui/react"
 import { useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
-import { selectListDrawifiers } from "../store/user/selector"
-import Scrollable from "../utils/Scrollable"
-import { DEFAULT_ORDER } from "../constants/consts"
+import { selectListDrawifiers } from "~/store/user/selector"
+import Scrollable from "../Scrollable"
+import { DEFAULT_ORDER } from "~/constants/consts"
 import Filter from "../Icons/Filter"
 
 export default function Order({

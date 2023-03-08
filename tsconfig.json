@@ -14,7 +14,15 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["src/*"],
+      "@layerhub-pro/react": ["src/layerhub"],
+      "@layerhub-pro/types": ["src/layerhub/types"],
+      "@layerhub-pro/core": ["src/layerhub/core"],
+      "@layerhub-pro/objects": ["src/layerhub/objects"]
+    }
   },
   "include": ["src", "test.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]

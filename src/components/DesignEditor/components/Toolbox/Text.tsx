@@ -29,12 +29,12 @@ import TextAlignRight from "../../../Icons/TextAlignRight"
 import TextAlignJustify from "../../../Icons/TextAlignJustify"
 import Minus from "../../../Icons/Minus"
 import Plus from "../../../Icons/Plus"
-import { selectFonts } from "../../../store/fonts/selector"
-import { getTextProperties } from "../../../utils/text"
-import { loadFonts } from "../../../utils/fonts"
-import { FONT_SIZES, TEXT_ALIGNS } from "../../../constants/consts"
+import { selectFonts } from "~/store/fonts/selector"
+import { getTextProperties } from "~/utils/text"
+import { loadFonts } from "~/utils/fonts"
+import { FONT_SIZES, TEXT_ALIGNS } from "~/constants/consts"
 import Down from "../../../Icons/Down"
-import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 
 interface TextState {
   color: string

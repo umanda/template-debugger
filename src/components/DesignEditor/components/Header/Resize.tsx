@@ -5,7 +5,7 @@ import { useDesign, useObjects } from "@layerhub-pro/react"
 import { IFrame } from "@layerhub-pro/types"
 import Lock from "../../../Icons/Lock"
 import Unlock from "../../../Icons/Unlock"
-import useDesignEditorContext from "../../../hooks/useDesignEditorContext"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 
 type ResizeMode =
   | "LANDSCAPE"
