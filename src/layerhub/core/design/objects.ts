@@ -1064,7 +1064,8 @@ class Objects {
           object.type === LayerType.FRAME ||
           object.type === LayerType.BACKGROUND ||
           object.type === LayerType.SEPARATOR ||
-          object.type === LayerType.PLACEHOLDER
+          object.type === LayerType.PLACEHOLDER ||
+          object.type === LayerType.BACKGROUND_CONTAINER
         ) {
           return false
         } else if (!object.evented) {

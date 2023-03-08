@@ -23,8 +23,6 @@ export default function Canva() {
   const editor = useEditor()
   const activeScene = useActiveScene()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const user = useSelector(selectUser)
-  const projectSelect = useSelector(selectProject)
   const flexRef = React.useRef<any>()
   const activeObject: any = useActiveObject()
 
@@ -168,6 +166,7 @@ export default function Canva() {
               enabled: true,
               color: ""
             },
+            zoomToMode: "POINT",
             shortcuts: false
           }}
         />
