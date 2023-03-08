@@ -36,6 +36,7 @@ import FAQ from "../../../Icons/FAQ"
 import Chat from "../../../Icons/Chat"
 import Bug from "../../../Icons/Bug"
 import LiveChat from "./LiveChat"
+import PanningMode from "./PanningMode"
 
 const redirectFaq: string = import.meta.env.VITE_APP_DOMAIN + "/faq"
 const redirectTutorals: string = import.meta.env.VITE_APP_DOMAIN + "/tutorials"
@@ -124,6 +125,7 @@ export default function Common() {
             padding: "0 0.45rem"
           }}
         >
+          <PanningMode />
           <IconButton
             variant={"ghost"}
             aria-label="Zoom out"
