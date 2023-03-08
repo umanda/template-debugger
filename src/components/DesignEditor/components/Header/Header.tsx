@@ -956,7 +956,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
           ? activeObject?.isEditing !== true && activeScene.objects.remove()
           : activeScene.objects.remove()
       } else if (booleanScene) {
-        design.deleteScene(currentScene.id)
+        editor.design.scenes.length !== 1 && design.deleteScene(currentScene.id)
       }
       return true
     }
