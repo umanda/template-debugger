@@ -20,7 +20,7 @@ class StaticVectorObject extends fabric.Group {
       // @ts-ignore
       this.colorMap = {
         ...this.colorMap,
-        [prev]: next
+        [prev]: next,
       }
     }
   }
@@ -70,7 +70,7 @@ class StaticVectorObject extends fabric.Group {
                 ...waterMarkOptions,
                 opacity: 0.5,
                 top: this.top! + this.getScaledHeight() / 2 - waterMarkOptions.height / 2,
-                left: this.left! + this.getScaledWidth() / 2 - waterMarkOptions.width / 2
+                left: this.left! + this.getScaledWidth() / 2 - waterMarkOptions.width / 2,
               })
               this._watermark = watermarkGroup
               this.add(...watermarkObjects)
@@ -87,7 +87,7 @@ class StaticVectorObject extends fabric.Group {
     super.initialize([object], {
       ...others,
       colorMap, // @ts-ignore
-      erasable: false
+      erasable: false,
     })
 
     return this
@@ -108,26 +108,27 @@ class StaticVectorObject extends fabric.Group {
     // @ts-ignore
     return super.toObject(propertiesToInclude, {
       src: this.src,
-      watermark: this.watermark
+      watermark: this.watermark,
     })
   }
   toJSON(propertiesToInclude = []) {
     // @ts-ignore
     return super.toObject(propertiesToInclude, {
       src: this.src,
-      watermark: this.watermark
+      watermark: this.watermark,
     })
   }
 
   static fromObject(options: any, callback: Function) {
     fabric.loadSVGFromURL(options.src, (objects, opts) => {
+      console.log({ objects, opts })
       return callback && callback(new fabric.StaticVector(objects, opts, { ...options }))
     })
   }
 }
 
 fabric.StaticVector = fabric.util.createClass(StaticVectorObject, {
-  type: StaticVectorObject.type
+  type: StaticVectorObject.type,
 })
 
 fabric.StaticVector.fromObject = StaticVectorObject.fromObject

@@ -53,6 +53,11 @@ export const defaultConfig: IConfig = {
   shortcuts: true,
   properties: PROPERTIES_TO_INCLUDE,
   frame: frame,
+  scroll: {
+    enabled: false,
+    limit: 500,
+  },
+
   guidelines: {
     enabled: false,
     color: "##8e44ad",
