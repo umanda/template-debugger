@@ -50,7 +50,6 @@ class CanvasEvents {
     })
 
     this.editor.config.shortcuts && this.canvas.wrapperEl.addEventListener("keydown", this.onKeyDown.bind(this), false)
-  
   }
 
   public disableEvents() {
@@ -70,10 +69,7 @@ class CanvasEvents {
       "added:eraser": this.onBrushAdded,
     })
 
-  
-
     this.editor.config.shortcuts && this.canvas.wrapperEl.removeEventListener("keydown", this.onKeyDown.bind(this))
-
   }
 
   private onBrushAdded = () => {
@@ -251,10 +247,12 @@ class CanvasEvents {
     } else {
       zoomRatio += 0.02
     }
-    this.editor.zoom.zoomToPoint(
-      new fabric.Point(this.canvas.getWidth() / 2, this.canvas.getHeight() / 2),
-      zoomRatio
-    )
+    if (this.editor.config.zoomToMode === "CENTER") {
+      this.editor.zoom.zoomToPoint(new fabric.Point(this.canvas.getWidth() / 2, this.canvas.getHeight() / 2), zoomRatio)
+    } else {
+      this.editor.zoom.zoomToPoint(new fabric.Point(event.e.offsetX, event.e.offsetY), zoomRatio)
+    }
+
     event.e.preventDefault()
     event.e.stopPropagation()
   }

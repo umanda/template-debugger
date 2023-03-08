@@ -49,7 +49,7 @@ export class Editor extends EventManager {
     const canvas = new Canvas({
       id: this.canvasId,
       config: this.config,
-      editor: this
+      editor: this,
     })
     this.canvas = canvas
     // @ts-ignore
@@ -62,14 +62,14 @@ export class Editor extends EventManager {
     setTimeout(() => {
       this.zoom = new Zoom({
         canvas: this.canvas.canvas,
-        state: this.state
+        state: this.state,
       })
       // @ts-ignore
       const design = createDesign({
         frame: {
           width: 1920,
-          height: 1080
-        }
+          height: 1080,
+        },
       })
       // const design = data as IDesign
       const fitRatio = getFitRatio(design.frame, this.canvas.canvas, this.config)
@@ -79,22 +79,22 @@ export class Editor extends EventManager {
         canvas: this.canvas.canvas,
         design: design,
         config: this.config,
-        state: this.state
+        state: this.state,
       })
       this.events = new CanvasEvents({
         canvas: this.canvas.canvas,
         design: this.design,
-        editor: this
+        editor: this,
       })
 
       this.dragger = new Dragger({
         canvas: this.canvas.canvas,
-        editor: this
+        editor: this,
       })
 
       this.guidelines = new Guidelines({
         canvas: this.canvas.canvas,
-        config: this.config
+        config: this.config,
       })
       this.zoom.zoomToFit(fitRatio)
       this.state.setDesign(this.design)
@@ -106,7 +106,7 @@ export class Editor extends EventManager {
   public debug() {
     console.log({
       design: this.design.toJSON(),
-      current: this.canvas.canvas.toJSON()
+      current: this.canvas.canvas.toJSON(),
     })
   }
 

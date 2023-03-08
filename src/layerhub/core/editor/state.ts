@@ -15,6 +15,7 @@ export default class State implements IState {
   public isFreeDrawing = false
   public template = null
   public isCropping: false
+  public dragMode: "IDLE"
   public setFrame(o: any) {
     this.frame = o
   }
@@ -56,5 +57,8 @@ export default class State implements IState {
   }
   public setParamMenuRequest(o: any) {
     this.paramMenuRequest = o
+  }
+  public setDragMode(o: any) {
+    this.dragMode = o
   }
 }
