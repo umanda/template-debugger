@@ -936,7 +936,6 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const dispatch = useAppDispatch()
   const editor = useEditor()
   const activeScene = useActiveScene()
-  const currentScene = useActiveScene()
   const scenes = useScenes()
   const [autoSave, setAutoSave] = useState<boolean>(false)
   const [stateJson, setStateJson] = useState<any>("")
@@ -956,7 +955,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
           ? activeObject?.isEditing !== true && activeScene.objects.remove()
           : activeScene.objects.remove()
       } else if (booleanScene) {
-        editor.design.scenes.length !== 1 && design.deleteScene(currentScene.id)
+        scenes.length !== 1 && design.deleteScene(activeScene.id)
       }
       return true
     }
@@ -1066,7 +1065,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
       }
     } catch (err: any) {}
-  }, [editor, scenes, currentScene, id, design, autoSave, namesPages])
+  }, [editor, scenes, id, design, autoSave, namesPages])
 
   return (
     <Flex>
