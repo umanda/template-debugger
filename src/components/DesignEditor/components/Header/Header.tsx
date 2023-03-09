@@ -202,7 +202,7 @@ function ShareMenu() {
 
   const handleDownload = async (type: string) => {
     try {
-      if (user?.plan !== "FREE") {
+      if (user?.plan !== "FREE" || type === "jpg") {
         toast({
           title: "Please wait while the image loads",
           status: "loading",
