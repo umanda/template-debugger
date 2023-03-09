@@ -943,12 +943,16 @@ class Objects {
     if (refObject) {
       if (isArray(refObject)) {
         refObject.forEach((obj) => {
-          if (obj?.type !== "Frame") {
+          if (obj?.type !== "Frame" && obj?.type !== "BackgroundContainer" && obj?.type !== "Background") {
             canvas.remove(obj)
           }
         })
       } else {
-        if (refObject?.type !== "Frame") {
+        if (
+          refObject?.type !== "Frame" &&
+          refObject?.type !== "BackgroundContainer" &&
+          refObject?.type !== "Background"
+        ) {
           canvas.remove(refObject)
         }
       }
@@ -966,12 +970,16 @@ class Objects {
     if (refObject) {
       if (isArray(refObject)) {
         refObject.forEach((obj) => {
-          if (obj?.type !== "Frame") {
+          if (obj?.type !== "Frame" && obj?.type !== "BackgroundContainer" && obj?.type !== "Background") {
             canvas.remove(obj)
           }
         })
       } else {
-        if (refObject?.type !== "Frame") {
+        if (
+          refObject?.type !== "Frame" &&
+          refObject?.type !== "BackgroundContainer" &&
+          refObject?.type !== "Background"
+        ) {
           canvas.remove(refObject)
         }
       }
