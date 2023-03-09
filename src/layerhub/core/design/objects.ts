@@ -959,6 +959,29 @@ class Objects {
     }
   }
 
+  public removeAll = () => {
+    const canvas = this.scene.canvas
+    let refObject: fabric.Object[] | fabric.Object = canvas.getObjects()
+
+    if (refObject) {
+      if (isArray(refObject)) {
+        refObject.forEach((obj) => {
+          if (obj?.type !== "Frame") {
+            canvas.remove(obj)
+          }
+        })
+      } else {
+        if (refObject?.type !== "Frame") {
+          canvas.remove(refObject)
+        }
+      }
+
+      canvas.discardActiveObject().renderAll()
+      this.scene.history.save()
+      this.updateContextObjects()
+    }
+  }
+
   public cut = () => {
     this.copy()
     this.isCut = true

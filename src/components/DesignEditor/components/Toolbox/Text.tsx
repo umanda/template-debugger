@@ -296,7 +296,6 @@ export default function Text() {
 }
 
 function LetterCase() {
-  const editor = useEditor()
   const activeScene = useActiveScene()
   return (
     <Popover placement="bottom-end">

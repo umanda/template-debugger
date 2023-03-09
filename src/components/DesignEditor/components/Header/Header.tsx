@@ -1014,12 +1014,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       if (e.ctrlKey && e.keyCode === 68) activeScene.objects.clone()
       if (e.ctrlKey && e.keyCode === 83) functionSave()
       if (e.ctrlKey && e.keyCode === 65) activeScene.objects.select()
-      if (e.ctrlKey && e.keyCode === 69) {
-        activeScene.layers.map((e, index) => {
-          if (index > 1) activeScene.objects.remove(e.id)
-        })
-        editor.zoom.zoomToRatio(zoom - 0.0000000000001 + 0.0000000000001)
-      }
+      if (e.ctrlKey && e.keyCode === 69) activeScene.objects.removeAll()
       if (e.ctrlKey && e.keyCode === 90 && activeObject?.isEditing !== true) activeScene.history.undo()
       if (e.ctrlKey && e.keyCode === 89 && activeObject?.isEditing !== true) activeScene.history.redo()
       return false
