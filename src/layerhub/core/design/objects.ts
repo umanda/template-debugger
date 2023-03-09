@@ -570,6 +570,31 @@ class Objects {
     }
   }
 
+  // Text exclusive hooks
+  public toCapitalize(id?: string) {
+    const canvas = this.scene.canvas
+
+    let refObject = canvas.getActiveObject() as fabric.StaticText
+    if (id) {
+      refObject = this.findOneById(id)
+    }
+    if (refObject && refObject.type === LayerType.STATIC_TEXT) {
+      if (refObject.isEditing) {
+        refObject.hiddenTextarea!.value = refObject.hiddenTextarea!.value.toLowerCase()
+        refObject.updateFromTextArea()
+        canvas.requestRenderAll()
+        return
+      }
+
+      const text = refObject.text
+      refObject.text = text
+        .split(" ")
+        .map((t) => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase())
+        .join(" ")
+      canvas.requestRenderAll()
+    }
+  }
+
   /**
    * Lock object movement and disable controls
    */

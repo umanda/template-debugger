@@ -309,22 +309,12 @@ function LetterCase() {
         sx={{
           background: "#FFFFFF",
           display: "grid",
-          gridTemplateColumns: "40px 40px",
+          gridTemplateColumns: " 40px 40px 40px",
           gap: "0.5rem",
           padding: "0.5rem",
-          width: "160px"
+          width: "auto"
         }}
       >
-        {/* <Button
-          variant={"unstyled"}
-          justifyContent={"center"}
-          display={"flex"}
-          alignItems={"center"}
-          size="sm"
-          onClick={() => activeScene.objects.toUppercase()}
-        >
-          <LetterMixedCase size={24} />
-        </Button> */}
         <Button
           variant={"unstyled"}
           justifyContent={"center"}
@@ -334,6 +324,16 @@ function LetterCase() {
           onClick={() => activeScene.objects.toUppercase()}
         >
           <LetterUpperCase size={24} />
+        </Button>
+        <Button
+          variant={"unstyled"}
+          justifyContent={"center"}
+          display={"flex"}
+          alignItems={"center"}
+          size="sm"
+          onClick={() => activeScene.objects.toCapitalize()}
+        >
+          <LetterMixedCase size={24} />
         </Button>
         <Button
           variant={"unstyled"}

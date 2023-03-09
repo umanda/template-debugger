@@ -994,7 +994,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       return true
     }
     if (e.ctrlKey && e.key === "v") {
-      if (activeObject) activeScene.objects.paste()
+      if (activeObject && activeObject?.isEditing !== true) activeScene.objects.paste()
       return true
     }
     if (
@@ -1020,8 +1020,8 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         })
         editor.zoom.zoomToRatio(zoom - 0.0000000000001 + 0.0000000000001)
       }
-      if (e.ctrlKey && e.keyCode === 90) activeScene.history.undo()
-      if (e.ctrlKey && e.keyCode === 89) activeScene.history.redo()
+      if (e.ctrlKey && e.keyCode === 90 && activeObject?.isEditing !== true) activeScene.history.undo()
+      if (e.ctrlKey && e.keyCode === 89 && activeObject?.isEditing !== true) activeScene.history.redo()
       return false
     } else return true
   }
