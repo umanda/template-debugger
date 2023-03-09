@@ -8,6 +8,7 @@ const PanningMode = () => {
   return (
     <IconButton
       onClick={() => {
+        editor.freeDrawer.disable()
         if (dragMode === "IDLE") {
           editor?.canvas.toggleDragMode("PANNING")
         } else {

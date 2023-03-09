@@ -29,6 +29,7 @@ export default function Pencil() {
 
   const enableDrawing = useCallback(
     (type: any) => {
+      editor?.canvas.toggleDragMode("IDDLE")
       if (editor) {
         if (type == "EraserBrush") {
           setDraw({ ...draw, type: type })
@@ -90,6 +91,7 @@ export default function Pencil() {
   )
 
   const toggleDrawing = useCallback(() => {
+    editor?.canvas.toggleDragMode("IDDLE")
     if (editor?.freeDrawer?.canvas?.isDrawingMode) {
       editor.freeDrawer.disable()
       setTypeDraw(draw.type)
