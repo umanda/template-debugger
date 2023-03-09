@@ -936,36 +936,11 @@ class Objects {
     const canvas = this.scene.canvas
     let refObject: fabric.Object[] | fabric.Object = canvas.getActiveObjects()
 
-    if (id) {
+    if (id && id !== "all") {
       refObject = this.findOneById(id)
+    } else {
+      refObject = canvas.getObjects()
     }
-
-    if (refObject) {
-      if (isArray(refObject)) {
-        refObject.forEach((obj) => {
-          if (obj?.type !== "Frame" && obj?.type !== "BackgroundContainer" && obj?.type !== "Background") {
-            canvas.remove(obj)
-          }
-        })
-      } else {
-        if (
-          refObject?.type !== "Frame" &&
-          refObject?.type !== "BackgroundContainer" &&
-          refObject?.type !== "Background"
-        ) {
-          canvas.remove(refObject)
-        }
-      }
-
-      canvas.discardActiveObject().renderAll()
-      this.scene.history.save()
-      this.updateContextObjects()
-    }
-  }
-
-  public removeAll = () => {
-    const canvas = this.scene.canvas
-    let refObject: fabric.Object[] | fabric.Object = canvas.getObjects()
 
     if (refObject) {
       if (isArray(refObject)) {

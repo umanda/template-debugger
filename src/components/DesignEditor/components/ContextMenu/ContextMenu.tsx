@@ -74,7 +74,7 @@ function ContextMenu() {
         />
         <ContextMenuItem
           onClick={() => {
-            activeScene.objects.removeAll()
+            activeScene.objects.remove("all")
             editor.cancelContextMenuRequest()
           }}
           icon="Trash"
