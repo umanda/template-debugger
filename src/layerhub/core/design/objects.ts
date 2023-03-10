@@ -938,7 +938,7 @@ class Objects {
 
     if (id && id !== "all") {
       refObject = this.findOneById(id)
-    } else {
+    } else if (id === "all") {
       refObject = canvas.getObjects()
     }
 
