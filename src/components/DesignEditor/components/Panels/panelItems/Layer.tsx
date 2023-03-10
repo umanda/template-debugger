@@ -36,20 +36,17 @@ export default function Layer() {
   }, [changeOrder])
 
   useEffect(() => {
-    console.log("order")
     setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom").reverse())
   }, [activeScene, activeObject, order])
 
   const handleChangeOrder = useCallback(() => {
     if (changeOrder.to === "front") {
-      console.log("front")
       activeScene.layers.map((e, index) => {
         if (index < changeOrder.cont) {
           setTimeout(async () => activeScene.objects.bringForward(changeOrder.id), 100)
         }
       })
     } else if (changeOrder.to === "back") {
-      console.log("back")
       activeScene.layers.map((e, index) => {
         if (index < changeOrder.cont) {
           setTimeout(() => activeScene.objects.sendBackwards(changeOrder.id), 100)
@@ -97,7 +94,6 @@ export default function Layer() {
               if (source.index === destination.index && source.droppableId === destination.droppableId) {
                 return
               }
-              console.log("drag end")
               setObjects((prevTasks) => reorder(prevTasks, source.index, destination.index))
             }}
           >
@@ -183,8 +179,8 @@ export default function Layer() {
 
     const handleRemoveLayer = useCallback(() => {
       activeScene.objects.removeById(id)
-      // //@ts-ignore
-      // setObjects(activeScene.layers.filter((e: any) => e.name !== "Custom"))
+      //@ts-ignore
+      setObjects(activeScene.layers.filter((e: any) => e.name !== "Custom"))
     }, [id, activeScene])
 
     const IconEye = useCallback(() => {
