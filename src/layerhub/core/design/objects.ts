@@ -936,11 +936,8 @@ class Objects {
     const canvas = this.scene.canvas
     let refObject: fabric.Object[] | fabric.Object = canvas.getActiveObjects()
 
-    if (id && id !== "all") {
-      refObject = this.findOneById(id)
-    } else if (id === "all") {
-      refObject = canvas.getObjects()
-    }
+    if (id && id !== "all") refObject = this.findOneById(id)
+    else if (id === "all") refObject = canvas.getObjects()
 
     if (refObject) {
       if (isArray(refObject)) {
