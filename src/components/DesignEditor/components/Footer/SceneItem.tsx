@@ -119,7 +119,7 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
           position: "relative",
           border:
             activeScene && currentScene.id === scene.id
-              ? "2px solid #DD6B20"
+              ? "2px solid #5456F5"
               : isCurrentScene
               ? "2px solid #5456F5"
               : "2px solid #DDDFE5",

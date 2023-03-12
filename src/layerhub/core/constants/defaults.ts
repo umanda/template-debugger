@@ -54,8 +54,8 @@ export const defaultConfig: IConfig = {
   properties: PROPERTIES_TO_INCLUDE,
   frame: frame,
   guidelines: {
-    enabled: false,
-    color: "##8e44ad",
+    enabled: true,
+    color: "#8e44ad",
   },
   zoomToMode: "CENTER",
   background: {

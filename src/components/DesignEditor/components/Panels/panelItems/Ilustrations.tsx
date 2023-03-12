@@ -190,14 +190,14 @@ export default function Ilustrations() {
           setNotIds,
           notIds
         )
-      } catch {}
+      } catch { }
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
         // stateFavorite !== true && stateRecent !== true && nameIllustration[0] !== "" && onOpenSearchFound()
         stateFavorite === true
           ? setValidateContent("No favorite illustrations to display")
           : stateRecent === true
-          ? setValidateContent("No recent illustrations to display")
-          : setValidateContent("noResult")
+            ? setValidateContent("No recent illustrations to display")
+            : setValidateContent("noResult")
       } else {
         setValidateContent(null)
       }
@@ -247,7 +247,7 @@ export default function Ilustrations() {
           const ctx = { id: resource.id }
           api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
         }
-      } catch {}
+      } catch { }
     },
     [activeScene, editor, activeObject, projectSelect, user]
   )
@@ -699,7 +699,7 @@ function IllustrationItem({
           const ctx = { id: illustration.id }
           api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
         }
-      } catch {}
+      } catch { }
     },
     [editor, user, projectSelect, illustration]
   )
@@ -734,9 +734,9 @@ function IllustrationItem({
         overflow={"hidden"}
         _hover={{ cursor: "pointer" }}
         justifyContent={"center"}
-        // onDragStart={(e) => onDragStart(e, illustration)}
-        // onMouseOver={() => setIsHovering(true)}
-        // onMouseOut={() => setIsHovering(false)}
+      // onDragStart={(e) => onDragStart(e, illustration)}
+      // onMouseOver={() => setIsHovering(true)}
+      // onMouseOut={() => setIsHovering(false)}
       >
         <Flex
           onClick={() => OpenModalIllustration("tag", illustration)}
