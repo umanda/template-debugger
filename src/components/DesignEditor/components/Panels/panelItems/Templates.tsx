@@ -395,6 +395,11 @@ export default function Template() {
                   onBlur={makeBlur}
                   onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
                   onChange={(e) => makeChangeInput(e.target.value)}
+                  sx={{
+                    _focusVisible:{
+                      boxShadow : "none"
+                    }
+                  }}
                 />
               </Tooltip>
             </PopoverAnchor>

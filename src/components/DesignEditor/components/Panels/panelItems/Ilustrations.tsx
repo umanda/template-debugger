@@ -381,6 +381,11 @@ export default function Ilustrations() {
                   ref={initialFocusRef}
                   value={nameIllustrationPrev}
                   placeholder="Search"
+                  sx={{
+                    _focusVisible:{
+                      boxShadow : "none"
+                    }
+                  }}
                   onFocus={() => {
                     onOpenInput()
                     setInputActive(true)
@@ -388,6 +393,7 @@ export default function Ilustrations() {
                   onBlur={makeBlur}
                   onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
                   onChange={(e) => makeChangeInput(e.target.value)}
+
                 />
               </Tooltip>
             </PopoverAnchor>
@@ -718,7 +724,8 @@ function IllustrationItem({
         dragObject(e)
       }}
       sx={{
-        height: "180px",
+        maxHeight: "180px",
+        minHeight: "134px",
         flexDirection: "column"
       }}
     >
@@ -780,6 +787,7 @@ function IllustrationItem({
           <LazyLoadImage url={illustration.preview} />
         </Flex>
       </Flex>
+      {illustration?.drawifier?.name && (
       <Flex
         sx={{
           justifyContent: "space-between",
@@ -787,7 +795,7 @@ function IllustrationItem({
           alignItems: "center"
         }}
       >
-        {illustration?.drawifier?.name && (
+        
           <Flex
             sx={{
               justifyContent: "space-between",
@@ -818,8 +826,8 @@ function IllustrationItem({
               )}
             </Center>
           </Flex>
-        )}
       </Flex>
+      )}
     </Flex>
   )
 }

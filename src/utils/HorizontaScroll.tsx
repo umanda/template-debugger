@@ -94,7 +94,6 @@ function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) 
   }
 
   const handleScrollToLeft = async () => {
-    console.log('handleScrollToLeft')
     if (contentWrapper.current) {
       await makeScroll(contentWrapper.current!, state.speed, state.distance, -state.step)
       updateScroll()
@@ -102,7 +101,6 @@ function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) 
   }
 
   const handleScrollToRight = async () => {
-    console.log('handleScrollToRight')
     if (contentWrapper.current) {
       await makeScroll(contentWrapper.current!, state.speed, state.distance, state.step)
       updateScroll()
