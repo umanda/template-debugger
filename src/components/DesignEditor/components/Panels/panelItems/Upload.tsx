@@ -369,6 +369,11 @@ export default function Upload() {
           onBlur={makeBlur}
           onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
           onChange={(e) => setNameUploadPrev([e.target.value])}
+          sx={{
+            _focusVisible:{
+              boxShadow : "none"
+            }
+          }}
         />
       </Flex>
       <Popover closeOnBlur={true} initialFocusRef={initialFocusRef} isOpen={isOpen} onClose={onClose}>

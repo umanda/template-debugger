@@ -76,7 +76,6 @@ export default function Common() {
         display: "grid",
         gridTemplateColumns: "auto 1fr 400px",
         paddingX: "1rem",
-        borderTop: "1px solid #DDDFE5",
         overflow: "hidden"
       }}
       height={"62px"}

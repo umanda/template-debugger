@@ -190,14 +190,14 @@ export default function Ilustrations() {
           setNotIds,
           notIds
         )
-      } catch {}
+      } catch { }
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
         // stateFavorite !== true && stateRecent !== true && nameIllustration[0] !== "" && onOpenSearchFound()
         stateFavorite === true
           ? setValidateContent("No favorite illustrations to display")
           : stateRecent === true
-          ? setValidateContent("No recent illustrations to display")
-          : setValidateContent("noResult")
+            ? setValidateContent("No recent illustrations to display")
+            : setValidateContent("noResult")
       } else {
         setValidateContent(null)
       }
@@ -247,7 +247,7 @@ export default function Ilustrations() {
           const ctx = { id: resource.id }
           api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
         }
-      } catch {}
+      } catch { }
     },
     [activeScene, editor, activeObject, projectSelect, user]
   )
@@ -381,6 +381,11 @@ export default function Ilustrations() {
                   ref={initialFocusRef}
                   value={nameIllustrationPrev}
                   placeholder="Search"
+                  sx={{
+                    _focusVisible:{
+                      boxShadow : "none"
+                    }
+                  }}
                   onFocus={() => {
                     onOpenInput()
                     setInputActive(true)
@@ -388,6 +393,7 @@ export default function Ilustrations() {
                   onBlur={makeBlur}
                   onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
                   onChange={(e) => makeChangeInput(e.target.value)}
+
                 />
               </Tooltip>
             </PopoverAnchor>
@@ -699,7 +705,7 @@ function IllustrationItem({
           const ctx = { id: illustration.id }
           api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
         }
-      } catch {}
+      } catch { }
     },
     [editor, user, projectSelect, illustration]
   )
@@ -718,7 +724,8 @@ function IllustrationItem({
         dragObject(e)
       }}
       sx={{
-        height: "180px",
+        maxHeight: "180px",
+        minHeight: "134px",
         flexDirection: "column"
       }}
     >
@@ -734,9 +741,9 @@ function IllustrationItem({
         overflow={"hidden"}
         _hover={{ cursor: "pointer" }}
         justifyContent={"center"}
-        // onDragStart={(e) => onDragStart(e, illustration)}
-        // onMouseOver={() => setIsHovering(true)}
-        // onMouseOut={() => setIsHovering(false)}
+      // onDragStart={(e) => onDragStart(e, illustration)}
+      // onMouseOver={() => setIsHovering(true)}
+      // onMouseOut={() => setIsHovering(false)}
       >
         <Flex
           onClick={() => OpenModalIllustration("tag", illustration)}
@@ -780,6 +787,7 @@ function IllustrationItem({
           <LazyLoadImage url={illustration.preview} />
         </Flex>
       </Flex>
+      {illustration?.drawifier?.name && (
       <Flex
         sx={{
           justifyContent: "space-between",
@@ -787,7 +795,7 @@ function IllustrationItem({
           alignItems: "center"
         }}
       >
-        {illustration?.drawifier?.name && (
+        
           <Flex
             sx={{
               justifyContent: "space-between",
@@ -818,8 +826,8 @@ function IllustrationItem({
               )}
             </Center>
           </Flex>
-        )}
       </Flex>
+      )}
     </Flex>
   )
 }

@@ -23,16 +23,6 @@ export default function DesignEditor() {
           flexDirection="column"
           sx={{
             width: "calc(100vw - 392px)",
-            "::-webkit-scrollbar": {
-              width: "4px"
-            },
-            "::-webkit-scrollbar-track": {
-              width: "6px"
-            },
-            "::-webkit-scrollbar-thumb": {
-              background: "red",
-              borderRadius: "24px"
-            }
           }}
         >
           {loadCanva && <Toolbox />}
