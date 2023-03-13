@@ -8,7 +8,7 @@ import { getFitRatio } from "../utils/zoom"
 import Design from "../design/design"
 import Config from "../common/config"
 import { createDesign } from "../utils/design"
-import CanvasEvents from "./canvas-events"
+import Events from "../events"
 import Drawer from "./drawer"
 import FreeDrawer from "./free-drawer"
 import Guidelines from "./guidelines"
@@ -33,7 +33,7 @@ export class Editor extends EventManager {
   public config: Config
   public clipboard: any
   public dragger: Dragger
-  private events: CanvasEvents
+  private events: Events
   private guidelines: Guidelines
   constructor({ id, state, config }: Options) {
     super()
@@ -81,9 +81,8 @@ export class Editor extends EventManager {
         config: this.config,
         state: this.state,
       })
-      this.events = new CanvasEvents({
+      this.events = new Events({
         canvas: this.canvas.canvas,
-        design: this.design,
         editor: this,
       })
 

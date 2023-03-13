@@ -13,6 +13,10 @@ export interface IConfig {
   shortcuts: boolean
   properties: string[]
   frame: IFrame
+  scroll: {
+    enabled: boolean
+    limit: number
+  }
   canvas: {
     color: string
     size: {
