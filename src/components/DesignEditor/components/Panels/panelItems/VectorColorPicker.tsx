@@ -149,9 +149,6 @@ export default function VectorColorPicker() {
                       dispatch(getRecentColor(colorHex))
                     }}
                     onFocus={() => setInputActive(true)}
-                    // onChange={(e) =>
-                    //   changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], e.target.value)
-                    // }
                     value={inputHexPrev}
                   />
                 </Box>

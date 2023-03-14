@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react"
-import { Box, Button, Center, Flex, Grid, GridItem, IconButton, Image, List, ListItem, Spacer } from "@chakra-ui/react"
-import { useActiveObject, useActiveScene, useObjects } from "@layerhub-pro/react"
+import { Button, Center, Flex, IconButton, Image, List, ListItem, Spacer } from "@chakra-ui/react"
+import { useActiveObject, useActiveScene } from "@layerhub-pro/react"
 import Lock from "~/components/Icons/Lock"
 import Unlock from "~/components/Icons/Unlock"
 import Trash from "~/components/Icons/Trash"

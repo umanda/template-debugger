@@ -14,7 +14,6 @@ import LazyLoadImage from "~/utils/LazyLoadImage"
 import { getListResourcesShapes } from "~/store/resources/action"
 import { selectResourceShapes } from "~/store/resources/selector"
 import { selectProject } from "~/store/project/selector"
-import NoShapesImage from "~/assets/images/no-shapes-to-display.svg"
 
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
 const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
@@ -63,7 +62,6 @@ export default function Shapes() {
               type: "StaticVector",
               name: "Shape",
               erasable: false,
-              // watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null,
               preview: resource.url,
               src: resource.url
             },
@@ -320,7 +318,9 @@ export default function Shapes() {
           </Scrollable>
         ) : (
           <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
-            {stateRecent === true ? <img src={NoShapesImage} /> : null}
+            {stateRecent === true ? (
+              <img src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noShapes.svg" />
+            ) : null}
             <p>{validateContent}</p>
           </Center>
         )}

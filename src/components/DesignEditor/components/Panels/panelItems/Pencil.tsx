@@ -200,7 +200,6 @@ export default function Pencil() {
           _hover={{}}
           colorScheme="brand"
           variant={editor?.freeDrawer?.canvas?.isDrawingMode ? "solid" : "outline"}
-          //background={editor?.freeDrawer?.canvas?.isDrawingMode ? "brand.500" : "inherit"}
           onClick={toggleDrawing}
           w="full"
         >

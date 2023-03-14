@@ -6,7 +6,6 @@ import { getFonts } from "./store/fonts/action"
 import { useAppDispatch } from "./store/store"
 import { getListDrawifiers, signInByToken } from "./store/user/action"
 import { generateId } from "./utils/unique"
-import SplashLoader from "./assets/images/SplashLoader.gif"
 
 const redirectHome: string = import.meta.env.VITE_REDIRECT_HOME
 
@@ -18,7 +17,6 @@ function App() {
       <Route path="/" element={state ? <Designer /> : <Loading setState={setState} state={state} />} />
       <Route path="/composer/" element={state ? <Designer /> : <Loading setState={setState} state={state} />} />
       <Route path="/composer/:id" element={state ? <Designer /> : <Loading setState={setState} state={state} />} />
-      {/* <Route path="/composer/test/test" element={<Test />} /> */}
     </Routes>
   )
 }
@@ -81,7 +79,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
         }}
       >
         <img
-          src={SplashLoader}
+          src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/splashLoader.gif"
           style={{
             height: "75px",
             width: "75px"

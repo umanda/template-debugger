@@ -6,7 +6,6 @@ import Toolbox from "./components/Toolbox"
 import Canvas from "./components/Canvas"
 import Footer from "./components/Footer/Footer"
 import useResourcesContext from "~/hooks/useResourcesContext"
-import CanvasLoader from "~/assets/images/CanvasLoader.gif"
 
 export default function DesignEditor() {
   const { loadCanva } = useResourcesContext()
@@ -22,7 +21,7 @@ export default function DesignEditor() {
           position="relative"
           flexDirection="column"
           sx={{
-            width: "calc(100vw - 392px)",
+            width: "calc(100vw - 392px)"
           }}
         >
           {loadCanva && <Toolbox />}
@@ -55,7 +54,7 @@ function Loading() {
             }}
           >
             <img
-              src={CanvasLoader}
+              src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/canvasLoader.gif"
               style={{
                 height: "75px",
                 width: "75px"

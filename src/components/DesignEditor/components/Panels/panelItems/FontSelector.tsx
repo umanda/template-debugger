@@ -10,7 +10,6 @@ import {
   TabList,
   Tab,
   Input,
-  useDisclosure,
   Center
 } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useEditor, useScenes } from "@layerhub-pro/react"
@@ -22,22 +21,17 @@ import { loadFonts } from "../../../../../utils/fonts"
 import Scrollable from "../../../../Scrollable/Scrollable"
 import InfiniteScroll from "../../../../../utils/InfiniteScroll"
 import { getCategoryFonts, getListUseFonts, getUseFont } from "~/store/fonts/action"
-import { selectCategoryFonts, selectFonts, selectListUseFonts } from "~/store/fonts/selector"
+import { selectCategoryFonts, selectFonts } from "~/store/fonts/selector"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import { getTextProperties } from "../../../../../utils/text"
 
 export default function FontSelector() {
-  const [language, setLanguage] = React.useState("English")
-  const [style, setStyle] = React.useState("Handwriting")
   const dispatch = useAppDispatch()
   const selectCategoryFont = useSelector(selectCategoryFonts)
   const user = useSelector(selectUser)
   const editor = useEditor()
-  const { isOpen: isOpenLanguage, onOpen: onOpenLanguage, onClose: onCloseLanguage } = useDisclosure()
-  const { isOpen: isOpenStyle, onOpen: onOpenStyle, onClose: onCloseStyle } = useDisclosure()
   const fonts = useSelector(selectFonts)
   const [commonFonts, setCommonFonts] = React.useState<any[]>([])
-  const listUseFonts = useSelector(selectListUseFonts)
   const [content, setContent] = React.useState<string>("")
   const activeScene = useActiveScene()
   const activeObject: any = useActiveObject()
@@ -58,7 +52,7 @@ export default function FontSelector() {
 
   useEffect(() => {
     initialState()
-  }, [style, language])
+  }, [])
 
   const initialState = async () => {
     setContent("")
