@@ -31,7 +31,7 @@ interface Props {
 }
 
 export default function SceneItem({ index, isCurrentScene, preview, setActiveScene, scene }: Props) {
-  const { setNamesPages, namesPages, setInputActive, activeScene } = useDesignEditorContext()
+  const { setInputActive, activeScene } = useDesignEditorContext()
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: scene.id! })
   const { onOpen, onClose, isOpen } = useDisclosure()
   const currentScene = useActiveScene()
@@ -43,7 +43,13 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
   //@ts-ignore
   const frame = useFrame()
   const design = useDesign()
-  const scenes = useScenes()
+  const scenes: any = useScenes()
+
+  const rename = () => {
+    let newScenes: any = scenes
+    newScenes[index].scene.name = "Pablito"
+    editor.design.setScenes(newScenes)
+  }
 
   useEffect(() => {
     setViewInput(false)
@@ -64,18 +70,19 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
   const handleDeleteScene = useCallback(
     async (id: string) => {
       design.deleteScene(id)
-      setNamesPages(namesPages.filter((e, i: number) => i !== index))
       editor.design.activeScene.objects.deselect()
       onClose()
     },
-    [namesPages, design, index]
+    [design, index]
   )
 
   const blurInput = useCallback(() => {
-    setNamesPages(Object.values({ ...namesPages, [index]: nameInput }) as string[])
+    let newScenes: any = scenes
+    newScenes[index].scene.name = nameInput
+    editor.design.setScenes(newScenes)
     onClose()
     setInputActive(false)
-  }, [nameInput, namesPages])
+  }, [nameInput, index, scenes, editor])
 
   const handleDuplicateScene = useCallback(
     async (id: string) => {
@@ -83,12 +90,10 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
         editor.freeDrawer.disable()
         editor.design.activeScene.objects.deselect()
       }
-      namesPages.splice(index + 1, 0, namesPages[index])
-      setNamesPages(namesPages)
       design.duplicateScene(id)
       onClose()
     },
-    [namesPages, design, index]
+    [design, index]
   )
 
   return (
@@ -102,9 +107,7 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
           zIndex: 100
         }}
       >
-        {namesPages[index] === "Untitled design" || namesPages[index] === undefined
-          ? index + 1
-          : namesPages[index]?.substring(0, 4)}
+        {scenes[index]?.scene?.name !== "Untitled design" ? scenes[index]?.scene?.name?.substring(0, 4) : index + 1}
       </Box>
       <Flex
         w="70px"

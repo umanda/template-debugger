@@ -3,8 +3,6 @@ import { DesignEditorContext } from "../contexts/DesignEditor"
 
 function useDesignEditorContext() {
   const {
-    namesPages,
-    setNamesPages,
     activeMenu,
     setActiveMenu,
     activePanel,
@@ -25,8 +23,6 @@ function useDesignEditorContext() {
     setActiveScene
   } = useContext(DesignEditorContext)
   return {
-    namesPages,
-    setNamesPages,
     activePanel,
     setActivePanel,
     activeMenu,

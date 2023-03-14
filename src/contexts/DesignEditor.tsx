@@ -26,8 +26,6 @@ interface DesignEditorState {
 }
 
 interface IDesignEditorContext {
-  namesPages: string[]
-  setNamesPages: React.Dispatch<React.SetStateAction<string[]>>
   activeMenu: string | null
   setActiveMenu: (option: string) => void
   activePanel: string
@@ -54,8 +52,6 @@ interface IDesignEditorContext {
 }
 
 export const DesignEditorContext = React.createContext<IDesignEditorContext>({
-  namesPages: ["Untitled design"],
-  setNamesPages: () => {},
   activeMenu: null,
   setActiveMenu: () => {},
   activePanel: "",
@@ -82,7 +78,6 @@ export const DesignEditorContext = React.createContext<IDesignEditorContext>({
 })
 
 export const DesignEditorProvider = ({ children }: { children: React.ReactNode }) => {
-  const [namesPages, setNamesPages] = React.useState<string[]>(["Untitled design"])
   const [activePanel, setActivePanel] = React.useState<string>("Templates")
   const [activeMenu, setActiveMenu] = React.useState<string | null>(null)
   const [isScenesVisible, setIsScenesVisible] = React.useState(true)
@@ -99,8 +94,6 @@ export const DesignEditorProvider = ({ children }: { children: React.ReactNode }
   })
 
   const context = {
-    namesPages,
-    setNamesPages,
     activePanel,
     setActivePanel,
     activeMenu,

@@ -19,7 +19,6 @@ const Designer: any = () => {
   const [typeSign, setTypeSign] = useState("signin")
   const { id } = useParams()
   const editor = useEditor()
-  const { setNamesPages, namesPages } = useDesignEditorContext()
   const design = useDesign()
   const dispatch = useAppDispatch()
   const user = useSelector(selectUser)
@@ -46,7 +45,6 @@ const Designer: any = () => {
           sceneNames.push(scn.name)
         }
         await loadGraphicTemplate(resolve)
-        setNamesPages(sceneNames)
         setLoadCanva(true)
       } else {
         setLoadCanva(true)
@@ -62,14 +60,13 @@ const Designer: any = () => {
       let designJSON: any = design?.toJSON()
       designJSON.key = id
       designJSON.scenes.map((e: any, index: number) => {
-        e.name = namesPages[index]
         e.position = index
         e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
         return e
       })
       user && (await dispatch(updateProject(designJSON))).payload
     } catch {}
-  }, [editor, design, namesPages, id])
+  }, [editor, design, id])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>
