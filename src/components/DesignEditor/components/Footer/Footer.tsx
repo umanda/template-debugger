@@ -3,11 +3,12 @@ import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import ChevronDown from "../../../Icons/ChevronDown"
 import Common from "./Common"
 import Scenes from "./Scenes"
+import Controls from "./PanningMode"
 
 export default function Footer() {
   const { isScenesVisible, setIsScenesVisible } = useDesignEditorContext()
   return (
-    <Box sx={{ position: "relative" }}>
+    <Box sx={{ position: "relative" ,borderTop: "1px solid #DDDFE5", }}>
       {isScenesVisible && (
         <Box
           onClick={() => setIsScenesVisible(false)}

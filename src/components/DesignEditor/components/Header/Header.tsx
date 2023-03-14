@@ -202,7 +202,7 @@ function ShareMenu() {
 
   const handleDownload = async (type: string) => {
     try {
-      if (user?.plan !== "FREE") {
+      if (user?.plan !== "FREE" || type === "jpg") {
         toast({
           title: "Please wait while the image loads",
           status: "loading",
@@ -936,7 +936,6 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const dispatch = useAppDispatch()
   const editor = useEditor()
   const activeScene = useActiveScene()
-  const currentScene = useActiveScene()
   const scenes = useScenes()
   const [autoSave, setAutoSave] = useState<boolean>(false)
   const [stateJson, setStateJson] = useState<any>("")
@@ -956,7 +955,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
           ? activeObject?.isEditing !== true && activeScene.objects.remove()
           : activeScene.objects.remove()
       } else if (booleanScene) {
-        design.deleteScene(currentScene.id)
+        scenes.length !== 1 && design.deleteScene(activeScene.id)
       }
       return true
     }
@@ -995,7 +994,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       return true
     }
     if (e.ctrlKey && e.key === "v") {
-      if (activeObject) activeScene.objects.paste()
+      if (activeObject && activeObject?.isEditing !== true) activeScene.objects.paste()
       return true
     }
     if (
@@ -1015,14 +1014,9 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
       if (e.ctrlKey && e.keyCode === 68) activeScene.objects.clone()
       if (e.ctrlKey && e.keyCode === 83) functionSave()
       if (e.ctrlKey && e.keyCode === 65) activeScene.objects.select()
-      if (e.ctrlKey && e.keyCode === 69) {
-        activeScene.layers.map((e, index) => {
-          if (index > 1) activeScene.objects.remove(e.id)
-        })
-        editor.zoom.zoomToRatio(zoom - 0.0000000000001 + 0.0000000000001)
-      }
-      if (e.ctrlKey && e.keyCode === 90) activeScene.history.undo()
-      if (e.ctrlKey && e.keyCode === 89) activeScene.history.redo()
+      if (e.ctrlKey && e.keyCode === 69) activeScene.objects.remove("all")
+      if (e.ctrlKey && e.keyCode === 90 && activeObject?.isEditing !== true) activeScene.history.undo()
+      if (e.ctrlKey && e.keyCode === 89 && activeObject?.isEditing !== true) activeScene.history.redo()
       return false
     } else return true
   }
@@ -1066,7 +1060,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
       }
     } catch (err: any) {}
-  }, [editor, scenes, currentScene, id, design, autoSave, namesPages])
+  }, [editor, scenes, id, design, autoSave, namesPages])
 
   return (
     <Flex>

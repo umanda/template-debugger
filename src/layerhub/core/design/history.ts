@@ -25,7 +25,7 @@ class History {
       objects: json.objects.map((object) => {
         object.clipPath = null
         return object
-      }),
+      })
     }
     return updatedJSON
   }
@@ -36,7 +36,7 @@ class History {
       hasRedo: this.redos.length > 0,
       undos: this.undos,
       redos: this.redos,
-      state: this.current,
+      state: this.current
     }
   }
 
@@ -100,7 +100,7 @@ class History {
     return {
       undos: this.undos,
       redos: this.redos,
-      current: this.current,
+      current: this.current
     }
   }
 }

@@ -1,22 +1,17 @@
 import { fabric } from "fabric"
 import { LayerType } from "../common/constants"
 import { FabricCanvas } from "../common/interfaces"
-import type Design from "../design/design"
-import { type Editor } from "./editor"
-import Shortcuts from "../utils/shortcuts"
+import { type Editor } from "../editor/editor"
 
 interface CanvasEventsOptions {
   canvas: FabricCanvas
-  design: Design
   editor: Editor
 }
 class CanvasEvents {
   private canvas: FabricCanvas
-  private design: Design
   private editor: Editor
   constructor(options: CanvasEventsOptions) {
     this.canvas = options.canvas
-    this.design = options.design
     this.editor = options.editor
     this.initialize()
   }
@@ -39,7 +34,6 @@ class CanvasEvents {
       "mouse:up": this.handleSelection,
       "selection:cleared": this.handleSelection,
       "selection:updated": this.handleSelection,
-      "mouse:wheel": this.onMouseWheel,
       "object:modified": this.objectModified,
       "background:selected": this.onBackgroundSelected,
       "crop:started": this.onCropStarted,
@@ -48,8 +42,6 @@ class CanvasEvents {
       "added:brush": this.onBrushAdded,
       "added:eraser": this.onBrushAdded,
     })
-
-    this.editor.config.shortcuts && this.canvas.wrapperEl.addEventListener("keydown", this.onKeyDown.bind(this), false)
   }
 
   public disableEvents() {
@@ -59,7 +51,6 @@ class CanvasEvents {
       "mouse:up": this.handleSelection,
       "selection:cleared": this.handleSelection,
       "selection:updated": this.handleSelection,
-      "mouse:wheel": this.onMouseWheel,
       "object:modified": this.objectModified,
       "background:selected": this.onBackgroundSelected,
       "crop:started": this.onCropStarted,
@@ -68,8 +59,6 @@ class CanvasEvents {
       "added:brush": this.onBrushAdded,
       "added:eraser": this.onBrushAdded,
     })
-
-    this.editor.config.shortcuts && this.canvas.wrapperEl.removeEventListener("keydown", this.onKeyDown.bind(this))
   }
 
   private onBrushAdded = () => {
@@ -95,49 +84,10 @@ class CanvasEvents {
     this.editor.state.setParamMenuRequest(event)
   }
 
-  private onKeyDown(event: KeyboardEvent) {
-    const shortcuts = Shortcuts()
-    if (shortcuts.isCtrlZero(event)) {
-      event.preventDefault()
-      const fitRatio = this.design.activeScene.getFitRatio()
-      this.editor.zoom.zoomToFit(fitRatio)
-    } else if (shortcuts.isCtrlMinus(event)) {
-      event.preventDefault()
-      this.editor.zoom.zoomIn()
-    } else if (shortcuts.isCtrlEqual(event)) {
-      event.preventDefault()
-      this.editor.zoom.zoomOut()
-    } else if (shortcuts.isCtrlOne(event)) {
-      event.preventDefault()
-      this.editor.zoom.zoomToOne()
-    } else if (shortcuts.isCtrlZ(event)) {
-      this.editor.design.activeScene.history.undo()
-    } else if (shortcuts.isCtrlShiftZ(event)) {
-      this.editor.design.activeScene.history.redo()
-    } else if (shortcuts.isCtrlY(event)) {
-      this.editor.design.activeScene.history.redo()
-    } else if (shortcuts.isCtrlA(event)) {
-      event.preventDefault()
-      this.editor.design.activeScene.objects.select()
-    } else if (shortcuts.isDelete(event)) {
-      event.preventDefault()
-      this.editor.design.activeScene.objects.remove()
-    } else if (shortcuts.isCtrlC(event)) {
-      event.preventDefault()
-      this.editor.design.activeScene.objects.copy()
-    } else if (shortcuts.isCtrlV(event)) {
-      event.preventDefault()
-      this.editor.design.activeScene.objects.paste()
-    } else if (shortcuts.isCtrlX(event)) {
-      event.preventDefault()
-      this.editor.design.activeScene.objects.cut()
-    }
-  }
-
   private onDoubleClick = (event: fabric.IEvent<any>) => {
     const subTarget = event.subTargets![0]
     if (subTarget) {
-      this.design.activeScene.objects.select(subTarget.id)
+      this.editor.design.activeScene.objects.select(subTarget.id)
     }
   }
 
@@ -227,34 +177,6 @@ class CanvasEvents {
       state.setActiveObject(null)
     }
     this.canvas.requestRenderAll()
-  }
-
-  private onMouseWheel = (event: fabric.IEvent<any>) => {
-    // @ts-ignore
-    if (!this.canvas.isCropping) {
-      const isCtrlKey = event.e.ctrlKey
-      if (isCtrlKey) {
-        this.handleZoom(event)
-      }
-    }
-  }
-
-  private handleZoom = (event: fabric.IEvent<any>) => {
-    const delta = event.e.deltaY
-    let zoomRatio = this.canvas.getZoom()
-    if (delta > 0) {
-      zoomRatio -= 0.02
-    } else {
-      zoomRatio += 0.02
-    }
-    if (this.editor.config.zoomToMode === "CENTER") {
-      this.editor.zoom.zoomToPoint(new fabric.Point(this.canvas.getWidth() / 2, this.canvas.getHeight() / 2), zoomRatio)
-    } else {
-      this.editor.zoom.zoomToPoint(new fabric.Point(event.e.offsetX, event.e.offsetY), zoomRatio)
-    }
-
-    event.e.preventDefault()
-    event.e.stopPropagation()
   }
 }
 

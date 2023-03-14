@@ -226,38 +226,16 @@ export default function Upload() {
     setLoadMoreResources(false)
   }
 
-  const dragObject = useCallback(
-    async (url: string, id: string, type?: string) => {
+  const addObject = useCallback(
+    async (resource: any) => {
       try {
-        await api.getUseUploads(id)
+        await api.getUseUploads(resource.id)
       } catch {}
-      let typeURL = ""
-      type === "svg" ? (typeURL = "StaticVector") : (typeURL = "StaticImage")
       const options: any = {
-        type: typeURL,
-        src: url,
-        erasable: false
-      }
-      let img = new Image()
-      img.src = url
-      if (editor) {
-        editor.dragger.onDragStart(options, { desiredSize: 300 })
-      }
-    },
-    [editor, user]
-  )
-
-  const addImageToCanvas = useCallback(
-    async (url: string, id: string, type?: string) => {
-      if (url.includes(defaultPreviewTemplate)) url = url.replace(defaultPreviewTemplate, replacePreviewTemplate)
-      try {
-        await api.getUseUploads(id)
-      } catch {}
-      let typeURL = ""
-      type === "svg" ? (typeURL = "StaticVector") : (typeURL = "StaticImage")
-      const options: any = {
-        type: typeURL,
-        src: url,
+        type: resource.type === "svg" ? "StaticVector" : "StaticImage",
+        src: resource.url.includes(defaultPreviewTemplate)
+          ? resource.url.replace(defaultPreviewTemplate, replacePreviewTemplate)
+          : resource.url,
         erasable: false,
         metadata: {}
       }
@@ -278,14 +256,6 @@ export default function Upload() {
     } else {
       onOpenUpgradeUser()
     }
-  }
-
-  const handleDelete = async (resource: IUpload) => {
-    try {
-      await dispatch(deleteUploadFile(resource))
-      setResources(resources.filter((e) => e.id !== resource.id))
-      resources.length === 1 && setValidateContent("Start uploading your illustrations here.")
-    } catch {}
   }
 
   const makeFilter = ({
@@ -399,6 +369,11 @@ export default function Upload() {
           onBlur={makeBlur}
           onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
           onChange={(e) => setNameUploadPrev([e.target.value])}
+          sx={{
+            _focusVisible:{
+              boxShadow : "none"
+            }
+          }}
         />
       </Flex>
       <Popover closeOnBlur={true} initialFocusRef={initialFocusRef} isOpen={isOpen} onClose={onClose}>
@@ -570,39 +545,14 @@ export default function Upload() {
                 {!loadMoreResources ? (
                   <Grid gap="0.5rem" padding="0 2rem 2rem" gridTemplateColumns="1fr 1fr">
                     {resources?.map((upload: any, index: number) => (
-                      <GridItem
-                        draggable={true}
-                        onDragStart={(e) =>
-                          dragObject(
-                            upload.url.includes(defaultPreviewTemplate)
-                              ? upload.url.replace(defaultPreviewTemplate, replacePreviewTemplate)
-                              : upload.url,
-                            upload.id,
-                            upload.type
-                          )
-                        }
+                      <UploadItem
+                        setResources={setResources}
+                        resources={resources}
+                        object={upload}
                         key={index}
-                        border="1px solid #d0d0d0"
-                        _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
-                        boxSize="120px"
-                      >
-                        <IconButton
-                          position="absolute"
-                          marginTop="5.5rem"
-                          marginLeft="5.8rem"
-                          variant="ghost"
-                          aria-label="Like"
-                          size="xs"
-                          _hover={{ color: "#fd7e14" }}
-                          border="1px solid #d0d0d0"
-                          onClick={() => handleDelete(upload)}
-                          icon={<Trash size={20} />}
-                        />
-                        <Flex w="full" h="full" onClick={() => addImageToCanvas(upload.url, upload.id, upload.type)}>
-                          <LazyLoadImage url={upload?.url} />
-                          {/* <LoadImageUpload url={upload.new_url} urlBack={upload.old_url} /> */}
-                        </Flex>
-                      </GridItem>
+                        addObject={() => addObject(upload)}
+                        setValidateContent={setValidateContent}
+                      />
                     ))}
                     <GridItem colSpan={2}>
                       <Button
@@ -632,5 +582,68 @@ export default function Upload() {
         )}
       </Flex>
     </Box>
+  )
+}
+
+const UploadItem = ({
+  object,
+  addObject,
+  setResources,
+  resources,
+  setValidateContent
+}: {
+  object: any
+  addObject: () => void
+  setResources: React.Dispatch<React.SetStateAction<any[]>>
+  setValidateContent: React.Dispatch<React.SetStateAction<string>>
+  resources: any[]
+}) => {
+  const dispatch = useAppDispatch()
+  const editor = useEditor()
+
+  const dragObject = useCallback(async () => {
+    const options: any = {
+      type: object.type === "svg" ? "StaticVector" : "StaticImage",
+      src: object.url.includes(defaultPreviewTemplate)
+        ? object.url.replace(defaultPreviewTemplate, replacePreviewTemplate)
+        : object.url,
+      erasable: false
+    }
+    let img = new Image()
+    img.src = object.url
+    if (editor) {
+      editor.dragger.onDragStart(options, { desiredSize: 300 })
+    }
+    try {
+      await api.getUseUploads(object.id)
+    } catch {}
+  }, [editor, object])
+
+  const handleDelete = useCallback(async () => {
+    try {
+      await dispatch(deleteUploadFile(object))
+      setResources(resources.filter((e) => e.id !== object.id))
+      resources.length === 1 && setValidateContent("Start uploading your illustrations here.")
+    } catch {}
+  }, [object, resources])
+
+  return (
+    <Flex border="1px solid #d0d0d0" _hover={{ cursor: "pointer", border: "3px solid #5456F5" }} boxSize="120px">
+      <IconButton
+        position="absolute"
+        marginTop="5.5rem"
+        marginLeft="5.8rem"
+        variant="ghost"
+        aria-label="Like"
+        size="xs"
+        _hover={{ color: "#fd7e14" }}
+        border="1px solid #d0d0d0"
+        onClick={handleDelete}
+        icon={<Trash size={20} />}
+      />
+      <Flex onDragStart={dragObject} w="full" h="full" onClick={addObject}>
+        <LazyLoadImage url={object?.url} />
+      </Flex>
+    </Flex>
   )
 }

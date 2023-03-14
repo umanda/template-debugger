@@ -11,6 +11,7 @@ class Config implements IConfig {
   public zoomToMode: "POINT" | "CENTER"
   public frame: IFrame
   public guidelines: { enabled: boolean; color: string }
+  public scroll: { enabled: boolean; limit: number }
   public background: {
     color: string
     shadow: fabric.IShadowOptions
@@ -26,6 +27,7 @@ class Config implements IConfig {
     // @ts-ignore
     this.canvas = Object.assign({}, defaultConfig.canvas, options?.canvas)
     this.guidelines = Object.assign({}, defaultConfig.guidelines, options?.guidelines)
+    this.scroll = Object.assign({}, defaultConfig.scroll, options?.scroll)
   }
 }
 export default Config

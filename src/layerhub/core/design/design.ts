@@ -44,7 +44,7 @@ class Design {
   }
 
   public async loadScenes() {
-    const scenes = this.design.scenes.map(scene => {
+    const scenes = this.design.scenes.map((scene) => {
       return new Scene({
         scene: scene,
         canvas: this.canvas,
@@ -54,8 +54,8 @@ class Design {
       })
     })
 
-    await Promise.all(scenes.map(scene => scene.prerender()))
-    await Promise.all(scenes.map(scene => scene.setPreviewDefault()))
+    await Promise.all(scenes.map((scene) => scene.prerender()))
+    await Promise.all(scenes.map((scene) => scene.setPreviewDefault()))
 
     this.scenes = scenes
     this.updateContext()
@@ -63,7 +63,7 @@ class Design {
   }
 
   public toJSON() {
-    const scenes = this.scenes.map(scene => scene.toJSON())
+    const scenes = this.scenes.map((scene) => scene.toJSON())
     return {
       ...this.design,
       scenes
@@ -72,7 +72,7 @@ class Design {
 
   public setActiveScene(scene: Scene | string) {
     if (typeof scene === "string") {
-      const activeScene = this.scenes.find(scn => scn.id === scene)
+      const activeScene = this.scenes.find((scn) => scn.id === scene)
       if (activeScene) {
         activeScene.renderObjects()
         this.activeScene = activeScene
@@ -98,7 +98,7 @@ class Design {
 
   public async duplicateScene(id: string) {
     this.activeScene.objects.deselect()
-    const targetScene = this.scenes.find(sn => sn.id === id)
+    const targetScene = this.scenes.find((sn) => sn.id === id)
     if (targetScene) {
       const targetSceneJson = targetScene.toJSON()
       targetSceneJson.id = nanoid()
@@ -136,8 +136,8 @@ class Design {
 
   public async deleteScene(id: string) {
     const isActive = this.activeScene.id === id
-    const currentIndex = this.scenes.findIndex(scene => scene.id === id)
-    this.scenes = this.scenes.filter(scene => scene.id !== id)
+    const currentIndex = this.scenes.findIndex((scene) => scene.id === id)
+    this.scenes = this.scenes.filter((scene) => scene.id !== id)
     if (!this.scenes.length) {
       const scene = await this.createScene()
       this.scenes = [scene]

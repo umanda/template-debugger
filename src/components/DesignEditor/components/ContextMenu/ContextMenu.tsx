@@ -13,6 +13,9 @@ import Trash from "../../../Icons/Trash"
 import Unlock from "../../../Icons/Unlock"
 import Copy from "../../../Icons/Copy"
 import Paste from "../../../Icons/Paste"
+import SelectAll from "../../../Icons/SelectAll"
+import Group from "../../../Icons/Group"
+import UnGroup from "../../../Icons/UnGroup"
 
 function ContextMenu() {
   const contextMenuRequest = useContextMenuRequest()
@@ -42,7 +45,9 @@ function ContextMenu() {
     return <></>
   }
 
-  if (contextMenuRequest?.target?.type === "Background") {
+  // if (activeObject?.type === "group" || activeObject?.type === "activeSelection") {
+
+  if (contextMenuRequest?.target?.type === "Background" || !activeObject?.type || activeObject?.type === "Frame") {
     return (
       <div // @ts-ignore
         onContextMenu={(e: Event) => e.preventDefault()}
@@ -59,15 +64,6 @@ function ContextMenu() {
         }}
       >
         <ContextMenuItem
-          onClick={() => {
-            activeScene.objects.copy()
-            editor.cancelContextMenuRequest()
-          }}
-          icon="Copy"
-          label="Copy"
-          disabled={true}
-        />
-        <ContextMenuItem
           disabled={!activeScene.objects.paste}
           onClick={() => {
             activeScene.objects.paste()
@@ -77,17 +73,23 @@ function ContextMenu() {
           label="Paste"
         />
         <ContextMenuItem
-          disabled={true}
           onClick={() => {
-            activeScene.objects.remove()
-            activeScene.objects.remove()
+            activeScene.objects.remove("all")
             editor.cancelContextMenuRequest()
           }}
           icon="Trash"
-          label="Delete"
+          label="Delete All"
+        />
+        <ContextMenuItem
+          onClick={() => {
+            activeScene.objects.select()
+            editor.cancelContextMenuRequest()
+          }}
+          icon="SelectAll"
+          label="Select All"
         />
         <div style={{ margin: "0.5rem 0" }} />
-        <ContextMenuItem
+        {/* <ContextMenuItem
           disabled={true}
           onClick={() => {
             activeScene.objects.bringToFront()
@@ -122,9 +124,9 @@ function ContextMenu() {
           }}
           icon="SendBackwards"
           label="Send backward"
-        />
+        /> */}
         <div style={{ margin: "0.5rem 0" }} />
-        <ContextMenuItem
+        {/* <ContextMenuItem
           disabled={true}
           onClick={() => {
             activeScene.objects.lock()
@@ -132,7 +134,7 @@ function ContextMenu() {
           }}
           icon="Unlock"
           label="Lock"
-        />
+        /> */}
         {/* <ContextMenuItem
           disabled={true}
           onClick={() => {
@@ -147,7 +149,7 @@ function ContextMenu() {
   }
   return (
     <>
-      {!contextMenuRequest.target.locked ? (
+      {!activeObject?.locked ? (
         <div // @ts-ignore
           onContextMenu={(e: Event) => e.preventDefault()}
           style={{
@@ -237,6 +239,17 @@ function ContextMenu() {
             label="Lock"
             disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
+          {activeObject?.type === "group" || activeObject?.type === "activeSelection" ? (
+            <ContextMenuItem
+              disabled={!activeScene.objects.paste}
+              onClick={() => {
+                activeObject?.type === "group" ? activeScene.objects.ungroup() : activeScene.objects.group()
+                editor.cancelContextMenuRequest()
+              }}
+              icon={activeObject?.type === "group" ? "UnGroup" : "Group"}
+              label={activeObject?.type === "group" ? "Un Group" : "Group"}
+            />
+          ) : null}
           {/* <ContextMenuItem
             onClick={() => {
               saveAsComponentHandler()
@@ -296,7 +309,10 @@ function ContextMenuItem({
     if (icon === "Trash") return <Trash size={24} />
     if (icon === "Unlock") return <Unlock size={24} />
     if (icon === "Copy") return <Copy size={24} />
+    if (icon === "SelectAll") return <SelectAll size={15} />
     if (icon === "Paste") return <Paste size={15} />
+    if (icon === "Group") return <Group size={15} />
+    if (icon === "UnGroup") return <UnGroup size={15} />
   }
 
   return (

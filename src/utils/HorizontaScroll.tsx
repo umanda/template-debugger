@@ -64,8 +64,8 @@ function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) 
   const [stateScroll, setStateScroll] = React.useState<boolean>(false)
   const [state, setState] = React.useState({
     left: 0,
-    requestScrollLeft: true,
-    requestScrollRight: true,
+    requestScrollLeft: false,
+    requestScrollRight: false,
     step: 10,
     distance: 150,
     speed: 10,
@@ -74,12 +74,8 @@ function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) 
   const contentFlex = React.useRef<HTMLDivElement>(null)
   const contentWrapper = React.useRef<HTMLDivElement>(null)
 
-  const handleScrollToLeft = async () => {
-    await makeScroll(contentWrapper.current!, state.speed, state.distance, -state.step)
-    updateScroll()
-  }
-
   const updateScroll = () => {
+
     if (contentWrapper.current) {
       let requestScrollLeft = true
       let requestScrollRight = true
@@ -92,8 +88,15 @@ function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) 
       if (scrolls) {
         requestScrollLeft = false
         requestScrollRight = false
-      }
+      }  
       setState({ ...state, requestScrollLeft, requestScrollRight })
+    }
+  }
+
+  const handleScrollToLeft = async () => {
+    if (contentWrapper.current) {
+      await makeScroll(contentWrapper.current!, state.speed, state.distance, -state.step)
+      updateScroll()
     }
   }
 
@@ -137,8 +140,7 @@ function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) 
             alignItems: "center",
             justifyContent: "flex-start",
             background: "linear-gradient(to left, rgba(255,255,255,0) 0%,rgba(255,255,255,0.9) 100%)",
-            height: "100%",
-            width: "60px"
+            height: "100%"
           }}
         >
           <LeftControl />
@@ -154,15 +156,16 @@ function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) 
         css={{
           "&::-webkit-scrollbar": {
             width: "4px",
-            height: "10px"
+            height: "4px"
           },
           "&::-webkit-scrollbar-track": {
             width: "6px"
           },
           "&::-webkit-scrollbar-thumb": {
-            background: "#5456F5",
+            background: "rgba(0, 0, 0, 0.2)",
             borderRadius: "24px"
           }
+
         }}
       >
         {children}
@@ -180,8 +183,7 @@ function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) 
             alignItems: "center",
             justifyContent: "flex-end",
             background: "linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(255,255,255,0.9) 100%)",
-            height: "100%",
-            width: "60px"
+            height: "100%"
           }}
         >
           <RightControl />

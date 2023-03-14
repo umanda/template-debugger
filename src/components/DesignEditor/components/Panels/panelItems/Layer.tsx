@@ -33,7 +33,7 @@ export default function Layer() {
 
   useEffect(() => {
     changeOrder.to !== null && handleChangeOrder()
-  }, [changeOrder.cont])
+  }, [changeOrder])
 
   useEffect(() => {
     setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom").reverse())

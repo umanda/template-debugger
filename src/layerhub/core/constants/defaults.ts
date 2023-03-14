@@ -53,9 +53,14 @@ export const defaultConfig: IConfig = {
   shortcuts: true,
   properties: PROPERTIES_TO_INCLUDE,
   frame: frame,
-  guidelines: {
+  scroll: {
     enabled: false,
-    color: "##8e44ad",
+    limit: 500,
+  },
+
+  guidelines: {
+    enabled: true,
+    color: "#8e44ad",
   },
   zoomToMode: "CENTER",
   background: {

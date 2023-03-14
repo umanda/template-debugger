@@ -97,7 +97,7 @@ export default function Template() {
     page: 1,
     limit: 10,
     query: {
-      plans: user.plan === "FREE" ? ["FREE"] : user.plan === "HERO" ? ["FREE", "HERO"] : undefined,
+      plans: user.plan === "FREE" ? ["FREE"] : user.plan === "PRO" ? ["FREE", "PRO"] : undefined,
       visibility: "public"
     },
     sorts: []
@@ -146,7 +146,7 @@ export default function Template() {
             page: resourcesTemplate.length / 10 + 1,
             limit: 10,
             query: {
-              plans: user.plan === "FREE" ? ["FREE"] : user.plan === "HERO" ? ["FREE", "HERO"] : undefined,
+              plans: user.plan === "FREE" ? ["FREE"] : user.plan === "PRO" ? ["FREE", "PRO"] : undefined,
               visibility: "public"
             },
             sorts: []
@@ -163,7 +163,7 @@ export default function Template() {
           drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
           names: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
           visibility: "public",
-          plans: user.plan === "FREE" ? ["FREE"] : user.plan === "HERO" ? ["FREE", "HERO"] : undefined,
+          plans: user.plan === "FREE" ? ["FREE"] : user.plan === "PRO" ? ["FREE", "PRO"] : undefined,
           favorited: stateFavorite ? true : undefined,
           used: stateRecent ? true : undefined
         },
@@ -395,6 +395,11 @@ export default function Template() {
                   onBlur={makeBlur}
                   onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
                   onChange={(e) => makeChangeInput(e.target.value)}
+                  sx={{
+                    _focusVisible:{
+                      boxShadow : "none"
+                    }
+                  }}
                 />
               </Tooltip>
             </PopoverAnchor>
