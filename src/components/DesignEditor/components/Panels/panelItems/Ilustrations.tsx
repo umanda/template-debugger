@@ -20,12 +20,10 @@ import {
   PopoverTrigger,
   Radio,
   RadioGroup,
-  Spacer,
   Spinner,
   Stack,
   Text,
   Tooltip,
-  border,
   useDisclosure,
   Textarea
 } from "@chakra-ui/react"
@@ -54,8 +52,6 @@ import FilterByTags from "~/components/Icons/FilterByTags"
 import { selectResourceImages } from "~/store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "~/store/resources/action"
 import { selectProject } from "~/store/project/selector"
-import NoIllustrationsImage from "~/assets/images/no-illustrations-to-display.svg"
-import NoRequestImage from "~/assets/images/NoRequestImage.png"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
@@ -190,14 +186,14 @@ export default function Ilustrations() {
           setNotIds,
           notIds
         )
-      } catch { }
+      } catch {}
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
         // stateFavorite !== true && stateRecent !== true && nameIllustration[0] !== "" && onOpenSearchFound()
         stateFavorite === true
           ? setValidateContent("No favorite illustrations to display")
           : stateRecent === true
-            ? setValidateContent("No recent illustrations to display")
-            : setValidateContent("noResult")
+          ? setValidateContent("No recent illustrations to display")
+          : setValidateContent("noResult")
       } else {
         setValidateContent(null)
       }
@@ -247,7 +243,7 @@ export default function Ilustrations() {
           const ctx = { id: resource.id }
           api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
         }
-      } catch { }
+      } catch {}
     },
     [activeScene, editor, activeObject, projectSelect, user]
   )
@@ -382,8 +378,8 @@ export default function Ilustrations() {
                   value={nameIllustrationPrev}
                   placeholder="Search"
                   sx={{
-                    _focusVisible:{
-                      boxShadow : "none"
+                    _focusVisible: {
+                      boxShadow: "none"
                     }
                   }}
                   onFocus={() => {
@@ -393,7 +389,6 @@ export default function Ilustrations() {
                   onBlur={makeBlur}
                   onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
                   onChange={(e) => makeChangeInput(e.target.value)}
-
                 />
               </Tooltip>
             </PopoverAnchor>
@@ -597,11 +592,13 @@ export default function Ilustrations() {
               </Text>
             )}
             {stateFavorite === true ? (
-              <img src={NoIllustrationsImage} />
+              <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
             ) : stateRecent === true ? (
-              <img src={NoIllustrationsImage} />
+              <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
             ) : (
-              user.plan !== "Hero" && <img src={NoRequestImage} />
+              user.plan !== "Hero" && (
+                <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noImages.png"} />
+              )
             )}
             <Flex w="full" padding="10px">
               {validateContent === "noResult" ? (
@@ -705,7 +702,7 @@ function IllustrationItem({
           const ctx = { id: illustration.id }
           api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
         }
-      } catch { }
+      } catch {}
     },
     [editor, user, projectSelect, illustration]
   )
@@ -741,9 +738,9 @@ function IllustrationItem({
         overflow={"hidden"}
         _hover={{ cursor: "pointer" }}
         justifyContent={"center"}
-      // onDragStart={(e) => onDragStart(e, illustration)}
-      // onMouseOver={() => setIsHovering(true)}
-      // onMouseOut={() => setIsHovering(false)}
+        // onDragStart={(e) => onDragStart(e, illustration)}
+        // onMouseOver={() => setIsHovering(true)}
+        // onMouseOut={() => setIsHovering(false)}
       >
         <Flex
           onClick={() => OpenModalIllustration("tag", illustration)}
@@ -788,14 +785,13 @@ function IllustrationItem({
         </Flex>
       </Flex>
       {illustration?.drawifier?.name && (
-      <Flex
-        sx={{
-          justifyContent: "space-between",
-          height: "40px",
-          alignItems: "center"
-        }}
-      >
-        
+        <Flex
+          sx={{
+            justifyContent: "space-between",
+            height: "40px",
+            alignItems: "center"
+          }}
+        >
           <Flex
             sx={{
               justifyContent: "space-between",
@@ -826,7 +822,7 @@ function IllustrationItem({
               )}
             </Center>
           </Flex>
-      </Flex>
+        </Flex>
       )}
     </Flex>
   )

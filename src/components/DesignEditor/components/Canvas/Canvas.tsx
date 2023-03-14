@@ -161,6 +161,10 @@ export default function Canva() {
         <Canvas
           config={{
             margin: 140,
+            scroll: {
+              enabled: true,
+              limit: 200
+            },
             outsideVisible: true,
             guidelines: {
               enabled: false,

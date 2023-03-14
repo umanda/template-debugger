@@ -48,17 +48,17 @@ export default function ModalUpgradePlan({
               ? "Upgrade to export your project as a Drawify file."
               : "Please upgrade your plan to use this template."}
             {type === "PNG" ? (
-              <Image src={ModalDownloadPNG} />
+              <Image src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/downloadPng.png" />
             ) : type === "PDF" ? (
-              <Image src={ModalDownloadPDF} />
+              <Image src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/downloadPdf.png" />
             ) : type === "Upload" ? (
-              <Image src={ModalUpload} />
+              <Image src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/upload.png" />
             ) : type === "Import" ? (
-              <Image src={ModalImport} />
+              <Image src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/import.png" />
             ) : type === "Export" ? (
-              <Image src={ModalExport} />
+              <Image src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/export.png" />
             ) : type === "JPG" ? (
-              <Image src={ModalDownloadPNG} />
+              <Image src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/downloadPng.png" />
             ) : null}
           </Flex>
         </ModalBody>

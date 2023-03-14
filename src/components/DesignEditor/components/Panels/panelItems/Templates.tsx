@@ -6,13 +6,11 @@ import {
   Flex,
   HStack,
   IconButton,
-  Image,
   Input,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   Popover,
@@ -54,7 +52,6 @@ import Order from "../../../../Modals/Order"
 import LazyLoadImage from "~/utils/LazyLoadImage"
 import { selectProject } from "~/store/project/selector"
 import useResourcesContext from "~/hooks/useResourcesContext"
-import NoTemplateImage from "~/assets/images/no-templates-to-display.svg"
 import { loadGraphicTemplate } from "~/utils/fonts"
 import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
@@ -396,8 +393,8 @@ export default function Template() {
                   onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
                   onChange={(e) => makeChangeInput(e.target.value)}
                   sx={{
-                    _focusVisible:{
-                      boxShadow : "none"
+                    _focusVisible: {
+                      boxShadow: "none"
                     }
                   }}
                 />
@@ -582,11 +579,11 @@ export default function Template() {
         ) : (
           <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
             {stateFavorite === true ? (
-              <img src={NoTemplateImage} />
+              <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noTemplates.svg"} />
             ) : stateRecent === true ? (
-              <img src={NoTemplateImage} />
+              <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noTemplates.svg"} />
             ) : (
-              <img src={NoTemplateImage} />
+              <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noTemplates.svg"} />
             )}
             <p>{validateContent}</p>
           </Center>

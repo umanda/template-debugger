@@ -36,7 +36,6 @@ import { IUpload } from "~/interfaces/editor"
 import Trash from "../../../../Icons/Trash"
 import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "~/store/resources/action"
 import { selectUploads } from "~/store/resources/selector"
-import NoUploadsImage from "~/assets/images/no-uploads-to-display.svg"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
 const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
@@ -370,8 +369,8 @@ export default function Upload() {
           onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
           onChange={(e) => setNameUploadPrev([e.target.value])}
           sx={{
-            _focusVisible:{
-              boxShadow : "none"
+            _focusVisible: {
+              boxShadow: "none"
             }
           }}
         />
@@ -576,7 +575,7 @@ export default function Upload() {
           </Flex>
         ) : (
           <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
-            <img src={NoUploadsImage} />
+            <img src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noUploads.svg" />
             <p>{validateContent}</p>
           </Center>
         )}

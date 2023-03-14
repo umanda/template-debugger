@@ -31,13 +31,7 @@ interface Props {
 }
 
 export default function SceneItem({ index, isCurrentScene, preview, setActiveScene, scene }: Props) {
-  const {
-    setNamesPages,
-    namesPages,
-    setInputActive,
-    setActiveScene: makeActiveScene,
-    activeScene
-  } = useDesignEditorContext()
+  const { setNamesPages, namesPages, setInputActive, activeScene } = useDesignEditorContext()
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: scene.id! })
   const { onOpen, onClose, isOpen } = useDisclosure()
   const currentScene = useActiveScene()

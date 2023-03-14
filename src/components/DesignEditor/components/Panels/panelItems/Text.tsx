@@ -1,9 +1,8 @@
-import { Box, Center, Flex, Grid, GridItem, IconButton, Image, Spinner } from "@chakra-ui/react"
-import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
+import { Box, Center, Flex, Grid, IconButton, Spinner } from "@chakra-ui/react"
+import { useActiveScene, useEditor } from "@layerhub-pro/react"
 import React, { useEffect, useState } from "react"
 import { nanoid } from "nanoid"
 import { useSelector } from "react-redux"
-
 import { selectUser } from "~/store/user/selector"
 import { useAppDispatch } from "~/store/store"
 import { loadFonts } from "~/utils/fonts"
@@ -29,44 +28,20 @@ export default function Text() {
   const [more, setMore] = useState(false)
   const [load, setLoad] = useState(true)
   const activeScene = useActiveScene()
-  const activeObject = useActiveObject()
 
   useEffect(() => {
     initialState()
   }, [user, selectListResources.length])
 
-  const initialState = async () => {
-    // if (user) {
-    //   if (selectListResources[0] === undefined) {
-    //     const resolve: any = (await (
-    //       await dispatch(getListResourcesComposite({ page: 1, limit: 10, query: {} }))
-    //     ).payload) as any[]
-    //     resolve.name !== "AxiosError" && setListResources(resolve)
-    //     resolve[0] !== undefined ? setMore(true) : setMore(false)
-    //   } else {
-    //     // setListResources(selectListResources)
-    //     setMore(true)
-    //   }
-    // }
-    // setLoad(true)
-  }
+  const initialState = async () => {}
 
-  const fetchDataResource = async () => {
-    // setMore(false)
-    // const resolve = (
-    //   await dispatch(getListResourcesComposite({ page: listResources.length / 10 + 1, limit: 10, query: {} }))
-    // ).payload as any[]
-    // setListResources(listResources.concat(resolve))
-    // resolve[0] !== undefined ? setMore(true) : setMore(false)
-    // setLoad(true)
-  }
+  const fetchDataResource = async () => {}
 
   const addHeader = React.useCallback(async () => {
     if (editor) {
       await loadFonts([font])
       const options = {
         id: nanoid(),
-        // width: 340,
         type: "StaticText",
         textAlign: "center",
         text: "Add Header",
@@ -91,7 +66,6 @@ export default function Text() {
 
       const options = {
         id: nanoid(),
-        // width: 240,
         type: "StaticText",
         textAlign: "center",
         text: "Add Sub Header",
@@ -109,7 +83,6 @@ export default function Text() {
       await loadFonts([font])
       const options = {
         id: nanoid(),
-        // width: 360,
         type: "StaticText",
         text: "Use this sample paragraph to add multiple lines of text and provide additional information for your visual story.",
         fontFamily: font.name,
@@ -124,7 +97,7 @@ export default function Text() {
     (ev: React.DragEvent<HTMLDivElement>, type: string) => {
       loadFonts([font])
       const options = {
-        id: nanoid(), //"Add header"
+        id: nanoid(),
         type: "StaticText",
         text:
           type === "header"
@@ -237,13 +210,6 @@ export default function Text() {
           </Box>
         </Box>
       </Flex>
-      {/* <Box sx={{ padding: "0 1rem" }}>
-        <Tabs size={"sm"}>
-          <TabList>
-            <Tab>All</Tab>
-          </TabList>
-        </Tabs>
-      </Box> */}
       <Flex w="full" h="full">
         <Scrollable autoHide={true}>
           <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
