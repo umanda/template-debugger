@@ -19,7 +19,6 @@ import { useEffect, useState } from "react"
 import * as api from "../../../../services/api"
 import useIsOpenPreview from "~/hooks/useIsOpenPreview"
 import Sync from "../../../Icons/Sync"
-import Home from "../../../Icons/Home"
 import Undo from "../../../Icons/Undo"
 import Redo from "../../../Icons/Redo"
 import Play from "../../../Icons/Play"
@@ -32,7 +31,6 @@ import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import Paper from "../../../Icons/Paper"
 import Instagram from "../../../Icons/Instagram"
 import Facebook from "../../../Icons/Facebook"
-import Magic from "../../../Icons/Magic"
 import { User } from "../../../../interfaces/user"
 import Logout from "../../../Icons/Logout"
 import { updateProject } from "~/store/project/action"
@@ -42,7 +40,6 @@ import SigninModal from "../../../Modals/AuthModal"
 import { useNavigate, useParams } from "react-router-dom"
 import { useDebounce } from "use-debounce"
 import { generateId } from "../../../../utils/unique"
-import { IDesign } from "@layerhub-pro/types"
 import { selectProject } from "~/store/project/selector"
 import DrawifyD from "../../../Icons/DrawifyD"
 import UserIcon from "../../../Icons/UserIcon"
@@ -153,13 +150,6 @@ export default function Header() {
         >
           Preview
         </Button>
-
-        {/* <Tooltip label="Present" fontSize="md">
-          <IconButton variant={"ghost"} aria-label="Play" onClick={() => onOpenPreview()} icon={<Play size={24} />} />
-        </Tooltip> */}
-        {/* <Tooltip label="Notifications" fontSize="md">
-          <IconButton variant={"ghost"} aria-label="Bell" icon={<Bell size={24} />} />
-        </Tooltip> */}
         <UserMenu />
       </Flex>
     </Flex>
@@ -169,36 +159,20 @@ export default function Header() {
 function ShareMenu() {
   const activeScene = useActiveScene()
   const editor = useEditor()
-  const scenes = useScenes()
   const dispatch = useAppDispatch()
   const { id } = useParams()
   const toast = useToast()
   const design = useDesign()
   const { isOpen, onToggle, onClose } = useDisclosure()
   const { isOpen: isOpenUpgradeUser, onOpen: onOpenUpgradeUser, onClose: onCloseUpgradeUser } = useDisclosure()
-  const { isOpen: isOpenAunth, onOpen: onOpenAunth, onClose: onCloseAunth } = useDisclosure()
   const user = useSelector(selectUser)
   const [valueInput, setValueInput] = useState<string>("")
-  const [typeSign, setTypeSign] = useState("signin")
+  // const [typeSign, setTypeSign] = useState("signin")
   const currentScene = useActiveScene()
   const projectSelect = useSelector(selectProject)
-  const { namesPages, setInputActive } = useDesignEditorContext()
+  const { setInputActive } = useDesignEditorContext()
   const [email, setEmail] = useState<{ text: string; state: boolean }>({ text: "", state: true })
   const [typeModal, setTypeModal] = useState<string>("")
-
-  // const functionSave = useCallback(async () => {
-  //   try {
-  //     let designJSON: any = design?.toJSON()
-  //     designJSON.key = id
-  //     designJSON.scenes.map((e: any, index: number) => {
-  //       e.name = namesPages[index]
-  //       e.position = index
-  //       e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-  //       return e
-  //     })
-  //     user && (await dispatch(updateProject(designJSON))).payload
-  //   } catch {}
-  // }, [editor, scenes, currentScene, id, design, namesPages])
 
   const handleDownload = async (type: string) => {
     try {
@@ -214,7 +188,6 @@ function ShareMenu() {
         let designJSON: any = design?.toJSON()
         designJSON.key = id
         designJSON.scenes.map((e: any, index: number) => {
-          e.name = namesPages[index]
           e.position = index
           e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
           return e
@@ -266,7 +239,6 @@ function ShareMenu() {
           let designJSON: any = design?.toJSON()
           designJSON.key = id
           designJSON.scenes.map((e: any, index: number) => {
-            e.name = namesPages[index]
             e.position = index
             e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
             return e
@@ -290,7 +262,7 @@ function ShareMenu() {
         }
       }
     },
-    [activeScene, namesPages, id]
+    [activeScene, id]
   )
 
   const makeChangeEmail = useCallback(
@@ -375,7 +347,7 @@ function ShareMenu() {
           colorScheme={"brand"}
           rightIcon={<Share size={16} />}
           onClick={() => {
-            user ? onToggle() : onOpenAunth()
+            user ? onToggle() : null
           }}
         >
           Share
@@ -505,7 +477,7 @@ function FileMenu() {
   const navigate = useNavigate()
   const scenes = useScenes()
   const design = useDesign()
-  const { setNamesPages, setInputActive } = useDesignEditorContext()
+  const { setInputActive } = useDesignEditorContext()
   const initialFocusRef = React.useRef()
   const inputFileRef = React.useRef<HTMLInputElement>(null)
   const [typeModal, setTypeModal] = useState<string>("")
@@ -582,7 +554,6 @@ function FileMenu() {
     for (const scn of scenes) {
       await design.deleteScene(scn.id)
     }
-    setNamesPages(["Untitled design"])
     navigate(`/composer/${generateId("", 10)}`)
   }, [design, scenes, navigate, editor])
 
@@ -932,11 +903,11 @@ function UserMenu() {
 function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const design = useDesign()
   const { id } = useParams()
-  const { namesPages, inputActive, setActiveScene, activeScene: booleanScene } = useDesignEditorContext()
+  const { inputActive, activeScene: booleanScene } = useDesignEditorContext()
   const dispatch = useAppDispatch()
   const editor = useEditor()
   const activeScene = useActiveScene()
-  const scenes = useScenes()
+  const scenes: any = useScenes()
   const [autoSave, setAutoSave] = useState<boolean>(false)
   const [stateJson, setStateJson] = useState<any>("")
   const [stateChange] = useDebounce(stateJson, 2000)
@@ -1025,11 +996,11 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
     try {
       if (activeScene && stateJson !== "") functionSave()
     } catch {}
-  }, [stateChange, namesPages])
+  }, [stateChange])
 
   useEffect(() => {
     stateJson !== "" && setAutoSave(false)
-  }, [scenes, namesPages])
+  }, [scenes])
 
   React.useEffect(() => {
     let watcher = async () => {
@@ -1043,24 +1014,28 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         editor.off("history:updated", watcher)
       }
     }
-  }, [editor, namesPages])
+  }, [editor])
 
   const functionSave = useCallback(async () => {
     try {
       let designJSON: any = design?.toJSON()
       designJSON.key = id
       designJSON.scenes.map((e: any, index: number) => {
-        e.name = namesPages[index]
+        e.name = scenes[index]?.scene?.name
         e.position = index
         e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
         return e
       })
+      if (designJSON.name === "") {
+        const resolve = await api.getListProjects({ query: {} })
+        designJSON.name = `Untitled Project ${resolve.pagination.total_items}`
+      }
       if (user) {
         const resolve = await dispatch(updateProject(designJSON))
         resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
       }
     } catch (err: any) {}
-  }, [editor, scenes, id, design, autoSave, namesPages])
+  }, [editor, scenes, id, design, autoSave])
 
   return (
     <Flex>

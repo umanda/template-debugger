@@ -11,7 +11,7 @@ import { restrictToFirstScrollableAncestor, restrictToHorizontalAxis } from "@dn
 
 export default function Scenes() {
   const scenes = useScenes()
-  const { setNamesPages, namesPages, setActiveScene: makeActiveScene } = useDesignEditorContext()
+  const { setActiveScene: makeActiveScene } = useDesignEditorContext()
   const activeScene = useActiveScene()
   const editor = useEditor()
   const [draggedScene, setDraggedScene] = React.useState<any | null>(null)
@@ -35,9 +35,8 @@ export default function Scenes() {
     if (editor) {
       editor.design.activeScene.objects.deselect()
       await editor.design.addScene()
-      setNamesPages(namesPages.concat(["Untitled design"]))
     }
-  }, [editor, namesPages, scenes])
+  }, [editor, scenes])
 
   const setActiveScene = React.useCallback(
     (id: string) => {
@@ -53,6 +52,7 @@ export default function Scenes() {
     if (active.id !== over.id) {
       const oldIndex = scenes.findIndex((s) => s.id === active.id)
       const newIndex = scenes.findIndex((s) => s.id === over.id)
+      console.log(arrayMove(scenes, oldIndex, newIndex))
       await editor.design.setScenes(arrayMove(scenes, oldIndex, newIndex))
     }
     setDraggedScene(null)
@@ -71,7 +71,10 @@ export default function Scenes() {
           >
             <SortableContext items={scenes} strategy={horizontalListSortingStrategy}>
               {scenes.map((scene, index) => (
-                <Flex key={index} onFocus={() => makeActiveScene(true)} onBlur={() => makeActiveScene(false)}
+                <Flex
+                  key={index}
+                  onFocus={() => makeActiveScene(true)}
+                  onBlur={() => makeActiveScene(false)}
                   sx={{
                     paddingBottom: "3px"
                   }}
@@ -90,7 +93,7 @@ export default function Scenes() {
           </DndContext>
         </HorizontalScroll>
       </Flex>
-      <Flex padding="26px 0 28px 0" >
+      <Flex padding="26px 0 28px 0">
         <Flex
           flexDir="column"
           sx={{
@@ -110,7 +113,6 @@ export default function Scenes() {
           <Text marginInline="10px" w="-webkit-max-content">
             Add Scene
           </Text>
-          
         </Flex>
       </Flex>
     </Flex>

@@ -493,6 +493,17 @@ export const getListPublicTemplates = (props: SearchTemplateDto): Promise<IDesig
   })
 }
 
+export const getListProjects = (props: SearchTemplateDto): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    base
+      .post("/es/project", props)
+      .then(({ data }: any) => {
+        resolve(data)
+      })
+      .catch(null)
+  })
+}
+
 export const getLikeTemplate = (id: string): Promise<any> => {
   return new Promise((resolve, reject) => {
     base

@@ -21,7 +21,7 @@ class Canvas {
 
   private options = {
     width: 0,
-    height: 0,
+    height: 0
   }
   private config: IConfig
 
@@ -38,7 +38,7 @@ class Canvas {
       preserveObjectStacking: true,
       fireRightClick: true,
       height: this.config.canvas.size!.height,
-      width: this.config.canvas.size!.width,
+      width: this.config.canvas.size!.width
     })
 
     this.canvas = canvas as FabricCanvas
@@ -78,7 +78,7 @@ class Canvas {
     const canvasEl = document.getElementById("canvas")
     const position = {
       left: canvasEl?.getBoundingClientRect().left,
-      top: canvasEl?.getBoundingClientRect().top,
+      top: canvasEl?.getBoundingClientRect().top
     }
     return position
   }
@@ -99,7 +99,6 @@ class Canvas {
   }
 
   public toggleDragMode(dragMode: "PANNING" | "IDDLE") {
-    console.log(dragMode)
     let lastClientX: number
     let lastClientY: number
     let state = STATE_IDLE
@@ -174,7 +173,7 @@ class Canvas {
       // canvas.off("mouse:down")
       canvas.off("mouse:move")
       // Restore selection ability on the canvas
-      canvas.selection = true
+      // canvas.selection = true
       this.editor.state.setDragMode("IDLE")
     }
     canvas.requestRenderAll()

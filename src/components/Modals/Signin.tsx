@@ -40,7 +40,6 @@ export default function SignIn({
     email: "",
     password: ""
   })
-  const { setNamesPages } = useDesignEditorContext()
 
   const makeJoin = async () => {
     try {
@@ -64,7 +63,6 @@ export default function SignIn({
       for (const scn of resolve.scenes) {
         sceneNames.push(scn.name)
       }
-      setNamesPages(sceneNames)
     } catch {
       navigate(`/composer/${generateId("", 10)}`)
     }
