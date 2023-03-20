@@ -99,7 +99,6 @@ class Canvas {
   }
 
   public toggleDragMode(dragMode: "PANNING" | "IDDLE") {
-    console.log(dragMode)
     let lastClientX: number
     let lastClientY: number
     let state = STATE_IDLE

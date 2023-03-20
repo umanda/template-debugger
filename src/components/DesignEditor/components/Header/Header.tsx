@@ -67,7 +67,6 @@ export default function Header() {
   const editor = useEditor()
 
   useEffect(() => {
-    console.log(activeScene?.history?.undos, activeScene?.history?.redos)
     let undoPrev: any[] = activeScene?.history.undos
     let redoPrev: any[] = activeScene?.history.redos
     if (state.undo !== undoPrev?.length || state.redo !== redoPrev?.length) {
@@ -922,7 +921,6 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
 
   document.onkeydown = function (e) {
     if ((e.key === "Delete" || e.key === "Backspace") && inputActive === false) {
-      console.log(activeObject)
       if (activeObject !== null && (activeObject?.locked === false || activeObject?.locked === undefined)) {
         activeObject?.type === "StaticText"
           ? activeObject?.isEditing !== true && activeScene.objects.remove()
