@@ -173,7 +173,7 @@ class Canvas {
       // canvas.off("mouse:down")
       canvas.off("mouse:move")
       // Restore selection ability on the canvas
-      // canvas.selection = true
+      canvas.selection = true
       this.editor.state.setDragMode("IDLE")
     }
     canvas.requestRenderAll()
