@@ -38,7 +38,6 @@ class FreeDrawer {
     this.canvas.isDrawingMode = false
     this.editor.state.setIsFreeDrawing(false)
     this.canvas.requestRenderAll()
-    this.editor.design.activeScene.history.save()
   }
 }
 

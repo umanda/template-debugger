@@ -169,7 +169,7 @@ class Canvas {
       // Reset the cursor
       canvas.defaultCursor = "default"
       // Remove the event listeners
-      canvas.off("mouse:up")
+      // canvas.off("mouse:up")
       // canvas.off("mouse:down")
       canvas.off("mouse:move")
       // Restore selection ability on the canvas

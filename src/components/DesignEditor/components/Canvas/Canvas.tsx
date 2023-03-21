@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react"
+import React, { useRef } from "react"
 import {
   Flex,
   Button,
@@ -12,12 +12,8 @@ import {
 } from "@chakra-ui/react"
 import { Canvas, fabric, useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
 import ContextMenu from "../ContextMenu"
-import { useSelector } from "react-redux"
-import { selectUser } from "~/store/user/selector"
 import Plus from "../../../Icons/Plus"
 import MobileModal from "../../../Modals/MobileModal"
-import { selectProject } from "~/store/project/selector"
-const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 
 export default function Canva() {
   const editor = useEditor()
