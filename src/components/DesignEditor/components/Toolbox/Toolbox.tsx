@@ -15,7 +15,7 @@ interface ToolboxState {
 export default function Toolbox() {
   const { setActiveMenu, activePanel } = useDesignEditorContext()
   const [state, setState] = React.useState<ToolboxState>({ toolbox: "Text" })
-  const activeScene = useActiveScene() as ILayer
+  const activeScene = useActiveScene() as any
   const editor = useEditor()
   const activeObject = useActiveObject()
   const [object] = activeScene?.objects?.getObject()
