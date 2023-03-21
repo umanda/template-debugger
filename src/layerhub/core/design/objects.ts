@@ -948,7 +948,6 @@ class Objects {
     if (refObject) {
       if (isArray(refObject)) {
         refObject.forEach((obj) => {
-          console.log(canvas.getActiveObjects())
           if (obj?.type !== "Frame" && obj?.type !== "BackgroundContainer" && obj?.type !== "Background") {
             canvas.remove(obj)
           }
