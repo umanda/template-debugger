@@ -1,6 +1,6 @@
 import React from "react"
 import { Flex } from "@chakra-ui/react"
-import { useActiveObject, useEditor } from "@layerhub-pro/react"
+import { useActiveScene, useEditor, useActiveObject } from "@layerhub-pro/react"
 import { ILayer } from "@layerhub-pro/types"
 import Items from "./Items"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
@@ -15,12 +15,14 @@ interface ToolboxState {
 export default function Toolbox() {
   const { setActiveMenu, activePanel } = useDesignEditorContext()
   const [state, setState] = React.useState<ToolboxState>({ toolbox: "Text" })
-  const activeObject = useActiveObject() as ILayer
+  const activeScene = useActiveScene() as any
   const editor = useEditor()
+  const activeObject = useActiveObject()
+  const [object] = activeScene?.objects?.getObject()
+  // console.log(object)
 
   React.useEffect(() => {
-    const selectionType = getSelectionType(activeObject)
-    // console.log(activeObject)
+    const selectionType = getSelectionType(object)
     if (selectionType) {
       if (selectionType.length > 1) {
         setState({ toolbox: "Multiple" })
@@ -31,12 +33,12 @@ export default function Toolbox() {
       setState({ toolbox: DEFAULT_TOOLBOX })
       setActiveMenu("")
     }
-  }, [activeObject, activePanel])
+  }, [activeScene, activePanel, activeObject])
 
   React.useEffect(() => {
     let watcher = async () => {
       if (activePanel !== "Pencil") {
-        if (activeObject) {
+        if (object) {
           // @ts-ignore
           const selectionType = getSelectionType(activeObject) as any
           if (selectionType.length > 1) {
@@ -55,7 +57,7 @@ export default function Toolbox() {
         editor.off("history:changed", watcher)
       }
     }
-  }, [editor, activeObject, activePanel])
+  }, [editor, activeScene, activeObject, activePanel])
 
   // @ts-ignore
   const Component = Items[state.toolbox]

@@ -52,7 +52,6 @@ export default function Scenes() {
     if (active.id !== over.id) {
       const oldIndex = scenes.findIndex((s) => s.id === active.id)
       const newIndex = scenes.findIndex((s) => s.id === over.id)
-      console.log(arrayMove(scenes, oldIndex, newIndex))
       await editor.design.setScenes(arrayMove(scenes, oldIndex, newIndex))
     }
     setDraggedScene(null)

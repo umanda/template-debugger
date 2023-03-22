@@ -65,7 +65,7 @@ export default function Template() {
   const [validateContent, setValidateContent] = useState<string | null>(null)
   let [nameTemplate, setNameTemplate] = useState<string[]>([""])
   let [nameTemplatePrev, setNameTemplatePrev] = useState<string[]>([""])
-  const [order, setOrder] = useState<string[]>([])
+  const [order, setOrder] = useState<string[]>(["LAST_UPDATE"])
   const user = useAppSelector(selectUser)
   const { isOpen: isOpenLoadTemplate, onOpen: onOpenLoadTemplate, onClose: onCloseLoadTemplate } = useDisclosure()
   const { isOpen: isOpenUpgradeUser, onOpen: onOpenUpgradeUser, onClose: onCloseUpgradeUser } = useDisclosure()
@@ -97,7 +97,7 @@ export default function Template() {
       plans: user.plan === "FREE" ? ["FREE"] : user.plan === "PRO" ? ["FREE", "PRO"] : undefined,
       visibility: "public"
     },
-    sorts: []
+    sorts: ["LAST_UPDATE"]
   }
 
   useEffect(() => {
@@ -133,7 +133,7 @@ export default function Template() {
       stateFavorite === false &&
       stateRecent === false &&
       orderDrawifier[0] === "" &&
-      order[0] === undefined
+      order[0] === "LAST_UPDATE"
     ) {
       let newQuery = initialQuery
       newQuery.page = resourcesTemplate.length / 10 + 1
@@ -146,7 +146,7 @@ export default function Template() {
               plans: user.plan === "FREE" ? ["FREE"] : user.plan === "PRO" ? ["FREE", "PRO"] : undefined,
               visibility: "public"
             },
-            sorts: []
+            sorts: ["LAST_UPDATE"]
           })
         )
       ).payload) as IDesign[]
@@ -477,7 +477,7 @@ export default function Template() {
                 setStateRecent(false)
                 setValidateContent(null)
                 setMore(false)
-                setOrder([])
+                setOrder(["LAST_UPDATE"])
                 setOrderDrawifier([])
                 initialState()
                 setListRecommend({ words: [] })
