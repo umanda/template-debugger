@@ -12,6 +12,7 @@ import { loadGraphicTemplate } from "../utils/fonts"
 import useResourcesContext from "~/hooks/useResourcesContext"
 import { useTokenInterceptor } from "~/hooks/useTokenInterceptor"
 import * as api from "~/services/api"
+import { putTemplate } from "~/store/templates/action"
 
 const Designer: any = () => {
   const { setLoadCanva } = useResourcesContext()
@@ -37,13 +38,14 @@ const Designer: any = () => {
         const resolve: any = (await dispatch(getProjectByKey(id))).payload
         let template: any
         if (templateId) {
-          template = await api.getTemplateById(templateId)
+          template = (await dispatch(putTemplate(id))).payload
         }
         setTimeout(async () => {
           try {
-            await loadGraphicTemplate(resolve)
-            await design.setDesign(resolve)
-            if (template) {
+            if (templateId === null || templateId === undefined) {
+              await loadGraphicTemplate(resolve)
+              await design.setDesign(resolve)
+            } else {
               await loadGraphicTemplate(template)
               await design.setDesign(template)
               localStorage.removeItem("template_id")

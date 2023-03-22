@@ -39,7 +39,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
         dispatch(getListDrawifiers({}))
         if (token !== "") {
           const resolve = (await dispatch(signInByToken(token))).payload
-          resolve?.plan ? setState(!state) : (window.location.href = redirectHome)
+          resolve?.created_at ? setState(!state) : (window.location.href = redirectHome)
         }
       } else {
         toast({

@@ -1,7 +1,6 @@
 import React from "react"
 import { Flex } from "@chakra-ui/react"
 import { useActiveScene, useEditor, useActiveObject } from "@layerhub-pro/react"
-import { ILayer } from "@layerhub-pro/types"
 import Items from "./Items"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import getSelectionType from "~/utils/get-selection-type"
@@ -18,11 +17,9 @@ export default function Toolbox() {
   const activeScene = useActiveScene() as any
   const editor = useEditor()
   const activeObject = useActiveObject()
-  const [object] = activeScene?.objects?.getObject()
-  // console.log(object)
 
   React.useEffect(() => {
-    const selectionType = getSelectionType(object)
+    const selectionType = getSelectionType(activeObject)
     if (selectionType) {
       if (selectionType.length > 1) {
         setState({ toolbox: "Multiple" })
@@ -38,7 +35,7 @@ export default function Toolbox() {
   React.useEffect(() => {
     let watcher = async () => {
       if (activePanel !== "Pencil") {
-        if (object) {
+        if (activeObject) {
           // @ts-ignore
           const selectionType = getSelectionType(activeObject) as any
           if (selectionType.length > 1) {

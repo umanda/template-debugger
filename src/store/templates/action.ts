@@ -2,6 +2,7 @@ import { IDesign } from "@layerhub-pro/types"
 import { createAction, createAsyncThunk } from "@reduxjs/toolkit"
 import { SearchTemplateDto } from "../../interfaces/editor"
 import * as api from "../../services/api"
+import { setUpdateProject } from "../project/action"
 
 export const setListTemplates = createAction<IDesign[]>("templates/setListTemplates")
 export const setListFavoriteTemplates = createAction<IDesign[]>("templates/setListFavoriteTemplates")
@@ -35,6 +36,17 @@ export const makeFavoriteTemplate = createAsyncThunk<any, IDesign, { rejectValue
       dispatch(setMakeFavoriteTemplate(args))
       const templates: any = await api.getLikeTemplate(args.id)
       return true
+    } catch (error) {}
+  }
+)
+
+export const putTemplate = createAsyncThunk<any, any, { rejectValue: void }>(
+  "templates/putTemplate",
+  async (args, { dispatch, rejectWithValue }) => {
+    try {
+      const template = await api.getTemplateById(args)
+      dispatch(setUpdateProject(template))
+      return template
     } catch (error) {}
   }
 )

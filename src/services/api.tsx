@@ -24,7 +24,7 @@ const token = localStorage.getItem("token")
 export const base = axios.create({
   baseURL: baseURL,
   withCredentials: true,
-  headers: { Authorization: `Bearer ${token}` }
+  headers: { Authorization: `Bearer ${token !== null ? token : "drawify"}` }
 })
 
 export const signup = (props: SignupDto): Promise<User> => {
@@ -46,7 +46,8 @@ export const signInByToken = (token: string): Promise<User> => {
     base
       .post("/signin/token")
       .then(({ data }: any) => {
-        resolve(data.customer)
+        data.customer && resolve({ ...data.admin, type: Object.keys(data)[0] })
+        data.admin && resolve({ ...data.admin, type: Object.keys(data)[0] })
       })
       .catch((err: any) => {
         reject(err)
@@ -569,7 +570,7 @@ export const getUseTemplate = ({ template_id, project_id }) => {
   })
 }
 
-export const getTemplateById = (id: string): Promise<IDesign> => {
+export const getTemplateById = (id: string): Promise<any> => {
   return new Promise((resolve, reject) => {
     base
       .get(`/templates/${id}`)
@@ -577,6 +578,17 @@ export const getTemplateById = (id: string): Promise<IDesign> => {
         resolve(data.template)
       })
       .catch(null)
+  })
+}
+
+export const putTemplate = (props: any): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    base
+      .post(`/templates`, props)
+      .then(({ data }) => {
+        resolve(data)
+      })
+      .catch((err) => reject(err))
   })
 }
 
