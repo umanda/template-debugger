@@ -3,8 +3,7 @@ import { useCallback, useEffect, useState } from "react"
 import DesignEditor from "~/components/DesignEditor"
 import SigninModal from "~/components/Modals/AuthModal"
 import { useParams } from "react-router-dom"
-import { useActiveScene, useDesign, useEditor } from "@layerhub-pro/react"
-import useDesignEditorContext from "~/hooks/useDesignEditorContext"
+import { useDesign, useEditor } from "@layerhub-pro/react"
 import { useAppDispatch } from "~/store/store"
 import { useSelector } from "react-redux"
 import { selectUser } from "~/store/user/selector"
@@ -12,6 +11,7 @@ import { getProjectByKey, updateProject } from "~/store/project/action"
 import { loadGraphicTemplate } from "../utils/fonts"
 import useResourcesContext from "~/hooks/useResourcesContext"
 import { useTokenInterceptor } from "~/hooks/useTokenInterceptor"
+import * as api from "~/services/api"
 
 const Designer: any = () => {
   const { setLoadCanva } = useResourcesContext()
@@ -22,7 +22,7 @@ const Designer: any = () => {
   const design = useDesign()
   const dispatch = useAppDispatch()
   const user = useSelector(selectUser)
-  const activeScene = useActiveScene()
+  const templateId = localStorage.getItem("template_id")
 
   useTokenInterceptor()
 
@@ -35,9 +35,19 @@ const Designer: any = () => {
       if (design && user) {
         setLoadCanva(false)
         const resolve: any = (await dispatch(getProjectByKey(id))).payload
+        let template: any
+        if (templateId) {
+          template = await api.getTemplateById(templateId)
+        }
         setTimeout(async () => {
           try {
+            await loadGraphicTemplate(resolve)
             await design.setDesign(resolve)
+            if (template) {
+              await loadGraphicTemplate(template)
+              await design.setDesign(template)
+              localStorage.removeItem("template_id")
+            }
           } catch {}
         }, 100)
         let sceneNames: string[] = []

@@ -282,12 +282,16 @@ export default function Pencil() {
               <Box
                 onClick={() => setDraw({ ...draw, color })}
                 boxSize="34px"
-                borderRadius="4px"
-                borderWidth="1px"
-                borderColor="#A9A9B2"
+                border={`5px solid ${draw.color === color ? "#5456F5" : "#DDDFE5"}`}
+                borderWidth="2px"
                 _hover={{ cursor: "pointer" }}
                 key={color}
-                sx={{ backgroundColor: color, height: "34px", borderRadius: "4px", cursor: "pointer" }}
+                sx={{
+                  backgroundColor: color,
+                  height: "34px",
+                  borderRadius: "4px",
+                  cursor: "pointer"
+                }}
               ></Box>
             ))}
           </Grid>

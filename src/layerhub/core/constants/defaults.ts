@@ -9,7 +9,7 @@ const frame: IFrame = {
   height: 1080,
   name: "Custom",
   unit: "PIXELS",
-  type: "Frame",
+  type: "Frame"
 }
 
 const background: IBackground = {
@@ -18,32 +18,32 @@ const background: IBackground = {
   name: "Custom",
   fill: "#ffffff",
   type: "Background",
-  id: nanoid(),
+  id: nanoid()
 }
 
 const scene: IScene = {
   id: nanoid(),
-  name: "Scene 1",
+  name: "Untitled design",
   frame,
   layers: [background],
-  metadata: {},
+  metadata: {}
 }
 
 const design: IDesign = {
   id: nanoid(),
-  name: "Scene 1",
+  name: "Untitled Project",
   frame,
   scenes: [scene],
   metadata: {},
   previews: [],
-  type: "GRAPHIC",
+  type: "GRAPHIC"
 }
 
 export const defaultObjects = {
   FRAME: frame,
   BACKGROUND: background,
   SCENE: scene,
-  DESIGN: design,
+  DESIGN: design
 }
 
 export const defaultConfig: IConfig = {
@@ -55,12 +55,12 @@ export const defaultConfig: IConfig = {
   frame: frame,
   scroll: {
     enabled: false,
-    limit: 500,
+    limit: 500
   },
 
   guidelines: {
     enabled: true,
-    color: "#8e44ad",
+    color: "#8e44ad"
   },
   zoomToMode: "CENTER",
   background: {
@@ -69,16 +69,16 @@ export const defaultConfig: IConfig = {
       blur: 10,
       color: "#C7C7C7",
       offsetX: 0,
-      offsetY: 0,
-    },
+      offsetY: 0
+    }
   },
   canvas: {
     color: "#ecf0f1",
     size: {
       width: 1200,
-      height: 1200,
-    },
-  },
+      height: 1200
+    }
+  }
 }
 
 export const defaultObjectOptions = {
@@ -101,5 +101,5 @@ export const defaultObjectOptions = {
   strokeUniform: false,
   strokeMiterLimit: 4,
   strokeDashOffset: 0,
-  metadata: {},
+  metadata: {}
 }
