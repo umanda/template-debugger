@@ -46,7 +46,7 @@ export const signInByToken = (token: string): Promise<User> => {
     base
       .post("/signin/token")
       .then(({ data }: any) => {
-        data.customer && resolve({ ...data.admin, type: Object.keys(data)[0] })
+        data.customer && resolve({ ...data.customer, type: Object.keys(data)[0] })
         data.admin && resolve({ ...data.admin, type: Object.keys(data)[0] })
       })
       .catch((err: any) => {

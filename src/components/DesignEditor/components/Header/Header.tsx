@@ -994,6 +994,8 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
     } else return true
   }
 
+  // && save === true   else setSave(true)
+
   useEffect(() => {
     try {
       if (activeScene && stateJson !== "") functionSave()
@@ -1047,13 +1049,18 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         })
         if (user) {
           const resolve = await api.putTemplate(designJSON)
-          if (resolve.payload === undefined) {
+          if (resolve?.template) {
             setAutoSave(false)
           } else {
             setAutoSave(true)
             toast({
-              title: "Oops, there was an error, try again.",
-              status: "error",
+              status: "info",
+              description: `Template Name: ${projectSelect.name}\n
+              Category: 1\n
+              Tags: ${projectSelect.tags}\n
+              Description: ${projectSelect.description}\n
+              Layout: Photo\n
+              Plan: Free`,
               position: "top",
               duration: 2000,
               isClosable: true
