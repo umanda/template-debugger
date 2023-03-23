@@ -90,7 +90,7 @@ export default function Header() {
             variant={"ghost"}
             aria-label=""
             icon={<DrawifyD size={24} />}
-            onClick={() => (window.location.href = redirectDefaultPage)}
+            onClick={() => (window.location.href = redirectUserProfilePage)}
           />
         </Flex>
         <Flex padding={"0 1rem"} gap={"1rem"} alignItems={"center"}>
@@ -178,7 +178,7 @@ function ShareMenu() {
     try {
       if (user?.plan !== "FREE" || type === "jpg") {
         toast({
-          title: "Please wait while the image loads",
+          title: "Your project is preparing to download",
           status: "loading",
           position: "top",
           duration: 2000,
@@ -567,7 +567,7 @@ function FileMenu() {
           const result = res.target!.result as string
           handleImportDesign(result)
         }
-        reader.onerror = (err) => {}
+        reader.onerror = (err) => { }
 
         reader.readAsText(file)
       }
@@ -999,7 +999,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   useEffect(() => {
     try {
       if (activeScene && stateJson !== "") functionSave()
-    } catch {}
+    } catch { }
   }, [stateChange])
 
   useEffect(() => {
@@ -1068,7 +1068,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
           }
         }
       }
-    } catch (err: any) {}
+    } catch (err: any) { }
   }, [editor, scenes, id, design, autoSave])
 
   return (
