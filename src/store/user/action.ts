@@ -85,7 +85,7 @@ export const logout = createAsyncThunk<any, void, { rejectValue: boolean }>(
   async (_, { dispatch, rejectWithValue }) => {
     localStorage.setItem("token", "")
     try {
-      const logout = await api.logout()
+      // await api.logout()
       dispatch(removeUser())
       dispatch(clearResourceComposite([]))
       dispatch(clearResourceUpload([]))

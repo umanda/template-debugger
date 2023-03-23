@@ -1043,10 +1043,20 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         let designJSON: any = design?.toJSON()
         designJSON.key = projectSelect.key
         designJSON.scenes.map((e: any, index: number) => {
+          e.name = scenes[index]?.scene?.name
           e.position = 0
           e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
           return e
         })
+        designJSON.layout_id = projectSelect.layout.id
+        designJSON.plan = projectSelect.plan
+        designJSON.frame = {
+          name: designJSON.frame.name,
+          visibility: designJSON.frame.visibility,
+          width: designJSON.scenes[0].frame.width,
+          height: designJSON.scenes[0].frame.height
+        }
+        designJSON.name === "" && (designJSON.name = `Untitled Template`)
         if (user) {
           const resolve = await api.putTemplate(designJSON)
           if (resolve?.template) {
@@ -1068,7 +1078,9 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
           }
         }
       }
-    } catch (err: any) { }
+    } catch (err: any) {
+      console.log(err)
+    }
   }, [editor, scenes, id, design, autoSave])
 
   return (
