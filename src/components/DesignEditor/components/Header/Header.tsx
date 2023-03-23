@@ -915,6 +915,8 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const activeObject: any = useActiveObject()
   const { isOpen: isOpenNoInternet, onOpen: onOpenNoInternet, onClose: onCloseNoInternet } = useDisclosure()
   const { isOpenPreview, switchPage, setSwitchPage } = useIsOpenPreview()
+  const toast = useToast()
+  const projectSelect = useSelector(selectProject)
 
   window.addEventListener("offline", onOpenNoInternet)
   window.addEventListener("online", onCloseNoInternet)
@@ -992,6 +994,8 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
     } else return true
   }
 
+  // && save === true   else setSave(true)
+
   useEffect(() => {
     try {
       if (activeScene && stateJson !== "") functionSave()
@@ -1018,21 +1022,51 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
 
   const functionSave = useCallback(async () => {
     try {
-      let designJSON: any = design?.toJSON()
-      designJSON.key = id
-      designJSON.scenes.map((e: any, index: number) => {
-        e.name = scenes[index]?.scene?.name
-        e.position = index
-        e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-        return e
-      })
-      if (designJSON.name === "") {
-        const resolve = await api.getListProjects({ query: {} })
-        designJSON.name = `Untitled Project ${resolve.pagination.total_items}`
-      }
-      if (user) {
-        const resolve = await dispatch(updateProject(designJSON))
-        resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
+      if (user.type !== "admin") {
+        let designJSON: any = design?.toJSON()
+        designJSON.key = id
+        designJSON.scenes.map((e: any, index: number) => {
+          e.name = scenes[index]?.scene?.name
+          e.position = index
+          e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          return e
+        })
+        if (designJSON.name === "") {
+          const resolve = await api.getListProjects({ query: {} })
+          designJSON.name = `Untitled Project ${resolve.pagination.total_items}`
+        }
+        if (user) {
+          const resolve = await dispatch(updateProject(designJSON))
+          resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
+        }
+      } else {
+        let designJSON: any = design?.toJSON()
+        designJSON.key = projectSelect.key
+        designJSON.scenes.map((e: any, index: number) => {
+          e.position = 0
+          e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          return e
+        })
+        if (user) {
+          const resolve = await api.putTemplate(designJSON)
+          if (resolve?.template) {
+            setAutoSave(false)
+          } else {
+            setAutoSave(true)
+            toast({
+              status: "info",
+              description: `Template Name: ${projectSelect.name}\n
+              Category: 1\n
+              Tags: ${projectSelect.tags}\n
+              Description: ${projectSelect.description}\n
+              Layout: Photo\n
+              Plan: Free`,
+              position: "top",
+              duration: 2000,
+              isClosable: true
+            })
+          }
+        }
       }
     } catch (err: any) { }
   }, [editor, scenes, id, design, autoSave])
