@@ -567,7 +567,7 @@ function FileMenu() {
           const result = res.target!.result as string
           handleImportDesign(result)
         }
-        reader.onerror = (err) => { }
+        reader.onerror = (err) => {}
 
         reader.readAsText(file)
       }
@@ -999,7 +999,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   useEffect(() => {
     try {
       if (activeScene && stateJson !== "") functionSave()
-    } catch { }
+    } catch {}
   }, [stateChange])
 
   useEffect(() => {
@@ -1078,9 +1078,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
           }
         }
       }
-    } catch (err: any) {
-      console.log(err)
-    }
+    } catch (err: any) {}
   }, [editor, scenes, id, design, autoSave])
 
   return (
