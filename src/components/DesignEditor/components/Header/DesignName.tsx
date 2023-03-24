@@ -19,11 +19,13 @@ function DesignName() {
   }, [scenes])
 
   const handleInputChange = (name: string) => {
-    setState({ ...state, name: name, width: spanRef.current?.clientWidth! })
-    if (design) {
-      design?.updateDesign({
-        name
-      })
+    if (name.length <= 50) {
+      setState({ ...state, name: name, width: spanRef.current?.clientWidth! })
+      if (design) {
+        design?.updateDesign({
+          name
+        })
+      }
     }
   }
 

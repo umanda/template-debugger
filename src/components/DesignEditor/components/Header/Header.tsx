@@ -922,6 +922,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   window.addEventListener("online", onCloseNoInternet)
 
   document.onkeydown = function (e) {
+    console.log(e)
     if ((e.key === "Delete" || e.key === "Backspace") && inputActive === false) {
       if (activeObject !== null && (activeObject?.locked === false || activeObject?.locked === undefined)) {
         activeObject?.type === "StaticText"
@@ -982,14 +983,14 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         e.key === "z" ||
         e.key === "y")
     ) {
-      if (e.ctrlKey && e.keyCode === 107) editor.zoom.zoomToRatio(zoom + 0.05)
-      if (e.ctrlKey && e.keyCode === 109) editor.zoom.zoomToRatio(zoom - 0.05)
-      if (e.ctrlKey && e.keyCode === 68) activeScene.objects.clone()
-      if (e.ctrlKey && e.keyCode === 83) functionSave()
-      if (e.ctrlKey && e.keyCode === 65) activeScene.objects.select()
-      if (e.ctrlKey && e.keyCode === 69) activeScene.objects.remove("all")
-      if (e.ctrlKey && e.keyCode === 90 && activeObject?.isEditing !== true) activeScene.history.undo()
-      if (e.ctrlKey && e.keyCode === 89 && activeObject?.isEditing !== true) activeScene.history.redo()
+      if (e.ctrlKey && e.key === "k") editor.zoom.zoomToRatio(zoom + 0.05)
+      if (e.ctrlKey && e.key === "m") editor.zoom.zoomToRatio(zoom - 0.05)
+      if (e.ctrlKey && e.key === "d") activeScene.objects.clone()
+      if (e.ctrlKey && e.key === "s") functionSave()
+      if (e.ctrlKey && e.key === "a") activeScene.objects.select()
+      if (e.ctrlKey && e.key === "e") activeScene.objects.remove("all")
+      if (e.ctrlKey && e.key === "z" && activeObject?.isEditing !== true) activeScene.history.undo()
+      if (e.ctrlKey && e.key === "y" && activeObject?.isEditing !== true) activeScene.history.redo()
       return false
     } else return true
   }
