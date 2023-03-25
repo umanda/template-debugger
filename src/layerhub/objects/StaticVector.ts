@@ -121,7 +121,6 @@ class StaticVectorObject extends fabric.Group {
 
   static fromObject(options: any, callback: Function) {
     fabric.loadSVGFromURL(options.src, (objects, opts) => {
-      console.log({ objects, opts })
       return callback && callback(new fabric.StaticVector(objects, opts, { ...options }))
     })
   }
