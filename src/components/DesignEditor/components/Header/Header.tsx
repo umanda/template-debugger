@@ -1183,7 +1183,6 @@ function SyncUp({
         designJSON.layout_id = projectSelect ? projectSelect.layout.id : 1
         designJSON.description = projectSelect ? projectSelect.description : metaData.description
         designJSON.plan = projectSelect ? projectSelect.plan : metaData.plan
-        console.log("save")
         designJSON.frame = {
           name: designJSON.frame.name,
           visibility: designJSON.frame.visibility,
