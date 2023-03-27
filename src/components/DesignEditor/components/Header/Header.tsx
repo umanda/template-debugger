@@ -133,9 +133,11 @@ export default function Header() {
       </Flex>
       <DesignName />
       <Flex gap={"1rem"} alignItems={"center"} paddingRight="1rem">
-        {/* <Button className="usr-feedback" colorScheme={"orange"} onClick={() => {}}>
-          Feedback
-        </Button> */}
+        <Button className="usr-feedback"  colorScheme={"brand"} onClick={() => {
+          alert("Show a popup to get Template Data, then Save it as not published template");
+        }}>
+          Save as template
+        </Button>
 
         <ShareMenu />
 
