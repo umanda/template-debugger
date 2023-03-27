@@ -76,12 +76,14 @@ export default function Canva() {
       }
     }
 
-    function deleteObject() {
-      activeScene.objects.remove()
+    function deleteObject(eventData, target) {
+      var value = target.corner
+      if (value === "deleteControl") activeScene.objects.remove()
     }
 
-    function cloneObject() {
-      activeScene.objects.clone()
+    function cloneObject(eventData, target) {
+      var value = target.corner
+      if (value === "clone") activeScene.objects.clone()
     }
 
     fabric.Object.prototype.controls.deleteControl = new fabric.Control({

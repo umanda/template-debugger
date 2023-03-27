@@ -273,7 +273,7 @@ const Resize = () => {
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Radio onClick={() => setMode("TWITTERCOVER")} selected={mode === "TWITTERCOVER"} />
-                    <Box marginLeft="10px">Twiter Cover</Box>
+                    <Box marginLeft="10px">Twitter Cover</Box>
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Radio onClick={() => setMode("YOUTUBECOVER")} selected={mode === "YOUTUBECOVER"} />

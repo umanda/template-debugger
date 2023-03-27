@@ -12,6 +12,7 @@ import { loadGraphicTemplate } from "../utils/fonts"
 import useResourcesContext from "~/hooks/useResourcesContext"
 import { useTokenInterceptor } from "~/hooks/useTokenInterceptor"
 import * as api from "~/services/api"
+import { putTemplate } from "~/store/templates/action"
 
 const Designer: any = () => {
   const { setLoadCanva } = useResourcesContext()
@@ -37,13 +38,14 @@ const Designer: any = () => {
         const resolve: any = (await dispatch(getProjectByKey(id))).payload
         let template: any
         if (templateId) {
-          template = await api.getTemplateById(templateId)
+          template = (await dispatch(putTemplate(id))).payload
         }
         setTimeout(async () => {
           try {
-            await loadGraphicTemplate(resolve)
-            await design.setDesign(resolve)
-            if (template) {
+            if (templateId === null || templateId === undefined) {
+              await loadGraphicTemplate(resolve)
+              await design.setDesign(resolve)
+            } else {
               await loadGraphicTemplate(template)
               await design.setDesign(template)
               localStorage.removeItem("template_id")
@@ -60,23 +62,22 @@ const Designer: any = () => {
         setLoadCanva(true)
       }
     } catch (err: any) {
-      user && functionSave()
       setLoadCanva(true)
     }
   }, [id, editor, user, design])
 
-  const functionSave = useCallback(async () => {
-    try {
-      let designJSON: any = design?.toJSON()
-      designJSON.key = id
-      designJSON.scenes.map((e: any, index: number) => {
-        e.position = index
-        e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-        return e
-      })
-      user && (await dispatch(updateProject(designJSON))).payload
-    } catch {}
-  }, [editor, design, id])
+  // const functionSave = useCallback(async () => {
+  //   try {
+  //     let designJSON: any = design?.toJSON()
+  //     designJSON.key = id
+  //     designJSON.scenes.map((e: any, index: number) => {
+  //       e.position = index
+  //       e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+  //       return e
+  //     })
+  //     user && (await dispatch(updateProject(designJSON))).payload
+  //   } catch {}
+  // }, [editor, design, id])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>

@@ -10,7 +10,7 @@ export function useTokenInterceptor() {
       setIsLoaded(true)
     }
     const authInterceptor = api.base.interceptors.request.use((r) => {
-      r.headers["Authorization"] = `Bearer ${token}`
+      r.headers["Authorization"] = `Bearer ${token!==null ? token : "drawify"}`
       return r
     })
     return () => {

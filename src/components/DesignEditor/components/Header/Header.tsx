@@ -90,7 +90,7 @@ export default function Header() {
             variant={"ghost"}
             aria-label=""
             icon={<DrawifyD size={24} />}
-            onClick={() => (window.location.href = redirectDefaultPage)}
+            onClick={() => (window.location.href = redirectUserProfilePage)}
           />
         </Flex>
         <Flex padding={"0 1rem"} gap={"1rem"} alignItems={"center"}>
@@ -178,7 +178,7 @@ function ShareMenu() {
     try {
       if (user?.plan !== "FREE" || type === "jpg") {
         toast({
-          title: "Please wait while the image loads",
+          title: "Your project is preparing to download",
           status: "loading",
           position: "top",
           duration: 2000,
@@ -915,11 +915,14 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const activeObject: any = useActiveObject()
   const { isOpen: isOpenNoInternet, onOpen: onOpenNoInternet, onClose: onCloseNoInternet } = useDisclosure()
   const { isOpenPreview, switchPage, setSwitchPage } = useIsOpenPreview()
+  const toast = useToast()
+  const projectSelect = useSelector(selectProject)
 
   window.addEventListener("offline", onOpenNoInternet)
   window.addEventListener("online", onCloseNoInternet)
 
   document.onkeydown = function (e) {
+    console.log(e)
     if ((e.key === "Delete" || e.key === "Backspace") && inputActive === false) {
       if (activeObject !== null && (activeObject?.locked === false || activeObject?.locked === undefined)) {
         activeObject?.type === "StaticText"
@@ -980,17 +983,19 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         e.key === "z" ||
         e.key === "y")
     ) {
-      if (e.ctrlKey && e.keyCode === 107) editor.zoom.zoomToRatio(zoom + 0.05)
-      if (e.ctrlKey && e.keyCode === 109) editor.zoom.zoomToRatio(zoom - 0.05)
-      if (e.ctrlKey && e.keyCode === 68) activeScene.objects.clone()
-      if (e.ctrlKey && e.keyCode === 83) functionSave()
-      if (e.ctrlKey && e.keyCode === 65) activeScene.objects.select()
-      if (e.ctrlKey && e.keyCode === 69) activeScene.objects.remove("all")
-      if (e.ctrlKey && e.keyCode === 90 && activeObject?.isEditing !== true) activeScene.history.undo()
-      if (e.ctrlKey && e.keyCode === 89 && activeObject?.isEditing !== true) activeScene.history.redo()
+      if (e.ctrlKey && e.key === "k") editor.zoom.zoomToRatio(zoom + 0.05)
+      if (e.ctrlKey && e.key === "m") editor.zoom.zoomToRatio(zoom - 0.05)
+      if (e.ctrlKey && e.key === "d") activeScene.objects.clone()
+      if (e.ctrlKey && e.key === "s") functionSave()
+      if (e.ctrlKey && e.key === "a") activeScene.objects.select()
+      if (e.ctrlKey && e.key === "e") activeScene.objects.remove("all")
+      if (e.ctrlKey && e.key === "z" && activeObject?.isEditing !== true) activeScene.history.undo()
+      if (e.ctrlKey && e.key === "y" && activeObject?.isEditing !== true) activeScene.history.redo()
       return false
     } else return true
   }
+
+  // && save === true   else setSave(true)
 
   useEffect(() => {
     try {
@@ -1018,21 +1023,61 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
 
   const functionSave = useCallback(async () => {
     try {
-      let designJSON: any = design?.toJSON()
-      designJSON.key = id
-      designJSON.scenes.map((e: any, index: number) => {
-        e.name = scenes[index]?.scene?.name
-        e.position = index
-        e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-        return e
-      })
-      if (designJSON.name === "") {
-        const resolve = await api.getListProjects({ query: {} })
-        designJSON.name = `Untitled Project ${resolve.pagination.total_items}`
-      }
-      if (user) {
-        const resolve = await dispatch(updateProject(designJSON))
-        resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
+      if (user.type !== "admin") {
+        let designJSON: any = design?.toJSON()
+        designJSON.key = id
+        designJSON.scenes.map((e: any, index: number) => {
+          e.name = scenes[index]?.scene?.name
+          e.position = index
+          e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          return e
+        })
+        if (designJSON.name === "") {
+          const resolve = await api.getListProjects({ query: {} })
+          designJSON.name = `Untitled Project ${resolve.pagination.total_items}`
+        }
+        if (user) {
+          const resolve = await dispatch(updateProject(designJSON))
+          resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
+        }
+      } else {
+        let designJSON: any = design?.toJSON()
+        designJSON.key = projectSelect.key
+        designJSON.scenes.map((e: any, index: number) => {
+          e.name = scenes[index]?.scene?.name
+          e.position = 0
+          e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          return e
+        })
+        designJSON.layout_id = projectSelect.layout.id
+        designJSON.plan = projectSelect.plan
+        designJSON.frame = {
+          name: designJSON.frame.name,
+          visibility: designJSON.frame.visibility,
+          width: designJSON.scenes[0].frame.width,
+          height: designJSON.scenes[0].frame.height
+        }
+        designJSON.name === "" && (designJSON.name = `Untitled Template`)
+        if (user) {
+          const resolve = await api.putTemplate(designJSON)
+          if (resolve?.template) {
+            setAutoSave(false)
+          } else {
+            setAutoSave(true)
+            toast({
+              status: "info",
+              description: `Template Name: ${projectSelect.name}\n
+              Category: 1\n
+              Tags: ${projectSelect.tags}\n
+              Description: ${projectSelect.description}\n
+              Layout: Photo\n
+              Plan: Free`,
+              position: "top",
+              duration: 2000,
+              isClosable: true
+            })
+          }
+        }
       }
     } catch (err: any) {}
   }, [editor, scenes, id, design, autoSave])
