@@ -68,6 +68,8 @@ export default function Header() {
     undo: 0,
     redo: 0
   })
+  const [textButtonSave, setTextButtonSave] = useState<string>(null)
+  const templateId = localStorage.getItem("template_id")
   const [stateSave, setStateSave] = useState<{ state: boolean; make: boolean }>({ state: false, make: false })
   const editor = useEditor()
   const { isOpen: isOpenSave, onToggle: onToggleSave, onClose: onCloseSave } = useDisclosure()
@@ -83,6 +85,10 @@ export default function Header() {
   })
 
   React.useEffect(() => {
+    validateButtonSave()
+  }, [])
+
+  React.useEffect(() => {
     setMetaData({
       ...metaData,
       tags: projectSelect?.tags ? projectSelect.tags : [],
@@ -94,6 +100,10 @@ export default function Header() {
   React.useEffect(() => {
     design && setStateName(design?.design?.name)
   }, [design?.design?.name])
+
+  const validateButtonSave = useCallback(() => {
+    templateId !== null ? setTextButtonSave("Save Template") : setTextButtonSave("Update Template")
+  }, [])
 
   const changeInput = useCallback(
     (value: string) => {
@@ -182,7 +192,7 @@ export default function Header() {
                   user ? onToggleSave() : null
                 }}
               >
-                Save Template
+                {textButtonSave}
               </Button>
             </PopoverTrigger>
             <PopoverContent padding="1rem">
