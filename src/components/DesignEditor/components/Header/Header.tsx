@@ -173,9 +173,9 @@ export default function Header() {
       </Flex>
       <DesignName />
       <Flex gap={"1rem"} alignItems={"center"} paddingRight="1rem">
-        <Popover placement="bottom-start" isOpen={isOpenSave} onClose={onCloseSave}>
-          <PopoverTrigger>
-            {user.type === "admin" && (
+        {user.type === "admin" && (
+          <Popover placement="bottom-start" isOpen={isOpenSave} onClose={onCloseSave}>
+            <PopoverTrigger>
               <Button
                 colorScheme={"brand"}
                 rightIcon={<Save size={16} />}
@@ -185,75 +185,75 @@ export default function Header() {
               >
                 Save Template
               </Button>
-            )}
-          </PopoverTrigger>
-          <PopoverContent padding="1rem">
-            <PopoverArrow />
-            <PopoverBody>
-              <Flex gap="10px" flexDir="column">
-                <Flex flexDir="column">
-                  Name:
-                  <Input
-                    ref={ref}
-                    value={stateName !== undefined ? stateName : "Untitled Project"}
-                    onFocus={() => setInputActive(true)}
-                    onChange={(e) => {
-                      changeInput(e.target.value)
-                    }}
-                    onBlur={() => setInputActive(false)}
-                  />
-                </Flex>
-                <Flex flexDir="column">
-                  Tags:
-                  <Input
-                    placeholder="Input your tags"
-                    onChange={(e) => setMetaData({ ...metaData, tags: e.target.value.split(",") })}
-                    value={metaData?.tags !== null && metaData?.tags !== undefined ? metaData?.tags?.join(",") : ""}
-                  />
-                </Flex>
-                <Flex flexDir="column">
-                  Description:
-                  <Textarea
-                    onFocus={() => setInputActive(true)}
-                    onChange={(e) => setMetaData({ ...metaData, description: e.target.value })}
-                    placeholder="Input your description"
-                    value={metaData.description !== null ? metaData.description : ""}
-                    onBlur={() => setInputActive(false)}
-                  />
-                </Flex>
-                <Flex flexDir="column">
-                  Layout:
-                  <Input value={"Screen"} isDisabled={true} />
-                </Flex>
-                <Flex flexDir="column">
-                  Category:
-                  <Input value={1} isDisabled={true} />
-                </Flex>
-                <Flex flexDir="column">
-                  Plans:
-                  <Select
-                    size="sm"
-                    onChange={(e) => setMetaData({ ...metaData, plan: e.target.value })}
-                    fontSize="12px"
-                    value={metaData.plan !== undefined ? metaData.plan : "FREE"}
-                    placeholder="Select option"
+            </PopoverTrigger>
+            <PopoverContent padding="1rem">
+              <PopoverArrow />
+              <PopoverBody>
+                <Flex gap="10px" flexDir="column">
+                  <Flex flexDir="column">
+                    Name:
+                    <Input
+                      ref={ref}
+                      value={stateName !== undefined ? stateName : "Untitled Project"}
+                      onFocus={() => setInputActive(true)}
+                      onChange={(e) => {
+                        changeInput(e.target.value)
+                      }}
+                      onBlur={() => setInputActive(false)}
+                    />
+                  </Flex>
+                  <Flex flexDir="column">
+                    Tags:
+                    <Input
+                      placeholder="Input your tags"
+                      onChange={(e) => setMetaData({ ...metaData, tags: e.target.value.split(",") })}
+                      value={metaData?.tags !== null && metaData?.tags !== undefined ? metaData?.tags?.join(",") : ""}
+                    />
+                  </Flex>
+                  <Flex flexDir="column">
+                    Description:
+                    <Textarea
+                      onFocus={() => setInputActive(true)}
+                      onChange={(e) => setMetaData({ ...metaData, description: e.target.value })}
+                      placeholder="Input your description"
+                      value={metaData.description !== null ? metaData.description : ""}
+                      onBlur={() => setInputActive(false)}
+                    />
+                  </Flex>
+                  <Flex flexDir="column">
+                    Layout:
+                    <Input value={"Screen"} isDisabled={true} />
+                  </Flex>
+                  <Flex flexDir="column">
+                    Category:
+                    <Input value={1} isDisabled={true} />
+                  </Flex>
+                  <Flex flexDir="column">
+                    Plans:
+                    <Select
+                      size="sm"
+                      onChange={(e) => setMetaData({ ...metaData, plan: e.target.value })}
+                      fontSize="12px"
+                      value={metaData.plan !== undefined ? metaData.plan : "FREE"}
+                      placeholder="Select option"
+                    >
+                      <option value="HERO">HERO</option>
+                      <option value="EXPLORER">EXPLORER</option>
+                      <option value="FREE">FREE</option>
+                    </Select>
+                  </Flex>
+                  <Button
+                    colorScheme={"brand"}
+                    rightIcon={<Save size={16} />}
+                    onClick={() => setStateSave({ ...stateSave, make: !stateSave.make })}
                   >
-                    <option value="HERO">HERO</option>
-                    <option value="EXPLORER">EXPLORER</option>
-                    <option value="FREE">FREE</option>
-                  </Select>
+                    Save
+                  </Button>
                 </Flex>
-                <Button
-                  colorScheme={"brand"}
-                  rightIcon={<Save size={16} />}
-                  onClick={() => setStateSave({ ...stateSave, make: !stateSave.make })}
-                >
-                  Save
-                </Button>
-              </Flex>
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+        )}
         <ShareMenu />
         <Button
           className="btn-preview"
