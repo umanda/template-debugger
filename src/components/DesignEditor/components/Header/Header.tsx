@@ -75,7 +75,6 @@ export default function Header() {
   const { setInputActive } = useDesignEditorContext()
   const ref = useRef<any>()
   const projectSelect = useSelector(selectProject)
-  const { id } = useParams()
   const [stateName, setStateName] = useState<string>(design?.design?.name)
   const [metaData, setMetaData] = useState<{ tags: string[]; description: string; plan: string }>({
     tags: projectSelect?.tags ? projectSelect.tags : [],
@@ -245,7 +244,10 @@ export default function Header() {
                   <Button
                     colorScheme={"brand"}
                     rightIcon={<Save size={16} />}
-                    onClick={() => setStateSave({ ...stateSave, make: !stateSave.make })}
+                    onClick={() => {
+                      onCloseSave()
+                      setStateSave({ ...stateSave, make: !stateSave.make, state: true })
+                    }}
                   >
                     Save
                   </Button>
@@ -281,7 +283,7 @@ function ShareMenu() {
   const design = useDesign()
   const { isOpen, onToggle, onClose } = useDisclosure()
   const { isOpen: isOpenUpgradeUser, onOpen: onOpenUpgradeUser, onClose: onCloseUpgradeUser } = useDisclosure()
-  const user = useSelector(selectUser)
+  const user: any = useSelector(selectUser)
   const [valueInput, setValueInput] = useState<string>("")
   // const [typeSign, setTypeSign] = useState("signin")
   const currentScene = useActiveScene()
