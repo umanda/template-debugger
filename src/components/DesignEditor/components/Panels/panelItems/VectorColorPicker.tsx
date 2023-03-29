@@ -136,7 +136,7 @@ export default function VectorColorPicker() {
                 <Box sx={{ padding: "1rem 0", display: "grid", gridTemplateColumns: "40px 1fr", alignItems: "center" }}>
                   <Box sx={{ color: "#A9A9B2" }}>HEX</Box>
                   <Input
-                    onBlur={(e) => {
+                    onBlur={() => {
                       setInputActive(false)
                       setColorHex(inputHex)
                       changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
@@ -165,20 +165,9 @@ export default function VectorColorPicker() {
       <Grid gap="10px" templateColumns="repeat(7, 1fr)">
         {Object.values(colors.colorMap).map((c: any, index) => {
           return (
-            <div key={index}>
-              <Flex
-                background={c}
-                _hover={{ cursor: "pointer" }}
-                borderWidth={indexColorPicker === index ? "2px" : "1px"}
-                borderColor={indexColorPicker === index ? "brand.500" : "#A9A9B2"}
-                borderStyle="solid"
-                onClick={() => {
-                  setIndexColorPicker(index)
-                }}
-                boxSize="34px"
-                borderRadius="20%"
-              />
-            </div>
+            <GridItem key={index}>
+              <HexColorVector index={index} c={c} changeBackgroundColor={changeBackgroundColor} />
+            </GridItem>
           )
         })}
       </Grid>
@@ -253,5 +242,91 @@ export default function VectorColorPicker() {
         </GridItem>
       </Grid>
     </Flex>
+  )
+}
+
+function HexColorVector({
+  index,
+  c,
+  changeBackgroundColor
+}: {
+  index: number
+  c
+  changeBackgroundColor: (prev: string, next: string) => void
+}) {
+  const { setInputActive, indexColorPicker, setIndexColorPicker, colors, setColors, setActiveMenu } =
+    useDesignEditorContext()
+  const { isOpen: isOpenColor, onOpen: onOpenColor, onClose: onCloseColor } = useDisclosure()
+  const dispatch = useAppDispatch()
+  const [inputHex, setInputHex] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
+  const [inputHexPrev, setInputHexPrev] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
+  const [colorHex, setColorHex] = useState<string>("")
+
+  useEffect(() => {
+    if (isOpenColor === false && colorHex !== "") dispatch(getRecentColor(colorHex))
+  }, [isOpenColor])
+
+  return (
+    <Popover key={index} isOpen={isOpenColor} onClose={onCloseColor} onOpen={onOpenColor} placement="bottom-start">
+      <PopoverTrigger>
+        <div>
+          <Flex
+            background={c}
+            _hover={{ cursor: "pointer" }}
+            borderWidth={indexColorPicker === index ? "2px" : "1px"}
+            borderColor={indexColorPicker === index ? "brand.500" : "#A9A9B2"}
+            borderStyle="solid"
+            onClick={() => setIndexColorPicker(index)}
+            boxSize="34px"
+            borderRadius="20%"
+          />
+        </div>
+      </PopoverTrigger>
+      <Portal>
+        <PopoverContent sx={{ width: "320px" }}>
+          <Box
+            className="custom"
+            style={{
+              padding: "1rem"
+            }}
+          >
+            <HexColorPicker
+              style={{ width: "100%" }}
+              //@ts-ignore
+              color={Object.values(colors.colorMap)[indexColorPicker]}
+              onChange={(color) => {
+                setColorHex(color)
+                setInputHex(color)
+                setInputHexPrev(color)
+                changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], color)
+              }}
+            />
+            <Box sx={{ padding: "1rem 0", display: "grid", gridTemplateColumns: "40px 1fr", alignItems: "center" }}>
+              <Box sx={{ color: "#A9A9B2" }}>HEX</Box>
+              <Input
+                onBlur={(e) => {
+                  setInputActive(false)
+                  setColorHex(inputHex)
+                  changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setColorHex(inputHex)
+                    changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
+                  }
+                }}
+                onChange={(e) => {
+                  setInputHex(e.target.value)
+                  setInputHexPrev(e.target.value)
+                  dispatch(getRecentColor(colorHex))
+                }}
+                onFocus={() => setInputActive(true)}
+                value={inputHexPrev}
+              />
+            </Box>
+          </Box>
+        </PopoverContent>
+      </Portal>
+    </Popover>
   )
 }
