@@ -1,9 +1,11 @@
 import { fabric } from "fabric"
 import groupBy from "lodash/groupBy"
+import { Scene } from "../core"
 // https://ik.imagekit.io/scenify/drawify-small.svg"
 class StaticVectorObject extends fabric.Group {
   static type = "StaticVector"
   public src: string
+  public scene:Scene
   public objectColors: Record<string, any[]> = {}
   public colorMap = {}
   private watermark: string
@@ -11,7 +13,6 @@ class StaticVectorObject extends fabric.Group {
 
   public updateLayerColor(prev: string, next: string) {
     const sameObjects = this.objectColors[prev]
-
     if (sameObjects) {
       sameObjects.forEach((c) => {
         c.fill = next

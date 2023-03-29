@@ -63,6 +63,7 @@ export default function VectorColorPicker() {
     if (activeObject) {
       objectRef.updateLayerColor(prev, next)
     }
+    editor.design.activeScene.history.save()
     editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
     editor.zoom.zoomToRatio(zoomRatio - 0.000000001)
   }, 100)

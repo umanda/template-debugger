@@ -102,7 +102,7 @@ export default function Header() {
   }, [design?.design?.name])
 
   const validateButtonSave = useCallback(() => {
-    templateId !== null ? setTextButtonSave("Save Template") : setTextButtonSave("Update Template")
+    templateId !== null ? setTextButtonSave("Update Template") : setTextButtonSave("Save Template")
   }, [])
 
   const changeInput = useCallback(
