@@ -1,4 +1,4 @@
-import React, { useCallback } from "react"
+import React, { useCallback, useRef } from "react"
 import {
   Avatar,
   Box,
@@ -7,7 +7,10 @@ import {
   Flex,
   IconButton,
   Input,
+  PopoverBody,
+  Select,
   Spacer,
+  Textarea,
   Tooltip,
   useDisclosure,
   useToast
@@ -49,6 +52,7 @@ import Share from "../../../Icons/Share"
 import ModalUpgradePlan from "../../../Modals/UpgradePlan"
 import useResourcesContext from "~/hooks/useResourcesContext"
 import NoInternet from "../../../Modals/NoInternet"
+import Save from "~/components/Icons/Save"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectDefaultPage: string = import.meta.env.VITE_REDIRECT_HOME
@@ -56,7 +60,7 @@ const redirectDefaultPage: string = import.meta.env.VITE_REDIRECT_HOME
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { onOpenPreview } = useIsOpenPreview()
-  const scenes = useScenes()
+  const scenes: any = useScenes()
   const user = useSelector(selectUser)
   //   const [typeSign, setTypeSign] = useState("signin")
   const activeScene: any = useActiveScene()
@@ -64,7 +68,52 @@ export default function Header() {
     undo: 0,
     redo: 0
   })
+  const [textButtonSave, setTextButtonSave] = useState<string>(null)
+  const templateId = localStorage.getItem("template_id")
+  const [stateSave, setStateSave] = useState<{ state: boolean; make: boolean }>({ state: false, make: false })
   const editor = useEditor()
+  const { isOpen: isOpenSave, onToggle: onToggleSave, onClose: onCloseSave } = useDisclosure()
+  const design = useDesign()
+  const { setInputActive } = useDesignEditorContext()
+  const ref = useRef<any>()
+  const projectSelect = useSelector(selectProject)
+  const [stateName, setStateName] = useState<string>(design?.design?.name)
+  const [metaData, setMetaData] = useState<{ tags: string[]; description: string; plan: string }>({
+    tags: projectSelect?.tags ? projectSelect.tags : [],
+    description: projectSelect?.description ? projectSelect.description : null,
+    plan: projectSelect?.plan ? projectSelect.plan : "FREE"
+  })
+
+  React.useEffect(() => {
+    validateButtonSave()
+  }, [])
+
+  React.useEffect(() => {
+    setMetaData({
+      ...metaData,
+      tags: projectSelect?.tags ? projectSelect.tags : [],
+      description: projectSelect?.description ? projectSelect.description : null,
+      plan: projectSelect?.plan ? projectSelect.plan : "FREE"
+    })
+  }, [projectSelect])
+
+  React.useEffect(() => {
+    design && setStateName(design?.design?.name)
+  }, [design?.design?.name])
+
+  const validateButtonSave = useCallback(() => {
+    templateId !== null ? setTextButtonSave("Save Template") : setTextButtonSave("Update Template")
+  }, [])
+
+  const changeInput = useCallback(
+    (value: string) => {
+      setStateName(value)
+      design?.updateDesign({
+        name: value
+      })
+    },
+    [stateName, design]
+  )
 
   useEffect(() => {
     let undoPrev: any[] = activeScene?.history.undos
@@ -116,7 +165,7 @@ export default function Header() {
               />
             </Tooltip>
           </Flex>
-          <SyncUp user={user} onOpen={onOpen} />
+          <SyncUp stateSave={stateSave} metaData={metaData} user={user} onOpen={onOpen} />
           {/* <Tooltip label="Save" fontSize="md">
             <IconButton
               variant={"ghost"}
@@ -133,12 +182,91 @@ export default function Header() {
       </Flex>
       <DesignName />
       <Flex gap={"1rem"} alignItems={"center"} paddingRight="1rem">
-        {/* <Button className="usr-feedback" colorScheme={"orange"} onClick={() => {}}>
-          Feedback
-        </Button> */}
-
+        {user.type === "admin" && (
+          <Popover placement="bottom-start" isOpen={isOpenSave} onClose={onCloseSave}>
+            <PopoverTrigger>
+              <Button
+                colorScheme={"brand"}
+                rightIcon={<Save size={16} />}
+                onClick={() => {
+                  user ? onToggleSave() : null
+                }}
+              >
+                {textButtonSave}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent padding="1rem">
+              <PopoverArrow />
+              <PopoverBody>
+                <Flex gap="10px" flexDir="column">
+                  <Flex flexDir="column">
+                    Name:
+                    <Input
+                      ref={ref}
+                      value={stateName !== undefined ? stateName : "Untitled Project"}
+                      onFocus={() => setInputActive(true)}
+                      onChange={(e) => {
+                        changeInput(e.target.value)
+                      }}
+                      onBlur={() => setInputActive(false)}
+                    />
+                  </Flex>
+                  <Flex flexDir="column">
+                    Tags:
+                    <Input
+                      placeholder="Input your tags"
+                      onChange={(e) => setMetaData({ ...metaData, tags: e.target.value.split(",") })}
+                      value={metaData?.tags !== null && metaData?.tags !== undefined ? metaData?.tags?.join(",") : ""}
+                    />
+                  </Flex>
+                  <Flex flexDir="column">
+                    Description:
+                    <Textarea
+                      onFocus={() => setInputActive(true)}
+                      onChange={(e) => setMetaData({ ...metaData, description: e.target.value })}
+                      placeholder="Input your description"
+                      value={metaData.description !== null ? metaData.description : ""}
+                      onBlur={() => setInputActive(false)}
+                    />
+                  </Flex>
+                  <Flex flexDir="column">
+                    Layout:
+                    <Input value={"Screen"} isDisabled={true} />
+                  </Flex>
+                  <Flex flexDir="column">
+                    Category:
+                    <Input value={1} isDisabled={true} />
+                  </Flex>
+                  <Flex flexDir="column">
+                    Plans:
+                    <Select
+                      size="sm"
+                      onChange={(e) => setMetaData({ ...metaData, plan: e.target.value })}
+                      fontSize="12px"
+                      value={metaData.plan !== undefined ? metaData.plan : "FREE"}
+                      placeholder="Select option"
+                    >
+                      <option value="HERO">HERO</option>
+                      <option value="EXPLORER">EXPLORER</option>
+                      <option value="FREE">FREE</option>
+                    </Select>
+                  </Flex>
+                  <Button
+                    colorScheme={"brand"}
+                    rightIcon={<Save size={16} />}
+                    onClick={() => {
+                      onCloseSave()
+                      setStateSave({ ...stateSave, make: !stateSave.make, state: true })
+                    }}
+                  >
+                    Save
+                  </Button>
+                </Flex>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+        )}
         <ShareMenu />
-
         <Button
           className="btn-preview"
           colorScheme={"orange"}
@@ -165,7 +293,7 @@ function ShareMenu() {
   const design = useDesign()
   const { isOpen, onToggle, onClose } = useDisclosure()
   const { isOpen: isOpenUpgradeUser, onOpen: onOpenUpgradeUser, onClose: onCloseUpgradeUser } = useDisclosure()
-  const user = useSelector(selectUser)
+  const user: any = useSelector(selectUser)
   const [valueInput, setValueInput] = useState<string>("")
   // const [typeSign, setTypeSign] = useState("signin")
   const currentScene = useActiveScene()
@@ -189,7 +317,7 @@ function ShareMenu() {
         designJSON.key = id
         designJSON.scenes.map((e: any, index: number) => {
           e.position = index
-          e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          e.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
           return e
         })
         await dispatch(updateProject(designJSON))
@@ -240,7 +368,7 @@ function ShareMenu() {
           designJSON.key = id
           designJSON.scenes.map((e: any, index: number) => {
             e.position = index
-            e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+            e.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
             return e
           })
           const resolve = (await dispatch(updateProject(designJSON))).payload
@@ -900,7 +1028,17 @@ function UserMenu() {
   )
 }
 
-function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
+function SyncUp({
+  user,
+  metaData,
+  onOpen,
+  stateSave
+}: {
+  metaData: any
+  user: any
+  onOpen: () => void
+  stateSave: any
+}) {
   const design = useDesign()
   const { id } = useParams()
   const { inputActive, activeScene: booleanScene } = useDesignEditorContext()
@@ -915,14 +1053,16 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
   const activeObject: any = useActiveObject()
   const { isOpen: isOpenNoInternet, onOpen: onOpenNoInternet, onClose: onCloseNoInternet } = useDisclosure()
   const { isOpenPreview, switchPage, setSwitchPage } = useIsOpenPreview()
-  const toast = useToast()
   const projectSelect = useSelector(selectProject)
+
+  useEffect(() => {
+    stateSave.state === true && functionSave()
+  }, [stateSave.make])
 
   window.addEventListener("offline", onOpenNoInternet)
   window.addEventListener("online", onCloseNoInternet)
 
   document.onkeydown = function (e) {
-    console.log(e)
     if ((e.key === "Delete" || e.key === "Backspace") && inputActive === false) {
       if (activeObject !== null && (activeObject?.locked === false || activeObject?.locked === undefined)) {
         activeObject?.type === "StaticText"
@@ -1029,7 +1169,7 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         designJSON.scenes.map((e: any, index: number) => {
           e.name = scenes[index]?.scene?.name
           e.position = index
-          e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          e.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
           return e
         })
         if (designJSON.name === "") {
@@ -1042,15 +1182,19 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
         }
       } else {
         let designJSON: any = design?.toJSON()
-        designJSON.key = projectSelect.key
+        designJSON.key = projectSelect ? projectSelect.key : id
         designJSON.scenes.map((e: any, index: number) => {
           e.name = scenes[index]?.scene?.name
           e.position = 0
-          e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          designJSON.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          e.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
           return e
         })
-        designJSON.layout_id = projectSelect.layout.id
-        designJSON.plan = projectSelect.plan
+        designJSON.tags = projectSelect ? projectSelect.tags : metaData.tags
+        designJSON.colors = projectSelect ? projectSelect.colors : []
+        designJSON.layout_id = projectSelect ? projectSelect.layout.id : 1
+        designJSON.description = projectSelect ? projectSelect.description : metaData.description
+        designJSON.plan = projectSelect ? projectSelect.plan : metaData.plan
         designJSON.frame = {
           name: designJSON.frame.name,
           visibility: designJSON.frame.visibility,
@@ -1064,18 +1208,6 @@ function SyncUp({ user, onOpen }: { user: any; onOpen: () => void }) {
             setAutoSave(false)
           } else {
             setAutoSave(true)
-            toast({
-              status: "info",
-              description: `Template Name: ${projectSelect.name}\n
-              Category: 1\n
-              Tags: ${projectSelect.tags}\n
-              Description: ${projectSelect.description}\n
-              Layout: Photo\n
-              Plan: Free`,
-              position: "top",
-              duration: 2000,
-              isClosable: true
-            })
           }
         }
       }
