@@ -62,6 +62,7 @@ export default function VectorColorPicker() {
 
     if (activeObject) {
       objectRef.updateLayerColor(prev, next)
+      // editor.design.activeScene.objects.updateLayerColor(prev, next)
     }
     editor.design.activeScene.history.save()
     editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
@@ -123,6 +124,8 @@ export default function VectorColorPicker() {
               >
                 <HexColorPicker
                   style={{ width: "100%" }}
+                  //@ts-ignore
+                  color={Object.values(colors.colorMap)[indexColorPicker]}
                   onChange={(color) => {
                     setColorHex(color)
                     setInputHex(color)
