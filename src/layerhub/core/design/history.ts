@@ -44,6 +44,7 @@ class History {
     try {
       this.undos.push(this.current)
       this.current = this.getJSON()
+      this.redos=[]
     } catch (err) {
       console.log(err)
     }
