@@ -55,6 +55,7 @@ import NoInternet from "../../../Modals/NoInternet"
 import Save from "~/components/Icons/Save"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
+const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN+"/template-manager?status=unpublished";
 const redirectDefaultPage: string = import.meta.env.VITE_REDIRECT_HOME
 
 export default function Header() {
@@ -139,7 +140,11 @@ export default function Header() {
             variant={"ghost"}
             aria-label=""
             icon={<DrawifyD size={24} />}
-            onClick={() => (window.location.href = redirectUserProfilePage)}
+            onClick={() => (
+              user.type === "admin" ? 
+              (window.location.href = redirectUserTemplateManager) :
+              (window.location.href = redirectUserProfilePage)
+              )}
           />
         </Flex>
         <Flex padding={"0 1rem"} gap={"1rem"} alignItems={"center"}>
