@@ -62,6 +62,7 @@ export default function VectorColorPicker() {
 
     if (activeObject) {
       objectRef.updateLayerColor(prev, next)
+      // editor.design.activeScene.objects.updateLayerColor(prev, next)
     }
     editor.design.activeScene.history.save()
     editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
@@ -123,6 +124,8 @@ export default function VectorColorPicker() {
               >
                 <HexColorPicker
                   style={{ width: "100%" }}
+                  //@ts-ignore
+                  color={Object.values(colors.colorMap)[indexColorPicker]}
                   onChange={(color) => {
                     setColorHex(color)
                     setInputHex(color)
@@ -167,8 +170,8 @@ export default function VectorColorPicker() {
                 background={c}
                 _hover={{ cursor: "pointer" }}
                 borderWidth={indexColorPicker === index ? "2px" : "1px"}
-                borderStyle="solid"
                 borderColor={indexColorPicker === index ? "brand.500" : "#A9A9B2"}
+                borderStyle="solid"
                 onClick={() => {
                   setIndexColorPicker(index)
                 }}
@@ -188,8 +191,8 @@ export default function VectorColorPicker() {
             <GridItem
               boxSize="34px"
               borderRadius="4px"
-              borderWidth="1px"
-              borderColor="#A9A9B2"
+              borderWidth={Object.values(colors.colorMap)[indexColorPicker] === color ? "2px" : "1px"}
+              borderColor={Object.values(colors.colorMap)[indexColorPicker] === color ? "brand.500" : "#A9A9B2"}
               _hover={{ cursor: "pointer" }}
               bg={color}
               onClick={() => {
@@ -211,8 +214,8 @@ export default function VectorColorPicker() {
               dispatch(getRecentColor(color))
               changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], color)
             }}
-            borderWidth="1px"
-            borderColor="#A9A9B2"
+            borderWidth={Object.values(colors.colorMap)[indexColorPicker] === color ? "2px" : "1px"}
+            borderColor={Object.values(colors.colorMap)[indexColorPicker] === color ? "brand.500" : "#A9A9B2"}
             key={color}
             sx={{ backgroundColor: color, height: "34px", borderRadius: "4px", cursor: "pointer" }}
           ></Box>
