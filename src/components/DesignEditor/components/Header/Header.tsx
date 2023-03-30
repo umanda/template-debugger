@@ -78,11 +78,14 @@ export default function Header() {
   const ref = useRef<any>()
   const projectSelect = useSelector(selectProject)
   const [stateName, setStateName] = useState<string>(design?.design?.name)
-  const [metaData, setMetaData] = useState<{ tags: string[]; description: string; plan: string }>({
+  const [metaData, setMetaData] = useState<{ tags: string[]; description: string; plan: string; visibility: string }>({
     tags: projectSelect?.tags ? projectSelect.tags : [],
     description: projectSelect?.description ? projectSelect.description : null,
-    plan: projectSelect?.plan ? projectSelect.plan : "FREE"
+    plan: projectSelect?.plan ? projectSelect.plan : "FREE",
+    visibility: projectSelect?.frame?.visibility ? projectSelect.frame : "private"
   })
+
+  console.log(projectSelect, metaData.visibility)
 
   React.useEffect(() => {
     validateButtonSave()
@@ -249,6 +252,19 @@ export default function Header() {
                       <option value="HERO">HERO</option>
                       <option value="EXPLORER">EXPLORER</option>
                       <option value="FREE">FREE</option>
+                    </Select>
+                  </Flex>
+                  <Flex flexDir="column">
+                    Plans:
+                    <Select
+                      size="sm"
+                      onChange={(e) => setMetaData({ ...metaData, visibility: e.target.value })}
+                      fontSize="12px"
+                      value={metaData.visibility !== undefined ? metaData.visibility : "private".toUpperCase()}
+                      placeholder="Select option"
+                    >
+                      <option value="private">PRIVATE</option>
+                      <option value="public">PUBLIC</option>
                     </Select>
                   </Flex>
                   <Button
@@ -1197,7 +1213,7 @@ function SyncUp({
         designJSON.plan = projectSelect ? projectSelect.plan : metaData.plan
         designJSON.frame = {
           name: designJSON.frame.name,
-          visibility: designJSON.frame.visibility,
+          visibility: projectSelect ? projectSelect?.frame?.visibility : metaData.visibility.toLocaleLowerCase(),
           width: designJSON.scenes[0].frame.width,
           height: designJSON.scenes[0].frame.height
         }
@@ -1212,7 +1228,7 @@ function SyncUp({
         }
       }
     } catch (err: any) {}
-  }, [editor, scenes, id, design, autoSave])
+  }, [editor, scenes, id, design, autoSave, metaData])
 
   return (
     <Flex>
