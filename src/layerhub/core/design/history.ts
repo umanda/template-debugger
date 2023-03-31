@@ -46,7 +46,6 @@ class History {
       this.current = this.getJSON()
       this.redos=[]
     } catch (err) {
-      console.log(err)
     }
     this.emitStatus()
   }
@@ -59,7 +58,6 @@ class History {
       }
       this.redos.push(this.current)
       this.restore(undo)
-      // console.log(this.undos)
     }
   }, 100)
 
@@ -70,7 +68,6 @@ class History {
     }
     this.undos.push(this.current)
     this.restore(redo)
-    // console.log(this.redo)
   }, 100)
 
   private restore = (transaction: any) => {

@@ -75,11 +75,10 @@ class Objects {
       }
     }
 
-    this.scene.canvas.requestRenderAll()
     this.scene.canvas.setActiveObject(object)
     this.scene.state.setActiveObject(object)
-    this.scene.history.save()
     this.updateContextObjects()
+    this.scene.canvas.requestRenderAll()
     return object
   }
 

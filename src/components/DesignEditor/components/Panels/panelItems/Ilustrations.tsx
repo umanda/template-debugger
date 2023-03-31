@@ -233,6 +233,7 @@ export default function Ilustrations() {
           type: "StaticVector",
           name: "Illustration",
           src: resource.url,
+          preview: resource.url,
           erasable: false,
           watermark: resource.license === "paid" && user.plan === "FREE" ? watermarkURL : null
         }
@@ -697,7 +698,6 @@ function IllustrationItem({
             },
             { desiredSize: 400 }
           )
-          editor.design.activeScene.history.save()
         }
         if (user && projectSelect) {
           const ctx = { id: illustration.id }
