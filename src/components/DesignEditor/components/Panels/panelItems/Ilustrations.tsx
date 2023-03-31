@@ -680,7 +680,7 @@ function IllustrationItem({
   }, [])
 
   const dragObject = useCallback(
-    (e: React.DragEvent<HTMLDivElement>) => {
+    async (e: React.DragEvent<HTMLDivElement>) => {
       try {
         let img = new Image()
         img.src = illustration.preview
@@ -697,6 +697,7 @@ function IllustrationItem({
             },
             { desiredSize: 400 }
           )
+          editor.design.activeScene.history.save()
         }
         if (user && projectSelect) {
           const ctx = { id: illustration.id }
