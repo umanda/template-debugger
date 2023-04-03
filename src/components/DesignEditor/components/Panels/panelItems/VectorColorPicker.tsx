@@ -305,7 +305,7 @@ function HexColorVector({
               <Box sx={{ color: "#A9A9B2" }}>HEX</Box>
               <Input
                 onBlur={(e) => {
-                  setInputActive(true)
+                  setInputActive(false)
                   setColorHex(inputHex)
                   changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
                 }}
