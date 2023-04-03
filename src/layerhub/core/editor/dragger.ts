@@ -66,6 +66,7 @@ class Dragger {
 
       this.item = null
     }
+    this.editor.design.activeScene.history.save()
   }
 
   onDragEnter = (e: DragEvent) => {}

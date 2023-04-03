@@ -79,7 +79,7 @@ const initialQuery = {
     favorited: false,
     used: false
   },
-  sorts: ["ALPHABETIC"]
+  sorts: ["LAST_UPDATE"]
 }
 
 export default function Ilustrations() {
@@ -90,13 +90,13 @@ export default function Ilustrations() {
   let [nameIllustration, setNameIllustration] = useState<string[]>([""])
   let [nameIllustrationPrev, setNameIllustrationPrev] = useState<string[]>([""])
   const editor = useEditor()
-  const [order, setOrder] = useState<string[]>(["ALPHABETIC"])
+  const [order, setOrder] = useState<string[]>(["LAST_UPDATE"])
   const user = useSelector(selectUser)
   const { isOpen: isOpenInput, onOpen: onOpenInput, onClose: onCloseInput } = useDisclosure()
   const { isOpen: isOpenSearchFound, onOpen: onOpenSearchFound, onClose: onCloseSearchFound } = useDisclosure()
   const [resourcesIllustration, setResourcesIllustration] = useState<any[]>([])
   const [load, setLoad] = useState(false)
-  const [more, setMore] = useState(true)
+  const [more, setMore] = useState(false)
   const selectListResources = useSelector(selectResourceImages).resources
   const selectListFavoriteResources = useSelector(selectResourceImages).favorited
   let [stateFavorite, setStateFavorite] = useState<boolean>(false)
@@ -158,7 +158,7 @@ export default function Ilustrations() {
       stateFavorite === false &&
       stateRecent === false &&
       orderDrawifier[0] === "" &&
-      order[0] === "ALPHABETIC"
+      order[0] === "LAST_UPDATE"
     ) {
       let newQuery = initialQuery
       newQuery.page = selectListResources.length / 10 + 1
@@ -233,6 +233,7 @@ export default function Ilustrations() {
           type: "StaticVector",
           name: "Illustration",
           src: resource.url,
+          preview: resource.url,
           erasable: false,
           watermark: resource.license === "paid" && user.plan === "FREE" ? watermarkURL : null
         }
@@ -326,7 +327,7 @@ export default function Ilustrations() {
         stateFavorite === false &&
         stateRecent === false &&
         orderDrawifier[0] === undefined &&
-        order[0] === "ALPHABETIC"
+        order[0] === "USED_AT"
       ) {
         setNameIllustrationPrev([""])
         setNameIllustration([""])
@@ -470,7 +471,7 @@ export default function Ilustrations() {
                 setStateRecent(false)
                 setValidateContent(null)
                 setMore(true)
-                setOrder(["ALPHABETIC"])
+                setOrder(["LAST_UPDATE"])
                 setOrderDrawifier([])
                 initialState()
                 setListRecommend({ words: [] })
@@ -680,7 +681,7 @@ function IllustrationItem({
   }, [])
 
   const dragObject = useCallback(
-    (e: React.DragEvent<HTMLDivElement>) => {
+    async (e: React.DragEvent<HTMLDivElement>) => {
       try {
         let img = new Image()
         img.src = illustration.preview
@@ -848,7 +849,7 @@ function ModalIllustration({
   const activeScene = useActiveScene()
   const [resources, setResources] = useState<IResource[]>([])
   const [load, setLoad] = useState(false)
-  const [sort, setSort] = useState<string>("ALPHABETIC")
+  const [sort, setSort] = useState<string>("USED_AT")
   const [idDrawifier, setIdDrawifier] = useState<string>("")
   const initialFocusRef = useRef<any>()
   const refInputName = useRef<any>()
@@ -861,7 +862,7 @@ function ModalIllustration({
   const activeObject = useActiveObject()
 
   useEffect(() => {
-    setSort("ALPHABETIC")
+    setSort("USED_AT")
     initialState()
     setIdDrawifier("")
   }, [isOpen])

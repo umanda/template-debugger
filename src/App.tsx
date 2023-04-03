@@ -8,6 +8,7 @@ import { getListDrawifiers, signInByToken } from "./store/user/action"
 import { generateId } from "./utils/unique"
 
 const redirectHome: string = import.meta.env.VITE_REDIRECT_HOME
+const redirectLogout = import.meta.env.VITE_LOGOUT
 
 function App() {
   const [state, setState] = useState(false)
@@ -39,7 +40,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
         dispatch(getListDrawifiers({}))
         if (token !== "") {
           const resolve = (await dispatch(signInByToken(token))).payload
-          resolve?.plan ? setState(!state) : (window.location.href = redirectHome)
+          resolve?.created_at ? setState(!state) : (window.location.href = redirectHome)
         }
       } else {
         toast({
@@ -49,7 +50,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
           duration: 3000,
           isClosable: true
         })
-        window.location.href = redirectHome
+        window.location.href = redirectLogout
       }
     }
     id === undefined && navigate(`/composer/${generateId("", 10)}`)

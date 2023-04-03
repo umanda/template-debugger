@@ -183,6 +183,7 @@ export interface SearchTemplateDto {
     used?: boolean
     resource_ids?: string[]
     plans?: string[]
+    is_published?: boolean
   }
   sorts?: string[]
 }

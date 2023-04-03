@@ -100,6 +100,7 @@ export default function TextColorPicker() {
               >
                 <HexColorPicker
                   style={{ width: "100%" }}
+                  color={state.color}
                   onChange={(color) => {
                     setColorHex(color)
                     updateObjectFill(color)
@@ -126,8 +127,8 @@ export default function TextColorPicker() {
             <GridItem
               boxSize="34px"
               borderRadius="4px"
-              borderWidth="1px"
-              borderColor="#A9A9B2"
+              borderWidth={state.color === color ? "2px" : "1px"}
+              borderColor={state.color === color ? "brand.500" : "#A9A9B2"}
               _hover={{ cursor: "pointer" }}
               bg={color}
               onClick={() => {
@@ -146,8 +147,8 @@ export default function TextColorPicker() {
             <Box
               boxSize="34px"
               borderRadius="4px"
-              borderWidth="1px"
-              borderColor="#A9A9B2"
+              borderWidth={state.color === color ? "2px" : "1px"}
+              borderColor={state.color === color ? "brand.500" : "#A9A9B2"}
               _hover={{ cursor: "pointer" }}
               bg={color}
               onClick={() => {

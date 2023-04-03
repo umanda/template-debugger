@@ -169,11 +169,11 @@ class Canvas {
       // Reset the cursor
       canvas.defaultCursor = "default"
       // Remove the event listeners
-      canvas.off("mouse:up")
+      // canvas.off("mouse:up")
       // canvas.off("mouse:down")
       canvas.off("mouse:move")
       // Restore selection ability on the canvas
-      // canvas.selection = true
+      canvas.selection = true
       this.editor.state.setDragMode("IDLE")
     }
     canvas.requestRenderAll()

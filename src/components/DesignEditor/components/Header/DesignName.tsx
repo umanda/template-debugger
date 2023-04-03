@@ -1,8 +1,6 @@
 import React from "react"
 import { Box, Flex, Input } from "@chakra-ui/react"
 import { useDesign, useScenes } from "@layerhub-pro/react"
-import UserIcon from "../../../Icons/UserIcon"
-import Pencil from "../../../Icons/Pencil"
 
 interface DesignNameState {
   name: string
@@ -16,14 +14,16 @@ function DesignName() {
 
   React.useEffect(() => {
     design && setState({ ...state, name: design?.design?.name })
-  }, [scenes])
+  }, [scenes, design?.design?.name])
 
   const handleInputChange = (name: string) => {
-    setState({ ...state, name: name, width: spanRef.current?.clientWidth! })
-    if (design) {
-      design?.updateDesign({
-        name
-      })
+    if (name.length <= 50) {
+      setState({ ...state, name: name, width: spanRef.current?.clientWidth! })
+      if (design) {
+        design?.updateDesign({
+          name
+        })
+      }
     }
   }
 

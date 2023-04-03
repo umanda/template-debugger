@@ -21,6 +21,7 @@ export interface User {
   downloaded: number
   plan?: string
   token?: string
+  type?:string
 }
 export interface Drawifier extends User {}
 

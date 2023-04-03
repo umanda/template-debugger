@@ -21,7 +21,7 @@ class Objects {
     const object: fabric.Object = await objectImporter.import({
       isInGroup: false,
       item: item as ILayer,
-      options: frame as unknown as Required<ILayer>,
+      options: frame as unknown as Required<ILayer>
     })
 
     if (!this.scene.config.outsideVisible) {
@@ -55,7 +55,7 @@ class Objects {
     const object: fabric.Object = await objectImporter.import({
       isInGroup: false,
       item: item as ILayer,
-      options: frame as unknown as Required<ILayer>,
+      options: frame as unknown as Required<ILayer>
     })
 
     this.scene.canvas.add(object)
@@ -75,11 +75,10 @@ class Objects {
       }
     }
 
-    this.scene.canvas.requestRenderAll()
     this.scene.canvas.setActiveObject(object)
     this.scene.state.setActiveObject(object)
-    this.scene.history.save()
     this.updateContextObjects()
+    this.scene.canvas.requestRenderAll()
     return object
   }
 
@@ -99,7 +98,7 @@ class Objects {
         hasControls: true,
         lockMovementY: false,
         lockMovementX: false,
-        hasBorders: true,
+        hasBorders: true
       })
       if (currentBackgrounImage) {
         canvas.remove(currentBackgrounImage)
@@ -178,7 +177,7 @@ class Objects {
               if (property === "metadata") {
                 object.set("metadata", {
                   ...object.metadata,
-                  ...options["metadata"],
+                  ...options["metadata"]
                 })
               } else {
                 // @ts-ignore
@@ -190,7 +189,7 @@ class Objects {
             if (property === "metadata") {
               refObject.set("metadata", {
                 ...refObject.metadata,
-                ...options[property],
+                ...options[property]
               })
             } else {
               // @ts-ignore
@@ -255,7 +254,7 @@ class Objects {
         stroke: refObject.stroke,
         strokeWidth: refObject.strokeWidth,
         fill: refObject.fill,
-        light: refObject.light,
+        light: refObject.light
       },
       {
         effect: options.effect ? options.effect : refObject.effect,
@@ -263,7 +262,7 @@ class Objects {
         stroke: options.stroke,
         strokeWidth: options.strokeWidth,
         fill: options.fill,
-        light: options.light,
+        light: options.light
       }
     )
     const effect = effectGeneratorNext.generate()
@@ -276,7 +275,7 @@ class Objects {
     if (path) {
       const imageElement = await loadImageFromURL(src)
       const image = new fabric.StaticImage(imageElement, {
-        src: src,
+        src: src
       })
 
       const pH = path.getScaledHeight()
@@ -289,7 +288,7 @@ class Objects {
 
       const patternSourceCanvas = new fabric.StaticCanvas("", {
         width: pW,
-        height: pH,
+        height: pH
       })
 
       if (isPathPortrait) {
@@ -311,12 +310,12 @@ class Objects {
       const pattern = new fabric.Pattern({
         // @ts-ignore
         source: patternSourceCanvas.getElement(),
-        repeat: "repeat",
+        repeat: "repeat"
       })
       path.set({
         fill: pattern,
         // @ts-ignore
-        patternSource: src,
+        patternSource: src
       })
       canvas.requestRenderAll()
       this.scene.history.save()
@@ -336,14 +335,14 @@ class Objects {
       if (type === "fit") {
         refObject.set({
           scaleX: width! / refObject.width,
-          scaleY: height! / refObject.height,
+          scaleY: height! / refObject.height
         })
       }
       if (type === "fill") {
         const proportion = height! / refObject.height
         refObject.set({
           scaleY: height! / refObject.height,
-          scaleX: (refObject.width * proportion) / refObject.width,
+          scaleX: (refObject.width * proportion) / refObject.width
         })
       }
       refObject.center()
@@ -362,7 +361,7 @@ class Objects {
         const nextImageElement = await loadImageFromURL(currentBackgroundImageJSON.src)
         nextImage = new fabric.StaticImage(nextImageElement, {
           ...currentBackgroundImageJSON,
-          id: nanoid(),
+          id: nanoid()
         })
         // @ts-ignore
         canvas.remove(currentBackgroundImage)
@@ -385,7 +384,7 @@ class Objects {
     const updatedObject = await objectImporter.import({
       item: { ...exportedObject, src },
       isInGroup: false,
-      options: frame as unknown as Required<ILayer>,
+      options: frame as unknown as Required<ILayer>
     })
     canvas.insertAt(updatedObject, index, true)
     canvas.setActiveObject(updatedObject)
@@ -406,7 +405,7 @@ class Objects {
         const nextImageElement = await loadImageFromURL(currentBackgroundImageJSON.src)
         nextImage = new fabric.StaticImage(nextImageElement, {
           ...currentBackgroundImageJSON,
-          id: nanoid(),
+          id: nanoid()
         })
         // @ts-ignore
         nextImage.clipPath = frame
@@ -455,7 +454,7 @@ class Objects {
       const image = await loadImageFromURL(objectJSON.src)
       const backgroundImage = new fabric.BackgroundImage(image, {
         ...objectJSON,
-        id: nanoid(),
+        id: nanoid()
       })
       // @ts-ignore
       canvas.add(backgroundImage)
@@ -611,7 +610,7 @@ class Objects {
             hasControls: false,
             lockMovementY: true,
             lockMovementX: true,
-            locked: true,
+            locked: true
           })
         })
         // @ts-ignore
@@ -619,7 +618,7 @@ class Objects {
           hasControls: false,
           lockMovementY: true,
           lockMovementX: true,
-          locked: true,
+          locked: true
         })
       } else {
         // @ts-ignore
@@ -627,7 +626,7 @@ class Objects {
           hasControls: false,
           lockMovementY: true,
           lockMovementX: true,
-          locked: true,
+          locked: true
         })
       }
       canvas.requestRenderAll()
@@ -652,7 +651,7 @@ class Objects {
             hasControls: true,
             lockMovementY: false,
             lockMovementX: false,
-            locked: false,
+            locked: false
           })
         })
         // @ts-ignore
@@ -660,7 +659,7 @@ class Objects {
           hasControls: true,
           lockMovementY: false,
           lockMovementX: false,
-          locked: false,
+          locked: false
         })
       } else {
         // @ts-ignore
@@ -668,7 +667,7 @@ class Objects {
           hasControls: true,
           lockMovementY: false,
           lockMovementX: false,
-          locked: false,
+          locked: false
         })
       }
       canvas.requestRenderAll()
@@ -697,18 +696,18 @@ class Objects {
         selectedObjects.forEach((object) => {
           const currentObject = object
           currentObject.set({
-            top: refTop,
+            top: refTop
           })
         })
         const selection = new fabric.ActiveSelection(selectedObjects, {
-          canvas: canvas,
+          canvas: canvas
         }) as fabric.Object
         canvas.setActiveObject(selection)
         this.scene.state.setActiveObject(selection)
       } else {
         const currentObject = refObject
         currentObject.set({
-          top: frame.top,
+          top: frame.top
         })
       }
       canvas.requestRenderAll()
@@ -737,11 +736,11 @@ class Objects {
           const currentObject = object
           const currentObjectHeight = currentObject.getScaledHeight()
           currentObject.set({
-            top: refTop + refHeight / 2 - currentObjectHeight / 2,
+            top: refTop + refHeight / 2 - currentObjectHeight / 2
           })
         })
         const selection = new fabric.ActiveSelection(selectedObjects, {
-          canvas: canvas,
+          canvas: canvas
         }) as fabric.Object
         canvas.setActiveObject(selection)
         this.scene.state.setActiveObject(selection)
@@ -749,7 +748,7 @@ class Objects {
         const currentObject = refObject
         const currentObjectHeight = currentObject.getScaledHeight()
         currentObject.set({
-          top: frame.top! + frame.height! / 2 - currentObjectHeight / 2,
+          top: frame.top! + frame.height! / 2 - currentObjectHeight / 2
         })
       }
       canvas.requestRenderAll()
@@ -779,11 +778,11 @@ class Objects {
           const currentObject = object
           const currentObjectHeight = currentObject.getScaledHeight()
           currentObject.set({
-            top: refTop + refHeight - currentObjectHeight,
+            top: refTop + refHeight - currentObjectHeight
           })
         })
         const selection = new fabric.ActiveSelection(selectedObjects, {
-          canvas: canvas,
+          canvas: canvas
         }) as fabric.Object
         canvas.setActiveObject(selection)
         this.scene.state.setActiveObject(selection)
@@ -791,7 +790,7 @@ class Objects {
         const currentObject = refObject
         const currentObjectHeight = currentObject.getScaledHeight()
         currentObject.set({
-          top: frame.top! + frame.height! - currentObjectHeight,
+          top: frame.top! + frame.height! - currentObjectHeight
         })
       }
       canvas.requestRenderAll()
@@ -819,18 +818,18 @@ class Objects {
         selectedObjects.forEach((object) => {
           const currentObject = object
           currentObject.set({
-            left: refLeft,
+            left: refLeft
           })
         })
         const selection = new fabric.ActiveSelection(selectedObjects, {
-          canvas: canvas,
+          canvas: canvas
         }) as fabric.Object
         canvas.setActiveObject(selection)
         this.scene.state.setActiveObject(selection)
       } else {
         const currentObject = refObject
         currentObject.set({
-          left: frame.left,
+          left: frame.left
         })
       }
       canvas.requestRenderAll()
@@ -860,11 +859,11 @@ class Objects {
           const currentObject = object
           const currentObjectWidth = currentObject.getScaledWidth()
           currentObject.set({
-            left: refLeft + refWidth / 2 - currentObjectWidth / 2,
+            left: refLeft + refWidth / 2 - currentObjectWidth / 2
           })
         })
         const selection = new fabric.ActiveSelection(selectedObjects, {
-          canvas: canvas,
+          canvas: canvas
         }) as fabric.Object
         canvas.setActiveObject(selection)
         this.scene.state.setActiveObject(selection)
@@ -872,7 +871,7 @@ class Objects {
         const currentObject = refObject
         const currentObjectWidth = currentObject.getScaledWidth()
         currentObject.set({
-          left: frame.left! + frame.width! / 2 - currentObjectWidth / 2,
+          left: frame.left! + frame.width! / 2 - currentObjectWidth / 2
         })
       }
       canvas.requestRenderAll()
@@ -901,11 +900,11 @@ class Objects {
           const currentObject = object
           const currentObjectWidth = currentObject.getScaledWidth()
           currentObject.set({
-            left: refLeft + refWidth - currentObjectWidth,
+            left: refLeft + refWidth - currentObjectWidth
           })
         })
         const selection = new fabric.ActiveSelection(selectedObjects, {
-          canvas: canvas,
+          canvas: canvas
         }) as fabric.Object
         canvas.setActiveObject(selection)
         this.scene.state.setActiveObject(selection)
@@ -913,7 +912,7 @@ class Objects {
         const currentObject = refObject
         const currentObjectWidth = currentObject.getScaledWidth()
         currentObject.set({
-          left: frame.left! + frame.width! - currentObjectWidth,
+          left: frame.left! + frame.width! - currentObjectWidth
         })
       }
       canvas.requestRenderAll()
@@ -927,6 +926,12 @@ class Objects {
     const frame = this.scene.frame
 
     this.deselect()
+  }
+
+  public getObject = () => {
+    const canvas = this.scene.canvas
+    let refObject: fabric.Object[] | fabric.Object = canvas.getActiveObjects()
+    return refObject
   }
 
   /**`
@@ -1013,12 +1018,12 @@ class Objects {
         }
         canvas.add(...cloned)
         const activeSelection = new fabric.ActiveSelection(cloned, {
-          canvas: canvas,
+          canvas: canvas
         }) as fabric.Object
 
         activeSelection.set({
           left: object.left! + 100,
-          top: object.top! + 100,
+          top: object.top! + 100
         })
         canvas.setActiveObject(activeSelection)
         this.scene.state.setActiveObject(activeSelection)
@@ -1030,11 +1035,11 @@ class Objects {
 
         cloned.set({
           left: object.left! + 100,
-          top: object.top! + 100,
+          top: object.top! + 100
         })
         canvas.add(cloned)
         const activeSelection = new fabric.ActiveSelection([cloned], {
-          canvas: canvas,
+          canvas: canvas
         }) as fabric.Object
         canvas.setActiveObject(activeSelection)
         this.scene.state.setActiveObject(activeSelection)
@@ -1064,7 +1069,7 @@ class Objects {
       object._objects?.forEach(this.setObjectId)
     } else {
       object.set({
-        id: nanoid(),
+        id: nanoid()
       })
     }
   }
@@ -1113,7 +1118,7 @@ class Objects {
         return
       }
       const activeSelection = new fabric.ActiveSelection(filteredObjects, {
-        canvas: canvas,
+        canvas: canvas
       }) as fabric.Object
       canvas.setActiveObject(activeSelection)
       canvas.renderAll()
@@ -1152,7 +1157,7 @@ class Objects {
       id: nanoid(),
       // @ts-ignore
       subTargetCheck: true,
-      clipPath: this.scene.config.outsideVisible ? null : frame,
+      clipPath: this.scene.config.outsideVisible ? null : frame
     })
     groupedActiveObject?._objects?.forEach((o) => {
       o.clipPath = null

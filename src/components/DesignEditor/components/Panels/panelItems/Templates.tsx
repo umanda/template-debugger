@@ -65,7 +65,7 @@ export default function Template() {
   const [validateContent, setValidateContent] = useState<string | null>(null)
   let [nameTemplate, setNameTemplate] = useState<string[]>([""])
   let [nameTemplatePrev, setNameTemplatePrev] = useState<string[]>([""])
-  const [order, setOrder] = useState<string[]>([])
+  const [order, setOrder] = useState<string[]>(["LAST_UPDATE"])
   const user = useAppSelector(selectUser)
   const { isOpen: isOpenLoadTemplate, onOpen: onOpenLoadTemplate, onClose: onCloseLoadTemplate } = useDisclosure()
   const { isOpen: isOpenUpgradeUser, onOpen: onOpenUpgradeUser, onClose: onCloseUpgradeUser } = useDisclosure()
@@ -94,10 +94,11 @@ export default function Template() {
     page: 1,
     limit: 10,
     query: {
-      plans: user.plan === "FREE" ? ["FREE"] : user.plan === "PRO" ? ["FREE", "PRO"] : undefined,
-      visibility: "public"
+      plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
+      visibility: "public",
+      is_published: true
     },
-    sorts: []
+    sorts: ["LAST_UPDATE"]
   }
 
   useEffect(() => {
@@ -133,7 +134,7 @@ export default function Template() {
       stateFavorite === false &&
       stateRecent === false &&
       orderDrawifier[0] === "" &&
-      order[0] === undefined
+      order[0] === "LAST_UPDATE"
     ) {
       let newQuery = initialQuery
       newQuery.page = resourcesTemplate.length / 10 + 1
@@ -143,10 +144,11 @@ export default function Template() {
             page: resourcesTemplate.length / 10 + 1,
             limit: 10,
             query: {
-              plans: user.plan === "FREE" ? ["FREE"] : user.plan === "PRO" ? ["FREE", "PRO"] : undefined,
-              visibility: "public"
+              plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
+              visibility: "public",
+              is_published: true
             },
-            sorts: []
+            sorts: ["LAST_UPDATE"]
           })
         )
       ).payload) as IDesign[]
@@ -160,9 +162,10 @@ export default function Template() {
           drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
           names: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
           visibility: "public",
-          plans: user.plan === "FREE" ? ["FREE"] : user.plan === "PRO" ? ["FREE", "PRO"] : undefined,
+          plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
           favorited: stateFavorite ? true : undefined,
-          used: stateRecent ? true : undefined
+          used: stateRecent ? true : undefined,
+          is_published: true
         },
         sorts: order
       })
@@ -477,7 +480,7 @@ export default function Template() {
                 setStateRecent(false)
                 setValidateContent(null)
                 setMore(false)
-                setOrder([])
+                setOrder(["LAST_UPDATE"])
                 setOrderDrawifier([])
                 initialState()
                 setListRecommend({ words: [] })
