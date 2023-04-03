@@ -702,7 +702,7 @@ function IllustrationItem({
     async (e: React.DragEvent<HTMLDivElement>) => {
       try {
         let img = new Image()
-        img.src = illustration.preview
+        img.src = illustration.url
         if (editor) {
           e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
           editor.dragger.onDragStart(
@@ -800,7 +800,7 @@ function IllustrationItem({
           }}
           _hover={{ borderColor: "#5456F5" }}
         >
-          <LazyLoadImage url={illustration.preview} />
+          <LazyLoadImage url={illustration.url} />
         </Flex>
       </Flex>
       {illustration?.drawifier?.name && (
@@ -1100,7 +1100,7 @@ function ModalIllustration({
                       }}
                       _hover={{ cursor: "pointer" }}
                     >
-                      <LazyLoadImage url={e.preview} />
+                      <LazyLoadImage url={e.url} />
                     </Flex>
                     <Flex
                       marginInline="10px"

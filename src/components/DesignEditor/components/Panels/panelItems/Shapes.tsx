@@ -51,7 +51,7 @@ export default function Shapes() {
     (e: React.DragEvent<HTMLDivElement>, resource: any) => {
       try {
         let img = new Image()
-        img.src = resource.preview
+        img.src = resource.url
         if (editor) {
           e.dataTransfer.setDragImage(img, img.width, img.height)
           editor.dragger.onDragStart(
