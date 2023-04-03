@@ -305,7 +305,7 @@ function HexColorVector({
               <Box sx={{ color: "#A9A9B2" }}>HEX</Box>
               <Input
                 onBlur={(e) => {
-                  setInputActive(false)
+                  setInputActive(true)
                   setColorHex(inputHex)
                   changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
                 }}
@@ -316,9 +316,11 @@ function HexColorVector({
                   }
                 }}
                 onChange={(e) => {
-                  setInputHex(e.target.value)
-                  setInputHexPrev(e.target.value)
-                  dispatch(getRecentColor(colorHex))
+                  if (e.target.value.length <= 7) {
+                    setInputHex(e.target.value)
+                    setInputHexPrev(e.target.value)
+                    dispatch(getRecentColor(colorHex))
+                  }
                 }}
                 onFocus={() => setInputActive(true)}
                 value={inputHexPrev}
