@@ -151,6 +151,7 @@ export interface SearchResourceDto {
     type?: any
     keywords?: string[]
     notIds?: number[]
+    is_published?: boolean
   }
   sorts?: string[]
 }

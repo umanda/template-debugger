@@ -95,8 +95,7 @@ export default function Template() {
     limit: 10,
     query: {
       plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
-      visibility: "public"
-      // is_published: true
+      is_published: true
     },
     sorts: ["LAST_UPDATE"]
   }
@@ -145,7 +144,7 @@ export default function Template() {
             limit: 10,
             query: {
               plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
-              visibility: "public"
+              is_published: true
             },
             sorts: ["LAST_UPDATE"]
           })
@@ -160,7 +159,6 @@ export default function Template() {
         query: {
           drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
           names: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
-          visibility: "public",
           plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
           favorited: stateFavorite === true ? true : undefined,
           used: stateRecent === true ? true : undefined,
