@@ -95,8 +95,8 @@ export default function Template() {
     limit: 10,
     query: {
       plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
-      visibility: "public",
-      is_published: true
+      visibility: "public"
+      // is_published: true
     },
     sorts: ["LAST_UPDATE"]
   }
@@ -145,8 +145,7 @@ export default function Template() {
             limit: 10,
             query: {
               plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
-              visibility: "public",
-              is_published: true
+              visibility: "public"
             },
             sorts: ["LAST_UPDATE"]
           })
@@ -163,8 +162,8 @@ export default function Template() {
           names: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
           visibility: "public",
           plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
-          favorited: stateFavorite ? true : undefined,
-          used: stateRecent ? true : undefined,
+          favorited: stateFavorite === true ? true : undefined,
+          used: stateRecent === true ? true : undefined,
           is_published: true
         },
         sorts: order

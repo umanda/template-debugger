@@ -76,8 +76,8 @@ const initialQuery = {
   page: 0,
   limit: 10,
   query: {
-    favorited: false,
-    used: false
+    // favorited: false,
+    // used: false
   },
   sorts: ["LAST_UPDATE"]
 }
@@ -177,8 +177,8 @@ export default function Ilustrations() {
               drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
               keywords: nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
               // categories: [],
-              favorited: stateFavorite ? true : undefined,
-              used: stateRecent ? true : undefined,
+              favorited: stateFavorite === true ? true : undefined,
+              used: stateRecent === true ? true : undefined,
               notIds: notIds[0] === undefined ? undefined : notIds
             },
             sorts: stateRecent ? ["USED_AT"] : order
