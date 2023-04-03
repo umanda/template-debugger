@@ -10,7 +10,7 @@ export default function LazyLoadImage({ url, style = {} }: { url: string; style?
     image.onload = () => {
       setTimeout(() => {
         setState({ image: image })
-      }, 1000)
+      }, 500)
     }
   }, [])
 

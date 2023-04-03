@@ -165,7 +165,6 @@ export default function Ilustrations() {
       setResourcesIllustration(selectListResources.concat(resolve))
       resolve[0] !== undefined && setMore(true)
     } else {
-      console.log(resourcesIllustration.length, nameIllustration[0])
       let resolve = []
       try {
         resolve = await api.searchResources(
