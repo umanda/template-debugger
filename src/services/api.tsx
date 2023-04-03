@@ -450,6 +450,17 @@ export const userMe = (): Promise<User> => {
   })
 }
 
+export const viewDrawifier = (prop: number): Promise<{ isSaved: boolean }> => {
+  return new Promise((resolve, reject) => {
+    base
+      .post(`/user/view-drawifier/${prop}`)
+      .then(({ data }: any) => {
+        resolve(data)
+      })
+      .catch((e) => reject(e))
+  })
+}
+
 export const oldSignIn = (props: Partial<SigninDto>): Promise<User> => {
   return new Promise((resolve, reject) => {
     base

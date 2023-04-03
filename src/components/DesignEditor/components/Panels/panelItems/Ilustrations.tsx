@@ -25,7 +25,8 @@ import {
   Text,
   Tooltip,
   useDisclosure,
-  Textarea
+  Textarea,
+  Spacer
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
@@ -75,7 +76,6 @@ const initialQuery = {
   page: 0,
   limit: 10,
   query: {
-    visibility: "public",
     favorited: false,
     used: false
   },
@@ -166,6 +166,7 @@ export default function Ilustrations() {
       setResourcesIllustration(selectListResources.concat(resolve))
       resolve[0] !== undefined && setMore(true)
     } else {
+      console.log(resourcesIllustration.length, nameIllustration[0])
       let resolve = []
       try {
         resolve = await api.searchResources(
@@ -174,9 +175,8 @@ export default function Ilustrations() {
             limit: 10,
             query: {
               drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
-              visibility: "public",
               keywords: nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
-              categories: [],
+              // categories: [],
               favorited: stateFavorite ? true : undefined,
               used: stateRecent ? true : undefined,
               notIds: notIds[0] === undefined ? undefined : notIds
@@ -209,7 +209,7 @@ export default function Ilustrations() {
           (r) => r?.drawifierId === resourcesIllustration[resourcesIllustration.length - 1]?.drawifierId
         )
         resourcesIllustration.map((r) => {
-          if (r?.drawifierId === lastDraw?.drawifierId) r.drawings = r.drawings.concat(lastDraw.drawings)
+          if (r?.drawifierId === lastDraw?.drawifierId) r.drawings = r.drawings?.concat(lastDraw?.drawings)
         })
         setResourcesIllustration(
           resourcesIllustration.concat(resolve?.filter((r) => r?.drawifierId !== lastDraw?.drawifierId))
@@ -356,6 +356,15 @@ export default function Ilustrations() {
     makeFilter({ input: [e] })
     makeChangeInput(e)
     onCloseInput()
+  }, [])
+
+  const makeAllDraws = useCallback((drawifier: any) => {
+    setResourcesIllustration([])
+    setPage(0)
+    setNameIllustration([drawifier?.drawifier_name?.split(" ")[0]])
+    setNameIllustrationPrev(drawifier?.drawifier_name)
+    setOrderDrawifier([drawifier?.drawifierId])
+    api.viewDrawifier(drawifier?.drawifierId)
   }, [])
 
   return (
@@ -512,13 +521,24 @@ export default function Ilustrations() {
                     {resourcesIllustration?.map((r, index) => (
                       <Flex flexDir="column" key={index} gap="5px" alignItems="center">
                         <Flex w="full">
-                          <Avatar size="md" name={r?.drawifier_name} src={r?.avatar} />
-                          <Center marginLeft="20px" flexDirection="column">
-                            <Box sx={{ fontSize: "12px" }} fontWeight="bold">
-                              {limitCharacters(r?.drawifier_name)}
-                            </Box>
-                            <Box sx={{ fontSize: "12px" }}>{`Found ${r?.total_drawings ?? 0} drawings`}</Box>
-                          </Center>
+                          <Avatar marginLeft="10px" size="md" name={r?.drawifier_name} src={r?.avatar} />
+                          <Flex flexDir="column" w="full">
+                            <Center flexDirection="column">
+                              <Box sx={{ fontSize: "12px" }} fontWeight="bold">
+                                {limitCharacters(r?.drawifier_name)}
+                              </Box>
+                              <Box sx={{ fontSize: "12px" }}>{`Found ${r?.total_drawings ?? 0} drawings`}</Box>
+                            </Center>
+                            <Center
+                              color="#fa6400"
+                              fontWeight="600"
+                              fontSize="12px"
+                              _hover={{ cursor: "pointer" }}
+                              onClick={() => makeAllDraws(r)}
+                            >
+                              {`All ${r?.drawifier_name?.split(" ")[0] ?? null}'s drawings`}
+                            </Center>
+                          </Flex>
                         </Flex>
                         <Flex
                           h="1px"
