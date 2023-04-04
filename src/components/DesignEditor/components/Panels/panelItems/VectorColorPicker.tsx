@@ -260,7 +260,14 @@ function HexColorVector({
   }, [isOpenColor])
 
   return (
-    <Popover key={index} isOpen={isOpenColor} onClose={onCloseColor} onOpen={onOpenColor} placement="bottom-start">
+    <Popover
+      key={index}
+      closeOnBlur={true}
+      isOpen={isOpenColor}
+      onClose={onCloseColor}
+      onOpen={onOpenColor}
+      placement="bottom-start"
+    >
       <PopoverTrigger>
         <div>
           <Flex
@@ -308,8 +315,6 @@ function HexColorVector({
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     ref.current.blur()
-                    onOpenColor()
-                    // changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
                   }
                 }}
                 onChange={(e) => {
