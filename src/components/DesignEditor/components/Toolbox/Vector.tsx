@@ -15,8 +15,8 @@ export default function Vector() {
   useEffect(() => {
     if (activeObject && activeObject.type === "StaticVector") {
       if (activeObject.type === "StaticVector") {
-        indexColorPicker > Object.values(activeObject.colorMap).length - 1 &&
-          setIndexColorPicker(Object.values(activeObject.colorMap).length - 1)
+        indexColorPicker > Object.values(activeObject?.colorMap).length - 1 &&
+          setIndexColorPicker(Object.values(activeObject?.colorMap).length - 1)
       }
       const objects = activeObject?._objects[0]?._objects
       const objectColors = groupBy(objects, "fill")
