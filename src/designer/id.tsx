@@ -24,6 +24,7 @@ const Designer: any = () => {
   const dispatch = useAppDispatch()
   const user = useSelector(selectUser)
   const templateId = localStorage.getItem("template_id")
+  const isNewProject = localStorage.getItem("is_new_project")
 
   useTokenInterceptor()
 
@@ -33,7 +34,7 @@ const Designer: any = () => {
 
   const lodaTemplateById = useCallback(async () => {
     try {
-      if (design && user) {
+      if (design && user && isNewProject === "false") {
         setLoadCanva(false)
         const resolve: any = (await dispatch(getProjectByKey(id))).payload
         let template: any
