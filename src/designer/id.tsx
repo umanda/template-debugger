@@ -59,6 +59,7 @@ const Designer: any = () => {
         }
         await loadGraphicTemplate(resolve)
         setLoadCanva(true)
+        localStorage.removeItem("is_new_project")
       } else {
         setLoadCanva(true)
       }
