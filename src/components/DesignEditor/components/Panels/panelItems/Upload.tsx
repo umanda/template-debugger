@@ -32,7 +32,6 @@ import Scrollable from "~/components/Scrollable/Scrollable"
 import InfiniteScroll from "~/utils/InfiniteScroll"
 import LazyLoadImage from "~/utils/LazyLoadImage"
 import { uniqueFilename } from "~/utils/unique"
-import { IUpload } from "~/interfaces/editor"
 import Trash from "../../../../Icons/Trash"
 import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "~/store/resources/action"
 import { selectUploads } from "~/store/resources/selector"
@@ -637,7 +636,7 @@ const UploadItem = ({
         icon={<Trash size={20} />}
       />
       <Flex onDragStart={dragObject} w="full" h="full" onClick={addObject}>
-        <LazyLoadImage url={object?.url} />
+        <LazyLoadImage url={object?.preview} />
       </Flex>
     </Flex>
   )

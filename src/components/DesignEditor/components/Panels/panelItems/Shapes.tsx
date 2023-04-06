@@ -289,7 +289,7 @@ export default function Shapes() {
                           _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
                         >
                           <Flex w="full" h="full">
-                            <LazyLoadImage url={obj.url} />
+                            <LazyLoadImage url={obj.preview} />
                           </Flex>
                         </Flex>
                       )

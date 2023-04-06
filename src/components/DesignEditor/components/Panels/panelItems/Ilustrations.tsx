@@ -800,7 +800,7 @@ function IllustrationItem({
           }}
           _hover={{ borderColor: "#5456F5" }}
         >
-          <LazyLoadImage url={illustration.url} />
+          <LazyLoadImage url={illustration.preview} />
         </Flex>
       </Flex>
       {illustration?.drawifier?.name && (
@@ -1100,7 +1100,7 @@ function ModalIllustration({
                       }}
                       _hover={{ cursor: "pointer" }}
                     >
-                      <LazyLoadImage url={e.url} />
+                      <LazyLoadImage url={e.preview} />
                     </Flex>
                     <Flex
                       marginInline="10px"
