@@ -17,8 +17,8 @@ import {
 import { IExportProjectNoLogin, listProjectsDTO, ShareTemplate } from "~/interfaces/template"
 import { IListComments, SaveCommentDTO } from "~/interfaces/comment"
 const baseURL = import.meta.env.VITE_API_CONNECTION
-const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
-const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
+// const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
+// const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 const token = localStorage.getItem("token")
 
 export const base = axios.create({
@@ -608,9 +608,9 @@ export const resourceSearchShapes = (props: Partial<SearchResourceDto>): Promise
     base
       .post("/shapes/search", props)
       .then(({ data }: any) => {
-        data.shapes.map((e) => {
-          e.url = e.url.replace(defaultPreviewTemplate, replacePreviewTemplate)
-        })
+        // data.shapes.map((e) => {
+        //   e.url = e.url.replace(defaultPreviewTemplate, replacePreviewTemplate)
+        // })
         const resources = data.shapes as IResource[]
         resolve(resources)
       })

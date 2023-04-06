@@ -38,8 +38,8 @@ import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "~/store
 import { selectUploads } from "~/store/resources/selector"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
-const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
-const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
+// const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
+// const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
 const initialQuery = {
   page: 1,
@@ -232,9 +232,7 @@ export default function Upload() {
       } catch {}
       const options: any = {
         type: resource.type === "svg" ? "StaticVector" : "StaticImage",
-        src: resource.url.includes(defaultPreviewTemplate)
-          ? resource.url.replace(defaultPreviewTemplate, replacePreviewTemplate)
-          : resource.url,
+        src: resource.url,
         erasable: false,
         metadata: {}
       }
@@ -603,9 +601,7 @@ const UploadItem = ({
   const dragObject = useCallback(async () => {
     const options: any = {
       type: object.type === "svg" ? "StaticVector" : "StaticImage",
-      src: object.url.includes(defaultPreviewTemplate)
-        ? object.url.replace(defaultPreviewTemplate, replacePreviewTemplate)
-        : object.url,
+      src: object.url,
       erasable: false
     }
     let img = new Image()
