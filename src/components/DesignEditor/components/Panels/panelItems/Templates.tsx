@@ -171,7 +171,7 @@ export default function Template() {
           used: stateRecent === true ? true : undefined,
           is_published: true
         },
-        sorts: order
+        sorts: stateRecent ? ["USED_AT"] : order
       })
       if (resolve[0] === undefined && resourcesTemplate[0] === undefined) {
         stateFavorite === true
@@ -275,8 +275,7 @@ export default function Template() {
     await activeScene.setScene(loadTemplate?.designData.scenes[0])
     setPreviewCanva(null)
     setLoadCanva(true)
-    if (user && projectSelector) {
-      console.log("use")
+    if (user) {
       api.getUseTemplate({ project_id: projectSelector.id, template_id: loadTemplate?.template.id })
     }
   }, [loadTemplate, projectSelector, user, activeScene])

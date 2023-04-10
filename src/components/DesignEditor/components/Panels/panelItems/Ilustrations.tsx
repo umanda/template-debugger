@@ -113,7 +113,10 @@ export default function Ilustrations() {
   const [page, setPage] = useState<number>(0)
   const filterResource = localStorage.getItem("drawing_filter")
   const [notIds, setNotIds] = useState<number[]>([])
-  // const listDrawifiers: any = useSelector(selectListDrawifiers)
+
+  useEffect(() => {
+    initialState()
+  }, [user])
 
   useEffect(() => {
     if (filterResource !== undefined && filterResource !== null) {
@@ -122,10 +125,6 @@ export default function Ilustrations() {
       localStorage.removeItem("drawing_filter")
     }
   }, [])
-
-  useEffect(() => {
-    filterResource === null && initialState()
-  }, [user])
 
   useEffect(() => {
     if (resourcesIllustration.length === 0) {
@@ -141,7 +140,7 @@ export default function Ilustrations() {
         .payload as IResolveRecommend
       setContentInput(resolve)
     }
-    if (selectListResources[0] === undefined) {
+    if (selectListResources[0] === undefined && filterResource === undefined) {
       const resolve = (await dispatch(getListResourcesImages(initialQuery))).payload as IResource[]
       resolve && setResourcesIllustration(resolve)
       resolve ? setMore(true) : setMore(false)
