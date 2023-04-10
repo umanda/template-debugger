@@ -1130,6 +1130,10 @@ function SyncUp({
       if (activeObject && activeObject?.isEditing !== true && inputActive === false) activeScene.objects.paste()
       return true
     }
+    if (e.ctrlKey && e.key === "a") {
+      if (activeObject && activeObject?.isEditing !== true && inputActive === false) activeScene.objects.select()
+      return true
+    }
     if (
       e.ctrlKey &&
       (e.key === "u" ||
@@ -1138,7 +1142,7 @@ function SyncUp({
         e.key === "e" ||
         e.key === "d" ||
         e.key === "s" ||
-        e.key === "a" ||
+        // e.key === "a" ||
         e.key === "z" ||
         e.key === "y")
     ) {
@@ -1146,7 +1150,6 @@ function SyncUp({
       if (e.ctrlKey && e.key === "m") editor.zoom.zoomToRatio(zoom - 0.05)
       if (e.ctrlKey && e.key === "d") activeScene.objects.clone()
       if (e.ctrlKey && e.key === "s") functionSave()
-      if (e.ctrlKey && e.key === "a") activeScene.objects.select()
       if (e.ctrlKey && e.key === "e") activeScene.objects.remove("all")
       if (e.ctrlKey && e.key === "z" && activeObject?.isEditing !== true) activeScene.history.undo()
       if (e.ctrlKey && e.key === "y" && activeObject?.isEditing !== true) activeScene.history.redo()

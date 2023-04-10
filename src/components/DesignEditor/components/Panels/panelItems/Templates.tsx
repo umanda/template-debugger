@@ -276,6 +276,7 @@ export default function Template() {
     setPreviewCanva(null)
     setLoadCanva(true)
     if (user && projectSelector) {
+      console.log("use")
       api.getUseTemplate({ project_id: projectSelector.id, template_id: loadTemplate?.template.id })
     }
   }, [loadTemplate, projectSelector, user, activeScene])
