@@ -19,14 +19,13 @@ import { DEFAULT_COLORS } from "~/constants/consts"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import { getRecentColor } from "~/store/colors/action"
 import { selectColors } from "~/store/colors/selector"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { HexColorPicker } from "react-colorful"
 import { useAppDispatch, useAppSelector } from "~/store/store"
 import { throttle } from "lodash"
 
 export default function VectorColorPicker() {
-  const { setInputActive, indexColorPicker, setIndexColorPicker, colors, setColors, setActiveMenu } =
-    useDesignEditorContext()
+  const { setInputActive, indexColorPicker, colors, setColors, setActiveMenu } = useDesignEditorContext()
   const editor = useEditor()
   const activeObject = useActiveObject() as any
   const [sliderValue, setSliderValue] = useState({
@@ -50,24 +49,17 @@ export default function VectorColorPicker() {
     if (isOpen === false && colorHex !== "") dispatch(getRecentColor(colorHex))
   }, [isOpen])
 
-  const changeBackgroundColor = throttle((prev: string, next: string) => {
-    const objectRef = activeObject
-    setColors({
-      ...colors,
-      colorMap: {
-        ...colors.colorMap,
-        [prev]: next
+  const changeBackgroundColor = useCallback(
+    (prev: string, next: string) => {
+      if (activeObject) {
+        editor.design.activeScene.objects.updateLayerColor(prev, next)
       }
-    })
-
-    if (activeObject) {
-      objectRef.updateLayerColor(prev, next)
-      // editor.design.activeScene.objects.updateLayerColor(prev, next)
-    }
-    editor.design.activeScene.history.save()
-    editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
-    editor.zoom.zoomToRatio(zoomRatio - 0.000000001)
-  }, 100)
+      setColors({ ...colors, colorMap: activeObject.colorMap })
+      editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
+      editor.zoom.zoomToRatio(zoomRatio - 0.000000001)
+    },
+    [activeObject, colors, editor]
+  )
 
   const applyTextChange = (value: number, id: string) => {
     if (editor) {
@@ -258,6 +250,7 @@ function HexColorVector({
     useDesignEditorContext()
   const { isOpen: isOpenColor, onOpen: onOpenColor, onClose: onCloseColor } = useDisclosure()
   const dispatch = useAppDispatch()
+  const ref = useRef<any>()
   const [inputHex, setInputHex] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
   const [inputHexPrev, setInputHexPrev] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
   const [colorHex, setColorHex] = useState<string>("")
@@ -267,7 +260,14 @@ function HexColorVector({
   }, [isOpenColor])
 
   return (
-    <Popover key={index} isOpen={isOpenColor} onClose={onCloseColor} onOpen={onOpenColor} placement="bottom-start">
+    <Popover
+      key={index}
+      closeOnBlur={true}
+      isOpen={isOpenColor}
+      onClose={onCloseColor}
+      onOpen={onOpenColor}
+      placement="bottom-start"
+    >
       <PopoverTrigger>
         <div>
           <Flex
@@ -304,21 +304,25 @@ function HexColorVector({
             <Box sx={{ padding: "1rem 0", display: "grid", gridTemplateColumns: "40px 1fr", alignItems: "center" }}>
               <Box sx={{ color: "#A9A9B2" }}>HEX</Box>
               <Input
+                ref={ref}
                 onBlur={(e) => {
-                  setInputActive(false)
-                  setColorHex(inputHex)
-                  changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
+                  if (Object.keys(colors.colorMap)[indexColorPicker] !== inputHexPrev) {
+                    setInputActive(false)
                     setColorHex(inputHex)
                     changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
                   }
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    ref.current.blur()
+                  }
+                }}
                 onChange={(e) => {
-                  setInputHex(e.target.value)
-                  setInputHexPrev(e.target.value)
-                  dispatch(getRecentColor(colorHex))
+                  if (e.target.value.length <= 7) {
+                    setInputHex(e.target.value)
+                    setInputHexPrev(e.target.value)
+                    dispatch(getRecentColor(colorHex))
+                  }
                 }}
                 onFocus={() => setInputActive(true)}
                 value={inputHexPrev}

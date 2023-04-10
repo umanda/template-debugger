@@ -1123,11 +1123,11 @@ function SyncUp({
       return false
     }
     if (e.ctrlKey && e.key === "c") {
-      if (activeObject) activeScene.objects.copy()
+      if (activeObject && inputActive === false) activeScene.objects.copy()
       return true
     }
     if (e.ctrlKey && e.key === "v") {
-      if (activeObject && activeObject?.isEditing !== true) activeScene.objects.paste()
+      if (activeObject && activeObject?.isEditing !== true && inputActive === false) activeScene.objects.paste()
       return true
     }
     if (

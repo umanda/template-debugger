@@ -15,9 +15,6 @@ import { getListResourcesShapes } from "~/store/resources/action"
 import { selectResourceShapes } from "~/store/resources/selector"
 import { selectProject } from "~/store/project/selector"
 
-const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
-const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
-
 const initialQuery = {
   page: 1,
   limit: 40,
@@ -54,7 +51,7 @@ export default function Shapes() {
     (e: React.DragEvent<HTMLDivElement>, resource: any) => {
       try {
         let img = new Image()
-        img.src = resource.preview
+        img.src = resource.url
         if (editor) {
           e.dataTransfer.setDragImage(img, img.width, img.height)
           editor.dragger.onDragStart(

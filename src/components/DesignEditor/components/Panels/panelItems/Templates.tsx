@@ -54,8 +54,8 @@ import { selectProject } from "~/store/project/selector"
 import useResourcesContext from "~/hooks/useResourcesContext"
 import { loadGraphicTemplate } from "~/utils/fonts"
 import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
-const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
-const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
+// const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
+// const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
 export default function Template() {
   const { setLoadCanva, setPreviewCanva } = useResourcesContext()
@@ -95,7 +95,6 @@ export default function Template() {
     limit: 10,
     query: {
       plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
-      visibility: "public",
       is_published: true
     },
     sorts: ["LAST_UPDATE"]
@@ -145,7 +144,6 @@ export default function Template() {
             limit: 10,
             query: {
               plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
-              visibility: "public",
               is_published: true
             },
             sorts: ["LAST_UPDATE"]
@@ -161,10 +159,9 @@ export default function Template() {
         query: {
           drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
           names: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
-          visibility: "public",
           plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
-          favorited: stateFavorite ? true : undefined,
-          used: stateRecent ? true : undefined,
+          favorited: stateFavorite === true ? true : undefined,
+          used: stateRecent === true ? true : undefined,
           is_published: true
         },
         sorts: order
@@ -202,12 +199,12 @@ export default function Template() {
           designData.frame.height = Number(designData.frame.height)
           designData.frame.width = Number(designData.frame.width)
           designData.scenes[0].frame = designData.frame
-          designData.scenes[0].layers.map((layer) => {
-            if (layer.src) {
-              if (layer.src.includes(defaultPreviewTemplate))
-                layer.src = layer.src.replace(defaultPreviewTemplate, replacePreviewTemplate)
-            }
-          })
+          // designData.scenes[0].layers.map((layer) => {
+          //   if (layer.src) {
+          //     // if (layer.src.includes(defaultPreviewTemplate))
+          //     //   layer.src = layer.src.replace(defaultPreviewTemplate, replacePreviewTemplate)
+          //   }
+          // })
           setLoadTemplate({ designData, template })
           setLoadModal(true)
         } else {
