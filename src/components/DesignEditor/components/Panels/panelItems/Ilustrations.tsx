@@ -127,6 +127,13 @@ export default function Ilustrations() {
     filterResource === null && initialState()
   }, [user])
 
+  useEffect(() => {
+    if (resourcesIllustration.length === 0) {
+      stateFavorite === true && setValidateContent("No favorite illustrations to display")
+      stateRecent === true && setValidateContent("No recent illustrations to display")
+    }
+  }, [resourcesIllustration])
+
   const initialState = useCallback(async () => {
     setMore(false)
     if (defaultRecommend.words[0] === undefined) {
@@ -566,7 +573,7 @@ export default function Ilustrations() {
                       isDisabled={!more}
                       onClick={fetchDataResource}
                     >
-                      {more ? "Load more resources?" : "There are no more resources"}
+                      Load More
                     </Button>
                   </Flex>
                 ) : (
@@ -592,7 +599,7 @@ export default function Ilustrations() {
                       isDisabled={!more}
                       onClick={fetchDataResource}
                     >
-                      {more ? "Load more resources?" : "There are no more resources"}
+                      Load More
                     </Button>
                   </Flex>
                 )

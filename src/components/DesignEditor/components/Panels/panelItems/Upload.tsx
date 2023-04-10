@@ -78,6 +78,13 @@ export default function Upload() {
     user && initialState()
   }, [user])
 
+  useEffect(() => {
+    if (resources.length === 0) {
+      stateFavorite === true && setValidateContent("No favorite illustrations to display")
+      stateRecent === true && setValidateContent("No recent illustrations to display")
+    }
+  }, [resources])
+
   const initialState = async () => {
     if (selectResourcesUploads[0] === undefined) {
       setLoadMoreResources(true)
@@ -558,7 +565,7 @@ export default function Upload() {
                         isDisabled={fetching}
                         onClick={fetchDataResource}
                       >
-                        {fetching ? "There are no more resources" : "Load more resources?"}
+                        Load More
                       </Button>
                     </GridItem>
                   </Grid>

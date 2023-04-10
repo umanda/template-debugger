@@ -104,6 +104,13 @@ export default function Template() {
     initialState()
   }, [user])
 
+  useEffect(() => {
+    if (resourcesTemplate.length === 0) {
+      stateFavorite === true && setValidateContent("No favorite illustrations to display")
+      stateRecent === true && setValidateContent("No recent illustrations to display")
+    }
+  }, [resourcesTemplate])
+
   const initialState = useCallback(async () => {
     setMore(false)
     if (defaultRecommend?.words[0] === undefined) {
@@ -566,7 +573,7 @@ export default function Template() {
                     isDisabled={!more}
                     onClick={fetchDataResource}
                   >
-                    {more ? "Load more resources?" : "There are no more resources"}
+                    Load More
                   </Button>
                 </Flex>
               ) : (
