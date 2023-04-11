@@ -30,8 +30,6 @@ export default function Scenes() {
   const [draggedScene, setDraggedScene] = React.useState<any | null>(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  console.log(scenes)
-
   useEffect(() => {
     scenes.length >= 20 && onOpen()
   }, [scenes.length])

@@ -1073,13 +1073,23 @@ function SyncUp({
   const { isOpen: isOpenNoInternet, onOpen: onOpenNoInternet, onClose: onCloseNoInternet } = useDisclosure()
   const { isOpenPreview, switchPage, setSwitchPage } = useIsOpenPreview()
   const projectSelect = useSelector(selectProject)
+  const toast = useToast()
 
   useEffect(() => {
     stateSave.state === true && functionSave()
   }, [stateSave.make])
 
   window.addEventListener("offline", onOpenNoInternet)
-  window.addEventListener("online", onCloseNoInternet)
+  window.addEventListener("online", () => {
+    toast({
+      title: "YOUR INTERNET CONNECTION HAS BEEN RESETTED.",
+      status: "success",
+      position: "top",
+      duration: 3000,
+      isClosable: true
+    })
+    onCloseNoInternet()
+  })
 
   document.onkeydown = function (e) {
     if ((e.key === "Delete" || e.key === "Backspace") && inputActive === false) {
