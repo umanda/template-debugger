@@ -1092,6 +1092,7 @@ function SyncUp({
   })
 
   document.onkeydown = function (e) {
+    console.log(e)
     if ((e.key === "Delete" || e.key === "Backspace") && inputActive === false) {
       if (activeObject !== null && (activeObject?.locked === false || activeObject?.locked === undefined)) {
         activeObject?.type === "StaticText"
