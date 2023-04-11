@@ -2,7 +2,7 @@ import { Flex, useDisclosure } from "@chakra-ui/react"
 import { useCallback, useEffect, useState } from "react"
 import DesignEditor from "~/components/DesignEditor"
 import SigninModal from "~/components/Modals/AuthModal"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useDesign, useEditor } from "@layerhub-pro/react"
 import { useAppDispatch } from "~/store/store"
 import { useSelector } from "react-redux"
@@ -13,6 +13,7 @@ import useResourcesContext from "~/hooks/useResourcesContext"
 import { useTokenInterceptor } from "~/hooks/useTokenInterceptor"
 import * as api from "~/services/api"
 import { putTemplate } from "~/store/templates/action"
+import { generateId } from "~/utils/unique"
 
 const Designer: any = () => {
   const { setLoadCanva } = useResourcesContext()
@@ -25,6 +26,7 @@ const Designer: any = () => {
   const user = useSelector(selectUser)
   const templateId = localStorage.getItem("template_id")
   const isNewProject = localStorage.getItem("is_new_project")
+  const navigate = useNavigate()
 
   useTokenInterceptor()
 
@@ -61,6 +63,7 @@ const Designer: any = () => {
         setLoadCanva(true)
         localStorage.removeItem("is_new_project")
       } else {
+        navigate(`/composer/${generateId("", 10)}`)
         setLoadCanva(true)
       }
     } catch (err: any) {
