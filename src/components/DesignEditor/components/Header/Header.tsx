@@ -1138,7 +1138,7 @@ function SyncUp({
       return true
     }
     if ((e.ctrlKey || e.metaKey) && e.key === "v") {
-      if (activeObject && activeObject?.isEditing !== true && inputActive === false) activeScene.objects.paste()
+      if (activeObject?.isEditing !== true && inputActive === false) activeScene.objects.paste()
       return true
     }
     if ((e.ctrlKey || e.metaKey) && e.key === "a") {
@@ -1153,7 +1153,6 @@ function SyncUp({
         e.key === "e" ||
         e.key === "d" ||
         e.key === "s" ||
-        // e.key === "a" ||
         e.key === "z" ||
         e.key === "y")
     ) {
@@ -1167,8 +1166,6 @@ function SyncUp({
       return false
     } else return true
   }
-
-  // && save === true   else setSave(true)
 
   useEffect(() => {
     try {
