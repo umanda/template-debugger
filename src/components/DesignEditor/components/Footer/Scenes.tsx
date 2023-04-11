@@ -1,5 +1,18 @@
-import React from "react"
-import { Box, Button, Flex, Text } from "@chakra-ui/react"
+import React, { useEffect } from "react"
+import {
+  Box,
+  Button,
+  Flex,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useDisclosure
+} from "@chakra-ui/react"
 import { useActiveScene, useEditor, useScenes } from "@layerhub-pro/react"
 import SceneItem from "./SceneItem"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
@@ -15,6 +28,13 @@ export default function Scenes() {
   const activeScene = useActiveScene()
   const editor = useEditor()
   const [draggedScene, setDraggedScene] = React.useState<any | null>(null)
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  console.log(scenes)
+
+  useEffect(() => {
+    scenes.length >= 20 && onOpen()
+  }, [scenes.length])
 
   const sensors = [
     useSensor(PointerSensor, {
@@ -59,7 +79,24 @@ export default function Scenes() {
 
   return (
     <Flex>
-      <Flex maxW="75vw" gap="10px" padding="1rem 0" flexDirection="column">
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Page Limit Reached</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Uh oh! It looks like you've reached the maximum limit of 20 pages. We understand that you're eager to keep
+            creating, but in order to maintain the best possible experience for everyone, we kindly ask that you remove
+            a few pages before adding more.
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme={"brand"} mr={3} onClick={onClose}>
+              Ok
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Flex maxW="74vw" gap="10px" padding="1rem 0" flexDirection="column">
         <HorizontalScroll scrolls={true}>
           <DndContext
             modifiers={[restrictToFirstScrollableAncestor, restrictToHorizontalAxis]}
@@ -93,7 +130,7 @@ export default function Scenes() {
         </HorizontalScroll>
       </Flex>
       <Flex padding="26px 0 28px 0">
-        <Flex
+        <Button
           flexDir="column"
           sx={{
             cursor: "pointer",
@@ -104,6 +141,7 @@ export default function Scenes() {
             alignItems: "center",
             justifyContent: "center"
           }}
+          isDisabled={scenes.length >= 20 ? true : false}
           fontSize="12px"
           textAlign="center"
           onClick={addScene}
@@ -112,7 +150,7 @@ export default function Scenes() {
           <Text marginInline="10px" w="-webkit-max-content">
             Add Scene
           </Text>
-        </Flex>
+        </Button>
       </Flex>
     </Flex>
   )
