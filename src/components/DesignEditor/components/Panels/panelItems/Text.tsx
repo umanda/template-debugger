@@ -33,7 +33,12 @@ export default function Text() {
   const useFont = useSelector(selectListUseFonts)
 
   useEffect(() => {
-    useFont[0] && setFont({ name: useFont[0]?.full_name, url: useFont[0]?.url, preview: useFont[0]?.preview })
+    useFont[0] &&
+      setFont({
+        name: useFont[useFont.length - 1]?.post_script_name,
+        url: useFont[useFont.length - 1]?.url,
+        preview: useFont[useFont.length - 1]?.preview
+      })
   }, [])
 
   useEffect(() => {
