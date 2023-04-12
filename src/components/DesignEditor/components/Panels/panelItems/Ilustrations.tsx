@@ -486,7 +486,7 @@ export default function Ilustrations() {
                 setNotIds([])
               }}
             >
-              All Illustrations
+              All
             </Tab>
             <Tab
               isDisabled={disableTab}
@@ -495,7 +495,7 @@ export default function Ilustrations() {
                 user ? makeFilter({ stateRecents: true }) : setValidateContent("You need to login to see this panel.")
               }}
             >
-              Recent Illustrations
+              Recent
             </Tab>
             <Tab
               isDisabled={disableTab}
@@ -504,7 +504,7 @@ export default function Ilustrations() {
                 user ? makeFilter({ stateFavorites: true }) : setValidateContent("You need to login to see this panel.")
               }}
             >
-              Favorite Illustrations
+              Favorite
             </Tab>
           </TabList>
         </Tabs>

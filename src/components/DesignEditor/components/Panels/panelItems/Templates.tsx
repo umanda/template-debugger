@@ -477,7 +477,7 @@ export default function Template() {
                 setListRecommend({ words: [] })
               }}
             >
-              All Templates
+              All
             </Tab>
             <Tab
               isDisabled={disableTab}
@@ -486,7 +486,7 @@ export default function Template() {
                 user ? makeFilter({ stateRecents: true }) : setValidateContent("You need to login to see this panel.")
               }}
             >
-              Recent Templates
+              Recent
             </Tab>
             <Tab
               isDisabled={disableTab}
@@ -495,7 +495,7 @@ export default function Template() {
                 user ? makeFilter({ stateFavorites: true }) : setValidateContent("You need to login to see this panel.")
               }}
             >
-              Favorite Templates
+              Favorite
             </Tab>
           </TabList>
         </Tabs>
