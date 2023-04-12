@@ -71,7 +71,6 @@ export default function Header() {
   })
   const [textButtonSave, setTextButtonSave] = useState<string>(null)
   const templateId = localStorage.getItem("template_id")
-  const [stateSave, setStateSave] = useState<{ state: boolean; make: boolean }>({ state: false, make: false })
   const editor = useEditor()
   const { isOpen: isOpenSave, onToggle: onToggleSave, onClose: onCloseSave } = useDisclosure()
   const design = useDesign()
@@ -171,7 +170,7 @@ export default function Header() {
               />
             </Tooltip>
           </Flex>
-          <SyncUp stateSave={stateSave} metaData={metaData} user={user} onOpen={onOpen} />
+          <SyncUp metaData={metaData} user={user} onOpen={onOpen} />
         </Flex>
       </Flex>
       <DesignName />
@@ -258,14 +257,7 @@ export default function Header() {
                       <option value="public">PUBLIC</option>
                     </Select>
                   </Flex>
-                  <Button
-                    colorScheme={"brand"}
-                    rightIcon={<Save size={16} />}
-                    onClick={() => {
-                      onCloseSave()
-                      setStateSave({ ...stateSave, make: !stateSave.make, state: true })
-                    }}
-                  >
+                  <Button colorScheme={"brand"} rightIcon={<Save size={16} />} onClick={onCloseSave}>
                     Save
                   </Button>
                 </Flex>
@@ -984,17 +976,7 @@ function UserMenu() {
   )
 }
 
-function SyncUp({
-  user,
-  metaData,
-  onOpen,
-  stateSave
-}: {
-  metaData: any
-  user: any
-  onOpen: () => void
-  stateSave: any
-}) {
+function SyncUp({ user, metaData, onOpen }: { metaData: any; user: any; onOpen: () => void }) {
   const design = useDesign()
   const { id } = useParams()
   const { inputActive, activeScene: booleanScene } = useDesignEditorContext()
@@ -1011,10 +993,11 @@ function SyncUp({
   const { isOpenPreview, switchPage, setSwitchPage } = useIsOpenPreview()
   const projectSelect = useSelector(selectProject)
   const toast = useToast()
+  const [idScenesPrev, setIdScenesPrev] = useState<string[]>([])
 
-  useEffect(() => {
-    stateSave.state === true && functionSave()
-  }, [stateSave.make])
+  // useEffect(() => {
+  //   functionSave()
+  // }, [])
 
   window.addEventListener("offline", onOpenNoInternet)
   window.addEventListener("online", () => {
@@ -1110,13 +1093,19 @@ function SyncUp({
 
   useEffect(() => {
     try {
-      if (activeScene && stateJson !== "") functionSave()
+      if (activeScene && stateJson !== "") {
+        functionSave()
+      }
     } catch {}
   }, [stateChange])
 
   useEffect(() => {
+    console.log(projectSelect)
+    if (editor && idScenesPrev[0] === undefined) {
+      setIdScenesPrev(scenes.map((s) => s.id))
+    }
     stateJson !== "" && setAutoSave(false)
-  }, [scenes])
+  }, [scenes, scenes.length])
 
   React.useEffect(() => {
     let watcher = async () => {
@@ -1138,15 +1127,22 @@ function SyncUp({
         let designJSON: any = design?.toJSON()
         designJSON.key = id
         designJSON.scenes.map((e: any, index: number) => {
+          if (idScenesPrev[index] === e.id) {
+            e.is_updated = false
+          } else {
+            e.is_updated = true
+          }
           e.name = scenes[index]?.scene?.name
           e.position = index
           e.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
           return e
         })
+        setIdScenesPrev(scenes.map((s) => s.id))
         if (designJSON.name === "") {
           const resolve = await api.getListProjects({ query: {} })
           designJSON.name = `Untitled Project ${resolve.pagination.total_items}`
         }
+        console.log(designJSON)
         if (user) {
           const resolve = await dispatch(updateProject(designJSON))
           resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
@@ -1190,6 +1186,7 @@ function SyncUp({
       <NoInternet isOpen={isOpenNoInternet} onClose={onCloseNoInternet} onOpen={onOpenNoInternet} />
       <Tooltip label="Click here to Save" fontSize="md">
         <Button
+          // isDisabled={autoSave===}
           variant={"ghost"}
           aria-label="sync status"
           color={autoSave === false ? "#F56565" : "#15BE53"}
