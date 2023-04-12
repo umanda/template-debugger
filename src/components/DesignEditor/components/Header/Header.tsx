@@ -1142,8 +1142,12 @@ function SyncUp({
       return true
     }
     if ((e.ctrlKey || e.metaKey) && e.key === "a") {
-      if (activeObject && activeObject?.isEditing !== true && inputActive === false) activeScene.objects.select()
-      return true
+      if (activeObject && activeObject?.isEditing !== true && inputActive === false) {
+        activeScene.objects.select()
+        return false
+      } else if (inputActive === true) {
+        return true
+      }
     }
     if (
       (e.ctrlKey || e.metaKey) &&
