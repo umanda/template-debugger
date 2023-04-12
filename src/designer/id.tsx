@@ -36,7 +36,7 @@ const Designer: any = () => {
 
   const lodaTemplateById = useCallback(async () => {
     try {
-      if (design && user && isNewProject === "false") {
+      if (design && user) {
         setLoadCanva(false)
         const resolve: any = (await dispatch(getProjectByKey(id))).payload
         let template: any
