@@ -12,8 +12,9 @@ import LazyLoadImage from "~/utils/LazyLoadImage"
 import Trash from "../../../../Icons/Trash"
 import { selectListResourcesComposite } from "~/store/resources/selector"
 import { deleteResourceComposite } from "~/store/resources/action"
+import { selectListUseFonts } from "~/store/fonts/selector"
 
-const font = {
+const defaultFont = {
   name: "JustAnotherHand-Regular",
   url: "https://fonts.gstatic.com/s/justanotherhand/v12/845CNN4-AJyIGvIou-6yJKyptyOpOcr_BmmlS5aw.ttf",
   preview: "https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/fonts-v3/preview/JustAnotherHand-Regular.png"
@@ -28,6 +29,17 @@ export default function Text() {
   const [more, setMore] = useState(false)
   const [load, setLoad] = useState(true)
   const activeScene = useActiveScene()
+  const [font, setFont] = useState<any>(defaultFont)
+  const useFont = useSelector(selectListUseFonts)
+
+  useEffect(() => {
+    useFont[0] &&
+      setFont({
+        name: useFont[useFont.length - 1]?.post_script_name,
+        url: useFont[useFont.length - 1]?.url,
+        preview: useFont[useFont.length - 1]?.preview
+      })
+  }, [])
 
   useEffect(() => {
     initialState()
@@ -52,13 +64,13 @@ export default function Text() {
       }
       activeScene.objects.add(options)
     }
-  }, [activeScene, editor])
+  }, [activeScene, editor, font])
 
   const makeDeleteResource = async (id: string) => {
     dispatch(deleteResourceComposite(id))
   }
 
-  const addObject = (images: any) => {}
+  // const addObject = (images: any) => {}
 
   const addSubHeader = React.useCallback(async () => {
     if (editor) {
@@ -76,7 +88,7 @@ export default function Text() {
       }
       activeScene.objects.add(options)
     }
-  }, [activeScene, editor])
+  }, [activeScene, editor, font])
 
   const addParagraph = React.useCallback(async () => {
     if (editor) {
@@ -91,7 +103,7 @@ export default function Text() {
       }
       activeScene.objects.add(options)
     }
-  }, [activeScene, editor])
+  }, [activeScene, editor, font])
 
   const onDragStart = React.useCallback(
     (ev: React.DragEvent<HTMLDivElement>, type: string) => {
@@ -113,7 +125,7 @@ export default function Text() {
       }
       editor.dragger.onDragStart(options, { desiredSize: type === "header" ? 292 : type === "subHeader" ? 240 : 255 })
     },
-    [editor]
+    [editor, font]
   )
 
   return (
@@ -225,7 +237,11 @@ export default function Text() {
                       border: "3px solid #5456F5"
                     }}
                   >
-                    <Flex w="full" h="120px" onClick={addObject}>
+                    <Flex
+                      w="full"
+                      h="120px"
+                      // onClick={addObject}
+                    >
                       <LazyLoadImage url={e.preview} />
                     </Flex>
                     <IconButton

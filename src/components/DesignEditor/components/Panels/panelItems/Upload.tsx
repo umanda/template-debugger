@@ -32,7 +32,6 @@ import Scrollable from "~/components/Scrollable/Scrollable"
 import InfiniteScroll from "~/utils/InfiniteScroll"
 import LazyLoadImage from "~/utils/LazyLoadImage"
 import { uniqueFilename } from "~/utils/unique"
-import { IUpload } from "~/interfaces/editor"
 import Trash from "../../../../Icons/Trash"
 import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "~/store/resources/action"
 import { selectUploads } from "~/store/resources/selector"
@@ -78,6 +77,13 @@ export default function Upload() {
   useEffect(() => {
     user && initialState()
   }, [user])
+
+  useEffect(() => {
+    if (resources.length === 0) {
+      stateFavorite === true && setValidateContent("No favorite illustrations to display")
+      stateRecent === true && setValidateContent("No recent illustrations to display")
+    }
+  }, [resources])
 
   const initialState = async () => {
     if (selectResourcesUploads[0] === undefined) {
@@ -559,7 +565,7 @@ export default function Upload() {
                         isDisabled={fetching}
                         onClick={fetchDataResource}
                       >
-                        {fetching ? "There are no more resources" : "Load more resources?"}
+                        Load More
                       </Button>
                     </GridItem>
                   </Grid>
@@ -637,7 +643,7 @@ const UploadItem = ({
         icon={<Trash size={20} />}
       />
       <Flex onDragStart={dragObject} w="full" h="full" onClick={addObject}>
-        <LazyLoadImage url={object?.url} />
+        <LazyLoadImage url={object?.preview} />
       </Flex>
     </Flex>
   )

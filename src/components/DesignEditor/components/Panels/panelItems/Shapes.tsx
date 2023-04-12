@@ -47,6 +47,12 @@ export default function Shapes() {
     initialState()
   }, [user])
 
+  useEffect(() => {
+    if (resources.length === 0) {
+      stateRecent === true && setValidateContent("No recent illustrations to display")
+    }
+  }, [resources])
+
   const dragObject = useCallback(
     (e: React.DragEvent<HTMLDivElement>, resource: any) => {
       try {
@@ -289,7 +295,7 @@ export default function Shapes() {
                           _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
                         >
                           <Flex w="full" h="full">
-                            <LazyLoadImage url={obj.url} />
+                            <LazyLoadImage url={obj.preview} />
                           </Flex>
                         </Flex>
                       )
@@ -303,7 +309,7 @@ export default function Shapes() {
                     disabled={fetching}
                     onClick={fetchDataResource}
                   >
-                    {!fetching ? "Load more resources?" : "There are no more resources"}
+                    Load More
                   </Button>
                 </Flex>
               ) : (

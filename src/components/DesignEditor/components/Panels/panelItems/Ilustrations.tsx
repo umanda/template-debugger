@@ -113,7 +113,10 @@ export default function Ilustrations() {
   const [page, setPage] = useState<number>(0)
   const filterResource = localStorage.getItem("drawing_filter")
   const [notIds, setNotIds] = useState<number[]>([])
-  // const listDrawifiers: any = useSelector(selectListDrawifiers)
+
+  useEffect(() => {
+    initialState()
+  }, [user])
 
   useEffect(() => {
     if (filterResource !== undefined && filterResource !== null) {
@@ -124,8 +127,11 @@ export default function Ilustrations() {
   }, [])
 
   useEffect(() => {
-    filterResource === null && initialState()
-  }, [user])
+    if (resourcesIllustration.length === 0) {
+      stateFavorite === true && setValidateContent("No favorite illustrations to display")
+      stateRecent === true && setValidateContent("No recent illustrations to display")
+    }
+  }, [resourcesIllustration])
 
   const initialState = useCallback(async () => {
     setMore(false)
@@ -134,7 +140,7 @@ export default function Ilustrations() {
         .payload as IResolveRecommend
       setContentInput(resolve)
     }
-    if (selectListResources[0] === undefined) {
+    if (selectListResources[0] === undefined && filterResource === undefined) {
       const resolve = (await dispatch(getListResourcesImages(initialQuery))).payload as IResource[]
       resolve && setResourcesIllustration(resolve)
       resolve ? setMore(true) : setMore(false)
@@ -486,7 +492,7 @@ export default function Ilustrations() {
                 setNotIds([])
               }}
             >
-              All
+              All Illustrations
             </Tab>
             <Tab
               isDisabled={disableTab}
@@ -495,7 +501,7 @@ export default function Ilustrations() {
                 user ? makeFilter({ stateRecents: true }) : setValidateContent("You need to login to see this panel.")
               }}
             >
-              Recent
+              Recent Illustrations
             </Tab>
             <Tab
               isDisabled={disableTab}
@@ -504,7 +510,7 @@ export default function Ilustrations() {
                 user ? makeFilter({ stateFavorites: true }) : setValidateContent("You need to login to see this panel.")
               }}
             >
-              Favorites
+              Favorite Illustrations
             </Tab>
           </TabList>
         </Tabs>
@@ -566,7 +572,7 @@ export default function Ilustrations() {
                       isDisabled={!more}
                       onClick={fetchDataResource}
                     >
-                      {more ? "Load more resources?" : "There are no more resources"}
+                      Load More
                     </Button>
                   </Flex>
                 ) : (
@@ -592,7 +598,7 @@ export default function Ilustrations() {
                       isDisabled={!more}
                       onClick={fetchDataResource}
                     >
-                      {more ? "Load more resources?" : "There are no more resources"}
+                      Load More
                     </Button>
                   </Flex>
                 )
@@ -800,7 +806,7 @@ function IllustrationItem({
           }}
           _hover={{ borderColor: "#5456F5" }}
         >
-          <LazyLoadImage url={illustration.url} />
+          <LazyLoadImage url={illustration.preview} />
         </Flex>
       </Flex>
       {illustration?.drawifier?.name && (
@@ -1100,7 +1106,7 @@ function ModalIllustration({
                       }}
                       _hover={{ cursor: "pointer" }}
                     >
-                      <LazyLoadImage url={e.url} />
+                      <LazyLoadImage url={e.preview} />
                     </Flex>
                     <Flex
                       marginInline="10px"

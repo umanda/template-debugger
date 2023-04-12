@@ -104,6 +104,13 @@ export default function Template() {
     initialState()
   }, [user])
 
+  useEffect(() => {
+    if (resourcesTemplate.length === 0) {
+      stateFavorite === true && setValidateContent("No favorite illustrations to display")
+      stateRecent === true && setValidateContent("No recent illustrations to display")
+    }
+  }, [resourcesTemplate])
+
   const initialState = useCallback(async () => {
     setMore(false)
     if (defaultRecommend?.words[0] === undefined) {
@@ -164,7 +171,7 @@ export default function Template() {
           used: stateRecent === true ? true : undefined,
           is_published: true
         },
-        sorts: order
+        sorts: stateRecent ? ["USED_AT"] : order
       })
       if (resolve[0] === undefined && resourcesTemplate[0] === undefined) {
         stateFavorite === true
@@ -268,7 +275,7 @@ export default function Template() {
     await activeScene.setScene(loadTemplate?.designData.scenes[0])
     setPreviewCanva(null)
     setLoadCanva(true)
-    if (user && projectSelector) {
+    if (user) {
       api.getUseTemplate({ project_id: projectSelector.id, template_id: loadTemplate?.template.id })
     }
   }, [loadTemplate, projectSelector, user, activeScene])
@@ -483,7 +490,7 @@ export default function Template() {
                 setListRecommend({ words: [] })
               }}
             >
-              All
+              All Templates
             </Tab>
             <Tab
               isDisabled={disableTab}
@@ -492,7 +499,7 @@ export default function Template() {
                 user ? makeFilter({ stateRecents: true }) : setValidateContent("You need to login to see this panel.")
               }}
             >
-              Recent
+              Recent Templates
             </Tab>
             <Tab
               isDisabled={disableTab}
@@ -501,7 +508,7 @@ export default function Template() {
                 user ? makeFilter({ stateFavorites: true }) : setValidateContent("You need to login to see this panel.")
               }}
             >
-              Favorites
+              Favorite Templates
             </Tab>
           </TabList>
         </Tabs>
@@ -566,7 +573,7 @@ export default function Template() {
                     isDisabled={!more}
                     onClick={fetchDataResource}
                   >
-                    {more ? "Load more resources?" : "There are no more resources"}
+                    Load More
                   </Button>
                 </Flex>
               ) : (
