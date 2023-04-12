@@ -70,8 +70,6 @@ export default function Text() {
     dispatch(deleteResourceComposite(id))
   }
 
-  // const addObject = (images: any) => {}
-
   const addSubHeader = React.useCallback(async () => {
     if (editor) {
       await loadFonts([font])
@@ -237,11 +235,7 @@ export default function Text() {
                       border: "3px solid #5456F5"
                     }}
                   >
-                    <Flex
-                      w="full"
-                      h="120px"
-                      // onClick={addObject}
-                    >
+                    <Flex w="full" h="120px">
                       <LazyLoadImage url={e.preview} />
                     </Flex>
                     <IconButton

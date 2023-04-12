@@ -72,19 +72,6 @@ const Designer: any = () => {
     }
   }, [id, editor, user, design])
 
-  // const functionSave = useCallback(async () => {
-  //   try {
-  //     let designJSON: any = design?.toJSON()
-  //     designJSON.key = id
-  //     designJSON.scenes.map((e: any, index: number) => {
-  //       e.position = index
-  //       e.metadata = { orientation: e.frame.width === e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-  //       return e
-  //     })
-  //     user && (await dispatch(updateProject(designJSON))).payload
-  //   } catch {}
-  // }, [editor, design, id])
-
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>
       <SigninModal setType={setTypeSign} type={typeSign} onClose={onClose} isOpen={isOpen} onOpen={onOpen} />

@@ -2,7 +2,6 @@ import { createReducer } from "@reduxjs/toolkit"
 import { Drawifier, IDrawifier, User } from "../../interfaces/user"
 import { removeUser, setListDrawifiers, setUpdateProfile, setUser } from "./action"
 
-// export const adapter = createEntityAdapter()
 
 export interface UserState {
   user: User | Drawifier | null

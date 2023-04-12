@@ -113,65 +113,6 @@ export default function Order({
                   </Stack>
                 </RadioGroup>
               </Grid>
-              {/* <Text color="#A9A9B2" fontSize="12px">
-                FILTER BY DRAWIFIER
-              </Text>
-              {id !== "" ? (
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setId("")
-                    setName("")
-                    setDrawifier([])
-                    setTimeout(() => initialFocusRef.current.focus(), 100)
-                  }}
-                >
-                  {name}
-                </Button>
-              ) : (
-                <Flex flexDirection="column">
-                  <Input
-                    ref={initialFocusRef}
-                    placeholder="Start typing..."
-                    value={name}
-                    w="full"
-                    onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
-                    onBlur={onCloseDrawifier}
-                    onChange={(e) => {
-                      onOpenDrawifier()
-                      setName(e.target.value)
-                    }}
-                    zIndex={999}
-                  ></Input>
-                  <Popover
-                    initialFocusRef={initialFocusRef}
-                    isOpen={isOpenDrawifier}
-                    returnFocusOnClose={false}
-                    onClose={onCloseDrawifier}
-                    placement="right-start"
-                  >
-                    <PopoverTrigger>
-                      <Flex w="95%" position="absolute">
-                        <Button w="full" visibility="hidden">
-                          Trigger
-                        </Button>
-                      </Flex>
-                    </PopoverTrigger>
-                    <PopoverContent position="relative">
-                      <PopoverArrow />
-                      <PopoverBody>
-                        <FilterByDrawifier
-                          setId={setId}
-                          onClose={onCloseDrawifier}
-                          listDrawifiers={drawifiers}
-                          setName={setName}
-                          name={name}
-                        />
-                      </PopoverBody>
-                    </PopoverContent>
-                  </Popover>
-                </Flex>
-              )} */}
               <Button
                 bg="#5456F5"
                 onClick={() => {

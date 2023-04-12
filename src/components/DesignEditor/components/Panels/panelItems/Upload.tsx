@@ -37,8 +37,6 @@ import { deleteUploadFile, setUploading, uploadFile, uploadFiles } from "~/store
 import { selectUploads } from "~/store/resources/selector"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
-// const defaultPreviewTemplate = import.meta.env.VITE_APP_DEFAULT_URL_PREVIEW_TEMPLATE
-// const replacePreviewTemplate = import.meta.env.VITE_APP_REPLACE_URL_PREVIEW_TEMPLATE
 
 const initialQuery = {
   page: 1,

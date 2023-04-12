@@ -172,18 +172,6 @@ export default function Header() {
             </Tooltip>
           </Flex>
           <SyncUp stateSave={stateSave} metaData={metaData} user={user} onOpen={onOpen} />
-          {/* <Tooltip label="Save" fontSize="md">
-            <IconButton
-              variant={"ghost"}
-              aria-label="sync status"
-              _hover={{ color: "#15BE53" }}
-              color="#DDDFE5"
-              icon={<Sync size={24} />}
-              onClick={() => {
-                !user && onOpen()
-              }}
-            />
-          </Tooltip> */}
         </Flex>
       </Flex>
       <DesignName />
@@ -534,14 +522,6 @@ function ShareMenu() {
                 aria-label="twitter"
                 icon={<Instagram size={20} />}
               />
-              {/* <IconButton
-                  onClick={() => {
-                    shareTemplate("WHATSAPP")
-                  }}
-                  variant={"ghost"}
-                  aria-label="twitter"
-                  icon={<Whatsapp size={20} />}
-                /> */}
               <IconButton
                 onClick={() => {
                   shareTemplate("LINKEDIN")
@@ -582,26 +562,6 @@ function ShareMenu() {
               </Button>
             </Flex>
           </Box>
-          {/* <Box>
-            <Box color="#A9A9B2">MAGIC LINK</Box>
-            <Flex sx={{ paddingY: "0.5rem" }}>
-              <Button w="100%" leftIcon={<Magic size={24} />} variant="outline" onClick={() => makeMagicLink()}>
-                Copy Magic Link
-              </Button>
-              <Input value={valueInput} position="absolute" onChange={() => {}} visibility={"hidden"} id="input" />
-            </Flex>
-          </Box> */}
-          {/* <Box>
-              <Box color="#A9A9B2">INVITE</Box>
-              <Box sx={{ paddingY: "0.5rem" }}>
-                <Box sx={{ display: "flex", gap: "1rem" }}>
-                  <Input width={"100%"} />
-                  <Button variant="outline" paddingX={"1.5rem"} leftIcon={<Mail size={24} />}>
-                    Invite
-                  </Button>
-                </Box>
-              </Box>
-            </Box> */}
         </Box>
       </PopoverContent>
     </Popover>
@@ -793,16 +753,6 @@ function FileMenu() {
           onOpen={onOpenUpgradeUser}
         />
         <PopoverArrow />
-        {/* <MenuOption>
-          <Flex
-            w="full"
-            onMouseOver={() => {
-              setState(!state)
-            }}
-          >
-            Home
-          </Flex>
-        </MenuOption> */}
         <Popover
           isOpen={isOpenProject}
           onClose={onCloseProject}
@@ -909,19 +859,6 @@ function FileMenu() {
             <MenuOption onClick={() => editor.zoom.zoomToRatio(1)}> Zoom to 100%</MenuOption>
           </PopoverContent>
         </Popover>
-        {/* <Button
-          _hover={{ color: "#5456f5", bg: "var(--chakra-colors-gray-200)" }}
-          borderRadius="none"
-          onMouseOver={() => {
-            onCloseProject()
-            onCloseEdit()
-            onCloseView()
-          }}
-          variant="ghost"
-          justifyContent="left"
-        >
-          Help
-        </Button> */}
         {user && (
           <MenuOption>
             <Flex

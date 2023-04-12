@@ -95,7 +95,6 @@ function PreviewModal() {
             </Button>
           </Flex>
         </ModalHeader>
-        {/* <ModalCloseButton /> */}
         <ModalBody flexDir="column">
           <Center marginLeft="40px" draggable={false} w="90vw" marginRight="10vw">
             <Center h="80vh" w="100vw">
