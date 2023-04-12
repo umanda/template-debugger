@@ -39,20 +39,10 @@ const Designer: any = () => {
       if (design && user) {
         setLoadCanva(false)
         const resolve: any = (await dispatch(getProjectByKey(id))).payload
-        let template: any
-        if (templateId) {
-          template = (await dispatch(putTemplate(id))).payload
-        }
         setTimeout(async () => {
           try {
-            if (templateId === null || templateId === undefined) {
-              await loadGraphicTemplate(resolve)
-              await design.setDesign(resolve)
-            } else {
-              await loadGraphicTemplate(template)
-              await design.setDesign(template)
-              localStorage.removeItem("template_id")
-            }
+            await loadGraphicTemplate(resolve)
+            await design.setDesign(resolve)
           } catch {}
         }, 100)
         let sceneNames: string[] = []
@@ -67,6 +57,17 @@ const Designer: any = () => {
         setLoadCanva(true)
       }
     } catch (err: any) {
+      let template: any
+      if (templateId) {
+        template = (await dispatch(putTemplate(templateId))).payload
+      }
+      setTimeout(async () => {
+        try {
+          await loadGraphicTemplate(template)
+          await design.setDesign(template)
+          localStorage.removeItem("template_id")
+        } catch {}
+      }, 100)
       setLoadCanva(true)
     }
   }, [id, editor, user, design])
