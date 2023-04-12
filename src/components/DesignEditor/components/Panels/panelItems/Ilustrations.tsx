@@ -238,7 +238,10 @@ export default function Ilustrations() {
           src: resource.url,
           preview: resource.url,
           erasable: false,
-          watermark: resource.license === "paid" && user.plan === "FREE" ? watermarkURL : null
+          watermark:
+            resource.license === "paid" && user.plan === "FREE"
+              ? `${watermarkURL}?${Math.random().toString(36).substring(2, 10)}`
+              : null
         }
         if (editor) {
           await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
