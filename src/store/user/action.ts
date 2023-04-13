@@ -8,27 +8,11 @@ export const removeUser = createAction<void>("user/setremoveUser")
 export const setUpdateProfile = createAction<Partial<User>>("user/setupdateProfile")
 export const setListDrawifiers = createAction<IDrawifier[]>("drawifier/setListDrawifiers")
 
-// export const oldSignIn = createAsyncThunk<any, SigninDto, { rejectValue: boolean }>(
-//   "user/olSignIn",
-//   async (args, { dispatch, rejectWithValue }) => {
-//     try {
-//       const user: any = await api.oldSignIn(args)
-//       dispatch(setUser({ ...user, email: args.email }))
-//       return user
-//     } catch (err: any) {
-//       return err
-//     }
-//   }
-// )
-
 export const signInByToken = createAsyncThunk<any, string, { rejectValue: boolean }>(
   "user/signInByToken",
   async (args, { dispatch, rejectWithValue }) => {
     try {
       const user: any = await api.signInByToken(args)
-      // const plan = await api.getsubscriptionMe()
-      // const me = await api.userMe()
-      // dispatch(setUser({ ...user, ...me, plan: plan.subscription.plan, token: args }))
       dispatch(setUser({ ...user, token: args }))
       return user
     } catch (err: any) {
@@ -85,7 +69,6 @@ export const logout = createAsyncThunk<any, void, { rejectValue: boolean }>(
   async (_, { dispatch, rejectWithValue }) => {
     localStorage.setItem("token", "")
     try {
-      // await api.logout()
       dispatch(removeUser())
       dispatch(clearResourceComposite([]))
       dispatch(clearResourceUpload([]))

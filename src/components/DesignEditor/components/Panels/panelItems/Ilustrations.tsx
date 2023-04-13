@@ -192,7 +192,6 @@ export default function Ilustrations() {
         )
       } catch {}
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
-        // stateFavorite !== true && stateRecent !== true && nameIllustration[0] !== "" && onOpenSearchFound()
         stateFavorite === true
           ? setValidateContent("No favorite illustrations to display")
           : stateRecent === true
@@ -239,7 +238,10 @@ export default function Ilustrations() {
           src: resource.url,
           preview: resource.url,
           erasable: false,
-          watermark: resource.license === "paid" && user.plan === "FREE" ? watermarkURL : null
+          watermark:
+            resource.license === "paid" && user.plan === "FREE"
+              ? `${watermarkURL}?${Math.random().toString(36).substring(2, 10)}`
+              : null
         }
         if (editor) {
           await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
@@ -416,11 +418,6 @@ export default function Ilustrations() {
             <PopoverArrow />
             <PopoverBody id="input">
               <Flex id="input" flexDir="column" fontSize="12px" gap="5px">
-                {/* <Flex id="input">
-                  <Text id="input">Recent searches</Text>
-                  <Spacer id="input" />
-                  <Text id="input">Erase</Text>
-                </Flex> */}
                 <Flex id="input">Suggestion</Flex>
                 {contentInput?.words.map(
                   (obj, index) =>
@@ -492,7 +489,7 @@ export default function Ilustrations() {
                 setNotIds([])
               }}
             >
-              All Illustrations
+              All
             </Tab>
             <Tab
               isDisabled={disableTab}
@@ -501,7 +498,7 @@ export default function Ilustrations() {
                 user ? makeFilter({ stateRecents: true }) : setValidateContent("You need to login to see this panel.")
               }}
             >
-              Recent Illustrations
+              Recent
             </Tab>
             <Tab
               isDisabled={disableTab}
@@ -510,7 +507,7 @@ export default function Ilustrations() {
                 user ? makeFilter({ stateFavorites: true }) : setValidateContent("You need to login to see this panel.")
               }}
             >
-              Favorite Illustrations
+              Favorite
             </Tab>
           </TabList>
         </Tabs>
@@ -758,15 +755,7 @@ function IllustrationItem({
         typeFilter={typeFilter}
         listFavorite={listFavorite}
       />
-      <Flex
-        flex={1}
-        overflow={"hidden"}
-        _hover={{ cursor: "pointer" }}
-        justifyContent={"center"}
-        // onDragStart={(e) => onDragStart(e, illustration)}
-        // onMouseOver={() => setIsHovering(true)}
-        // onMouseOut={() => setIsHovering(false)}
-      >
+      <Flex flex={1} overflow={"hidden"} _hover={{ cursor: "pointer" }} justifyContent={"center"}>
         <Flex
           onClick={() => OpenModalIllustration("tag", illustration)}
           zIndex={5}
@@ -780,20 +769,6 @@ function IllustrationItem({
         >
           <FilterByTags size={30} />
         </Flex>
-        {/* <Flex
-          onClick={() => OpenModalIllustration("id", illustration)}
-          zIndex={5}
-          visibility={isHovering ? "visible" : "hidden"}
-          position="absolute"
-          marginLeft="35%"
-          marginTop="12%"
-          _hover={{ cursor: "pointer", bg: "brand.500" }}
-          border="1px"
-          borderRadius="10px"
-          color="#545465"
-        >
-          <FilterByTemplates size={30} />
-        </Flex> */}
         <Flex
           opacity={isHovering ? "0.2" : "1"}
           w="full"
@@ -960,14 +935,6 @@ function ModalIllustration({
     },
     [resourcesPrev, resources]
   )
-
-  // const ValidateIcon = () => {
-  //   if (like) {
-  //     return <LikeClick size={20} />
-  //   } else {
-  //     return <Like size={20} />
-  //   }
-  // }
 
   return (
     <Modal isOpen={isOpen} size={"full"} onClose={onClose}>

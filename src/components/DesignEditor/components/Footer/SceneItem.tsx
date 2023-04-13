@@ -199,9 +199,6 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
           </Portal>
         </Popover>
       </Box>
-      {/* <Box position="absolute" visibility={user ? "visible" : "hidden"} top="40px" right="40px">
-        <Comments index={index} />
-      </Box> */}
     </Box>
   )
 }

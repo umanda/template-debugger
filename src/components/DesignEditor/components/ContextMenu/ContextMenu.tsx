@@ -45,8 +45,6 @@ function ContextMenu() {
     return <></>
   }
 
-  // if (activeObject?.type === "group" || activeObject?.type === "activeSelection") {
-
   if (contextMenuRequest?.target?.type === "Background" || !activeObject?.type || activeObject?.type === "Frame") {
     return (
       <div // @ts-ignore
@@ -89,61 +87,7 @@ function ContextMenu() {
           label="Select All"
         />
         <div style={{ margin: "0.5rem 0" }} />
-        {/* <ContextMenuItem
-          disabled={true}
-          onClick={() => {
-            activeScene.objects.bringToFront()
-            editor.cancelContextMenuRequest()
-          }}
-          icon="BringToFront"
-          label="Bring to front"
-        />
-        <ContextMenuItem
-          disabled={true}
-          onClick={() => {
-            activeScene.objects.bringForward()
-            editor.cancelContextMenuRequest()
-          }}
-          icon="BringForward"
-          label="Bring forward"
-        />
-        <ContextMenuItem
-          disabled={true}
-          onClick={() => {
-            activeScene.objects.sendToBack()
-            editor.cancelContextMenuRequest()
-          }}
-          icon="SendToBack"
-          label="Send back"
-        />
-        <ContextMenuItem
-          disabled={true}
-          onClick={() => {
-            activeScene.objects.sendBackwards()
-            editor.cancelContextMenuRequest()
-          }}
-          icon="SendBackwards"
-          label="Send backward"
-        /> */}
         <div style={{ margin: "0.5rem 0" }} />
-        {/* <ContextMenuItem
-          disabled={true}
-          onClick={() => {
-            activeScene.objects.lock()
-            editor.cancelContextMenuRequest()
-          }}
-          icon="Unlock"
-          label="Lock"
-        /> */}
-        {/* <ContextMenuItem
-          disabled={true}
-          onClick={() => {
-            saveAsComponentHandler()
-            editor.cancelContextMenuRequest()
-          }}
-          icon="FileIco"
-          label="Save as component"
-        /> */}
       </div>
     )
   }
@@ -250,14 +194,6 @@ function ContextMenu() {
               label={activeObject?.type === "group" ? "Un Group" : "Group"}
             />
           ) : null}
-          {/* <ContextMenuItem
-            onClick={() => {
-              saveAsComponentHandler()
-              editor.cancelContextMenuRequest()
-            }}
-            icon="FileIco"
-            label="Save as component"
-          /> */}
         </div>
       ) : (
         <div // @ts-ignore

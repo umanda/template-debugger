@@ -149,7 +149,6 @@ export default function Canva() {
       },
       false
     )
-    // app?.addEventListener
   } catch {}
 
   return (

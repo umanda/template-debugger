@@ -255,8 +255,6 @@ const Resize = () => {
                 </Box>
               </Box>
               <Box>
-                {/* | "FACEBOOKCOVER" | "FACEBOOKPOST" | "INSTAGRAMPOST" | "TWITTERCOVER" | "PHOTO" | "PHOTO" |
-                "TWITTERPOST" | "LINKEDINPOST" | "INSTAGRAM" */}
                 <Box color={"#A9A9B2"}>SIZES</Box>
                 <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", padding: "0.75rem 0" }}>
                   <Box sx={{ display: "flex", alignItems: "center" }}>

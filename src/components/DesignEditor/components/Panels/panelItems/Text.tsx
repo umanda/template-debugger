@@ -15,9 +15,9 @@ import { deleteResourceComposite } from "~/store/resources/action"
 import { selectListUseFonts } from "~/store/fonts/selector"
 
 const defaultFont = {
-  name: "JustAnotherHand-Regular",
-  url: "https://fonts.gstatic.com/s/justanotherhand/v12/845CNN4-AJyIGvIou-6yJKyptyOpOcr_BmmlS5aw.ttf",
-  preview: "https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/fonts-v3/preview/JustAnotherHand-Regular.png"
+  name: "Outfit-Regular",
+  url: "https://fonts.gstatic.com/s/outfit/v1/QGYyz_MVcBeNP4NjuGObqx1XmO1I4TC1C4G-EiAou6Y.ttf",
+  preview: "https://project-drawify-v2.s3.eu-west-3.amazonaws.com/fonts-v3/preview/Outfit-Regular.png"
 }
 
 export default function Text() {
@@ -69,8 +69,6 @@ export default function Text() {
   const makeDeleteResource = async (id: string) => {
     dispatch(deleteResourceComposite(id))
   }
-
-  // const addObject = (images: any) => {}
 
   const addSubHeader = React.useCallback(async () => {
     if (editor) {
@@ -237,11 +235,7 @@ export default function Text() {
                       border: "3px solid #5456F5"
                     }}
                   >
-                    <Flex
-                      w="full"
-                      h="120px"
-                      // onClick={addObject}
-                    >
+                    <Flex w="full" h="120px">
                       <LazyLoadImage url={e.preview} />
                     </Flex>
                     <IconButton

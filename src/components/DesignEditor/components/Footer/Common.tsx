@@ -141,7 +141,6 @@ export default function Common() {
         </Flex>
       </Flex>
       <Flex alignItems={"center"} justifyContent={"flex-end"}>
-        {/* <IconButton variant={"ghost"} aria-label="Comment" icon={<Chat size={24} />} /> */}
         <Popover placement="top-end">
           <PopoverTrigger>
             <IconButton variant={"ghost"} aria-label="Help" icon={<Help size={24} />} />
@@ -149,13 +148,6 @@ export default function Common() {
           <Portal>
             <PopoverContent width={"200px"} marginRight={"1rem"}>
               <PopoverBody fontSize="15px">
-                {/* <MenuOption>
-                  <Flex gap="0.25rem" alignItems={"center"}>
-                    <Feedback size={20} />
-                    Feedback
-                  </Flex>
-                </MenuOption> */}
-
                 <MenuOption>
                   <Flex gap="0.25rem" alignItems={"center"}>
                     <Flex onClick={onOpen} gap="3px">

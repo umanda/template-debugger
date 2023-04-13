@@ -106,7 +106,6 @@ export const listResourceCompositeReducer = createReducer(initialListResourceCom
     state.resources = state.resources?.filter((e) => e.id !== payload)
   })
   builder.addCase(clearResourceComposite, (state, { payload }) => {
-    // state.resources = state.resources?.filter((e) => e.id !== payload)
     state.resources = payload
   })
 })

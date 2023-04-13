@@ -32,18 +32,18 @@ export const Canvas = (props: Props) => {
         canvas: {
           size: {
             width: clientWidth,
-            height: clientHeight,
-          },
-        },
+            height: clientHeight
+          }
+        }
       },
-      state: context,
+      state: context
     })
 
     const resizeObserver = new ResizeObserver((entries) => {
       const { width = clientWidth, height = clientHeight } = (entries[0] && entries[0].contentRect) || {}
       editor.canvas.resize({
         width,
-        height,
+        height
       })
     })
     resizeObserver.observe(container)
@@ -53,7 +53,6 @@ export const Canvas = (props: Props) => {
         resizeObserver.unobserve(container)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
     <div
@@ -65,7 +64,7 @@ export const Canvas = (props: Props) => {
         style={{
           position: "absolute",
           height: "100%",
-          width: "100%",
+          width: "100%"
         }}
       >
         <canvas id="layerhub_io_canvas"></canvas>

@@ -106,13 +106,11 @@ export default function Text() {
       let desiredFont
 
       if (state.italic) {
-        // look for regular italic
         desiredFont = state.styleOptions.options.find((option) => {
           const postscriptnames = option.post_script_name.split("-")
           return postscriptnames[postscriptnames.length - 1].match(/^Italic$/)
         })
       } else {
-        // look for  regular
         desiredFont = state.styleOptions.options.find((option) => {
           const postscriptnames = option.post_script_name.split("-")
           return postscriptnames[postscriptnames.length - 1].match(/^Regular$/)
@@ -133,13 +131,11 @@ export default function Text() {
     } else {
       let desiredFont
       if (state.italic) {
-        // look for bold italic
         desiredFont = state.styleOptions.options.find((option) => {
           const postscriptnames = option.post_script_name.split("-")
           return postscriptnames[postscriptnames.length - 1].match(/^BoldItalic$/)
         })
       } else {
-        // look for bold
         desiredFont = state.styleOptions.options.find((option) => {
           const postscriptnames = option.post_script_name.split("-")
           return postscriptnames[postscriptnames.length - 1].match(/^Bold$/)
@@ -164,13 +160,11 @@ export default function Text() {
     if (state.italic) {
       let desiredFont
       if (state.bold) {
-        // Search bold regular
         desiredFont = state.styleOptions.options.find((option) => {
           const postscriptnames = option.post_script_name.split("-")
           return postscriptnames[postscriptnames.length - 1].match(/^Bold$/)
         })
       } else {
-        // Search regular
         desiredFont = state.styleOptions.options.find((option) => {
           const postscriptnames = option.post_script_name.split("-")
           return postscriptnames[postscriptnames.length - 1].match(/^Regular$/)
@@ -192,13 +186,11 @@ export default function Text() {
       let desiredFont
 
       if (state.bold) {
-        // search italic bold
         desiredFont = state.styleOptions.options.find((option) => {
           const postscriptnames = option.post_script_name.split("-")
           return postscriptnames[postscriptnames.length - 1].match(/^BoldItalic$/)
         })
       } else {
-        // search regular italic
         desiredFont = state.styleOptions.options.find((option) => {
           const postscriptnames = option.post_script_name.split("-")
           return postscriptnames[postscriptnames.length - 1].match(/^Italic$/)
@@ -536,35 +528,6 @@ function TextFontSize() {
             </Scrollbar>
           </PopoverContent>
         </Popover>
-
-        {/* {isScrollOpen && (
-          <Scrollbar style={{ height: "320px", width: "90px" }}>
-            <Box backgroundColor={"#ffffff"} padding={"10px 0"}>
-              {FONT_SIZES.map((size: any, index: number) => (
-                <Box
-                  onClick={() => {
-                    onChange(size.label)
-                    setIsScrollOpen(false)
-                  }}
-                  _hover={{
-                    background: "rgb(243,243,243)"
-                  }}
-                  style={{
-                    height: "32px",
-                    fontSize: "14px",
-                    cursor: "pointer",
-                    padding: "0 20px",
-                    display: "flex",
-                    alignItems: "center"
-                  }}
-                  key={index}
-                >
-                  {size.label}
-                </Box>
-              ))}
-            </Box>
-          </Scrollbar>
-        )} */}
 
         <Button
           isDisabled={activeObject?.isEditing == false || activeObject?.isEditing === undefined ? false : true}

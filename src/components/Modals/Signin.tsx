@@ -74,11 +74,7 @@ export default function SignIn({
         <Center>Welcome to Drawify 3.0 Demo</Center>
       </ModalHeader>
       <ModalBody>
-        <Flex
-          flexDir="column"
-          gap="10px"
-          // onClick={onClose}
-        >
+        <Flex flexDir="column" gap="10px">
           <Flex flexDir="column" gap="20px">
             <Grid>
               <GridItem>
@@ -104,9 +100,6 @@ export default function SignIn({
             <Grid templateColumns="repeat(4, 1fr)">
               <Text>Password:</Text>
               <GridItem colSpan={3}>
-                {/* <InputGroup size="sm">
-                  <Input  w="full" onFocus={() => setErr("")} onKeyDown={(e) => e.key === "Enter" && makeJoin()} />
-                </InputGroup> */}
                 <InputGroup size="md">
                   <Input
                     onFocus={() => setErr("")}
