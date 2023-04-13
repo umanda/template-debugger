@@ -1,4 +1,4 @@
-import { Flex, useDisclosure } from "@chakra-ui/react"
+import { Flex, useDisclosure, useToast } from "@chakra-ui/react"
 import { useCallback, useEffect, useState } from "react"
 import DesignEditor from "~/components/DesignEditor"
 import SigninModal from "~/components/Modals/AuthModal"
@@ -27,6 +27,7 @@ const Designer: any = () => {
   const templateId = localStorage.getItem("template_id")
   const isNewProject = localStorage.getItem("is_new_project")
   const navigate = useNavigate()
+  const toast = useToast()
 
   useTokenInterceptor()
 
@@ -35,6 +36,7 @@ const Designer: any = () => {
   }, [design])
 
   const lodaTemplateById = useCallback(async () => {
+    const plans = ["FREE", "PRO", "HERO"]
     try {
       if (design && user) {
         setLoadCanva(false)
@@ -57,18 +59,33 @@ const Designer: any = () => {
         setLoadCanva(true)
       }
     } catch (err: any) {
-      let template: any
-      if (templateId) {
-        template = (await dispatch(putTemplate(templateId))).payload
+      try {
+        let template: any
+        if (templateId) {
+          template = (await dispatch(putTemplate(templateId))).payload
+        }
+        const indexPlanTemplate = plans.findIndex((p) => p === template.plan)
+        const indexPlanUser = plans.findIndex((p) => p === user.plan)
+        if (indexPlanUser >= indexPlanTemplate) {
+          setTimeout(async () => {
+            try {
+              await loadGraphicTemplate(template)
+              await design.setDesign(template)
+              localStorage.removeItem("template_id")
+            } catch {}
+          }, 100)
+        }
+        setLoadCanva(true)
+      } catch {
+        toast({
+          title: "You need to upgrade your current subscription plan to customize this template.",
+          status: "error",
+          position: "top",
+          duration: 2000,
+          isClosable: true
+        })
+        setLoadCanva(true)
       }
-      setTimeout(async () => {
-        try {
-          await loadGraphicTemplate(template)
-          await design.setDesign(template)
-          localStorage.removeItem("template_id")
-        } catch {}
-      }, 100)
-      setLoadCanva(true)
     }
   }, [id, editor, user, design])
 
