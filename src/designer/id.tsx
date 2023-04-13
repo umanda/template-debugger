@@ -63,17 +63,17 @@ const Designer: any = () => {
         let template: any
         if (templateId) {
           template = (await dispatch(putTemplate(templateId))).payload
-        }
-        const indexPlanTemplate = plans.findIndex((p) => p === template.plan)
-        const indexPlanUser = plans.findIndex((p) => p === user.plan)
-        if (indexPlanUser >= indexPlanTemplate) {
-          setTimeout(async () => {
-            try {
-              await loadGraphicTemplate(template)
-              await design.setDesign(template)
-              localStorage.removeItem("template_id")
-            } catch {}
-          }, 100)
+          const indexPlanTemplate = plans.findIndex((p) => p === template.plan)
+          const indexPlanUser = plans.findIndex((p) => p === user.plan)
+          if (indexPlanUser >= indexPlanTemplate) {
+            setTimeout(async () => {
+              try {
+                await loadGraphicTemplate(template)
+                await design.setDesign(template)
+                localStorage.removeItem("template_id")
+              } catch {}
+            }, 100)
+          }
         }
         setLoadCanva(true)
       } catch {
