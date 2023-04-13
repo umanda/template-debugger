@@ -742,6 +742,7 @@ function IllustrationItem({
       onDragStart={(e) => {
         dragObject(e)
       }}
+      draggable={true}
       sx={{
         maxHeight: "180px",
         minHeight: "134px",

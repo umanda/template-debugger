@@ -741,7 +741,7 @@ function FileMenu() {
           _hover={{}}
           variant="outline"
         >
-          File
+          Project
         </Button>
       </PopoverTrigger>
       {/* @ts-ignore */}
