@@ -113,6 +113,7 @@ export default function Ilustrations() {
   const [page, setPage] = useState<number>(0)
   const filterResource = localStorage.getItem("drawing_filter")
   const [notIds, setNotIds] = useState<number[]>([])
+  const [textArea, setTextArea] = useState<string>()
 
   useEffect(() => {
     initialState()
@@ -325,6 +326,7 @@ export default function Ilustrations() {
   const makeBlur = useCallback(() => {
     setValidateContent(null)
     if (nameIllustrationPrev[0]?.length > 2) {
+      console.log(nameIllustration)
       nameIllustrationPrev[0] !== nameIllustration[0] && makeFilter({ input: nameIllustrationPrev })
       setDisableTab(false)
     } else if (nameIllustrationPrev[0] === "") {
@@ -642,16 +644,19 @@ export default function Ilustrations() {
                   <Flex flexDir="column" w="full" align="center" gap="20px">
                     <Textarea
                       onFocus={() => setInputActive(true)}
-                      onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
-                      onChange={(e) => setNameIllustrationPrev([e.target.value])}
+                      onChange={(e) => setTextArea(e.target.value)}
+                      onBlur={() => setNameIllustration([textArea])}
                       w="full"
                       id="textArea"
                       placeholder="Describe the image you would like"
                     />
                     <Button
                       w="-webkit-fit-content"
-                      //@ts-ignore
-                      onClick={() => document.getElementById("textArea")?.value !== "" && makeBlur()}
+                      onClick={() => {
+                        setNameIllustrationPrev([textArea])
+                        //@ts-ignore
+                        document.getElementById("textArea")?.value !== "" && makeFilter({ input: [textArea] })
+                      }}
                       colorScheme={"brand"}
                     >
                       Send Image Request
