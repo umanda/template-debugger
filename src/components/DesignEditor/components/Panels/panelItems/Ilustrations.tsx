@@ -326,7 +326,6 @@ export default function Ilustrations() {
   const makeBlur = useCallback(() => {
     setValidateContent(null)
     if (nameIllustrationPrev[0]?.length > 2) {
-      console.log(nameIllustration)
       nameIllustrationPrev[0] !== nameIllustration[0] && makeFilter({ input: nameIllustrationPrev })
       setDisableTab(false)
     } else if (nameIllustrationPrev[0] === "") {
@@ -720,7 +719,7 @@ function IllustrationItem({
               erasable: false,
               watermark: illustration.license === "paid" && user.plan === "FREE" ? watermarkURL : null,
               preview: illustration.url,
-              src: illustration.url
+              src: `${illustration.url}?${Math.random().toString(36).substring(2, 10)}`
             },
             { desiredSize: 400 }
           )

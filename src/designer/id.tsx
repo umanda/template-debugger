@@ -77,6 +77,7 @@ const Designer: any = () => {
         }
         setLoadCanva(true)
       } catch {
+        localStorage.removeItem("template_id")
         toast({
           title: "You need to upgrade your current subscription plan to customize this template.",
           status: "error",
