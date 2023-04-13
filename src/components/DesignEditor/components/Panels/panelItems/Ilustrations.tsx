@@ -113,6 +113,7 @@ export default function Ilustrations() {
   const [page, setPage] = useState<number>(0)
   const filterResource = localStorage.getItem("drawing_filter")
   const [notIds, setNotIds] = useState<number[]>([])
+  const [textArea, setTextArea] = useState<string>()
 
   useEffect(() => {
     initialState()
@@ -642,16 +643,19 @@ export default function Ilustrations() {
                   <Flex flexDir="column" w="full" align="center" gap="20px">
                     <Textarea
                       onFocus={() => setInputActive(true)}
-                      onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
-                      onChange={(e) => setNameIllustrationPrev([e.target.value])}
+                      onChange={(e) => setTextArea(e.target.value)}
+                      onBlur={() => setNameIllustration([textArea])}
                       w="full"
                       id="textArea"
                       placeholder="Describe the image you would like"
                     />
                     <Button
                       w="-webkit-fit-content"
-                      //@ts-ignore
-                      onClick={() => document.getElementById("textArea")?.value !== "" && makeBlur()}
+                      onClick={() => {
+                        setNameIllustrationPrev([textArea])
+                        //@ts-ignore
+                        document.getElementById("textArea")?.value !== "" && makeFilter({ input: [textArea] })
+                      }}
                       colorScheme={"brand"}
                     >
                       Send Image Request
@@ -715,7 +719,7 @@ function IllustrationItem({
               erasable: false,
               watermark: illustration.license === "paid" && user.plan === "FREE" ? watermarkURL : null,
               preview: illustration.url,
-              src: illustration.url
+              src: `${illustration.url}?${Math.random().toString(36).substring(2, 10)}`
             },
             { desiredSize: 400 }
           )
@@ -742,6 +746,7 @@ function IllustrationItem({
       onDragStart={(e) => {
         dragObject(e)
       }}
+      draggable={true}
       sx={{
         maxHeight: "180px",
         minHeight: "134px",
@@ -904,7 +909,7 @@ function ModalIllustration({
       const options: any = {
         type: "StaticVector",
         name: "Illustration",
-        src: resource.url,
+        src: `${resource.url}?${Math.random().toString(36).substring(2, 10)}`,
         erasable: false,
         watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
       }

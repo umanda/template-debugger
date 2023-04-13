@@ -573,9 +573,12 @@ export const getTemplate = (props: string) => {
 
 export const getUseTemplate = ({ template_id, project_id }) => {
   return new Promise((resolve, reject) => {
-    base.put(`/templates/use`, { template_id, project_id }).then(({ data }: any) => {
-      resolve(data)
-    })
+    base
+      .put(`/templates/use`, { template_id, project_id })
+      .then(({ data }: any) => {
+        resolve(data)
+      })
+      .catch((err) => reject(err))
   })
 }
 
@@ -586,7 +589,7 @@ export const getTemplateById = (id: string): Promise<any> => {
       .then(({ data }) => {
         resolve(data.template)
       })
-      .catch(null)
+      .catch((err) => reject(err))
   })
 }
 

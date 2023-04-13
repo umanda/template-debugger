@@ -47,6 +47,8 @@ export const putTemplate = createAsyncThunk<any, any, { rejectValue: void }>(
       const template = await api.getTemplateById(args)
       dispatch(setUpdateProject(template))
       return template
-    } catch (error) {}
+    } catch (error) {
+      rejectWithValue(error)
+    }
   }
 )

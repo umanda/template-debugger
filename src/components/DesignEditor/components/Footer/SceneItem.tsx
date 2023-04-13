@@ -177,6 +177,7 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
                     justifyContent="left"
                     leftIcon={<Duplicate2 size={20} />}
                     size="xs"
+                    isDisabled={scenes.length >= 20 ? true : false}
                     variant="ghost"
                     onClick={() => handleDuplicateScene(scene.id!)}
                   >
