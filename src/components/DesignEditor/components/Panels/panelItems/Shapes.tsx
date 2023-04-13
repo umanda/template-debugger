@@ -65,8 +65,8 @@ export default function Shapes() {
               type: "StaticVector",
               name: "Shape",
               erasable: false,
-              preview: resource.url,
-              src: resource.url
+              preview: `${resource.url}?${Math.random().toString(36).substring(2, 10)}`,
+              src: `${resource.url}?${Math.random().toString(36).substring(2, 10)}`
             },
             { desiredSize: 300 }
           )
@@ -140,7 +140,8 @@ export default function Shapes() {
         const options: any = {
           type: "StaticVector",
           name: "Shape",
-          src: images.url,
+          preview: `${images.url}?${Math.random().toString(36).substring(2, 10)}`,
+          src: `${images.url}?${Math.random().toString(36).substring(2, 10)}`,
           erasable: false
         }
         if (editor) {

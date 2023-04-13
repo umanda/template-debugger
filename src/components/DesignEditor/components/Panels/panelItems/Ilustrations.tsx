@@ -909,7 +909,7 @@ function ModalIllustration({
       const options: any = {
         type: "StaticVector",
         name: "Illustration",
-        src: resource.url,
+        src: `${resource.url}?${Math.random().toString(36).substring(2, 10)}`,
         erasable: false,
         watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
       }

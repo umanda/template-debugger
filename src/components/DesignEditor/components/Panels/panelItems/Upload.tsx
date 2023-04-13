@@ -236,7 +236,8 @@ export default function Upload() {
       } catch {}
       const options: any = {
         type: resource.type === "svg" ? "StaticVector" : "StaticImage",
-        src: resource.url,
+        preview: `${resource.url}?${Math.random().toString(36).substring(2, 10)}`,
+        src: `${resource.url}?${Math.random().toString(36).substring(2, 10)}`,
         erasable: false,
         metadata: {}
       }
@@ -605,7 +606,8 @@ const UploadItem = ({
   const dragObject = useCallback(async () => {
     const options: any = {
       type: object.type === "svg" ? "StaticVector" : "StaticImage",
-      src: object.url,
+      preview: `${object.url}?${Math.random().toString(36).substring(2, 10)}`,
+      src: `${object.url}?${Math.random().toString(36).substring(2, 10)}`,
       erasable: false
     }
     let img = new Image()
