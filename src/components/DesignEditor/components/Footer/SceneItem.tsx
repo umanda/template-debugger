@@ -122,7 +122,10 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
               : "2px solid #DDDFE5",
           borderRadius: "4px"
         }}
-        onClick={() => setActiveScene(scene.id)}
+        onClick={() => {
+          editor.design.activeScene.objects.deselect()
+          setActiveScene(scene.id)
+        }}
       >
         <Image
           src={preview}
