@@ -985,7 +985,9 @@ class Objects {
       }
     }
 
-    if (refObject) {
+    if (refObject && refObject?.type !== "Frame" &&
+          refObject?.type !== "BackgroundContainer" &&
+          refObject?.type !== "Background") {
       this.scene.editor.clipboard = refObject
     }
   }

@@ -1084,6 +1084,9 @@ function SyncUp({
         return false
       } else if (inputActive === true) {
         return true
+      } else {
+        activeScene.objects.select()
+        return false
       }
     }
     if (
