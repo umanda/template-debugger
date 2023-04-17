@@ -994,21 +994,24 @@ function SyncUp({ user, metaData, onOpen }: { metaData: any; user: any; onOpen: 
   const projectSelect = useSelector(selectProject)
   const toast = useToast()
   const [idScenesPrev, setIdScenesPrev] = useState<string[]>([])
+  const [stateToast, setStateToast] = useState<boolean>(false)
 
-  // useEffect(() => {
-  //   functionSave()
-  // }, [])
-
-  window.addEventListener("offline", onOpenNoInternet)
+  window.addEventListener("offline", () => {
+    onOpenNoInternet()
+    setStateToast(true)
+  })
   window.addEventListener("online", () => {
-    toast({
-      title: "YOUR INTERNET CONNECTION HAS BEEN RESETTED.",
-      status: "success",
-      position: "top",
-      duration: 3000,
-      isClosable: true
-    })
-    onCloseNoInternet()
+    if (stateToast === true) {
+      toast({
+        title: "YOR CONNECTION HAS BEEN RESTORES.",
+        status: "success",
+        position: "top",
+        duration: 3000,
+        isClosable: true
+      })
+      setStateToast(false)
+      onCloseNoInternet()
+    }
   })
 
   document.onkeydown = function (e) {
