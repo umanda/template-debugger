@@ -547,7 +547,7 @@ export default function Ilustrations() {
                           w="full"
                           bg="linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5578606442577031) 27%, rgba(0,212,255,0) 100%)"
                         ></Flex>
-                        <Grid gap="2px" templateColumns="repeat(2, 1fr)">
+                        <Grid w="full" gap="2px" templateColumns="repeat(2, 1fr)">
                           {r?.drawings?.map(
                             (illustration, index) =>
                               illustration && (
@@ -789,7 +789,7 @@ function IllustrationItem({
           <LazyLoadImage url={illustration.preview} />
         </Flex>
       </Flex>
-      {illustration?.drawifier?.name && (
+      {illustration?.drawifier?.name ? (
         <Flex
           sx={{
             justifyContent: "space-between",
@@ -828,6 +828,15 @@ function IllustrationItem({
             </Center>
           </Flex>
         </Flex>
+      ) : (
+        <Center
+          margin="5px"
+          position="absolute"
+          boxSize="21px"
+          sx={{ background: "#F6D056", color: "#FFFFFF", borderRadius: "4px" }}
+        >
+          <Pro size={40} />
+        </Center>
       )}
     </Flex>
   )
