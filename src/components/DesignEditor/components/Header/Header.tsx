@@ -1103,7 +1103,6 @@ function SyncUp({ user, metaData, onOpen }: { metaData: any; user: any; onOpen: 
   }, [stateChange])
 
   useEffect(() => {
-    console.log(projectSelect)
     if (editor && idScenesPrev[0] === undefined) {
       setIdScenesPrev(scenes.map((s) => s.id))
     }
@@ -1145,7 +1144,6 @@ function SyncUp({ user, metaData, onOpen }: { metaData: any; user: any; onOpen: 
           const resolve = await api.getListProjects({ query: {} })
           designJSON.name = `Untitled Project ${resolve.pagination.total_items}`
         }
-        console.log(designJSON)
         if (user) {
           const resolve = await dispatch(updateProject(designJSON))
           resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)

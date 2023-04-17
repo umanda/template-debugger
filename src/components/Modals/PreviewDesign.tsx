@@ -1,8 +1,6 @@
 import React, { useEffect } from "react"
 import {
-  Box,
   Modal,
-  ModalCloseButton,
   ModalContent,
   ModalOverlay,
   Flex,

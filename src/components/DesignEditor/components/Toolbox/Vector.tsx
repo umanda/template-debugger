@@ -29,7 +29,7 @@ export default function Vector() {
     <Flex flex={1} alignItems={"center"} justifyContent={"space-between"}>
       <Flex flexDir="row" gap="10px">
         <Grid gap="10px" templateColumns="repeat(20, 1fr)">
-          {Object.values(colors.colorMap).map((c: any, index) => {
+          {Object?.values(colors?.colorMap)?.map((c: any, index) => {
             return (
               <Flex
                 key={index}

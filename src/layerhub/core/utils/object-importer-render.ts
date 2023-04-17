@@ -87,7 +87,7 @@ class ObjectImporter {
           ...baseOptions,
           underline,
           width: baseOptions.width ? baseOptions.width : 240,
-          text: text ? text : "Empty Text",
+          text: text ? text : "",
           fill: fill ? fill : "#333333",
           ...(textAlign && { textAlign }),
           ...(fontFamily && { fontFamily }),
