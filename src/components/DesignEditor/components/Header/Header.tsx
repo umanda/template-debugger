@@ -1019,7 +1019,7 @@ function SyncUp({ user, metaData, onOpen }: { metaData: any; user: any; onOpen: 
   window.addEventListener("online", () => {
     if (stateToast === true) {
       toast({
-        title: "YOR CONNECTION HAS BEEN RESTORES.",
+        title: "YOUR CONNECTION HAS BEEN RESTORED.",
         status: "success",
         position: "top",
         duration: 3000,

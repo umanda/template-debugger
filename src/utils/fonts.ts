@@ -18,7 +18,7 @@ export const loadFonts = (fonts: { name: string; url: string }[]) => {
   })
 }
 
-const getFontsFromObjects = (objects: Partial<ILayer>[]) => {
+const getFontsFromObjects = (objects: any) => {
   let fonts: any[] = []
   for (const object of objects) {
     if (object.type === "StaticText" || object.type === "DynamicText") {
@@ -26,6 +26,9 @@ const getFontsFromObjects = (objects: Partial<ILayer>[]) => {
         name: (object as Required<IStaticText>).fontFamily,
         url: (object as Required<IStaticText>).fontURL
       })
+      if(object.styles){
+        object.styles.map((s)=>fonts.push({name:s.style.fontFamily,url:s.style.fontURL}))
+      }
     }
     if (object.type === "Group" || object.type === "group") {
       // @ts-ignore
