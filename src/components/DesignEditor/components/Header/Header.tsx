@@ -53,6 +53,10 @@ import ModalUpgradePlan from "../../../Modals/UpgradePlan"
 import useResourcesContext from "~/hooks/useResourcesContext"
 import NoInternet from "../../../Modals/NoInternet"
 import Save from "~/components/Icons/Save"
+import { getTextProperties } from "~/utils/text"
+import { selectFonts } from "~/store/fonts/selector"
+import { initialOptions, TextState } from "../Toolbox/Text"
+import { loadFonts } from "~/utils/fonts"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
@@ -996,8 +1000,17 @@ function SyncUp({ user, metaData, onOpen }: { metaData: any; user: any; onOpen: 
   const { isOpenPreview, switchPage, setSwitchPage } = useIsOpenPreview()
   const projectSelect = useSelector(selectProject)
   const toast = useToast()
+  const fonts = useSelector(selectFonts)
   const [idScenesPrev, setIdScenesPrev] = useState<string[]>([])
   const [stateToast, setStateToast] = useState<boolean>(false)
+  const [state, setState] = React.useState<TextState>(initialOptions)
+
+  React.useEffect(() => {
+    if (activeObject && activeObject.type === "StaticText") {
+      const textProperties = getTextProperties(activeObject, fonts)
+      setState({ ...state, ...textProperties })
+    }
+  }, [activeObject, scenes])
 
   window.addEventListener("offline", () => {
     onOpenNoInternet()
@@ -1017,7 +1030,7 @@ function SyncUp({ user, metaData, onOpen }: { metaData: any; user: any; onOpen: 
     }
   })
 
-  document.onkeydown = function (e) {
+  document.onkeydown = async function (e) {
     if ((e.key === "Delete" || e.key === "Backspace") && inputActive === false) {
       if (activeObject !== null && (activeObject?.locked === false || activeObject?.locked === undefined)) {
         activeObject?.type === "StaticText"
@@ -1079,15 +1092,109 @@ function SyncUp({ user, metaData, onOpen }: { metaData: any; user: any; onOpen: 
       }
     }
     if ((e.ctrlKey || e.metaKey) && e.key === "i") {
-      console.log(activeObject)
       if (activeObject.type === "StaticText") {
-        //  activeObject.underline === undefined || activeObject.underline === false
-        //    ? activeScene.objects.updateText({
-        //        underline: true
-        //      })
-        //    : activeScene.objects.updateText({ underline: false })
+        if (state.italic) {
+          let desiredFont
+          if (state.bold) {
+            desiredFont = state.styleOptions.options.find((option) => {
+              const postscriptnames = option.post_script_name.split("-")
+              return postscriptnames[postscriptnames.length - 1].match(/^Bold$/)
+            })
+          } else {
+            desiredFont = state.styleOptions.options.find((option) => {
+              const postscriptnames = option.post_script_name.split("-")
+              return postscriptnames[postscriptnames.length - 1].match(/^Regular$/)
+            })
+          }
+          const font = {
+            name: desiredFont.post_script_name,
+            url: desiredFont.url
+          }
+          await loadFonts([font])
+          activeScene.objects.update({
+            fontFamily: desiredFont.post_script_name,
+            fontURL: font.url
+          })
+          setState({ ...state, italic: false })
+        } else {
+          let desiredFont
+
+          if (state.bold) {
+            desiredFont = state.styleOptions.options.find((option) => {
+              const postscriptnames = option.post_script_name.split("-")
+              return postscriptnames[postscriptnames.length - 1].match(/^BoldItalic$/)
+            })
+          } else {
+            desiredFont = state.styleOptions.options.find((option) => {
+              const postscriptnames = option.post_script_name.split("-")
+              return postscriptnames[postscriptnames.length - 1].match(/^Italic$/)
+            })
+          }
+          const font = {
+            name: desiredFont.post_script_name,
+            url: desiredFont.url
+          }
+          await loadFonts([font])
+          activeScene.objects.updateText({
+            fontFamily: desiredFont.post_script_name,
+            fontURL: font.url
+          })
+          setState({ ...state, italic: true })
+        }
         return false
       }
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === "b") {
+      if (activeObject.type === "StaticText") {
+        if (state.bold) {
+          let desiredFont
+          if (state.italic) {
+            desiredFont = state.styleOptions.options.find((option) => {
+              const postscriptnames = option.post_script_name.split("-")
+              return postscriptnames[postscriptnames.length - 1].match(/^Italic$/)
+            })
+          } else {
+            desiredFont = state.styleOptions.options.find((option) => {
+              const postscriptnames = option.post_script_name.split("-")
+              return postscriptnames[postscriptnames.length - 1].match(/^Regular$/)
+            })
+          }
+          const font = {
+            name: desiredFont.post_script_name,
+            url: desiredFont.url
+          }
+          await loadFonts([font])
+          activeScene.objects.updateText({
+            fontFamily: desiredFont.post_script_name,
+            fontURL: font.url
+          })
+          setState({ ...state, bold: false })
+        } else {
+          let desiredFont
+          if (state.italic) {
+            desiredFont = state.styleOptions.options.find((option) => {
+              const postscriptnames = option.post_script_name.split("-")
+              return postscriptnames[postscriptnames.length - 1].match(/^BoldItalic$/)
+            })
+          } else {
+            desiredFont = state.styleOptions.options.find((option) => {
+              const postscriptnames = option.post_script_name.split("-")
+              return postscriptnames[postscriptnames.length - 1].match(/^Bold$/)
+            })
+          }
+          const font = {
+            name: desiredFont.post_script_name,
+            url: desiredFont.url
+          }
+          await loadFonts([font])
+          activeScene.objects.updateText({
+            fontFamily: desiredFont.post_script_name,
+            fontURL: font.url
+          })
+          setState({ ...state, bold: true })
+        }
+      }
+      return false
     }
     if ((e.ctrlKey || e.metaKey) && e.key === "u") {
       if (activeObject.type === "StaticText") {
