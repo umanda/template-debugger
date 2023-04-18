@@ -22,7 +22,7 @@ import { selectColors } from "~/store/colors/selector"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { HexColorPicker } from "react-colorful"
 import { useAppDispatch, useAppSelector } from "~/store/store"
-import { throttle } from "lodash"
+import { useDebounce } from "use-debounce"
 
 export default function VectorColorPicker() {
   const { setInputActive, indexColorPicker, colors, setColors, setActiveMenu } = useDesignEditorContext()
@@ -40,6 +40,11 @@ export default function VectorColorPicker() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [inputHex, setInputHex] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
   const [inputHexPrev, setInputHexPrev] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
+  const [stateChange] = useDebounce(colorHex, 500)
+
+  useEffect(() => {
+    changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
+  }, [stateChange])
 
   useEffect(() => {
     if (activeObject) activeObject.type !== "StaticVector" && setActiveMenu("Illustrations")
@@ -51,12 +56,14 @@ export default function VectorColorPicker() {
 
   const changeBackgroundColor = useCallback(
     (prev: string, next: string) => {
-      if (activeObject) {
-        editor.design.activeScene.objects.updateLayerColor(prev, next)
+      if (prev !== next) {
+        if (activeObject) {
+          editor.design.activeScene.objects.updateLayerColor(prev, next)
+        }
+        setColors({ ...colors, colorMap: activeObject.colorMap })
+        editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
+        editor.zoom.zoomToRatio(zoomRatio - 0.000000001)
       }
-      setColors({ ...colors, colorMap: activeObject.colorMap })
-      editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
-      editor.zoom.zoomToRatio(zoomRatio - 0.000000001)
     },
     [activeObject, colors, editor]
   )
@@ -122,7 +129,6 @@ export default function VectorColorPicker() {
                     setColorHex(color)
                     setInputHex(color)
                     setInputHexPrev(color)
-                    changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], color)
                   }}
                 />
                 <Box sx={{ padding: "1rem 0", display: "grid", gridTemplateColumns: "40px 1fr", alignItems: "center" }}>
@@ -254,6 +260,11 @@ function HexColorVector({
   const [inputHex, setInputHex] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
   const [inputHexPrev, setInputHexPrev] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
   const [colorHex, setColorHex] = useState<string>("")
+  const [stateChange] = useDebounce(colorHex, 100)
+
+  useEffect(() => {
+    changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
+  }, [stateChange])
 
   useEffect(() => {
     if (isOpenColor === false && colorHex !== "") dispatch(getRecentColor(colorHex))
@@ -298,7 +309,6 @@ function HexColorVector({
                 setColorHex(color)
                 setInputHex(color)
                 setInputHexPrev(color)
-                changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], color)
               }}
             />
             <Box sx={{ padding: "1rem 0", display: "grid", gridTemplateColumns: "40px 1fr", alignItems: "center" }}>

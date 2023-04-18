@@ -41,17 +41,13 @@ const Designer: any = () => {
       if (design && user) {
         setLoadCanva(false)
         const resolve: any = (await dispatch(getProjectByKey(id))).payload
-        setTimeout(async () => {
-          try {
-            await loadGraphicTemplate(resolve)
-            await design.setDesign(resolve)
-          } catch {}
-        }, 100)
+        await loadGraphicTemplate(resolve)
+        await design.setDesign(resolve)
         let sceneNames: string[] = []
         for (const scn of resolve?.scenes) {
           sceneNames.push(scn.name)
         }
-        await loadGraphicTemplate(resolve)
+        // await loadGraphicTemplate(resolve)
         setLoadCanva(true)
         localStorage.removeItem("is_new_project")
       } else {

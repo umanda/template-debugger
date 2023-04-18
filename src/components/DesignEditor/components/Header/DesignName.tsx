@@ -1,12 +1,14 @@
 import React from "react"
 import { Box, Flex, Input } from "@chakra-ui/react"
 import { useDesign, useScenes } from "@layerhub-pro/react"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 
 interface DesignNameState {
   name: string
   width: number
 }
 function DesignName() {
+  const { setInputActive } = useDesignEditorContext()
   const [state, setState] = React.useState<DesignNameState>({ name: "My first design.", width: 0 })
   const spanRef = React.useRef<HTMLDivElement | null>(null)
   const design = useDesign()
@@ -57,7 +59,9 @@ function DesignName() {
         <Input
           id="DesignNameInput"
           variant={"unstyled"}
+          onFocus={() => setInputActive(true)}
           onChange={(e: any) => handleInputChange(e.target.value)}
+          onBeforeInput={() => setInputActive(false)}
           sx={{
             fontSize: "14px",
             color: "#2D3748",
