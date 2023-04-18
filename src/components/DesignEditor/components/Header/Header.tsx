@@ -300,15 +300,16 @@ function ShareMenu() {
   const { setInputActive } = useDesignEditorContext()
   const [email, setEmail] = useState<{ text: string; state: boolean }>({ text: "", state: true })
   const [typeModal, setTypeModal] = useState<string>("")
+  // const [stateToast,setStateToast]=useState<boolean>(false)
 
   const handleDownload = async (type: string) => {
     try {
       if (user?.plan !== "FREE" || type === "jpg") {
         toast({
-          title: "Your project is preparing to download",
+          title: "Downloading your project…",
           status: "loading",
           position: "top",
-          duration: 2000,
+          duration: 100000,
           isClosable: true
         })
         let resolve: any
@@ -324,7 +325,6 @@ function ShareMenu() {
           resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
         }
         const url = resolve.url
-        const fileTypeParts = url.split(".")
         fetch(url)
           .then((result) => result.blob())
           .then((blob) => {
@@ -337,11 +337,14 @@ function ShareMenu() {
               a.click()
             }
           })
+        toast.closeAll()
       } else {
+        toast.closeAll()
         setTypeModal(type.toLocaleUpperCase())
         onOpenUpgradeUser()
       }
     } catch {
+      toast.closeAll()
       toast({
         title: "Oops, there was an error, try again.",
         status: "error",
@@ -1075,19 +1078,39 @@ function SyncUp({ user, metaData, onOpen }: { metaData: any; user: any; onOpen: 
         return false
       }
     }
+    if ((e.ctrlKey || e.metaKey) && e.key === "i") {
+      console.log(activeObject)
+      if (activeObject.type === "StaticText") {
+        //  activeObject.underline === undefined || activeObject.underline === false
+        //    ? activeScene.objects.updateText({
+        //        underline: true
+        //      })
+        //    : activeScene.objects.updateText({ underline: false })
+        return false
+      }
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === "u") {
+      if (activeObject.type === "StaticText") {
+        activeObject.underline === undefined || activeObject.underline === false
+          ? activeScene.objects.updateText({
+              underline: true
+            })
+          : activeScene.objects.updateText({ underline: false })
+      }
+      return false
+    }
     if (
       (e.ctrlKey || e.metaKey) &&
-      (e.key === "u" ||
-        e.key === "k" ||
-        e.key === "m" ||
+      (e.key === "+" ||
+        e.key === "-" ||
         e.key === "e" ||
         e.key === "d" ||
         e.key === "s" ||
         e.key === "z" ||
         e.key === "y")
     ) {
-      if ((e.ctrlKey || e.metaKey) && e.key === "k") editor.zoom.zoomToRatio(zoom + 0.05)
-      if ((e.ctrlKey || e.metaKey) && e.key === "m") editor.zoom.zoomToRatio(zoom - 0.05)
+      if ((e.ctrlKey || e.metaKey) && e.key === "+") editor.zoom.zoomToRatio(zoom + 0.05)
+      if ((e.ctrlKey || e.metaKey) && e.key === "-") editor.zoom.zoomToRatio(zoom - 0.05)
       if ((e.ctrlKey || e.metaKey) && e.key === "d") activeScene.objects.clone()
       if ((e.ctrlKey || e.metaKey) && e.key === "s") functionSave()
       if ((e.ctrlKey || e.metaKey) && e.key === "e") activeScene.objects.remove("all")

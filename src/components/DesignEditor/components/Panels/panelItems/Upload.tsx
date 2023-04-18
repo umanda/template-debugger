@@ -150,7 +150,7 @@ export default function Upload() {
         })
       )
       const resolve: any = await (await dispatch(uploadFile({ file: updatedFile, nameFile: file.name }))).payload
-      setResources([resolve].concat(resources))
+      setResources([{ resolve, preview: resolve.url }].concat(resources))
       setValidateContent(null)
       toast({
         title: "The image was uploaded successfully.",
