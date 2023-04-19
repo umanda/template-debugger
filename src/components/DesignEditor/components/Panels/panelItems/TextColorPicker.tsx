@@ -13,15 +13,12 @@ import { Grid, Popover, PopoverContent, PopoverTrigger, Portal } from "@chakra-u
 import { HexColorPicker } from "react-colorful"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
 import React, { useEffect, useState } from "react"
-import { useAppDispatch, useAppSelector } from "~/store/store"
-import { selectColors } from "~/store/colors/selector"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
-import { getRecentColor } from "~/store/colors/action"
 import { DEFAULT_COLORS } from "~/constants/consts"
+import { stateRecentColors } from "~/utils/recentColors"
 
 export default function TextColorPicker() {
-  const dispatch = useAppDispatch()
-  const recentColors = useAppSelector(selectColors).color
+  const recentColors: string[] | null = JSON.parse(localStorage.getItem("recentColors"))
   const editor = useEditor()
   const activeObject = useActiveObject() as any
   const { setColorText, setActiveMenu, setInputActive } = useDesignEditorContext()
@@ -38,10 +35,6 @@ export default function TextColorPicker() {
     if (activeObject) activeObject.type !== "StaticText" && setActiveMenu("Text")
   }, [activeObject])
 
-  useEffect(() => {
-    if (isOpen === false && colorHex !== "") dispatch(getRecentColor(colorHex))
-  }, [isOpen])
-
   const onChange = (type: string, value: number) => {
     if (editor) {
       if (type.includes("emp")) {
@@ -57,6 +50,7 @@ export default function TextColorPicker() {
     if (editor) {
       setState({ ...state, color })
       activeScene.objects.updateText({ fill: color })
+      stateRecentColors(color, recentColors)
       setColorText(color)
     }
   }
@@ -132,7 +126,6 @@ export default function TextColorPicker() {
               _hover={{ cursor: "pointer" }}
               bg={color}
               onClick={() => {
-                dispatch(getRecentColor(color))
                 updateObjectFill(color)
               }}
               key={index}
@@ -152,7 +145,6 @@ export default function TextColorPicker() {
               _hover={{ cursor: "pointer" }}
               bg={color}
               onClick={() => {
-                dispatch(getRecentColor(color))
                 updateObjectFill(color)
               }}
               key={color}
