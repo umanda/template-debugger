@@ -36,7 +36,7 @@ import { FONT_SIZES, TEXT_ALIGNS } from "~/constants/consts"
 import Down from "../../../Icons/Down"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 
-interface TextState {
+export interface TextState {
   color: string
   bold: boolean
   italic: boolean
@@ -51,7 +51,7 @@ interface StyleOptions {
   options: any[]
 }
 
-const initialOptions: TextState = {
+export const initialOptions: TextState = {
   family: "CoreLang",
   bold: false,
   italic: false,
@@ -170,7 +170,6 @@ export default function Text() {
           return postscriptnames[postscriptnames.length - 1].match(/^Regular$/)
         })
       }
-
       const font = {
         name: desiredFont.post_script_name,
         url: desiredFont.url
@@ -196,7 +195,6 @@ export default function Text() {
           return postscriptnames[postscriptnames.length - 1].match(/^Italic$/)
         })
       }
-
       const font = {
         name: desiredFont.post_script_name,
         url: desiredFont.url

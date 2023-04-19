@@ -17,12 +17,10 @@ import {
 import { useActiveObject, useActiveScene, useEditor, useZoomRatio } from "@layerhub-pro/react"
 import { DEFAULT_COLORS } from "~/constants/consts"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
-import { getRecentColor } from "~/store/colors/action"
-import { selectColors } from "~/store/colors/selector"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { HexColorPicker } from "react-colorful"
-import { useAppDispatch, useAppSelector } from "~/store/store"
 import { useDebounce } from "use-debounce"
+import { stateRecentColors } from "~/utils/recentColors"
 
 export default function VectorColorPicker() {
   const { setInputActive, indexColorPicker, colors, setColors, setActiveMenu } = useDesignEditorContext()
@@ -32,8 +30,7 @@ export default function VectorColorPicker() {
     sliderValue: activeObject?.opacity * 100,
     sliderValueTemp: activeObject?.opacity * 100
   })
-  const dispatch = useAppDispatch()
-  const recentColors = useAppSelector(selectColors).color
+  const recentColors: string[] | null = JSON.parse(localStorage.getItem("recentColors"))
   const activeScene = useActiveScene()
   const zoomRatio = useZoomRatio()
   const [colorHex, setColorHex] = useState<string>("")
@@ -50,16 +47,13 @@ export default function VectorColorPicker() {
     if (activeObject) activeObject.type !== "StaticVector" && setActiveMenu("Illustrations")
   }, [activeObject])
 
-  useEffect(() => {
-    if (isOpen === false && colorHex !== "") dispatch(getRecentColor(colorHex))
-  }, [isOpen])
-
   const changeBackgroundColor = useCallback(
     (prev: string, next: string) => {
       if (prev !== next) {
         if (activeObject) {
           editor.design.activeScene.objects.updateLayerColor(prev, next)
         }
+        stateRecentColors(next, recentColors)
         setColors({ ...colors, colorMap: activeObject.colorMap })
         editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
         editor.zoom.zoomToRatio(zoomRatio - 0.000000001)
@@ -148,7 +142,6 @@ export default function VectorColorPicker() {
                     onChange={(e) => {
                       setInputHex(e.target.value)
                       setInputHexPrev(e.target.value)
-                      dispatch(getRecentColor(colorHex))
                     }}
                     onFocus={() => setInputActive(true)}
                     value={inputHexPrev}
@@ -173,7 +166,7 @@ export default function VectorColorPicker() {
         RECENT COLORS
       </Flex>
       <Grid gridGap="8px" templateColumns="repeat(7, 1fr)">
-        {recentColors.map((color, index) => {
+        {recentColors?.map((color, index) => {
           return (
             <GridItem
               boxSize="34px"
@@ -183,7 +176,6 @@ export default function VectorColorPicker() {
               _hover={{ cursor: "pointer" }}
               bg={color}
               onClick={() => {
-                dispatch(getRecentColor(color))
                 changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], color)
               }}
               key={index}
@@ -198,7 +190,6 @@ export default function VectorColorPicker() {
         {DEFAULT_COLORS.map((color) => (
           <Box
             onClick={() => {
-              dispatch(getRecentColor(color))
               changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], color)
             }}
             borderWidth={Object.values(colors.colorMap)[indexColorPicker] === color ? "2px" : "1px"}
@@ -252,10 +243,8 @@ function HexColorVector({
   c
   changeBackgroundColor: (prev: string, next: string) => void
 }) {
-  const { setInputActive, indexColorPicker, setIndexColorPicker, colors, setColors, setActiveMenu } =
-    useDesignEditorContext()
+  const { setInputActive, indexColorPicker, setIndexColorPicker, colors } = useDesignEditorContext()
   const { isOpen: isOpenColor, onOpen: onOpenColor, onClose: onCloseColor } = useDisclosure()
-  const dispatch = useAppDispatch()
   const ref = useRef<any>()
   const [inputHex, setInputHex] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
   const [inputHexPrev, setInputHexPrev] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
@@ -265,10 +254,6 @@ function HexColorVector({
   useEffect(() => {
     changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
   }, [stateChange])
-
-  useEffect(() => {
-    if (isOpenColor === false && colorHex !== "") dispatch(getRecentColor(colorHex))
-  }, [isOpenColor])
 
   return (
     <Popover
@@ -331,7 +316,6 @@ function HexColorVector({
                   if (e.target.value.length <= 7) {
                     setInputHex(e.target.value)
                     setInputHexPrev(e.target.value)
-                    dispatch(getRecentColor(colorHex))
                   }
                 }}
                 onFocus={() => setInputActive(true)}

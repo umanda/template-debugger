@@ -47,7 +47,6 @@ const Designer: any = () => {
         for (const scn of resolve?.scenes) {
           sceneNames.push(scn.name)
         }
-        // await loadGraphicTemplate(resolve)
         setLoadCanva(true)
         localStorage.removeItem("is_new_project")
       } else {

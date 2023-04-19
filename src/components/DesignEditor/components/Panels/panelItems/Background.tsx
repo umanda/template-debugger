@@ -11,30 +11,23 @@ import {
 } from "@chakra-ui/react"
 import { useEditor } from "@layerhub-pro/react"
 import { DEFAULT_COLORS } from "~/constants/consts"
-import { getRecentColor } from "~/store/colors/action"
-import { selectColors } from "~/store/colors/selector"
-import { useAppDispatch, useAppSelector } from "~/store/store"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { HexColorPicker } from "react-colorful"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
+import { stateRecentColors } from "~/utils/recentColors"
 
 export default function Backogrund() {
-  const dispatch = useAppDispatch()
   const { setInputActive } = useDesignEditorContext()
-  const recentColors = useAppSelector(selectColors).color
+  const recentColors: string[] | null = JSON.parse(localStorage.getItem("recentColors"))
   const editor = useEditor()
-  const [colorHex, setColorHex] = useState<string>("")
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [state, setState] = React.useState<{
     color: string
   }>({ color: "#000000" })
 
-  useEffect(() => {
-    if (isOpen === false && colorHex !== "") dispatch(getRecentColor(colorHex))
-  }, [isOpen])
-
   const setBackgroundColor = (color: string) => {
     setState({ color })
+    stateRecentColors(color, recentColors)
     editor.design.activeScene.background.update({ fill: color })
   }
 
@@ -68,7 +61,6 @@ export default function Backogrund() {
                 <HexColorPicker
                   style={{ width: "100%" }}
                   onChange={(color) => {
-                    setColorHex(color)
                     setBackgroundColor(color)
                   }}
                 />
@@ -88,7 +80,7 @@ export default function Backogrund() {
       </Flex>
       <Flex sx={{ fontSize: "14px" }}>RECENT COLORS</Flex>
       <Grid gridGap="8px" templateColumns="repeat(7, 1fr)">
-        {recentColors.map((color, index) => {
+        {recentColors?.map((color, index) => {
           return (
             <Flex
               boxSize="34px"
@@ -98,7 +90,6 @@ export default function Backogrund() {
               _hover={{ cursor: "pointer" }}
               bg={color}
               onClick={() => {
-                dispatch(getRecentColor(color))
                 setBackgroundColor(color)
               }}
               key={index}
@@ -112,7 +103,6 @@ export default function Backogrund() {
           {DEFAULT_COLORS.map((color) => (
             <Box
               onClick={() => {
-                dispatch(getRecentColor(color))
                 setBackgroundColor(color)
               }}
               key={color}
