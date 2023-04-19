@@ -105,7 +105,7 @@ export default function TextColorPicker() {
                   <Input
                     onFocus={() => setInputActive(true)}
                     onBlur={() => setInputActive(false)}
-                    onChange={(e) => updateObjectFill(e.target.value)}
+                    onChange={(e) => e.target.value.length <= 7 && updateObjectFill(e.target.value)}
                     value={state.color}
                   />
                 </Box>

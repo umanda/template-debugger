@@ -56,6 +56,7 @@ class History {
       if (!undo) {
         return
       }
+      console.log(this.current)
       this.redos.push(this.current)
       this.restore(undo)
     }
