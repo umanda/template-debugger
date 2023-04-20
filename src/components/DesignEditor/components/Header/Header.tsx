@@ -162,15 +162,18 @@ export default function Header() {
         designJSON.key = id
         designJSON.is_updated = true
         designJSON.scenes.map((e: any, index: number) => {
-          if (idScenesPrev[index] === e.id) {
-            e.is_updated = false
-          } else {
-            e.is_updated = true
-          }
           e.name = scenes[index]?.scene?.name
           e.position = index
           e.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
           return e
+        })
+        designJSON.scenes.map((s, i) => {
+          console.log(i)
+          if (JSON.stringify(designJSON?.scenes[i]?.layers) === JSON.stringify(projectSelect?.scenes[i]?.layers)) {
+            s.is_updated = false
+          } else {
+            s.is_updated = true
+          }
         })
         setIdScenesPrev(scenes.map((s) => s.id))
         if (designJSON.name === "") {
@@ -212,7 +215,9 @@ export default function Header() {
           }
         }
       }
-    } catch (err: any) {}
+    } catch (err: any) {
+      console.log(err)
+    }
   }, [editor, scenes, id, design, autoSave, metaData])
 
   useEffect(() => {
