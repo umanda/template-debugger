@@ -116,7 +116,7 @@ export default function TextColorPicker() {
       </Flex>
       <Flex sx={{ fontSize: "14px" }}>RECENT COLORS</Flex>
       <Grid gridGap="8px" templateColumns="repeat(7, 1fr)">
-        {recentColors.map((color, index) => {
+        {recentColors?.map((color, index) => {
           return (
             <GridItem
               boxSize="34px"
