@@ -1261,6 +1261,7 @@ function SyncUp({ user, metaData, onOpen }: { metaData: any; user: any; onOpen: 
       if (user.type !== "admin") {
         let designJSON: any = design?.toJSON()
         designJSON.key = id
+        designJSON.is_updated = true
         designJSON.scenes.map((e: any, index: number) => {
           if (idScenesPrev[index] === e.id) {
             e.is_updated = false

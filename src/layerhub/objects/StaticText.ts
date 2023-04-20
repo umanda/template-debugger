@@ -82,16 +82,15 @@ export class StaticTextObject extends fabric.Textbox {
       erasable: false
     })
     if (styles) {
-      // text.split(/\r\n|\r|\n/).map((t)=>)
       // @ts-ignore
       styles.forEach((style,i) => {
         const prevArrayLetters = text.split("").filter((t,i)=>i<=style.start)
-        const currentArrayLetters = text.split("").filter((t,i)=>i>style.start && i<=style.end && t)
         let contPrevLineBreak = 0
-        let contCurrentLineBreak = 0
         for(const t of prevArrayLetters){
           t==="\n" && contPrevLineBreak++
         }
+        const currentArrayLetters = text.split("").filter((t,i)=>i>style.start && i<=style.end && t)
+        let contCurrentLineBreak = 0
         for(const t of currentArrayLetters){
           t==="\n" && contCurrentLineBreak++
         }
