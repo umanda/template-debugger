@@ -420,27 +420,39 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
         await functionSave()
         if (editor && user) {
           resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
+          if (resolve.has_preview) {
+            const url = resolve.url
+            fetch(url)
+              .then((result) => result.blob())
+              .then((blob) => {
+                if (blob != null) {
+                  const url = window.URL.createObjectURL(blob)
+                  const a = document.createElement("a")
+                  a.href = url
+                  a.download = projectSelect.name
+                  document.body.appendChild(a)
+                  a.click()
+                }
+              })
+            toast.closeAll()
+          } else {
+            toast.closeAll()
+            toast({
+              title: "Wait a moment, the images are being created",
+              status: "warning",
+              position: "top",
+              duration: 3000,
+              isClosable: true
+            })
+          }
         }
-        const url = resolve.url
-        fetch(url)
-          .then((result) => result.blob())
-          .then((blob) => {
-            if (blob != null) {
-              const url = window.URL.createObjectURL(blob)
-              const a = document.createElement("a")
-              a.href = url
-              a.download = projectSelect.name
-              document.body.appendChild(a)
-              a.click()
-            }
-          })
-        toast.closeAll()
       } else {
         toast.closeAll()
         setTypeModal(type.toLocaleUpperCase())
         onOpenUpgradeUser()
       }
-    } catch {
+    } catch (err: any) {
+      console.log(err)
       toast.closeAll()
       toast({
         title: "Oops, there was an error, try again.",
