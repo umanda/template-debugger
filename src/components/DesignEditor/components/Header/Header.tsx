@@ -73,6 +73,12 @@ export default function Header() {
     undo: 0,
     redo: 0
   })
+  const { id } = useParams()
+  const dispatch = useAppDispatch()
+  const [autoSave, setAutoSave] = useState<boolean>(false)
+  const [idScenesPrev, setIdScenesPrev] = useState<string[]>([])
+  const [stateJson, setStateJson] = useState<any>("")
+  const [stateChange] = useDebounce(stateJson, 2000)
   const [textButtonSave, setTextButtonSave] = useState<string>(null)
   const templateId = localStorage.getItem("template_id")
   const editor = useEditor()
@@ -90,8 +96,37 @@ export default function Header() {
   })
 
   React.useEffect(() => {
+    let watcher = async () => {
+      setStateJson(JSON.stringify(editor.design.toJSON()))
+    }
+    if (editor) {
+      editor.on("history:updated", watcher)
+    }
+    return () => {
+      if (editor) {
+        editor.off("history:updated", watcher)
+      }
+    }
+  }, [editor])
+
+  useEffect(() => {
+    try {
+      if (activeScene && stateJson !== "") {
+        functionSave()
+      }
+    } catch {}
+  }, [stateChange])
+
+  React.useEffect(() => {
     validateButtonSave()
   }, [])
+
+  useEffect(() => {
+    if (editor && idScenesPrev[0] === undefined) {
+      setIdScenesPrev(scenes.map((s) => s.id))
+    }
+    stateJson !== "" && setAutoSave(false)
+  }, [scenes, scenes.length])
 
   React.useEffect(() => {
     setMetaData({
@@ -119,6 +154,66 @@ export default function Header() {
     },
     [stateName, design]
   )
+
+  const functionSave = useCallback(async () => {
+    try {
+      if (user.type !== "admin") {
+        let designJSON: any = design?.toJSON()
+        designJSON.key = id
+        designJSON.is_updated = true
+        designJSON.scenes.map((e: any, index: number) => {
+          if (idScenesPrev[index] === e.id) {
+            e.is_updated = false
+          } else {
+            e.is_updated = true
+          }
+          e.name = scenes[index]?.scene?.name
+          e.position = index
+          e.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          return e
+        })
+        setIdScenesPrev(scenes.map((s) => s.id))
+        if (designJSON.name === "") {
+          const resolve = await api.getListProjects({ query: {} })
+          designJSON.name = `Untitled Project ${resolve.pagination.total_items}`
+        }
+        if (user) {
+          const resolve = await dispatch(updateProject(designJSON))
+          resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
+        }
+      } else {
+        let designJSON: any = design?.toJSON()
+        designJSON.key = projectSelect ? projectSelect.key : id
+        designJSON.scenes.map((e: any, index: number) => {
+          e.name = scenes[index]?.scene?.name
+          e.position = 0
+          designJSON.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          e.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
+          return e
+        })
+        designJSON.tags = projectSelect ? projectSelect.tags : metaData.tags
+        designJSON.colors = projectSelect ? projectSelect.colors : []
+        designJSON.layout_id = projectSelect ? projectSelect.layout.id : 1
+        designJSON.description = projectSelect ? projectSelect.description : metaData.description
+        designJSON.plan = projectSelect ? projectSelect.plan : metaData.plan
+        designJSON.frame = {
+          name: designJSON.frame.name,
+          visibility: projectSelect ? projectSelect?.frame?.visibility : metaData.visibility.toLocaleLowerCase(),
+          width: designJSON.scenes[0].frame.width,
+          height: designJSON.scenes[0].frame.height
+        }
+        designJSON.name === "" && (designJSON.name = `Untitled Template`)
+        if (user) {
+          const resolve = await api.putTemplate(designJSON)
+          if (resolve?.template) {
+            setAutoSave(false)
+          } else {
+            setAutoSave(true)
+          }
+        }
+      }
+    } catch (err: any) {}
+  }, [editor, scenes, id, design, autoSave, metaData])
 
   useEffect(() => {
     let undoPrev: any[] = activeScene?.history.undos
@@ -174,7 +269,7 @@ export default function Header() {
               />
             </Tooltip>
           </Flex>
-          <SyncUp metaData={metaData} user={user} onOpen={onOpen} />
+          <SyncUp autoSave={autoSave} functionSave={functionSave} user={user} onOpen={onOpen} />
         </Flex>
       </Flex>
       <DesignName />
@@ -269,7 +364,7 @@ export default function Header() {
             </PopoverContent>
           </Popover>
         )}
-        <ShareMenu />
+        <ShareMenu functionSave={functionSave} />
         <Button
           className="btn-preview"
           colorScheme={"orange"}
@@ -287,7 +382,7 @@ export default function Header() {
   )
 }
 
-function ShareMenu() {
+function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const activeScene = useActiveScene()
   const editor = useEditor()
   const dispatch = useAppDispatch()
@@ -317,14 +412,7 @@ function ShareMenu() {
           isClosable: true
         })
         let resolve: any
-        let designJSON: any = design?.toJSON()
-        designJSON.key = id
-        designJSON.scenes.map((e: any, index: number) => {
-          e.position = index
-          e.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-          return e
-        })
-        await dispatch(updateProject(designJSON))
+        await functionSave()
         if (editor && user) {
           resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
         }
@@ -444,20 +532,20 @@ function ShareMenu() {
     }
   }, [email])
 
-  const makeMagicLink = useCallback(async () => {
-    try {
-      const resolve = await api.makeMagicLink(id)
-      setValueInput(resolve.url)
-    } catch {
-      toast({
-        title: "Please try agayn",
-        status: "warning",
-        position: "top",
-        duration: 5000,
-        isClosable: true
-      })
-    }
-  }, [])
+  // const makeMagicLink = useCallback(async () => {
+  //   try {
+  //     const resolve = await api.makeMagicLink(id)
+  //     setValueInput(resolve.url)
+  //   } catch {
+  //     toast({
+  //       title: "Please try agayn",
+  //       status: "warning",
+  //       position: "top",
+  //       duration: 5000,
+  //       isClosable: true
+  //     })
+  //   }
+  // }, [])
 
   useEffect(() => {
     if (valueInput !== "") {
@@ -983,25 +1071,28 @@ function UserMenu() {
   )
 }
 
-function SyncUp({ user, metaData, onOpen }: { metaData: any; user: any; onOpen: () => void }) {
+function SyncUp({
+  user,
+  autoSave,
+  onOpen,
+  functionSave
+}: {
+  autoSave: boolean
+  user: any
+  onOpen: () => void
+  functionSave: () => Promise<void>
+}) {
   const design = useDesign()
-  const { id } = useParams()
   const { inputActive, activeScene: booleanScene } = useDesignEditorContext()
-  const dispatch = useAppDispatch()
   const editor = useEditor()
   const activeScene = useActiveScene()
   const scenes: any = useScenes()
-  const [autoSave, setAutoSave] = useState<boolean>(false)
-  const [stateJson, setStateJson] = useState<any>("")
-  const [stateChange] = useDebounce(stateJson, 2000)
   const zoom = useZoomRatio()
   const activeObject: any = useActiveObject()
   const { isOpen: isOpenNoInternet, onOpen: onOpenNoInternet, onClose: onCloseNoInternet } = useDisclosure()
   const { isOpenPreview, switchPage, setSwitchPage } = useIsOpenPreview()
-  const projectSelect = useSelector(selectProject)
   const toast = useToast()
   const fonts = useSelector(selectFonts)
-  const [idScenesPrev, setIdScenesPrev] = useState<string[]>([])
   const [stateToast, setStateToast] = useState<boolean>(false)
   const [state, setState] = React.useState<TextState>(initialOptions)
 
@@ -1227,101 +1318,11 @@ function SyncUp({ user, metaData, onOpen }: { metaData: any; user: any; onOpen: 
     } else return true
   }
 
-  useEffect(() => {
-    try {
-      if (activeScene && stateJson !== "") {
-        functionSave()
-      }
-    } catch {}
-  }, [stateChange])
-
-  useEffect(() => {
-    if (editor && idScenesPrev[0] === undefined) {
-      setIdScenesPrev(scenes.map((s) => s.id))
-    }
-    stateJson !== "" && setAutoSave(false)
-  }, [scenes, scenes.length])
-
-  React.useEffect(() => {
-    let watcher = async () => {
-      setStateJson(JSON.stringify(editor.design.toJSON()))
-    }
-    if (editor) {
-      editor.on("history:updated", watcher)
-    }
-    return () => {
-      if (editor) {
-        editor.off("history:updated", watcher)
-      }
-    }
-  }, [editor])
-
-  const functionSave = useCallback(async () => {
-    try {
-      if (user.type !== "admin") {
-        let designJSON: any = design?.toJSON()
-        designJSON.key = id
-        designJSON.is_updated = true
-        designJSON.scenes.map((e: any, index: number) => {
-          if (idScenesPrev[index] === e.id) {
-            e.is_updated = false
-          } else {
-            e.is_updated = true
-          }
-          e.name = scenes[index]?.scene?.name
-          e.position = index
-          e.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-          return e
-        })
-        setIdScenesPrev(scenes.map((s) => s.id))
-        if (designJSON.name === "") {
-          const resolve = await api.getListProjects({ query: {} })
-          designJSON.name = `Untitled Project ${resolve.pagination.total_items}`
-        }
-        if (user) {
-          const resolve = await dispatch(updateProject(designJSON))
-          resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
-        }
-      } else {
-        let designJSON: any = design?.toJSON()
-        designJSON.key = projectSelect ? projectSelect.key : id
-        designJSON.scenes.map((e: any, index: number) => {
-          e.name = scenes[index]?.scene?.name
-          e.position = 0
-          designJSON.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-          e.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-          return e
-        })
-        designJSON.tags = projectSelect ? projectSelect.tags : metaData.tags
-        designJSON.colors = projectSelect ? projectSelect.colors : []
-        designJSON.layout_id = projectSelect ? projectSelect.layout.id : 1
-        designJSON.description = projectSelect ? projectSelect.description : metaData.description
-        designJSON.plan = projectSelect ? projectSelect.plan : metaData.plan
-        designJSON.frame = {
-          name: designJSON.frame.name,
-          visibility: projectSelect ? projectSelect?.frame?.visibility : metaData.visibility.toLocaleLowerCase(),
-          width: designJSON.scenes[0].frame.width,
-          height: designJSON.scenes[0].frame.height
-        }
-        designJSON.name === "" && (designJSON.name = `Untitled Template`)
-        if (user) {
-          const resolve = await api.putTemplate(designJSON)
-          if (resolve?.template) {
-            setAutoSave(false)
-          } else {
-            setAutoSave(true)
-          }
-        }
-      }
-    } catch (err: any) {}
-  }, [editor, scenes, id, design, autoSave, metaData])
-
   return (
     <Flex>
       <NoInternet isOpen={isOpenNoInternet} onClose={onCloseNoInternet} onOpen={onOpenNoInternet} />
       <Tooltip label="Click here to Save" fontSize="md">
         <Button
-          // isDisabled={autoSave===}
           variant={"ghost"}
           aria-label="sync status"
           color={autoSave === false ? "#F56565" : "#15BE53"}
