@@ -168,7 +168,6 @@ export default function Header() {
           return e
         })
         designJSON.scenes.map((s, i) => {
-          console.log(i)
           if (JSON.stringify(designJSON?.scenes[i]?.layers) === JSON.stringify(projectSelect?.scenes[i]?.layers)) {
             s.is_updated = false
           } else {
@@ -215,9 +214,7 @@ export default function Header() {
           }
         }
       }
-    } catch (err: any) {
-      console.log(err)
-    }
+    } catch (err: any) {}
   }, [editor, scenes, id, design, autoSave, metaData])
 
   useEffect(() => {
@@ -452,7 +449,6 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
         onOpenUpgradeUser()
       }
     } catch (err: any) {
-      console.log(err)
       toast.closeAll()
       toast({
         title: "Oops, there was an error, try again.",
