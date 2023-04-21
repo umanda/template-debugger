@@ -69,7 +69,7 @@ export default function Backogrund() {
                   <Input
                     onBlur={() => setInputActive(false)}
                     onFocus={() => setInputActive(true)}
-                    onChange={(e) => setBackgroundColor(e.target.value)}
+                    onChange={(e) => e.target.value.length <= 7 && setBackgroundColor(e.target.value)}
                     value={state.color}
                   />
                 </Box>

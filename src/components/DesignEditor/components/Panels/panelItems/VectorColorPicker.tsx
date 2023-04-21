@@ -140,8 +140,10 @@ export default function VectorColorPicker() {
                       }
                     }}
                     onChange={(e) => {
-                      setInputHex(e.target.value)
-                      setInputHexPrev(e.target.value)
+                      if (e.target.value.length <= 7) {
+                        setInputHex(e.target.value)
+                        setInputHexPrev(e.target.value)
+                      }
                     }}
                     onFocus={() => setInputActive(true)}
                     value={inputHexPrev}

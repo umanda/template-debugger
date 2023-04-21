@@ -16,7 +16,7 @@ const REF_TARGET = {
   NEON: "stroke",
   HOLLOW: "stroke",
   LIFT: "fill",
-  SHADOW: "fill",
+  SHADOW: "fill"
 }
 
 export class StaticTextObject extends fabric.Textbox {
@@ -42,17 +42,17 @@ export class StaticTextObject extends fabric.Textbox {
           .slice(1, matchWord.length - 1)
           .toLowerCase()
           .split(" ")
-          .join("_"),
+          .join("_")
       })
     }
     return params
   }
 
   private registerHoverEvent() {
-    this.canvas!.on("mouse:move", (e) => {
+    this.canvas!.on("mouse:move", e => {
       if (!this.isEditing && e.target === this) {
         const pointer = this.canvas!.getPointer(e.e, false)
-        const key = this.paramBounds.find((key) => {
+        const key = this.paramBounds.find(key => {
           if (
             pointer.x >= key.left + this.left &&
             pointer.x <= this.left + key.left + key.width &&
@@ -79,27 +79,37 @@ export class StaticTextObject extends fabric.Textbox {
     //@ts-ignore
     super.initialize(text, {
       ...textOptions, // @ts-ignore
-      erasable: false,
+      erasable: false
     })
     if (styles) {
       // @ts-ignore
-      styles.forEach((style) => {
-        this.setSelectionStyles(style.style, style.start, style.end)
+      styles.forEach((style,i) => {
+        const prevArrayLetters = text.split("").filter((t,i)=>i<=style.start)
+        let contPrevLineBreak = 0
+        for(const t of prevArrayLetters){
+          t==="\n" && contPrevLineBreak++
+        }
+        const currentArrayLetters = text.split("").filter((t,i)=>i>style.start && i<=style.end && t)
+        let contCurrentLineBreak = 0
+        for(const t of currentArrayLetters){
+          t==="\n" && contCurrentLineBreak++
+        }
+        this.setSelectionStyles(style.style, style.start+contPrevLineBreak, style.end+contCurrentLineBreak+contPrevLineBreak)
       })
     }
     this.on("added", () => {
-      // this.registerHoverEvent()
-      // this.updateParams()
+      this.registerHoverEvent()
+      this.updateParams()
     })
     this.on("editing:entered", () => {
-      // this.clearStyles()
+      this.clearStyles()
     })
     this.on("editing:exited", () => {
-      // this.updateParams()
+      this.updateParams()
     })
 
     this.on("modified", () => {
-      // this.updateParams()
+      this.updateParams()
     })
 
     this.on("mouseup", this.handleMouseUp)
@@ -111,7 +121,7 @@ export class StaticTextObject extends fabric.Textbox {
     if (!this.isEditing && this.canvas) {
       const pointer = this.canvas!.getPointer(e.e, false)
       // @ts-ignore
-      const param = this.paramBounds.find((param) => {
+      const param = this.paramBounds.find(param => {
         if (
           pointer.x >= param.left + this.left &&
           pointer.x <= this.left + param.left + param.width &&
@@ -134,20 +144,20 @@ export class StaticTextObject extends fabric.Textbox {
           object: this,
           position: {
             left: left + padLeft + param.width * zoom + param.left,
-            top: top + padTop + param.height * zoom + param.top,
+            top: top + padTop + param.height * zoom + param.top
           },
-          param,
+          param
         }
         this.canvas!.fire("param:selected", eventData)
       }
     }
   }
   updateParam(key: string, name: string) {
-    this.params = this.params.map((p) => {
+    this.params = this.params.map(p => {
       if (p.key === key) {
         return {
           ...p,
-          name,
+          name
         }
       }
       return p
@@ -158,12 +168,12 @@ export class StaticTextObject extends fabric.Textbox {
     const params = this.getParamsFromKeys(this.text!)
 
     if (this.params) {
-      const updatedParams = params.map((param) => {
-        const existingParam = this.params.find((p) => p.key === param.key)
+      const updatedParams = params.map(param => {
+        const existingParam = this.params.find(p => p.key === param.key)
         if (existingParam) {
           return {
             ...param,
-            name: existingParam.name,
+            name: existingParam.name
           }
         }
         return param
@@ -172,17 +182,17 @@ export class StaticTextObject extends fabric.Textbox {
     } else {
       this.params = params
     }
-
-    this.params.forEach((param) => {
-      const size = param.endIndex - param.startIndex
-      const fillText = Array(size).fill("M")
-      const fillStyle = Array(size).fill({
-        textBackgroundColor: "#dcdde1",
-        key: param.key,
-        id: param.id,
-        name: param.name,
-      })
-      this.insertNewStyleBlock(fillText, param.startIndex, fillStyle)
+    this.params.forEach(param => {
+      this.setSelectionStyles(
+        {
+          textBackgroundColor: "#dcdde1",
+          key: param.key,
+          id: param.id,
+          name: param.name
+        },
+        param.startIndex,
+        param.endIndex
+      )
     })
   }
 
@@ -190,13 +200,13 @@ export class StaticTextObject extends fabric.Textbox {
     setTimeout(() => {
       let textLines = this.getUpdatedTextLines()
       let paramBounds: any[] = []
-      textLines.forEach((textLine) => {
+      textLines.forEach(textLine => {
         const lineHeight = this.__lineHeights[parseInt(textLine.textStyleGroupIndex)]
         const params = this.getKeysFromTextStyles(textLine.lineStyles)
-        const linekeyBounds = params.map((param) => {
-          const charBounds = this.__charBounds![textLine.lineIndex].map((cbs) => ({
+        const linekeyBounds = params.map(param => {
+          const charBounds = this.__charBounds![textLine.lineIndex].map(cbs => ({
             ...cbs,
-            top: lineHeight * textLine.lineIndex,
+            top: lineHeight * textLine.lineIndex
           }))
           const charBoundMin = charBounds[param.startIndex - textLine.startIndex]
           const charBoundMax = charBounds[param.endIndex - 1 - textLine.startIndex]
@@ -218,7 +228,7 @@ export class StaticTextObject extends fabric.Textbox {
             left: shift + charBoundMin.left,
             top: charBoundMin.top,
             width: charBoundMax.width + charBoundMax.left - charBoundMin.left,
-            height: charBoundMin.height,
+            height: charBoundMin.height
           }
           return charBound
         })
@@ -231,30 +241,30 @@ export class StaticTextObject extends fabric.Textbox {
   getKeysFromTextStyles(textSyles: any) {
     let charStyles: any[] = []
     let params: any[] = []
-    Object.keys(textSyles).forEach((style) => {
+    Object.keys(textSyles).forEach(style => {
       if (textSyles[style].key) {
         charStyles = charStyles.concat({
           index: parseInt(style),
           key: textSyles[style].key,
           id: textSyles[style].id,
-          name: textSyles[style].name,
+          name: textSyles[style].name
         })
       }
     })
 
     const groupedCharStyles = groupBy(charStyles, "id")
-    Object.keys(groupedCharStyles).forEach((group) => {
+    Object.keys(groupedCharStyles).forEach(group => {
       const size = groupedCharStyles[group].length
       const key = groupedCharStyles[group][0].key
       const name = groupedCharStyles[group][0].name
-      const indexes = groupedCharStyles[group].map((g) => g.index).sort((a, b) => a - b)
+      const indexes = groupedCharStyles[group].map(g => g.index).sort((a, b) => a - b)
       const [startIndex] = [indexes[0]]
       const param = {
         key,
         startIndex,
         name,
         endIndex: startIndex + size,
-        id: group,
+        id: group
       }
       params = params.concat(param)
     })
@@ -306,11 +316,11 @@ export class StaticTextObject extends fabric.Textbox {
         textStyleGroupIndex,
         startIndex,
         lineIndex: lineIndex,
-        initialText: textLine,
+        initialText: textLine
       })
     })
     const textStyleGroups = this.styles
-    const updatedTextLinesWithStyles = updatedTextLines.map((updatedTextLine) => {
+    const updatedTextLinesWithStyles = updatedTextLines.map(updatedTextLine => {
       const textStyleGroup = textStyleGroups[updatedTextLine.textStyleGroupIndex]
       const indexes = Array(updatedTextLine.text.length)
         .fill(0)
@@ -323,7 +333,32 @@ export class StaticTextObject extends fabric.Textbox {
   }
 
   clearStyles() {
-    this.removeStyleFromTo(0, this.text?.length!)
+    const styleGroups = this.styles
+    Object.keys(styleGroups).forEach(key => {
+      const styleGroup = styleGroups[key]
+      const styleGroupArray = Object.keys(styleGroup).map(k => ({ ...styleGroup[k], startIndex: parseInt(k) }))
+      const groupedById = groupBy(styleGroupArray, "id")
+      Object.keys(groupedById).forEach(k => {
+        if (k !== "undefined" && k !== "null") {
+          const group = groupedById[k]
+          const startIndex = group[0].startIndex
+          const endIndex = startIndex + group.length
+          this.setSelectionStart(startIndex)
+          this.setSelectionEnd(endIndex)
+
+          this.setSelectionStyles(
+            {
+              textBackgroundColor: "",
+              key: null,
+              id: null,
+              name: null
+            },
+            startIndex,
+            endIndex
+          )
+        }
+      })
+    })
   }
 
   updateParams() {
@@ -342,17 +377,17 @@ export class StaticTextObject extends fabric.Textbox {
   toObject(propertiesToInclude = []) {
     return fabric.util.object.extend(super.toObject.call(this, propertiesToInclude), {
       fontURL: this.fontURL,
-      params: this.params.map((p) => ({ key: p.key, name: p.name })),
+      params: this.params.map(p => ({ key: p.key, name: p.name })),
       effect: this.effect,
-      light: this.light,
+      light: this.light
     })
   }
   toJSON(propertiesToInclude = []) {
     return fabric.util.object.extend(super.toObject.call(this, propertiesToInclude), {
       fontURL: this.fontURL,
-      params: this.params.map((p) => ({ key: p.key, name: p.name })),
+      params: this.params.map(p => ({ key: p.key, name: p.name })),
       effect: this.effect,
-      light: this.light,
+      light: this.light
     })
   }
 
@@ -362,7 +397,7 @@ export class StaticTextObject extends fabric.Textbox {
 }
 
 fabric.StaticText = fabric.util.createClass(StaticTextObject, {
-  type: StaticTextObject.type,
+  type: StaticTextObject.type
 })
 fabric.StaticText.fromObject = StaticTextObject.fromObject
 
