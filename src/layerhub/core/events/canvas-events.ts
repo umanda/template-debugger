@@ -94,8 +94,12 @@ class CanvasEvents {
   private objectModified = (event: fabric.IEvent) => {
     const { target } = event
     if (target instanceof fabric.Textbox) {
-      this.scaleTextbox(target)
+      const scaleY= this.scaleTextbox(target)
+      target?.styles[0]===undefined ? null : target?.styles[0]!==(undefined||null) && Object.entries(target.styles[0]).forEach(([key, value]:any) => {
+           if(value.fontSize)value.fontSize=value.fontSize!*scaleY!
+        });
     }
+      
     // @ts-ignore
     if (!target.state) {
       this.editor.design.activeScene.history.save()
@@ -103,13 +107,14 @@ class CanvasEvents {
   }
 
   private scaleTextbox = (target: fabric.Textbox) => {
-    const { fontSize, width, scaleX } = target
+    const { fontSize, width, scaleX,scaleY } = target
     target.set({
       fontSize: fontSize! * scaleX!,
       width: width! * scaleX!,
       scaleX: 1,
       scaleY: 1,
     })
+    return scaleY
   }
 
   onBackgroundSelected = () => {
