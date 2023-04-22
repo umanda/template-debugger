@@ -198,6 +198,7 @@ declare module "fabric" {
       _objects?: fabric.Object[]
       metadata?: Record<string, any>
       clipPath?: undefined | null | fabric.Object
+      styles?:any
     }
   }
 }
