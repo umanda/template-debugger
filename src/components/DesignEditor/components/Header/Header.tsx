@@ -56,7 +56,7 @@ import Save from "~/components/Icons/Save"
 import { getTextProperties } from "~/utils/text"
 import { selectFonts } from "~/store/fonts/selector"
 import { initialOptions, TextState } from "../Toolbox/Text"
-import { loadFonts } from "~/utils/fonts"
+import { loadFonts, loadGraphicTemplate } from "~/utils/fonts"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
@@ -764,15 +764,15 @@ function FileMenu() {
     navigate(`/composer/${generateId("", 10)}`)
   }, [design, scenes, navigate, editor])
 
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoadCanva(false)
     const file = e.target.files![0]
     if (file?.name?.includes(".drawify")) {
       if (file) {
         const reader = new FileReader()
-        reader.onload = (res) => {
+        reader.onload = async (res) => {
           const result = res.target!.result as string
-          handleImportDesign(result)
+          await handleImportDesign(result)
         }
         reader.onerror = (err) => {}
 
@@ -801,7 +801,8 @@ function FileMenu() {
         })
         const props = { key: id, data: data }
         const resolve: any = await api.makeImportProject(props)
-        await editor?.design.setDesign(resolve.project)
+        await loadGraphicTemplate(resolve?.project!)
+        await editor?.design.setDesign(resolve?.project!)
         setLoadCanva(true)
       } catch {
         setLoadCanva(true)
