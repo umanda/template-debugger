@@ -182,7 +182,9 @@ export default function Header() {
         if (user) {
           const resolve = await dispatch(updateProject(designJSON))
           resolve.payload === undefined ? setAutoSave(false) : setAutoSave(true)
+          return resolve.payload
         }
+        return false
       } else {
         let designJSON: any = design?.toJSON()
         designJSON.key = projectSelect ? projectSelect.key : id
@@ -213,9 +215,12 @@ export default function Header() {
             setAutoSave(true)
           }
         }
+        return false
       }
-    } catch (err: any) {}
-  }, [editor, scenes, id, design, autoSave, metaData])
+    } catch (err: any) {
+      return false
+    }
+  }, [editor, scenes, id, design, autoSave, metaData, projectSelect])
 
   useEffect(() => {
     let undoPrev: any[] = activeScene?.history.undos
@@ -414,9 +419,9 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
           isClosable: true
         })
         let resolve: any
-        await functionSave()
+        const project: any = await functionSave()
         if (editor && user) {
-          resolve = await api.getExportProject({ id: projectSelect.id, scene_ids: [], type })
+          resolve = await api.getExportProject({ id: project.id, scene_ids: [], type })
           if (resolve.has_preview) {
             const url = resolve.url
             fetch(url)
