@@ -26,7 +26,8 @@ import {
   Tooltip,
   useDisclosure,
   Textarea,
-  Spacer
+  Spacer,
+  useToast
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
@@ -85,6 +86,7 @@ export default function Ilustrations() {
   const dispatch: any = useAppDispatch()
   const { setInputActive } = useDesignEditorContext()
   const initialFocusRef = useRef<any>()
+  const textAreaRef = useRef<any>()
   const [validateContent, setValidateContent] = useState<string | null>(null)
   let [nameIllustration, setNameIllustration] = useState<string[]>([""])
   let [nameIllustrationPrev, setNameIllustrationPrev] = useState<string[]>([""])
@@ -114,6 +116,7 @@ export default function Ilustrations() {
   const filterResource = localStorage.getItem("drawing_filter")
   const [notIds, setNotIds] = useState<number[]>([])
   const [textArea, setTextArea] = useState<string>()
+  const toast = useToast()
 
   useEffect(() => {
     initialState()
@@ -363,6 +366,32 @@ export default function Ilustrations() {
     makeFilter({ input: [e] })
     makeChangeInput(e)
     onCloseInput()
+  }, [])
+
+  const sendIllustrationRequest = useCallback(async (text: string) => {
+    try {
+      const resolve = await api.setRequestIllustration(text)
+      toast({
+        title:
+          resolve?.is_sent === true
+            ? "Your image request has been submitted successfully!."
+            : "Oops, there was a problem, please try again.",
+        status: resolve?.is_sent === true ? "info" : "warning",
+        position: "top",
+        duration: 3000,
+        isClosable: true
+      })
+      textAreaRef.current.value = ""
+    } catch {
+      toast({
+        title: "Oops, there was a problem, please try again.",
+        status: "info",
+        position: "top",
+        duration: 3000,
+        isClosable: true
+      })
+      textAreaRef.current.value = ""
+    }
   }, [])
 
   const makeAllDraws = useCallback((drawifier: any) => {
@@ -642,20 +671,17 @@ export default function Ilustrations() {
                 ) : (
                   <Flex flexDir="column" w="full" align="center" gap="20px">
                     <Textarea
+                      ref={textAreaRef}
                       onFocus={() => setInputActive(true)}
                       onChange={(e) => setTextArea(e.target.value)}
                       onBlur={() => setNameIllustration([textArea])}
                       w="full"
-                      id="textArea"
                       placeholder="Describe the image you would like"
                     />
                     <Button
+                      isDisabled={textAreaRef?.current?.value! === "" ? true : false}
                       w="-webkit-fit-content"
-                      onClick={() => {
-                        setNameIllustrationPrev([textArea])
-                        //@ts-ignore
-                        document.getElementById("textArea")?.value !== "" && makeFilter({ input: [textArea] })
-                      }}
+                      onClick={() => sendIllustrationRequest(textArea)}
                       colorScheme={"brand"}
                     >
                       Send Image Request

@@ -106,6 +106,19 @@ export const getListRecommend = (props: ISearchRecommend): Promise<any> => {
   })
 }
 
+export const setRequestIllustration = (message: string): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    base
+      .post(`/message/request`, { message })
+      .then(({ data }: any) => {
+        resolve(data)
+      })
+      .catch((err: any) => {
+        reject(err)
+      })
+  })
+}
+
 export const getComments = (props: any): Promise<IListComments> => {
   return new Promise((resolve, reject) => {
     base
