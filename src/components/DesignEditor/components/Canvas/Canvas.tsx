@@ -160,7 +160,7 @@ export default function Canva() {
             margin: 140,
             scroll: {
               enabled: true,
-              limit: 200
+              limit: 20000
             },
             outsideVisible: true,
             guidelines: {

@@ -43,15 +43,13 @@ const Designer: any = () => {
         const resolve: any = (await dispatch(getProjectByKey(id))).payload
         await loadGraphicTemplate(resolve)
         await design.setDesign(resolve)
-        let sceneNames: string[] = []
-        for (const scn of resolve?.scenes) {
-          sceneNames.push(scn.name)
-        }
+        design.activeScene.applyFit()
         setLoadCanva(true)
         localStorage.removeItem("is_new_project")
       } else {
         navigate(`/composer/${generateId("", 10)}`)
         setLoadCanva(true)
+        design.activeScene.applyFit()
       }
     } catch (err: any) {
       try {
@@ -71,6 +69,7 @@ const Designer: any = () => {
           }
         }
         setLoadCanva(true)
+        design.activeScene.applyFit()
       } catch {
         localStorage.removeItem("template_id")
         toast({
@@ -81,6 +80,7 @@ const Designer: any = () => {
           isClosable: true
         })
         setLoadCanva(true)
+        design.activeScene.applyFit()
       }
     }
   }, [id, editor, user, design])

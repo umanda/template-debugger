@@ -60,7 +60,6 @@ import { loadFonts, loadGraphicTemplate } from "~/utils/fonts"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
-const redirectDefaultPage: string = import.meta.env.VITE_REDIRECT_HOME
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -111,7 +110,7 @@ export default function Header() {
 
   useEffect(() => {
     try {
-      if (activeScene && stateJson !== "") {
+      if (activeScene) {
         functionSave()
       }
     } catch {}
@@ -808,6 +807,7 @@ function FileMenu() {
         const resolve: any = await api.makeImportProject(props)
         await loadGraphicTemplate(resolve?.project!)
         await editor?.design.setDesign(resolve?.project!)
+        design.activeScene.applyFit()
         setLoadCanva(true)
       } catch {
         setLoadCanva(true)

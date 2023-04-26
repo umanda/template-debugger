@@ -270,6 +270,7 @@ export default function Template() {
     if (user) {
       api.getUseTemplate({ project_id: projectSelector.id, template_id: loadTemplate?.template.id })
     }
+    activeScene.applyFit()
   }, [loadTemplate, projectSelector, user, activeScene])
 
   const makeChangeInput = useCallback(async (valueInput: string) => {
