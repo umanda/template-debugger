@@ -30,7 +30,7 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
   const toast = useToast()
 
   useEffect(() => {
-    if (id.length === 10) {
+    if (id?.length === 10) {
       initialState()
     } else {
       navigate(`/composer/${generateId("", 10)}`)
