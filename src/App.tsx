@@ -30,7 +30,11 @@ function Loading({ setState, state }: { setState?: React.Dispatch<React.SetState
   const toast = useToast()
 
   useEffect(() => {
-    initialState()
+    if (id?.length === 10) {
+      initialState()
+    } else {
+      navigate(`/composer/${generateId("", 10)}`)
+    }
   }, [id, token])
 
   const initialState = useCallback(async () => {

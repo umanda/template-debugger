@@ -73,7 +73,6 @@ export class Editor extends EventManager {
       })
       // const design = data as IDesign
       const fitRatio = getFitRatio(design.frame, this.canvas.canvas, this.config)
-
       this.design = new Design({
         editor: this,
         canvas: this.canvas.canvas,

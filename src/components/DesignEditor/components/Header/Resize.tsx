@@ -20,6 +20,11 @@ type ResizeMode =
   | "TWITTERPOST"
   | "LINKEDINPOST"
   | "YOUTUBECOVER"
+  | "A4"
+  | "A3"
+  | "A5"
+  | "SQUARE"
+  | "SCREEN"
 
 const PRESETS = {
   FACEBOOKCOVER: {
@@ -39,8 +44,8 @@ const PRESETS = {
     height: 500
   },
   PHOTO: {
-    width: 576,
-    height: 384
+    width: 1800,
+    height: 1200
   },
   LINKEDINCOVER: {
     width: 1584,
@@ -57,7 +62,15 @@ const PRESETS = {
   YOUTUBECOVER: {
     width: 1546,
     height: 360
-  }
+  },
+  SCREEN: {
+    width: 1920,
+    height: 1080
+  },
+  A3: { width: 3508, height: 4961 },
+  SQUARE: { width: 2048, height: 2048 },
+  A4: { width: 2480, height: 3508 },
+  A5: { width: 1748, height: 2480 }
 }
 
 const Resize = () => {
@@ -133,6 +146,26 @@ const Resize = () => {
     if (mode === "FACEBOOKCOVER") {
       newHeight = PRESETS.FACEBOOKCOVER.height
       newWidth = PRESETS.FACEBOOKCOVER.width
+    }
+    if (mode === "SQUARE") {
+      newHeight = PRESETS.SQUARE.height
+      newWidth = PRESETS.SQUARE.width
+    }
+    if (mode === "A4") {
+      newHeight = PRESETS.A4.height
+      newWidth = PRESETS.A4.width
+    }
+    if (mode === "A3") {
+      newHeight = PRESETS.A3.height
+      newWidth = PRESETS.A3.width
+    }
+    if (mode === "A5") {
+      newHeight = PRESETS.A5.height
+      newWidth = PRESETS.A5.width
+    }
+    if (mode === "SCREEN") {
+      newHeight = PRESETS.SCREEN.height
+      newWidth = PRESETS.SCREEN.width
     }
     if (mode === "FACEBOOKPOST") {
       newHeight = PRESETS.FACEBOOKPOST.height
@@ -258,32 +291,28 @@ const Resize = () => {
                 <Box color={"#A9A9B2"}>SIZES</Box>
                 <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", padding: "0.75rem 0" }}>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Radio onClick={() => setMode("FACEBOOKCOVER")} selected={mode === "FACEBOOKCOVER"} />
-                    <Box marginLeft="10px">Facebook Cover</Box>
+                    <Radio onClick={() => setMode("SCREEN")} selected={mode === "SCREEN"} />
+                    <Box marginLeft="10px">Screen</Box>
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Radio onClick={() => setMode("FACEBOOKPOST")} selected={mode === "FACEBOOKPOST"} />
-                    <Box marginLeft="10px">Facebook Post</Box>
-                  </Box>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Radio onClick={() => setMode("INSTAGRAMPOST")} selected={mode === "INSTAGRAMPOST"} />
-                    <Box marginLeft="10px">Instagram Post</Box>
-                  </Box>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Radio onClick={() => setMode("TWITTERCOVER")} selected={mode === "TWITTERCOVER"} />
-                    <Box marginLeft="10px">Twitter Cover</Box>
-                  </Box>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Radio onClick={() => setMode("YOUTUBECOVER")} selected={mode === "YOUTUBECOVER"} />
-                    <Box marginLeft="10px">Youtube Cover</Box>
+                    <Radio onClick={() => setMode("SQUARE")} selected={mode === "SQUARE"} />
+                    <Box marginLeft="10px">Square</Box>
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Radio onClick={() => setMode("PHOTO")} selected={mode === "PHOTO"} />
                     <Box marginLeft="10px">Photo</Box>
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <Radio onClick={() => setMode("TWITTERPOST")} selected={mode === "TWITTERPOST"} />
-                    <Box marginLeft="10px">Twitter Post</Box>
+                    <Radio onClick={() => setMode("A4")} selected={mode === "A4"} />
+                    <Box marginLeft="10px">A4</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Radio onClick={() => setMode("A3")} selected={mode === "A3"} />
+                    <Box marginLeft="10px">A3</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Radio onClick={() => setMode("A5")} selected={mode === "A5"} />
+                    <Box marginLeft="10px">A5</Box>
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Radio onClick={() => setMode("LINKEDINPOST")} selected={mode === "LINKEDINPOST"} />
@@ -292,6 +321,31 @@ const Resize = () => {
                   <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Radio onClick={() => setMode("LINKEDINCOVER")} selected={mode === "LINKEDINCOVER"} />
                     <Box marginLeft="10px">Linkedin Cover</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Radio onClick={() => setMode("FACEBOOKPOST")} selected={mode === "FACEBOOKPOST"} />
+                    <Box marginLeft="10px">Facebook Post</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Radio onClick={() => setMode("FACEBOOKCOVER")} selected={mode === "FACEBOOKCOVER"} />
+                    <Box marginLeft="10px">Facebook Cover</Box>
+                  </Box>
+
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Radio onClick={() => setMode("INSTAGRAMPOST")} selected={mode === "INSTAGRAMPOST"} />
+                    <Box marginLeft="10px">Instagram Post</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Radio onClick={() => setMode("YOUTUBECOVER")} selected={mode === "YOUTUBECOVER"} />
+                    <Box marginLeft="10px">Youtube Cover</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Radio onClick={() => setMode("TWITTERPOST")} selected={mode === "TWITTERPOST"} />
+                    <Box marginLeft="10px">Twitter Post</Box>
+                  </Box>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Radio onClick={() => setMode("TWITTERCOVER")} selected={mode === "TWITTERCOVER"} />
+                    <Box marginLeft="10px">Twitter Cover</Box>
                   </Box>
                 </Box>
               </Box>

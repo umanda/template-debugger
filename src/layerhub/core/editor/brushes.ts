@@ -52,7 +52,7 @@ fabric.Point.prototype.angleBetween = function(that) {
  * Convert a brush drawing on the upperCanvas to an image on the fabric canvas.
  * This makes the drawing editable, it can be moved, rotated, scaled, skewed etc.
  */
-fabric.BaseBrush.prototype.convertToImg = function() {
+fabric.BaseBrush.prototype.convertToImg = function(type?:string) {
   var pixelRatio = this.canvas.getRetinaScaling(),
     c = fabric.util.copyCanvasElement(this.canvas.upperCanvasEl),
     xy = fabric.util.trimCanvas(c),
@@ -66,7 +66,7 @@ fabric.BaseBrush.prototype.convertToImg = function() {
     img
       .set({
         id: nanoid(),
-        name: "Brush",
+        name: type ? type:"Brush",
         left: xy.x / (pixelRatio * zoom) - _vt[4] / zoom,
         top: xy.y / (pixelRatio * zoom) - _vt[5] / zoom,
         scaleX: 1 / (pixelRatio * zoom),
@@ -336,7 +336,7 @@ export const SpraypaintBrush = fabric.util.createClass(fabric.BaseBrush, {
   },
 
   onMouseUp: function() {
-    this.convertToImg()
+    this.convertToImg("Spray")
   },
 
   _render: function() {
@@ -450,7 +450,7 @@ export const MarkerBrush = fabric.util.createClass(fabric.BaseBrush, {
     this.canvas.contextTop.globalAlpha = 1
     var ctx = this.canvas.contextTop
     ctx.closePath()
-    this.convertToImg()
+    this.convertToImg("Highlight")
   }
 })
 
@@ -545,7 +545,7 @@ export const RibbonBrush = fabric.util.createClass(fabric.BaseBrush, {
 
   onMouseUp: function(pointer) {
     clearInterval(this._interval)
-    this.convertToImg()
+    this.convertToImg("Glow")
   },
 
   _render: function() {}
@@ -857,7 +857,7 @@ export const PencilBrush = fabric.util.createClass(
       path.set({
         id: nanoid(),
         opacity: this.opacity,
-        name: "Pencil Brush"
+        name: "Marker"
       })
 
       this.canvas.clearContext(this.canvas.contextTop)

@@ -92,14 +92,13 @@ class CanvasEvents {
   }
 
   private objectModified = (event: fabric.IEvent) => {
-    const { target } = event
+    const { target }:any = event
     if (target instanceof fabric.Textbox) {
       const scaleY= this.scaleTextbox(target)
-      target?.styles[0]===undefined ? null : target?.styles[0]!==(undefined||null) && Object.entries(target.styles[0]).forEach(([key, value]:any) => {
-           if(value.fontSize)value.fontSize=value.fontSize!*scaleY!
-        });
+      Object.keys(target?.styles).map((k)=> Object.entries(target.styles[k]).forEach(([key, value]:any) => {
+             if(value.fontSize)value.fontSize=value.fontSize!*scaleY!
+          }))
     }
-      
     // @ts-ignore
     if (!target.state) {
       this.editor.design.activeScene.history.save()
@@ -107,7 +106,7 @@ class CanvasEvents {
   }
 
   private scaleTextbox = (target: fabric.Textbox) => {
-    const { fontSize, width, scaleX,scaleY } = target
+    const { fontSize, width, scaleX,scaleY,styles } = target
     target.set({
       fontSize: fontSize! * scaleX!,
       width: width! * scaleX!,

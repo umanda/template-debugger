@@ -61,7 +61,7 @@ function DesignName() {
           variant={"unstyled"}
           onFocus={() => setInputActive(true)}
           onChange={(e: any) => handleInputChange(e.target.value)}
-          onBeforeInput={() => setInputActive(false)}
+          onBlur={() => setInputActive(false)}
           sx={{
             fontSize: "14px",
             color: "#2D3748",

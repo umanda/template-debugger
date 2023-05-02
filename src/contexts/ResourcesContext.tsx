@@ -21,6 +21,8 @@ interface IResourcesContext {
   setLoadCanva: React.Dispatch<React.SetStateAction<boolean>>
   previewCanva: string | null
   setPreviewCanva: React.Dispatch<React.SetStateAction<string | null>>
+  dimensionZoom: number | null
+  setDimensionZoom: React.Dispatch<React.SetStateAction<number | null>>
 }
 
 export type BrushType =
@@ -60,7 +62,9 @@ export const ResourcesContext = React.createContext<IResourcesContext>({
   loadCanva: false,
   setLoadCanva: () => {},
   previewCanva: null,
-  setPreviewCanva: () => {}
+  setPreviewCanva: () => {},
+  dimensionZoom: null,
+  setDimensionZoom: () => {}
 })
 
 export const ResourcesContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -76,6 +80,7 @@ export const ResourcesContextProvider = ({ children }: { children: React.ReactNo
   const [order, setOrder] = React.useState<boolean>(false)
   const [loadCanva, setLoadCanva] = React.useState<boolean>(false)
   const [previewCanva, setPreviewCanva] = React.useState<string | null>(null)
+  const [dimensionZoom, setDimensionZoom] = React.useState<number>(null)
   const context = {
     draw,
     setDraw,
@@ -84,7 +89,9 @@ export const ResourcesContextProvider = ({ children }: { children: React.ReactNo
     loadCanva,
     setLoadCanva,
     previewCanva,
-    setPreviewCanva
+    setPreviewCanva,
+    dimensionZoom,
+    setDimensionZoom
   }
   return <ResourcesContext.Provider value={context}>{children}</ResourcesContext.Provider>
 }

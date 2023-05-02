@@ -60,7 +60,6 @@ import { loadFonts, loadGraphicTemplate } from "~/utils/fonts"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
-const redirectDefaultPage: string = import.meta.env.VITE_REDIRECT_HOME
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -111,7 +110,7 @@ export default function Header() {
 
   useEffect(() => {
     try {
-      if (activeScene && stateJson !== "") {
+      if (activeScene) {
         functionSave()
       }
     } catch {}
@@ -675,7 +674,8 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
 
 function FileMenu() {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { setLoadCanva } = useResourcesContext()
+  const { setLoadCanva, loadCanva, setDimensionZoom } = useResourcesContext()
+  const zoomRatio = useZoomRatio()
   const { isOpen: isOpenProject, onClose: onCloseProject, onOpen: onOpenProject } = useDisclosure()
   const { isOpen: isOpenEdit, onClose: onCloseEdit, onOpen: onOpenEdit } = useDisclosure()
   const { isOpen: isOpenView, onClose: onCloseView, onOpen: onOpenView } = useDisclosure()
@@ -701,6 +701,10 @@ function FileMenu() {
     onCloseProject()
     onCloseView()
   }, [isOpen, state])
+
+  useEffect(() => {
+    loadCanva === true && setDimensionZoom(zoomRatio)
+  }, [loadCanva])
 
   const handleLogout = async () => {
     const resolve = await dispatch(logout())
@@ -804,10 +808,12 @@ function FileMenu() {
           duration: 3000,
           isClosable: true
         })
+        setLoadCanva(false)
         const props = { key: id, data: data }
         const resolve: any = await api.makeImportProject(props)
         await loadGraphicTemplate(resolve?.project!)
         await editor?.design.setDesign(resolve?.project!)
+        design.activeScene.applyFit()
         setLoadCanva(true)
       } catch {
         setLoadCanva(true)

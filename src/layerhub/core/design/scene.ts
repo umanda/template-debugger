@@ -401,6 +401,10 @@ class Scene {
   public getFitRatio = () => {
     return getFitRatio(this.frame, this.canvas, this.config)
   }
+
+  public applyFit=()=>{
+    this.editor.zoom.zoomToFit(this.getFitRatio())
+  }
 }
 
 export default Scene
