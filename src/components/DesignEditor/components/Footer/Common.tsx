@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import {
   Box,
   Button,
@@ -37,15 +37,22 @@ import Chat from "../../../Icons/Chat"
 import Bug from "../../../Icons/Bug"
 import LiveChat from "./LiveChat"
 import PanningMode from "./PanningMode"
+import useResourcesContext from "~/hooks/useResourcesContext"
 
 const redirectFaq: string = import.meta.env.VITE_APP_DOMAIN + "/faq"
 const redirectTutorals: string = import.meta.env.VITE_APP_DOMAIN + "/tutorials"
 
 export default function Common() {
   const { setActivePanel, isScenesVisible, setIsScenesVisible, activePanel } = useDesignEditorContext()
+  const { dimensionZoom } = useResourcesContext()
+  const [zoomState, setZoomState] = useState<number>(0)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const zoomRatio = useZoomRatio() as number
   const editor = useEditor()
+
+  useEffect(() => {
+    setZoomState(dimensionZoom / zoomRatio)
+  }, [dimensionZoom, zoomRatio])
 
   const changePanel = useCallback(
     (type: string) => {
@@ -131,7 +138,7 @@ export default function Common() {
             icon={<Minus size={24} />}
             onClick={() => editor.zoom.zoomOut()}
           />
-          <Button variant={"ghost"}>{Math.trunc(zoomRatio * 100)}%</Button>
+          <Button variant={"ghost"}>{Math.trunc(zoomState * 100)}%</Button>
           <IconButton
             variant={"ghost"}
             aria-label="Zoom in"

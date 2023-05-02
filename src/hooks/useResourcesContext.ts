@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { ResourcesContext } from "../contexts/ResourcesContext"
 
 export function useResourcesContext() {
-  const { draw, setDraw, order, setOrder, loadCanva, setLoadCanva, previewCanva, setPreviewCanva } =
+  const { draw, setDraw, order, setOrder, loadCanva, setLoadCanva, previewCanva, setPreviewCanva,setDimensionZoom,dimensionZoom } =
     useContext(ResourcesContext)
   return {
     draw,
@@ -12,7 +12,8 @@ export function useResourcesContext() {
     loadCanva,
     setLoadCanva,
     previewCanva,
-    setPreviewCanva
+    setPreviewCanva,
+    dimensionZoom,setDimensionZoom
   }
 }
 

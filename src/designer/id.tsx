@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react"
 import DesignEditor from "~/components/DesignEditor"
 import SigninModal from "~/components/Modals/AuthModal"
 import { useNavigate, useParams } from "react-router-dom"
-import { useDesign, useEditor } from "@layerhub-pro/react"
+import { useDesign, useEditor, useZoomRatio } from "@layerhub-pro/react"
 import { useAppDispatch } from "~/store/store"
 import { useSelector } from "react-redux"
 import { selectUser } from "~/store/user/selector"
@@ -16,7 +16,7 @@ import { putTemplate } from "~/store/templates/action"
 import { generateId } from "~/utils/unique"
 
 const Designer: any = () => {
-  const { setLoadCanva } = useResourcesContext()
+  const { setLoadCanva, setDimensionZoom, loadCanva } = useResourcesContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [typeSign, setTypeSign] = useState("signin")
   const { id } = useParams()
@@ -28,12 +28,17 @@ const Designer: any = () => {
   const isNewProject = localStorage.getItem("is_new_project")
   const navigate = useNavigate()
   const toast = useToast()
+  const zoomRatio = useZoomRatio() as number
 
   useTokenInterceptor()
 
   useEffect(() => {
     design && lodaTemplateById()
   }, [design])
+
+  useEffect(() => {
+    loadCanva === true && setDimensionZoom(zoomRatio)
+  }, [loadCanva])
 
   const lodaTemplateById = useCallback(async () => {
     const plans = ["FREE", "PRO", "HERO"]
@@ -48,8 +53,8 @@ const Designer: any = () => {
         localStorage.removeItem("is_new_project")
       } else {
         navigate(`/composer/${generateId("", 10)}`)
-        setLoadCanva(true)
         design.activeScene.applyFit()
+        setLoadCanva(true)
       }
     } catch (err: any) {
       try {
@@ -79,11 +84,11 @@ const Designer: any = () => {
           duration: 2000,
           isClosable: true
         })
-        setLoadCanva(true)
         design.activeScene.applyFit()
+        setLoadCanva(true)
       }
     }
-  }, [id, editor, user, design])
+  }, [id, editor, user, design, zoomRatio])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>

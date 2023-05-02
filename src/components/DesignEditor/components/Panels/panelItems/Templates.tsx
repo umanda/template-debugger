@@ -27,7 +27,7 @@ import {
   useToast
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
-import { useActiveScene, useDesign } from "@layerhub-pro/react"
+import { useActiveScene, useDesign, useZoomRatio } from "@layerhub-pro/react"
 import React, { useCallback, useRef, useState } from "react"
 import { useEffect } from "react"
 import { useSelector } from "react-redux"
@@ -56,7 +56,8 @@ import { loadGraphicTemplate } from "~/utils/fonts"
 import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
 
 export default function Template() {
-  const { setLoadCanva, setPreviewCanva } = useResourcesContext()
+  const { setLoadCanva, loadCanva, setPreviewCanva, setDimensionZoom } = useResourcesContext()
+  const zoomRatio = useZoomRatio()
   const { setInputActive } = useDesignEditorContext()
   const dispatch = useAppDispatch()
   const initialFocusRef = useRef<any>()
@@ -97,6 +98,10 @@ export default function Template() {
     },
     sorts: ["LAST_UPDATE"]
   }
+
+  useEffect(() => {
+    loadCanva === true && setDimensionZoom(zoomRatio)
+  }, [loadCanva])
 
   useEffect(() => {
     initialState()
@@ -266,11 +271,11 @@ export default function Template() {
     await loadGraphicTemplate(loadTemplate?.designData)
     await activeScene.setScene(loadTemplate?.designData.scenes[0])
     setPreviewCanva(null)
+    activeScene.applyFit()
     setLoadCanva(true)
     if (user) {
       api.getUseTemplate({ project_id: projectSelector.id, template_id: loadTemplate?.template.id })
     }
-    activeScene.applyFit()
   }, [loadTemplate, projectSelector, user, activeScene])
 
   const makeChangeInput = useCallback(async (valueInput: string) => {
