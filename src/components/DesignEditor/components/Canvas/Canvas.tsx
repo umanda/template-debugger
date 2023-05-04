@@ -164,7 +164,7 @@ export default function Canva() {
             },
             outsideVisible: true,
             guidelines: {
-              enabled: false,
+              enabled: true,
               color: ""
             },
             zoomToMode: "POINT",
