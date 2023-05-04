@@ -14,6 +14,9 @@ import LazyLoadImage from "~/utils/LazyLoadImage"
 import { getListResourcesShapes } from "~/store/resources/action"
 import { selectResourceShapes } from "~/store/resources/selector"
 import { selectProject } from "~/store/project/selector"
+import { useParams } from "react-router-dom"
+import { generateEmptyDesign } from "~/constants/consts"
+import { updateProject } from "~/store/project/action"
 
 const initialQuery = {
   page: 1,
@@ -42,6 +45,7 @@ export default function Shapes() {
   const activeScene = useActiveScene()
   const projectSelect = useSelector(selectProject)
   const activeObject = useActiveObject()
+  const { id } = useParams()
 
   useEffect(() => {
     initialState()
@@ -135,8 +139,9 @@ export default function Shapes() {
   }
 
   const addObject = useCallback(
-    (images: any) => {
+    async (images: any) => {
       try {
+        const ctx = { id: images.id }
         const options: any = {
           type: "StaticVector",
           name: "Shape",
@@ -147,13 +152,16 @@ export default function Shapes() {
         if (editor) {
           activeScene.objects.add(options, { desiredSize: 200 })
         }
-        if (user && projectSelect.id) {
-          const ctx = { id: images.id }
+        if (user && projectSelect) {
           api.useShapes({ project_id: projectSelect.id, resource_id: ctx.id })
+        } else if (user) {
+          const emptyDesign = generateEmptyDesign({ width: 1920, height: 1080 })
+          const resolve = await dispatch(updateProject({ ...emptyDesign, key: id }))
+          api.useShapes({ project_id: resolve?.payload.id, resource_id: ctx.id })
         }
       } catch {}
     },
-    [activeScene, editor, activeObject, projectSelect, user]
+    [activeScene, editor, activeObject, projectSelect, user, id]
   )
 
   const makeFilter = useCallback(
