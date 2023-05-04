@@ -231,9 +231,6 @@ export default function Upload() {
 
   const addObject = useCallback(
     async (resource: any) => {
-      try {
-        await api.getUseUploads(resource.id)
-      } catch {}
       const options: any = {
         type: resource.type === "svg" ? "StaticVector" : "StaticImage",
         preview: `${resource.url}?${Math.random().toString(36).substring(2, 10)}`,
@@ -244,6 +241,9 @@ export default function Upload() {
       if (editor) {
         activeScene.objects.add(options)
       }
+      try {
+        await api.getUseUploads(resource.id)
+      } catch {}
     },
     [activeScene, editor, activeObject, user]
   )

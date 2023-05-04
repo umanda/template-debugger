@@ -55,6 +55,9 @@ import { selectResourceImages } from "~/store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "~/store/resources/action"
 import { selectProject } from "~/store/project/selector"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
+import { updateProject } from "~/store/project/action"
+import { generateEmptyDesign } from "~/constants/consts"
+import { useParams } from "react-router-dom"
 
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 const redirectPayments = import.meta.env.VITE_PAYMENTS
@@ -117,6 +120,7 @@ export default function Ilustrations() {
   const [notIds, setNotIds] = useState<number[]>([])
   const [textArea, setTextArea] = useState<string>()
   const toast = useToast()
+  const { id } = useParams()
 
   useEffect(() => {
     initialState()
@@ -236,6 +240,7 @@ export default function Ilustrations() {
   const addObject = useCallback(
     async (resource: IResource) => {
       try {
+        const ctx = { id: resource.id }
         const options: any = {
           type: "StaticVector",
           name: "Illustration",
@@ -251,12 +256,15 @@ export default function Ilustrations() {
           await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
         }
         if (user && projectSelect) {
-          const ctx = { id: resource.id }
           api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
+        } else if (user) {
+          const emptyDesign = generateEmptyDesign({ width: 1920, height: 1080 })
+          const resolve = await dispatch(updateProject({ ...emptyDesign, key: id }))
+          api.recentResource({ project_id: resolve?.payload.id, resource_id: ctx.id })
         }
       } catch {}
     },
-    [activeScene, editor, activeObject, projectSelect, user]
+    [activeScene, editor, activeObject, projectSelect, user, id]
   )
 
   const makeFilter = async ({

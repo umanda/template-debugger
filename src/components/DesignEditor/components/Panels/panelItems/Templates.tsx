@@ -54,6 +54,9 @@ import { selectProject } from "~/store/project/selector"
 import useResourcesContext from "~/hooks/useResourcesContext"
 import { loadGraphicTemplate } from "~/utils/fonts"
 import ModalUpgradePlan from "../../../../Modals/UpgradePlan"
+import { generateEmptyDesign } from "~/constants/consts"
+import { updateProject } from "~/store/project/action"
+import { useParams } from "react-router-dom"
 
 export default function Template() {
   const { setLoadCanva, loadCanva, setPreviewCanva, setDimensionZoom } = useResourcesContext()
@@ -89,6 +92,7 @@ export default function Template() {
   const projectSelector = useSelector(selectProject)
   const [loadModal, setLoadModal] = useState<boolean>(false)
   const toast = useToast()
+  const { id } = useParams()
   const initialQuery = {
     page: 1,
     limit: 10,
@@ -273,10 +277,14 @@ export default function Template() {
     setPreviewCanva(null)
     activeScene.applyFit()
     setLoadCanva(true)
-    if (user) {
+    if (user && projectSelector) {
       api.getUseTemplate({ project_id: projectSelector.id, template_id: loadTemplate?.template.id })
+    } else if (user) {
+      const emptyDesign = generateEmptyDesign({ width: 1920, height: 1080 })
+      const resolve = await dispatch(updateProject({ ...emptyDesign, key: id }))
+      api.getUseTemplate({ project_id: resolve?.payload.id, template_id: loadTemplate?.template.id })
     }
-  }, [loadTemplate, projectSelector, user, activeScene])
+  }, [loadTemplate, projectSelector, user, activeScene, id])
 
   const makeChangeInput = useCallback(async (valueInput: string) => {
     setNameTemplatePrev([valueInput])
