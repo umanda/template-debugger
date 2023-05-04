@@ -150,7 +150,7 @@ export default function Upload() {
         })
       )
       const resolve: any = await (await dispatch(uploadFile({ file: updatedFile, nameFile: file.name }))).payload
-      setResources([{ resolve, preview: resolve.url }].concat(resources))
+      setResources([resolve].concat(resources))
       setValidateContent(null)
       toast({
         title: "The image was uploaded successfully.",
@@ -239,11 +239,13 @@ export default function Upload() {
         metadata: {}
       }
       if (editor) {
-        activeScene.objects.add(options)
+        await activeScene.objects.add(options)
       }
       try {
         await api.getUseUploads(resource.id)
-      } catch {}
+      } catch (err) {
+        console.log(err)
+      }
     },
     [activeScene, editor, activeObject, user]
   )
@@ -629,7 +631,12 @@ const UploadItem = ({
   }, [object, resources])
 
   return (
-    <Flex border="1px solid #d0d0d0" _hover={{ cursor: "pointer", border: "3px solid #5456F5" }} boxSize="120px">
+    <Flex
+      border="1px solid #d0d0d0"
+      draggable={true}
+      _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
+      boxSize="120px"
+    >
       <IconButton
         position="absolute"
         marginTop="5.5rem"
@@ -643,7 +650,7 @@ const UploadItem = ({
         icon={<Trash size={20} />}
       />
       <Flex onDragStart={dragObject} w="full" h="full" onClick={addObject}>
-        <LazyLoadImage url={object?.preview} />
+        <LazyLoadImage url={object?.url} />
       </Flex>
     </Flex>
   )
