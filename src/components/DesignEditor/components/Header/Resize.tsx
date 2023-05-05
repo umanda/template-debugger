@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Box, Button, Flex, Input, useDisclosure, IconButton, Portal, Grid } from "@chakra-ui/react"
 import { Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from "@chakra-ui/react"
-import { useDesign, useObjects } from "@layerhub-pro/react"
+import { useActiveScene, useDesign, useObjects } from "@layerhub-pro/react"
 import { IFrame } from "@layerhub-pro/types"
 import Lock from "../../../Icons/Lock"
 import Unlock from "../../../Icons/Unlock"
@@ -76,6 +76,7 @@ const PRESETS = {
 const Resize = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [size, setSize] = useState<any>()
+  const activeScene = useActiveScene()
   const objects = useObjects() as any[]
   const design = useDesign()
   const { setInputActive } = useDesignEditorContext()
@@ -206,9 +207,10 @@ const Resize = () => {
           width: newWidth,
           height: newHeight
         })
+        design.setActiveScene(activeScene?.id)
       }
     }
-  }, [displayFrame, mode, size, design])
+  }, [displayFrame, mode, size, design, activeScene])
 
   return (
     <Popover isOpen={isOpen} onClose={onClose} onOpen={onOpen} placement="bottom-start">
