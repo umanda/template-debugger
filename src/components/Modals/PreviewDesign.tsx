@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useCallback, useEffect } from "react"
 import {
   Modal,
   ModalContent,
@@ -12,9 +12,8 @@ import {
   Center,
   ModalFooter
 } from "@chakra-ui/react"
-import { useEditor, useScenes } from "@layerhub-pro/react"
+import { useActiveScene, useScenes } from "@layerhub-pro/react"
 import { motion, AnimatePresence } from "framer-motion"
-import { wrap } from "popmotion"
 import useIsOpenPreview from "~/hooks/useIsOpenPreview"
 import Home from "../Icons/Home"
 import LeftArrow from "../Icons/LeftArrow"
@@ -51,17 +50,20 @@ const swipePower = (offset: number, velocity: number) => {
 
 function PreviewModal() {
   const [[page, direction], setPage] = React.useState([0, 0])
-  const { isOpenPreview, onClosePreview, switchPage } = useIsOpenPreview()
+  const { isOpenPreview, onClosePreview } = useIsOpenPreview()
+  const currentScene = useActiveScene()
   const scenes = useScenes()
   const [images, setImages] = React.useState<string[]>([])
   const [options, setOptions] = React.useState<{ imageIndex: number; maxIndex: number }>({
     imageIndex: 0,
     maxIndex: 0
   })
-  const imageIndex = wrap(0, scenes.length, page)
-  const paginate = (newDirection: number) => {
-    setPage([page + newDirection, newDirection])
-  }
+  const paginate = useCallback(
+    (newDirection: number) => {
+      setPage([page + newDirection, newDirection])
+    },
+    [page]
+  )
 
   useEffect(() => {
     let previews: string[] = []
@@ -70,15 +72,11 @@ function PreviewModal() {
     }
     setImages(previews)
     setOptions({ ...options, maxIndex: previews.length })
+    setPage([
+      page + scenes.findIndex((s) => currentScene.id === s.id),
+      scenes.findIndex((s) => currentScene.id === s.id)
+    ])
   }, [])
-
-  useEffect(() => {
-    isOpenPreview && paginate(-1)
-  }, [switchPage.left])
-
-  useEffect(() => {
-    isOpenPreview && paginate(1)
-  }, [switchPage.right])
 
   return (
     <Modal size="full" isOpen={isOpenPreview} onClose={onClosePreview}>
@@ -99,7 +97,7 @@ function PreviewModal() {
               <Flex h="full" boxShadow="rgba(0, 0, 0, 0.35) 0px 5px 15px">
                 <AnimatePresence initial={false} custom={direction}>
                   <motion.img
-                    src={images[imageIndex]}
+                    src={images[page]}
                     custom={direction}
                     variants={variants}
                     initial="enter"
@@ -114,9 +112,9 @@ function PreviewModal() {
                     dragElastic={1}
                     onDragEnd={(e, { offset, velocity }) => {
                       const swipe = swipePower(offset.x, velocity.x)
-                      if (swipe < -swipeConfidenceThreshold) {
+                      if (swipe < -swipeConfidenceThreshold && page < scenes.length - 1) {
                         paginate(1)
-                      } else if (swipe > swipeConfidenceThreshold) {
+                      } else if (swipe > swipeConfidenceThreshold && page > 0) {
                         paginate(-1)
                       }
                     }}
@@ -127,7 +125,7 @@ function PreviewModal() {
           </Center>
           <ModalFooter marginTop="20px">
             <IconButton
-              visibility={`${imageIndex === 0 ? "hidden" : "visible"}`}
+              visibility={`${page <= 0 ? "hidden" : "visible"}`}
               onClick={() => paginate(-1)}
               size="md"
               variant={"outline"}
@@ -137,7 +135,7 @@ function PreviewModal() {
             <Spacer />
             <IconButton
               zIndex={99}
-              visibility={`${imageIndex >= scenes.length - 1 ? "hidden" : "visible"}`}
+              visibility={`${page >= scenes.length - 1 ? "hidden" : "visible"}`}
               onClick={() => paginate(1)}
               size="md"
               variant={"outline"}

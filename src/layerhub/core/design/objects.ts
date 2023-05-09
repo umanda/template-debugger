@@ -41,12 +41,16 @@ class Objects {
     } else {
       this.scaleOnAdd(object)
     }
+    if( object.type==="StaticText"){
+      (object as fabric.StaticText).enterEditing()
+    }
 
     this.scene.canvas.requestRenderAll()
     this.scene.canvas.setActiveObject(object)
     this.scene.state.setActiveObject(object)
     this.scene.history.save()
     this.updateContextObjects()
+    
   }
 
   public addOnDrag = async (item: Partial<ILayer>, options?: { desiredSize: number }) => {
