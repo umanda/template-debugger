@@ -44,8 +44,7 @@ class Objects {
     if( object.type==="StaticText"){
       (object as fabric.StaticText).enterEditing();
       (object as fabric.StaticText).setSelectionStart(0);
-      //@ts-ignore
-      (object as fabric.StaticText).setSelectionEnd(object.text.length);
+      (object as fabric.StaticText).setSelectionEnd((object as fabric.StaticText).text.length);
     }
 
     this.scene.canvas.requestRenderAll()
@@ -1158,7 +1157,6 @@ class Objects {
     }
 
     activeObject.toGroup()
-
     const groupedActiveObject = canvas.getActiveObject()
     // @ts-ignore
     groupedActiveObject.set({
