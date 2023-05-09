@@ -99,6 +99,9 @@ class CanvasEvents {
              if(value.fontSize)value.fontSize=value.fontSize!*scaleY!
           }))
     }
+    if(target?.text===""){
+      this.editor.design.activeScene.objects.remove(target.id)
+    }
     // @ts-ignore
     if (!target.state) {
       this.editor.design.activeScene.history.save()
