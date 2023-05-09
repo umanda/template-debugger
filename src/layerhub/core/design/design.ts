@@ -36,7 +36,9 @@ class Design {
   }
 
   public async setDesign(design: IDesign) {
-    const fixedDesign = fixDesignFrame(design)
+     var validateDesign = JSON.stringify(design)
+    validateDesign.includes(`"type":"Group"`) ? validateDesign = validateDesign.replace(`"type":"Group"`,`"type":"group"`):null
+    const fixedDesign = fixDesignFrame(JSON.parse(validateDesign))
     this.design = fixedDesign
     this.template = fixedDesign
     await this.loadScenes()
