@@ -42,7 +42,10 @@ class Objects {
       this.scaleOnAdd(object)
     }
     if( object.type==="StaticText"){
-      (object as fabric.StaticText).enterEditing()
+      (object as fabric.StaticText).enterEditing();
+      (object as fabric.StaticText).setSelectionStart(0);
+      //@ts-ignore
+      (object as fabric.StaticText).setSelectionEnd(object.text.length);
     }
 
     this.scene.canvas.requestRenderAll()
