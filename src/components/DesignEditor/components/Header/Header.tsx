@@ -1146,7 +1146,114 @@ function SyncUp({
     }
   })
 
-  document.onkeydown = async function (e) {
+  const makeItalic = useCallback(async () => {
+    try {
+      if (activeObject.type === "StaticText") {
+        if (state.italic) {
+          let desiredFont
+          if (state.bold) {
+            desiredFont = state.styleOptions.options.find((option) => {
+              const postscriptnames = option.post_script_name.split("-")
+              return postscriptnames[postscriptnames.length - 1].match(/^Bold$/)
+            })
+          } else {
+            desiredFont = state.styleOptions.options.find((option) => {
+              const postscriptnames = option.post_script_name.split("-")
+              return postscriptnames[postscriptnames.length - 1].match(/^Regular$/)
+            })
+          }
+          const font = {
+            name: desiredFont.post_script_name,
+            url: desiredFont.url
+          }
+          await loadFonts([font])
+          activeScene.objects.update({
+            fontFamily: desiredFont.post_script_name,
+            fontURL: font.url
+          })
+          setState({ ...state, italic: false })
+        } else {
+          let desiredFont
+
+          if (state.bold) {
+            desiredFont = state.styleOptions.options.find((option) => {
+              const postscriptnames = option.post_script_name.split("-")
+              return postscriptnames[postscriptnames.length - 1].match(/^BoldItalic$/)
+            })
+          } else {
+            desiredFont = state.styleOptions.options.find((option) => {
+              const postscriptnames = option.post_script_name.split("-")
+              return postscriptnames[postscriptnames.length - 1].match(/^Italic$/)
+            })
+          }
+          const font = {
+            name: desiredFont.post_script_name,
+            url: desiredFont.url
+          }
+          await loadFonts([font])
+          activeScene.objects.updateText({
+            fontFamily: desiredFont.post_script_name,
+            fontURL: font.url
+          })
+          setState({ ...state, italic: true })
+        }
+      }
+    } catch {}
+  }, [activeObject, state, activeScene])
+
+  const makeBold = useCallback(async () => {
+    if (activeObject.type === "StaticText") {
+      if (state.bold) {
+        let desiredFont
+        if (state.italic) {
+          desiredFont = state.styleOptions.options.find((option) => {
+            const postscriptnames = option.post_script_name.split("-")
+            return postscriptnames[postscriptnames.length - 1].match(/^Italic$/)
+          })
+        } else {
+          desiredFont = state.styleOptions.options.find((option) => {
+            const postscriptnames = option.post_script_name.split("-")
+            return postscriptnames[postscriptnames.length - 1].match(/^Regular$/)
+          })
+        }
+        const font = {
+          name: desiredFont.post_script_name,
+          url: desiredFont.url
+        }
+        await loadFonts([font])
+        activeScene.objects.updateText({
+          fontFamily: desiredFont.post_script_name,
+          fontURL: font.url
+        })
+        setState({ ...state, bold: false })
+      } else {
+        let desiredFont
+        if (state.italic) {
+          desiredFont = state.styleOptions.options.find((option) => {
+            const postscriptnames = option.post_script_name.split("-")
+            return postscriptnames[postscriptnames.length - 1].match(/^BoldItalic$/)
+          })
+        } else {
+          desiredFont = state.styleOptions.options.find((option) => {
+            const postscriptnames = option.post_script_name.split("-")
+            return postscriptnames[postscriptnames.length - 1].match(/^Bold$/)
+          })
+        }
+        const font = {
+          name: desiredFont.post_script_name,
+          url: desiredFont.url
+        }
+        await loadFonts([font])
+        activeScene.objects.updateText({
+          fontFamily: desiredFont.post_script_name,
+          fontURL: font.url
+        })
+        setState({ ...state, bold: true })
+      }
+    }
+  }, [activeObject, state, activeScene])
+
+  document.onkeydown = function (e) {
     if ((e.key === "Delete" || e.key === "Backspace") && inputActive === false) {
       if (activeObject !== null && (activeObject?.locked === false || activeObject?.locked === undefined)) {
         activeObject?.type === "StaticText"
@@ -1208,108 +1315,11 @@ function SyncUp({
       }
     }
     if ((e.ctrlKey || e.metaKey) && e.key === "i") {
-      if (activeObject.type === "StaticText") {
-        if (state.italic) {
-          let desiredFont
-          if (state.bold) {
-            desiredFont = state.styleOptions.options.find((option) => {
-              const postscriptnames = option.post_script_name.split("-")
-              return postscriptnames[postscriptnames.length - 1].match(/^Bold$/)
-            })
-          } else {
-            desiredFont = state.styleOptions.options.find((option) => {
-              const postscriptnames = option.post_script_name.split("-")
-              return postscriptnames[postscriptnames.length - 1].match(/^Regular$/)
-            })
-          }
-          const font = {
-            name: desiredFont.post_script_name,
-            url: desiredFont.url
-          }
-          await loadFonts([font])
-          activeScene.objects.update({
-            fontFamily: desiredFont.post_script_name,
-            fontURL: font.url
-          })
-          setState({ ...state, italic: false })
-        } else {
-          let desiredFont
-
-          if (state.bold) {
-            desiredFont = state.styleOptions.options.find((option) => {
-              const postscriptnames = option.post_script_name.split("-")
-              return postscriptnames[postscriptnames.length - 1].match(/^BoldItalic$/)
-            })
-          } else {
-            desiredFont = state.styleOptions.options.find((option) => {
-              const postscriptnames = option.post_script_name.split("-")
-              return postscriptnames[postscriptnames.length - 1].match(/^Italic$/)
-            })
-          }
-          const font = {
-            name: desiredFont.post_script_name,
-            url: desiredFont.url
-          }
-          await loadFonts([font])
-          activeScene.objects.updateText({
-            fontFamily: desiredFont.post_script_name,
-            fontURL: font.url
-          })
-          setState({ ...state, italic: true })
-        }
-        return false
-      }
+      makeItalic()
+      return false
     }
     if ((e.ctrlKey || e.metaKey) && e.key === "b") {
-      if (activeObject.type === "StaticText") {
-        if (state.bold) {
-          let desiredFont
-          if (state.italic) {
-            desiredFont = state.styleOptions.options.find((option) => {
-              const postscriptnames = option.post_script_name.split("-")
-              return postscriptnames[postscriptnames.length - 1].match(/^Italic$/)
-            })
-          } else {
-            desiredFont = state.styleOptions.options.find((option) => {
-              const postscriptnames = option.post_script_name.split("-")
-              return postscriptnames[postscriptnames.length - 1].match(/^Regular$/)
-            })
-          }
-          const font = {
-            name: desiredFont.post_script_name,
-            url: desiredFont.url
-          }
-          await loadFonts([font])
-          activeScene.objects.updateText({
-            fontFamily: desiredFont.post_script_name,
-            fontURL: font.url
-          })
-          setState({ ...state, bold: false })
-        } else {
-          let desiredFont
-          if (state.italic) {
-            desiredFont = state.styleOptions.options.find((option) => {
-              const postscriptnames = option.post_script_name.split("-")
-              return postscriptnames[postscriptnames.length - 1].match(/^BoldItalic$/)
-            })
-          } else {
-            desiredFont = state.styleOptions.options.find((option) => {
-              const postscriptnames = option.post_script_name.split("-")
-              return postscriptnames[postscriptnames.length - 1].match(/^Bold$/)
-            })
-          }
-          const font = {
-            name: desiredFont.post_script_name,
-            url: desiredFont.url
-          }
-          await loadFonts([font])
-          activeScene.objects.updateText({
-            fontFamily: desiredFont.post_script_name,
-            fontURL: font.url
-          })
-          setState({ ...state, bold: true })
-        }
-      }
+      makeBold()
       return false
     }
     if ((e.ctrlKey || e.metaKey) && e.key === "u") {

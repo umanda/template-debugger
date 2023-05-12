@@ -1,5 +1,6 @@
 import { FabricCanvas } from "../common/interfaces"
 import { type Editor } from "./editor"
+import { fabric } from "fabric"
 
 interface DraggerOptions {
   canvas: FabricCanvas
@@ -63,6 +64,12 @@ class Dragger {
         originX: "center",
         originY: "center",
       })
+
+      if( object.type==="StaticText"){
+      (object as fabric.StaticText).enterEditing();
+      (object as fabric.StaticText).setSelectionStart(0);
+      (object as fabric.StaticText).setSelectionEnd((object as fabric.StaticText).text.length);
+    }
 
       this.item = null
     }

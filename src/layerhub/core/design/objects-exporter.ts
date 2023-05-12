@@ -344,7 +344,7 @@ class ObjectsExporter {
     })
     return {
       ...baseOptions,
-      type: "group",
+      type: "Group",
       objects: groupObjects,
       metadata,
     }

@@ -150,7 +150,7 @@ export default function Common() {
       <Flex alignItems={"center"} justifyContent={"flex-end"}>
         <Popover placement="top-end">
           <PopoverTrigger>
-            <IconButton variant={"ghost"} aria-label="Help" icon={<Help size={24} />} />
+            <IconButton color={"#dd6b20"} variant={"ghost"} aria-label="Help" icon={<Help size={24} />} />
           </PopoverTrigger>
           <Portal>
             <PopoverContent width={"200px"} marginRight={"1rem"}>
