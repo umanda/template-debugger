@@ -475,19 +475,15 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
             duration: 2000,
             isClosable: true
           })
-          let designJSON: any = design?.toJSON()
-          designJSON.key = id
-          designJSON.scenes.map((e: any, index: number) => {
-            e.position = index
-            e.metadata = { orientation: e.frame.width >= e.frame.height ? "PORTRAIT" : "LANDSCAPE" }
-            return e
+          const resolve: any = await functionSave()
+          const getPreview = await api.getPreviewTemplate({
+            id: resolve.id,
+            scene_ids: [resolve.scenes.find((s) => s.id === currentScene.id && s.id).id],
+            type: "png"
           })
-          const resolve = (await dispatch(updateProject(designJSON))).payload
           const url: any = await api.getShareTemplate({
             type: type,
-            image: resolve.scenes.filter((e: any) => {
-              if (e.id === currentScene.id) return e
-            })[0].preview
+            image: getPreview.url
           })
           window.open(url.url, "_blank")
         } catch {
@@ -501,7 +497,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
         }
       }
     },
-    [activeScene, id]
+    [currentScene]
   )
 
   const makeChangeEmail = useCallback(
@@ -525,9 +521,15 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
         duration: 3000,
         isClosable: true
       })
+      const resolve: any = await functionSave()
+      const getPreview = await api.getPreviewTemplate({
+        id: resolve.id,
+        scene_ids: [resolve.scenes.find((s) => s.id === currentScene.id && s.id).id],
+        type: "png"
+      })
       await api.getShareTemplate({
         type: "EMAIL",
-        image: projectSelect.scenes.find((e) => e.id === currentScene.id).preview,
+        image: getPreview.url,
         email: email.text
       })
       toast({
@@ -547,7 +549,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
         isClosable: true
       })
     }
-  }, [email])
+  }, [email, currentScene])
 
   // const makeMagicLink = useCallback(async () => {
   //   try {

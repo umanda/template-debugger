@@ -14,7 +14,7 @@ import {
   ICreateComponent,
   ISubscriptionMe
 } from "~/interfaces/editor"
-import { IExportProjectNoLogin, listProjectsDTO, ShareTemplate } from "~/interfaces/template"
+import { IExportProjectNoLogin, IGetPreview, listProjectsDTO, ShareTemplate } from "~/interfaces/template"
 import { IListComments, SaveCommentDTO } from "~/interfaces/comment"
 const baseURL = import.meta.env.VITE_API_CONNECTION
 const token = localStorage.getItem("token")
@@ -323,6 +323,17 @@ export const updateProject = (props: any) => {
       .catch((err) => {
         reject(err)
       })
+  })
+}
+
+export const getPreviewTemplate = (props: any) => {
+  return new Promise<IGetPreview>((resolve, reject) => {
+    base
+      .post("/projects/export-preview", props)
+      .then(({ data }) => {
+        resolve(data)
+      })
+      .catch((err) => reject(err))
   })
 }
 
