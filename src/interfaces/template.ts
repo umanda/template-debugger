@@ -26,3 +26,7 @@ export interface ShareTemplate {
   image: string | undefined
   email: string
 }
+
+export interface IGetPreview{
+  url:string
+}
