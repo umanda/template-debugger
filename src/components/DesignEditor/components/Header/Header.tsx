@@ -903,6 +903,7 @@ function FileMenu() {
               ref={inputFileRef}
               style={{ display: "none" }}
             />
+            <MenuOption onClick={() => (window.location.href = redirectUserProfilePage)}>Open</MenuOption>
             <MenuOption onClick={handleNew}>New</MenuOption>
             <MenuOption onClick={handleExport}> Export</MenuOption>
             <MenuOption onClick={handleInputFileRefClick}> Import</MenuOption>
