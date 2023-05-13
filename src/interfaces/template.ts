@@ -28,5 +28,6 @@ export interface ShareTemplate {
 }
 
 export interface IGetPreview{
+  has_preview:boolean
   url:string
 }
