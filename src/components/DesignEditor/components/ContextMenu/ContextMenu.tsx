@@ -1,5 +1,5 @@
 import { useActiveObject, useActiveScene, useContextMenuRequest, useEditor } from "@layerhub-pro/react"
-import { Box } from "@chakra-ui/react"
+import { Box, Flex } from "@chakra-ui/react"
 import Mail from "../../../Icons/Mail"
 import { useAppDispatch } from "~/store/store"
 import { createResourceComposite } from "~/store/resources/action"
@@ -50,11 +50,7 @@ function ContextMenu() {
       <div // @ts-ignore
         onContextMenu={(e: Event) => e.preventDefault()}
         style={{
-          position: "absolute",
-          top: `${contextMenuRequest.top}px`,
-          left: `${contextMenuRequest.left}px`,
           zIndex: 129,
-          width: "240px",
           backgroundColor: "#ffffff",
           borderRadius: "10px",
           boxShadow: "0.5px 2px 7px rgba(0, 0, 0, 0.1)",
@@ -86,8 +82,6 @@ function ContextMenu() {
           icon="SelectAll"
           label="Select All"
         />
-        <div style={{ margin: "0.5rem 0" }} />
-        <div style={{ margin: "0.5rem 0" }} />
       </div>
     )
   }
@@ -97,11 +91,7 @@ function ContextMenu() {
         <div // @ts-ignore
           onContextMenu={(e: Event) => e.preventDefault()}
           style={{
-            position: "absolute",
-            top: `${contextMenuRequest.top}px`,
-            left: `${contextMenuRequest.left}px`,
             zIndex: 129,
-            width: "240px",
             backgroundColor: "#ffffff",
             borderRadius: "10px",
             boxShadow: "0.5px 2px 7px rgba(0, 0, 0, 0.1)",
@@ -136,7 +126,6 @@ function ContextMenu() {
             label="Delete"
             disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
-          <div style={{ margin: "0.5rem 0" }} />
           <ContextMenuItem
             onClick={() => {
               activeScene.objects.bringToFront()
@@ -173,7 +162,6 @@ function ContextMenu() {
             label="Send backwards"
             disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
           />
-          <div style={{ margin: "0.5rem 0" }} />
           <ContextMenuItem
             onClick={() => {
               activeScene.objects.lock()
@@ -199,9 +187,6 @@ function ContextMenu() {
         <div // @ts-ignore
           onContextMenu={(e: Event) => e.preventDefault()}
           style={{
-            position: "absolute",
-            top: `${contextMenuRequest.top}px`,
-            left: `${contextMenuRequest.left}px`,
             zIndex: 129,
             width: "240px",
             backgroundColor: "#ffffff",
@@ -252,13 +237,12 @@ function ContextMenuItem({
   }
 
   return (
-    <Box
+    <Flex
       onClick={onClick}
       _hover={{ backgroundColor: "rgba(0,0,0,0.075)" }}
       style={{
-        display: "flex",
-        height: "42px",
         alignItems: "center",
+        height: "42px",
         padding: "0 1rem",
         gap: "1rem",
         cursor: "pointer",
@@ -267,7 +251,7 @@ function ContextMenuItem({
       }}
     >
       <Icon /> {label}
-    </Box>
+    </Flex>
   )
 }
 

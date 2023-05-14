@@ -1,16 +1,18 @@
-import React, { useRef } from "react"
+import React, { useRef, useState } from "react"
 import {
   Flex,
-  Button,
   Center,
   Drawer,
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
   DrawerBody,
-  useDisclosure
+  useDisclosure,
+  Popover,
+  PopoverTrigger,
+  PopoverContent
 } from "@chakra-ui/react"
-import { Canvas, fabric, useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
+import { Canvas, fabric, useActiveObject, useActiveScene, useContextMenuRequest, useEditor } from "@layerhub-pro/react"
 import ContextMenu from "../ContextMenu"
 import Plus from "../../../Icons/Plus"
 import MobileModal from "../../../Modals/MobileModal"
@@ -21,6 +23,12 @@ export default function Canva() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const flexRef = React.useRef<any>()
   const activeObject: any = useActiveObject()
+  const contextMenuRequest = useContextMenuRequest()
+  const { isOpen: isOpenContextMenu, onToggle: onToggleContextMenu, onClose: onCloseContextMenu } = useDisclosure()
+  const [placementContextMenu, setPlacementContextMenu] = useState<{ vertical: string; horizontal: string }>({
+    vertical: "bottom",
+    horizontal: "start"
+  })
 
   React.useEffect(() => {
     fabric.Object.prototype.setControlsVisibility({
@@ -140,6 +148,19 @@ export default function Canva() {
     fabric.Textbox.prototype.controls.mtr = fabric.Object.prototype.controls.mtr
   }, [editor, activeScene])
 
+  React.useEffect(() => {
+    //vertical
+    if (contextMenuRequest?.top <= contextMenuRequest?.target?.canvas.height / 2) {
+      contextMenuRequest?.left <= contextMenuRequest?.target?.canvas.width / 2
+        ? setPlacementContextMenu({ vertical: "top", horizontal: "start" })
+        : setPlacementContextMenu({ vertical: "top", horizontal: "end" })
+    } else if (contextMenuRequest?.top >= contextMenuRequest?.target?.canvas.height / 2) {
+      contextMenuRequest?.left >= contextMenuRequest?.target?.canvas.width / 2
+        ? setPlacementContextMenu({ vertical: "bottom", horizontal: "start" })
+        : setPlacementContextMenu({ vertical: "bottom", horizontal: "end" })
+    }
+  }, [isOpenContextMenu])
+
   try {
     const app: any = document.getElementById("app")
     app?.addEventListener(
@@ -152,8 +173,38 @@ export default function Canva() {
   } catch {}
 
   return (
-    <Flex ref={flexRef} flex={1} position="relative" id="app">
-      <ContextMenu />
+    <Flex
+      ref={flexRef}
+      flex={1}
+      position="relative"
+      id="app"
+      onClick={onCloseContextMenu}
+      onAuxClick={onToggleContextMenu}
+    >
+      {/* bottom-top-end-start */}
+      <Popover
+        isOpen={isOpenContextMenu}
+        onClose={onCloseContextMenu}
+        //@ts-ignore
+        placement={`${placementContextMenu.vertical}-${placementContextMenu.horizontal}`}
+      >
+        <PopoverTrigger>
+          <Flex
+            top={`${contextMenuRequest?.top}px`}
+            left={`${contextMenuRequest?.left}px`}
+            position="absolute"
+            visibility="hidden"
+            w="0px"
+            h="0px"
+          >
+            Hidden
+          </Flex>
+        </PopoverTrigger>
+        <PopoverContent display="flex" w="auto">
+          <ContextMenu />
+        </PopoverContent>
+      </Popover>
+      {/* <ContextMenu /> */}
       <Flex flex={1}>
         <Canvas
           config={{
