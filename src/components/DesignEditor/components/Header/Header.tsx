@@ -389,12 +389,9 @@ export default function Header() {
 }
 
 function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
-  const activeScene = useActiveScene()
   const editor = useEditor()
   const dispatch = useAppDispatch()
-  const { id } = useParams()
   const toast = useToast()
-  const design = useDesign()
   const { isOpen, onToggle, onClose } = useDisclosure()
   const { isOpen: isOpenUpgradeUser, onOpen: onOpenUpgradeUser, onClose: onCloseUpgradeUser } = useDisclosure()
   const user: any = useSelector(selectUser)
@@ -481,11 +478,23 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
             scene_ids: [resolve.scenes.find((s) => s.id === currentScene.id && s.id).id],
             type: "png"
           })
-          const url: any = await api.getShareTemplate({
-            type: type,
-            image: getPreview.url
-          })
-          window.open(url.url, "_blank")
+          if (getPreview.has_preview === true) {
+            toast.closeAll()
+            const url: any = await api.getShareTemplate({
+              type: type,
+              image: getPreview.url
+            })
+            window.open(url.url, "_blank")
+          } else if (getPreview.has_preview === false) {
+            toast.closeAll()
+            toast({
+              title: "Oops, there was an error, try again.",
+              status: "error",
+              position: "top",
+              duration: 2000,
+              isClosable: true
+            })
+          }
         } catch {
           toast({
             title: "Oops, there was an error, try again.",
@@ -527,19 +536,31 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
         scene_ids: [resolve.scenes.find((s) => s.id === currentScene.id && s.id).id],
         type: "png"
       })
-      await api.getShareTemplate({
-        type: "EMAIL",
-        image: getPreview.url,
-        email: email.text
-      })
-      toast({
-        title: "Email sent successfully.",
-        status: "success",
-        position: "top",
-        duration: 3000,
-        isClosable: true
-      })
-      setEmail({ text: "", state: false })
+      if (getPreview.has_preview === true) {
+        await api.getShareTemplate({
+          type: "EMAIL",
+          image: getPreview.url,
+          email: email.text
+        })
+        toast.closeAll()
+        toast({
+          title: "Email sent successfully.",
+          status: "success",
+          position: "top",
+          duration: 3000,
+          isClosable: true
+        })
+        setEmail({ text: "", state: false })
+      } else if (getPreview.has_preview === false) {
+        toast.closeAll()
+        toast({
+          title: "Oops, there was an error, try again.",
+          status: "error",
+          position: "top",
+          duration: 2000,
+          isClosable: true
+        })
+      }
     } catch {
       toast({
         title: "Email sending failed, please check email address and try again.",
