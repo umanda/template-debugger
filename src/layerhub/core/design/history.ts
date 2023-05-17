@@ -91,6 +91,7 @@ class History {
 
   public emitStatus = async () => {
     this.scene.updateLoadedObjects()
+    this.scene.setJSON()
     await this.scene.setPreview()
     this.scene.editor.emit("history:updated", this.scene)
     this.scene.editor.design.updateContext()

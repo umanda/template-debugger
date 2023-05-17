@@ -40,6 +40,7 @@ class Scene {
   public cropObject: any
   public background: Background
   public duration: number
+  public json:any
 
   constructor(options: SceneOptions) {
     this.id = options.scene.id ? options.scene.id : nanoid()
@@ -101,6 +102,10 @@ class Scene {
     this.preview = preview
   }
 
+  public setJSON() {
+    this.json = this.canvas.toJSON(this.config.properties)
+  }
+
   public async setPreview() {
     this.scene = this.toJSON()
     const preview = await this.toDataURL()
@@ -140,7 +145,7 @@ class Scene {
         animated
       }
     }
-    const objects = this.layers.map((layer) => layer.toJSON(this.config.properties))
+    const objects = this.json ? this.json.objects : this.layers.map((layer) => layer.toJSON(this.config.properties))
     const layers = objects.filter((object: any) => object.type !== LayerType.FRAME)
 
     const objectExporter = new ObjectExporter()
@@ -281,6 +286,7 @@ class Scene {
     this.canvas.requestRenderAll()
     this.history.setCurrent()
     this.objects.updateContextObjects()
+    this.setJSON()
   }
 
   public async loadObjects() {
