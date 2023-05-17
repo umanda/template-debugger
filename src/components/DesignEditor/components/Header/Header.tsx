@@ -59,6 +59,7 @@ import { initialOptions, TextState } from "../Toolbox/Text"
 import { loadFonts, loadGraphicTemplate } from "~/utils/fonts"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
+const redirectListProjects: string = import.meta.env.VITE_REDIRECT_PROJECTS
 const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
 
 export default function Header() {
@@ -924,7 +925,7 @@ function FileMenu() {
               ref={inputFileRef}
               style={{ display: "none" }}
             />
-            <MenuOption onClick={() => (window.location.href = redirectUserProfilePage)}>Open</MenuOption>
+            <MenuOption onClick={() => (window.location.href = redirectListProjects)}>Open</MenuOption>
             <MenuOption onClick={handleNew}>New</MenuOption>
             <MenuOption onClick={handleExport}> Export</MenuOption>
             <MenuOption onClick={handleInputFileRefClick}> Import</MenuOption>
