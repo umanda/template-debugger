@@ -1190,11 +1190,12 @@ class Objects {
     const activeSelection = activeObject.toActiveSelection()
     // @ts-ignore
     activeSelection._objects.forEach((object) => {
+      if (!this.scene.config.outsideVisible) {
       object.clipPath = frame
+    }
     })
     this.scene.state.setActiveObject(activeSelection)
     canvas.requestRenderAll()
-    this.scene.objects.update({left:activeObject?.left+0.0000000001},activeObject.id)
     this.scene.history.save()
     this.updateContextObjects()
   }
