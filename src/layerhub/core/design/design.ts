@@ -37,7 +37,7 @@ class Design {
 
   public async setDesign(design: IDesign) {
      var validateDesign = JSON.stringify(design)
-    validateDesign.includes(`"type":"Group"`) ? validateDesign = validateDesign.replace(`"type":"Group"`,`"type":"group"`):null
+    validateDesign.includes(`"type":"Group"`) ? validateDesign = validateDesign.replaceAll(`"type":"Group"`,`"type":"group"`):null
     const fixedDesign = fixDesignFrame(JSON.parse(validateDesign))
     this.design = fixedDesign
     this.template = fixedDesign
