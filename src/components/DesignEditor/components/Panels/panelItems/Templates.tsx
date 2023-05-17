@@ -113,8 +113,8 @@ export default function Template() {
 
   useEffect(() => {
     if (resourcesTemplate.length === 0) {
-      stateFavorite === true && setValidateContent("No favorite illustrations to display")
-      stateRecent === true && setValidateContent("No recent illustrations to display")
+      stateFavorite === true && setValidateContent("No favorite templates to display")
+      stateRecent === true && setValidateContent("No recent template to display")
     }
   }, [resourcesTemplate])
 
