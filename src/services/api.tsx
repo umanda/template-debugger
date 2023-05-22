@@ -337,6 +337,28 @@ export const getPreviewTemplate = (props: any) => {
   })
 }
 
+export const getPreviewProject = (props: any) => {
+  return new Promise<IGetPreview>((resolve, reject) => {
+    base
+      .post("/projects/preview", props)
+      .then(({ data }) => {
+        resolve(data)
+      })
+      .catch((err) => reject(err))
+  })
+}
+
+export const getURLPreview = (props: any) => {
+  return new Promise<IGetPreview>((resolve, reject) => {
+    base
+      .post("/projects/get-preview", props)
+      .then(({ data }) => {
+        resolve(data)
+      })
+      .catch((err) => reject(err))
+  })
+}
+
 export const getShareTemplate = (props: any) => {
   return new Promise<ShareTemplate>((resolve, reject) => {
     base
@@ -362,7 +384,7 @@ export const deleteProject = (props: any) => {
 export const getExportProject = (props: any): Promise<{ url: string }> => {
   return new Promise((resolve, reject) => {
     base
-      .post("/projects/export-preview", props)
+      .post("/projects/preview", props)
       .then(({ data }) => {
         resolve(data)
       })
