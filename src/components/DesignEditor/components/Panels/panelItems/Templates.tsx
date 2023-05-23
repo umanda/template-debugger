@@ -67,7 +67,7 @@ export default function Template() {
   const [validateContent, setValidateContent] = useState<string | null>(null)
   let [nameTemplate, setNameTemplate] = useState<string[]>([""])
   let [nameTemplatePrev, setNameTemplatePrev] = useState<string[]>([""])
-  const [order, setOrder] = useState<string[]>(["LAST_UPDATE"])
+  const [order, setOrder] = useState<string[]>(["ALPHABETIC"])
   const user = useAppSelector(selectUser)
   const { isOpen: isOpenLoadTemplate, onOpen: onOpenLoadTemplate, onClose: onCloseLoadTemplate } = useDisclosure()
   const { isOpen: isOpenUpgradeUser, onOpen: onOpenUpgradeUser, onClose: onCloseUpgradeUser } = useDisclosure()
@@ -172,7 +172,7 @@ export default function Template() {
         limit: 10,
         query: {
           drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
-          names: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
+          keywords: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
           plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
           favorited: stateFavorite === true ? true : undefined,
           used: stateRecent === true ? true : undefined,
