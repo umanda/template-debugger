@@ -408,13 +408,14 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const socket = io(apiDomain, { autoConnect: false })
   let socketRef = React.useRef<Socket>()
   let [stateProgress, setStateProgress] = useState<boolean[]>([])
-  const [stateProgressValue, setStateProgressValue] = useState<number>(0)
+  const [stateProgressValue, setStateProgressValue] = useState<any>(0)
   const [generateURL, setGenerateURL] = useState<boolean>(false)
   const { id } = useParams()
   const scenes = useScenes()
   const projectSelect = useSelector(selectProject)
 
   useEffect(() => {
+    console.log(stateProgress.length)
     if (isOpen) {
       setStateProgress(scenes.map(() => false))
       socket.on("connect", () => {
@@ -444,23 +445,34 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
             setGenerateURL(true)
           }
         } catch {
+          console.log("catch 1")
           setButtonsDownload(true)
+          setStateProgressValue(0)
           setGenerateURL(false)
           socketRef.current.disconnect()
           setStateProgress([])
         }
       })
+
+      socket.off("disconnect", (a) => {})
+
       socketRef.current = socket
 
       return () => {
-        socket.off("message")
-      }
-    } else if (stateProgress.length === 0) {
-      console.log("close")
-      if (socketRef.current) {
-        socketRef.current.disconnect()
+        socket.off("message", () => {
+          console.log("off")
+        })
       }
     }
+    // else if (stateProgress.length === 0 && isOpen === false) {
+    //   setStateProgressValue(0)
+    //   if (socketRef.current) {
+    //     socketRef.current.disconnect()
+    //   }
+    // } else {
+    //   setStateProgressValue(0)
+    //   setButtonsDownload(true)
+    // }
   }, [isOpen])
 
   useEffect(() => {
@@ -497,6 +509,8 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
       setButtonsDownload(true)
       setTimeout(() => setStateProgressValue(0), 3000)
     } catch {
+      console.log("catch 2")
+      setStateProgressValue(0)
       setButtonsDownload(true)
       setGenerateURL(false)
       socketRef.current.disconnect()
@@ -521,12 +535,15 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
           })
         }
       } else {
+        setStateProgressValue(0)
         setButtonsDownload(true)
         toast.closeAll()
         setTypeModal(type.toLocaleUpperCase())
         onOpenUpgradeUser()
       }
     } catch (err: any) {
+      console.log("catch 3")
+      setStateProgressValue(0)
       setButtonsDownload(true)
       toast.closeAll()
       socketRef.current.disconnect()
@@ -682,17 +699,9 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   }, [valueInput])
 
   return (
-    <Popover
-      closeOnBlur={buttonsDownload}
-      closeOnEsc={buttonsDownload}
-      returnFocusOnClose={buttonsDownload}
-      placement="bottom-start"
-      isOpen={isOpen}
-      onClose={onClose}
-    >
+    <Popover placement="bottom-start" isOpen={isOpen} onClose={onClose}>
       <PopoverTrigger>
         <Button
-          isDisabled={!buttonsDownload}
           colorScheme={"brand"}
           rightIcon={<Share size={16} />}
           onClick={() => {
