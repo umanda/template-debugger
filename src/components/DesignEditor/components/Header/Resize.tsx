@@ -1,11 +1,12 @@
 import React, { useState } from "react"
 import { Box, Button, Flex, Input, useDisclosure, IconButton, Portal, Grid } from "@chakra-ui/react"
 import { Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from "@chakra-ui/react"
-import { useActiveScene, useDesign, useObjects } from "@layerhub-pro/react"
+import { useActiveScene, useDesign, useObjects, useZoomRatio } from "@layerhub-pro/react"
 import { IFrame } from "@layerhub-pro/types"
 import Lock from "../../../Icons/Lock"
 import Unlock from "../../../Icons/Unlock"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
+import useResourcesContext from "~/hooks/useResourcesContext"
 
 type ResizeMode =
   | "LANDSCAPE"
@@ -74,10 +75,12 @@ const PRESETS = {
 }
 
 const Resize = () => {
+  const { setLoadCanva } = useResourcesContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [size, setSize] = useState<any>()
   const activeScene = useActiveScene()
   const objects = useObjects() as any[]
+  const zoomRatio = useZoomRatio()
   const design = useDesign()
   const { setInputActive } = useDesignEditorContext()
   const [mode, setMode] = React.useState<ResizeMode>("LANDSCAPE")
@@ -124,6 +127,7 @@ const Resize = () => {
   )
 
   const applyResize = React.useCallback(async () => {
+    setLoadCanva(false)
     let newHeight = 0
     let newWidth = 0
     if (mode === "CUSTOM") {
@@ -210,7 +214,9 @@ const Resize = () => {
         design.setActiveScene(activeScene?.id)
       }
     }
-  }, [displayFrame, mode, size, design, activeScene])
+    design.activeScene.applyFit()
+    setLoadCanva(true)
+  }, [displayFrame, mode, size, design, activeScene, zoomRatio])
 
   return (
     <Popover isOpen={isOpen} onClose={onClose} onOpen={onOpen} placement="bottom-start">

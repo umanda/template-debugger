@@ -415,7 +415,6 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const projectSelect = useSelector(selectProject)
 
   useEffect(() => {
-    console.log(stateProgress.length)
     if (isOpen) {
       setStateProgress(scenes.map(() => false))
       socket.on("connect", () => {
@@ -445,7 +444,6 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
             setGenerateURL(true)
           }
         } catch {
-          console.log("catch 1")
           setButtonsDownload(true)
           setStateProgressValue(0)
           setGenerateURL(false)
@@ -459,9 +457,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
       socketRef.current = socket
 
       return () => {
-        socket.off("message", () => {
-          console.log("off")
-        })
+        socket.off("message", () => {})
       }
     }
     // else if (stateProgress.length === 0 && isOpen === false) {
@@ -509,7 +505,6 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
       setButtonsDownload(true)
       setTimeout(() => setStateProgressValue(0), 3000)
     } catch {
-      console.log("catch 2")
       setStateProgressValue(0)
       setButtonsDownload(true)
       setGenerateURL(false)
@@ -542,7 +537,6 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
         onOpenUpgradeUser()
       }
     } catch (err: any) {
-      console.log("catch 3")
       setStateProgressValue(0)
       setButtonsDownload(true)
       toast.closeAll()
