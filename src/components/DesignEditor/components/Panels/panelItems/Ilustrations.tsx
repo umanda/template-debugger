@@ -863,7 +863,7 @@ function IllustrationItem({
           </Flex>
         </Flex>
       ) : (
-        <Box>
+        <Flex position="absolute">
           <Center
             margin="5px"
             position="absolute"
@@ -885,7 +885,7 @@ function IllustrationItem({
           >
             <ValidateIcon />
           </Flex>
-        </Box>
+        </Flex>
       )}
     </Flex>
   )
