@@ -208,10 +208,10 @@ export default function Canva() {
       <Flex flex={1}>
         <Canvas
           config={{
-            margin: 140,
+            margin: 240,
             scroll: {
               enabled: true,
-              limit: 100000
+              limit: 10000000000000000
             },
             outsideVisible: true,
             guidelines: {

@@ -8,6 +8,7 @@ import {
   IconButton,
   Input,
   PopoverBody,
+  Progress,
   Select,
   Spacer,
   Textarea,
@@ -57,10 +58,12 @@ import { getTextProperties } from "~/utils/text"
 import { selectFonts } from "~/store/fonts/selector"
 import { initialOptions, TextState } from "../Toolbox/Text"
 import { loadFonts, loadGraphicTemplate } from "~/utils/fonts"
+import io, { Socket } from "socket.io-client"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectListProjects: string = import.meta.env.VITE_REDIRECT_PROJECTS
 const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
+const apiDomain = (import.meta.env.VITE_API_CONNECTION as String).replace("v1/", "")
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -390,68 +393,154 @@ export default function Header() {
 }
 
 function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
+  const [buttonsDownload, setButtonsDownload] = useState<boolean>(true)
   const editor = useEditor()
-  const dispatch = useAppDispatch()
   const toast = useToast()
   const { isOpen, onToggle, onClose } = useDisclosure()
   const { isOpen: isOpenUpgradeUser, onOpen: onOpenUpgradeUser, onClose: onCloseUpgradeUser } = useDisclosure()
   const user: any = useSelector(selectUser)
   const [valueInput, setValueInput] = useState<string>("")
-  // const [typeSign, setTypeSign] = useState("signin")
   const currentScene = useActiveScene()
-  const projectSelect = useSelector(selectProject)
+  const [type, setType] = useState<string>(null)
   const { setInputActive } = useDesignEditorContext()
   const [email, setEmail] = useState<{ text: string; state: boolean }>({ text: "", state: true })
   const [typeModal, setTypeModal] = useState<string>("")
-  // const [stateToast,setStateToast]=useState<boolean>(false)
+  const socket = io(apiDomain, { autoConnect: false })
+  let socketRef = React.useRef<Socket>()
+  let [stateProgress, setStateProgress] = useState<boolean[]>([])
+  const [stateProgressValue, setStateProgressValue] = useState<any>(0)
+  const [generateURL, setGenerateURL] = useState<boolean>(false)
+  const { id } = useParams()
+  const scenes = useScenes()
+  const projectSelect = useSelector(selectProject)
+
+  useEffect(() => {
+    if (isOpen) {
+      setStateProgress(scenes.map(() => false))
+      socket.on("connect", () => {
+        setStateProgress(scenes.map((s) => false))
+      })
+
+      socket.on("message", async (data: any) => {
+        try {
+          const state = JSON.parse(data)
+          const stateValue = 100 / (state.scenes + 1)
+          let cont = 0
+          let stateReturn = false
+          stateProgress[state.scene - 1] = true
+          setStateProgress(stateProgress)
+          for (var x = 0; x <= state.scenes - 1; x++) {
+            if (stateProgress[x] === undefined) {
+              stateReturn = false
+              x = state.scenes
+            } else {
+              stateReturn = true
+            }
+          }
+          stateProgress.map((a) => a === true && cont++)
+          setStateProgressValue(stateValue * cont)
+          if (stateReturn === true) {
+            stateProgress = []
+            setGenerateURL(true)
+          }
+        } catch {
+          setButtonsDownload(true)
+          setStateProgressValue(0)
+          setGenerateURL(false)
+          socketRef.current.disconnect()
+          setStateProgress([])
+        }
+      })
+
+      socket.off("disconnect", (a) => {})
+
+      socketRef.current = socket
+
+      return () => {
+        socket.off("message", () => {})
+      }
+    }
+    // else if (stateProgress.length === 0 && isOpen === false) {
+    //   setStateProgressValue(0)
+    //   if (socketRef.current) {
+    //     socketRef.current.disconnect()
+    //   }
+    // } else {
+    //   setStateProgressValue(0)
+    //   setButtonsDownload(true)
+    // }
+  }, [isOpen])
+
+  useEffect(() => {
+    generateURL === true && getURL()
+  }, [generateURL])
+
+  const getURL = useCallback(async () => {
+    try {
+      let resolve: any = null
+      stateProgress.every((a) => a === true) &&
+        (resolve = await api.getURLPreview({
+          key: id,
+          scene_ids: [],
+          type
+        }))
+      const url = resolve.url
+      fetch(url)
+        .then((result) => result.blob())
+        .then((blob) => {
+          if (blob != null) {
+            const url = window.URL.createObjectURL(blob)
+            const a = document.createElement("a")
+            a.href = url
+            a.download = projectSelect.name
+            document.body.appendChild(a)
+            a.click()
+          }
+        })
+      setStateProgressValue(100)
+      toast.closeAll()
+      setStateProgress([])
+      socketRef.current.disconnect()
+      setGenerateURL(false)
+      setButtonsDownload(true)
+      setTimeout(() => setStateProgressValue(0), 3000)
+    } catch {
+      setStateProgressValue(0)
+      setButtonsDownload(true)
+      setGenerateURL(false)
+      socketRef.current.disconnect()
+    }
+  }, [type, stateProgress, id])
 
   const handleDownload = async (type: string) => {
     try {
+      setButtonsDownload(false)
+      if (socketRef.current) {
+        setType(type)
+        socketRef.current.connect()
+        socketRef.current.emit("joinRoom", id)
+      }
       if (user?.plan !== "FREE" || type === "jpg") {
-        toast({
-          title: "Downloading your project…",
-          status: "loading",
-          position: "top",
-          duration: 100000,
-          isClosable: true
-        })
-        let resolve: any
-        const project: any = await functionSave()
+        await functionSave()
         if (editor && user) {
-          resolve = await api.getExportProject({ id: project.id, scene_ids: [], type })
-          if (resolve.has_preview) {
-            const url = resolve.url
-            fetch(url)
-              .then((result) => result.blob())
-              .then((blob) => {
-                if (blob != null) {
-                  const url = window.URL.createObjectURL(blob)
-                  const a = document.createElement("a")
-                  a.href = url
-                  a.download = projectSelect.name
-                  document.body.appendChild(a)
-                  a.click()
-                }
-              })
-            toast.closeAll()
-          } else {
-            toast.closeAll()
-            toast({
-              title: "Wait a moment, the images are being created",
-              status: "warning",
-              position: "top",
-              duration: 3000,
-              isClosable: true
-            })
-          }
+          await api.getExportProject({
+            key: id,
+            scene_ids: [],
+            type
+          })
         }
       } else {
+        setStateProgressValue(0)
+        setButtonsDownload(true)
         toast.closeAll()
         setTypeModal(type.toLocaleUpperCase())
         onOpenUpgradeUser()
       }
     } catch (err: any) {
+      setStateProgressValue(0)
+      setButtonsDownload(true)
       toast.closeAll()
+      socketRef.current.disconnect()
       toast({
         title: "Oops, there was an error, try again.",
         status: "error",
@@ -628,13 +717,28 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
           <Box>
             <Box color="#A9A9B2">DOWNLOAD</Box>
             <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", paddingY: "0.5rem" }}>
-              <Button onClick={() => handleDownload("png")} variant={"outline"} leftIcon={<Paper size={24} />}>
+              <Button
+                isDisabled={!buttonsDownload}
+                onClick={() => handleDownload("png")}
+                variant={"outline"}
+                leftIcon={<Paper size={24} />}
+              >
                 PNG
               </Button>
-              <Button onClick={() => handleDownload("jpg")} variant={"outline"} leftIcon={<Paper size={24} />}>
+              <Button
+                isDisabled={!buttonsDownload}
+                onClick={() => handleDownload("jpg")}
+                variant={"outline"}
+                leftIcon={<Paper size={24} />}
+              >
                 JPEG
               </Button>
-              <Button onClick={() => handleDownload("pdf")} variant={"outline"} leftIcon={<Paper size={24} />}>
+              <Button
+                isDisabled={!buttonsDownload}
+                onClick={() => handleDownload("pdf")}
+                variant={"outline"}
+                leftIcon={<Paper size={24} />}
+              >
                 PDF
               </Button>
             </Box>
@@ -689,6 +793,12 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
                 Send
               </Button>
             </Flex>
+          </Box>
+          <Box
+            visibility={stateProgressValue === 0 ? "hidden" : "visible"}
+            marginTop={stateProgressValue === 0 ? "0px" : "15px"}
+          >
+            <Progress hasStripe colorScheme="telegram" size="lg" value={stateProgressValue} />
           </Box>
         </Box>
       </PopoverContent>

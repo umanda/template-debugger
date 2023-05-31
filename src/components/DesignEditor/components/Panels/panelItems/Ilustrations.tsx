@@ -863,14 +863,29 @@ function IllustrationItem({
           </Flex>
         </Flex>
       ) : (
-        <Center
-          margin="5px"
-          position="absolute"
-          boxSize="21px"
-          sx={{ background: "#F6D056", color: "#FFFFFF", borderRadius: "4px" }}
-        >
-          <Pro size={40} />
-        </Center>
+        <Flex position="absolute">
+          <Center
+            margin="5px"
+            position="absolute"
+            boxSize="21px"
+            sx={{ background: "#F6D056", color: "#FFFFFF", borderRadius: "4px" }}
+          >
+            <Pro size={40} />
+          </Center>
+          <Flex
+            marginTop="115px"
+            marginLeft="5px"
+            position="absolute"
+            boxSize="21px"
+            _hover={{ cursor: "pointer" }}
+            onClick={() => {
+              makeFavorite(illustration)
+              setLike(!like)
+            }}
+          >
+            <ValidateIcon />
+          </Flex>
+        </Flex>
       )}
     </Flex>
   )

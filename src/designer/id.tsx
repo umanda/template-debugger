@@ -24,6 +24,8 @@ const Designer: any = () => {
   const design = useDesign()
   const dispatch = useAppDispatch()
   const user = useSelector(selectUser)
+  const aiGeneratedData = localStorage.getItem("ai_generated_data")
+  const aiGenerate = localStorage.getItem("ai_generated")
   const templateId = localStorage.getItem("template_id")
   const isNewProject = localStorage.getItem("is_new_project")
   const navigate = useNavigate()
@@ -73,10 +75,15 @@ const Designer: any = () => {
             }, 100)
           }
         }
+        if (aiGenerate === "true") {
+          const jsonAI = JSON.parse(aiGeneratedData)
+          await design.setDesign(jsonAI)
+          localStorage.removeItem("ai_generated")
+          localStorage.removeItem("ai_generated_data")
+        }
         setLoadCanva(true)
         design.activeScene.applyFit()
       } catch {
-        localStorage.removeItem("template_id")
         toast({
           title: "You need to upgrade your current subscription plan to customize this template.",
           status: "error",
@@ -84,11 +91,13 @@ const Designer: any = () => {
           duration: 2000,
           isClosable: true
         })
+        localStorage.removeItem("template_id")
+
         design.activeScene.applyFit()
         setLoadCanva(true)
       }
     }
-  }, [id, editor, user, design, zoomRatio])
+  }, [id, editor, user, design, zoomRatio, aiGeneratedData, aiGenerate])
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }}>
