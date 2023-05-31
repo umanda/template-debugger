@@ -63,7 +63,13 @@ const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectListProjects: string = import.meta.env.VITE_REDIRECT_PROJECTS
 const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
-const apiDomain = (import.meta.env.VITE_API_CONNECTION as String).replace("v1/", "")
+let apiDomain: string = ""
+
+if ((import.meta.env.VITE_API_CONNECTION as String).includes("/v1/")) {
+  apiDomain = (import.meta.env.VITE_API_CONNECTION as String).replace("/v1/", "/")
+} else if ((import.meta.env.VITE_API_CONNECTION as String).includes("/v1")) {
+  apiDomain = (import.meta.env.VITE_API_CONNECTION as String).replace("/v1", "/")
+}
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -504,6 +510,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
       setGenerateURL(false)
       setButtonsDownload(true)
       setTimeout(() => setStateProgressValue(0), 3000)
+      toast.closeAll()
     } catch {
       setStateProgressValue(0)
       setButtonsDownload(true)
@@ -513,6 +520,13 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   }, [type, stateProgress, id])
 
   const handleDownload = async (type: string) => {
+    toast({
+      title: "Downloading your project.",
+      status: "info",
+      position: "top",
+      duration: 1000000,
+      isClosable: true
+    })
     try {
       setButtonsDownload(false)
       if (socketRef.current) {
