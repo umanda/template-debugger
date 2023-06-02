@@ -414,7 +414,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const socket = io(apiDomain, { autoConnect: false })
   let socketRef = React.useRef<Socket>()
   let [stateProgress, setStateProgress] = useState<boolean[]>([])
-  const [stateProgressValue, setStateProgressValue] = useState<any>(0)
+  const [stateProgressValue, setStateProgressValue] = useState<number>(0)
   const [generateURL, setGenerateURL] = useState<boolean>(false)
   const { id } = useParams()
   const scenes = useScenes()
@@ -430,6 +430,22 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
       socket.on("message", async (data: any) => {
         try {
           const state = JSON.parse(data)
+          if (state.is_finished === true) {
+            setButtonsDownload(true)
+            setStateProgressValue(0)
+            setGenerateURL(false)
+            socketRef.current.disconnect()
+            setStateProgress([])
+            return
+          }
+          if (state.is_error === true) {
+            setButtonsDownload(true)
+            setStateProgressValue(0)
+            setGenerateURL(false)
+            socketRef.current.disconnect()
+            setStateProgress([])
+            return
+          }
           const stateValue = 100 / (state.scenes + 1)
           let cont = 0
           let stateReturn = false
@@ -520,6 +536,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   }, [type, stateProgress, id])
 
   const handleDownload = async (type: string) => {
+    setStateProgressValue(0.1)
     toast({
       title: "Downloading your project.",
       status: "info",
