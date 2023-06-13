@@ -427,13 +427,17 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
         setStateProgress(scenes.map((s) => false))
       })
 
-      socket.on("message", async (data: any) => {
+      socket.on("messageRoom", async (data: any) => {
         try {
           const state = JSON.parse(data)
           if (state.is_finished === true) {
             setButtonsDownload(true)
             setStateProgressValue(0)
             setGenerateURL(false)
+            socketRef.current.emit("sendMessage", {
+              room: projectSelect.key,
+              message: JSON.stringify({ is_disconnect: true })
+            })
             socketRef.current.disconnect()
             setStateProgress([])
             return
@@ -442,6 +446,10 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
             setButtonsDownload(true)
             setStateProgressValue(0)
             setGenerateURL(false)
+            socketRef.current.emit("sendMessage", {
+              room: projectSelect.key,
+              message: JSON.stringify({ is_disconnect: true })
+            })
             socketRef.current.disconnect()
             setStateProgress([])
             return
@@ -469,6 +477,10 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
           setButtonsDownload(true)
           setStateProgressValue(0)
           setGenerateURL(false)
+          socketRef.current.emit("sendMessage", {
+            room: projectSelect.key,
+            message: JSON.stringify({ is_disconnect: true })
+          })
           socketRef.current.disconnect()
           setStateProgress([])
         }
@@ -482,15 +494,6 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
         socket.off("message", () => {})
       }
     }
-    // else if (stateProgress.length === 0 && isOpen === false) {
-    //   setStateProgressValue(0)
-    //   if (socketRef.current) {
-    //     socketRef.current.disconnect()
-    //   }
-    // } else {
-    //   setStateProgressValue(0)
-    //   setButtonsDownload(true)
-    // }
   }, [isOpen])
 
   useEffect(() => {
@@ -522,6 +525,10 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
       setStateProgressValue(100)
       toast.closeAll()
       setStateProgress([])
+      socketRef.current.emit("sendMessage", {
+        room: projectSelect.key,
+        message: JSON.stringify({ is_disconnect: true })
+      })
       socketRef.current.disconnect()
       setGenerateURL(false)
       setButtonsDownload(true)
@@ -531,6 +538,10 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
       setStateProgressValue(0)
       setButtonsDownload(true)
       setGenerateURL(false)
+      socketRef.current.emit("sendMessage", {
+        room: projectSelect.key,
+        message: JSON.stringify({ is_disconnect: true })
+      })
       socketRef.current.disconnect()
     }
   }, [type, stateProgress, id])
@@ -571,6 +582,14 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
       setStateProgressValue(0)
       setButtonsDownload(true)
       toast.closeAll()
+      socketRef.current.emit("sendMessage", {
+        room: projectSelect.key,
+        message: JSON.stringify({ is_disconnect: true })
+      })
+      socketRef.current.emit("sendMessage", {
+        room: projectSelect.key,
+        message: JSON.stringify({ is_disconnect: true })
+      })
       socketRef.current.disconnect()
       toast({
         title: "Oops, there was an error, try again.",
