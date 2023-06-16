@@ -64,6 +64,7 @@ const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectListProjects: string = import.meta.env.VITE_REDIRECT_PROJECTS
 const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
 let apiDomain: string = ""
+const wss: string = import.meta.env.VITE_WSS
 
 if ((import.meta.env.VITE_API_CONNECTION as String).includes("/v1/")) {
   apiDomain = (import.meta.env.VITE_API_CONNECTION as String).replace("/v1/", "/")
@@ -411,7 +412,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const { setInputActive } = useDesignEditorContext()
   const [email, setEmail] = useState<{ text: string; state: boolean }>({ text: "", state: true })
   const [typeModal, setTypeModal] = useState<string>("")
-  const socket = io(apiDomain, { autoConnect: false })
+  const socket = io(wss, { autoConnect: false })
   let socketRef = React.useRef<Socket>()
   let [stateProgress, setStateProgress] = useState<boolean[]>([])
   const [stateProgressValue, setStateProgressValue] = useState<number>(0)
