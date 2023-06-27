@@ -51,7 +51,7 @@ export default function Common() {
   const editor = useEditor()
 
   useEffect(() => {
-    setZoomState(dimensionZoom / zoomRatio)
+    setZoomState(zoomRatio / dimensionZoom)
   }, [dimensionZoom, zoomRatio])
 
   const changePanel = useCallback(
@@ -76,6 +76,19 @@ export default function Common() {
   const onOpenFaq = () => {
     window.open(redirectFaq, "_blank")
   }
+
+  const makeZoom = useCallback(
+    (type) => {
+      if (type === "in") {
+        editor.zoom.zoomIn()
+        setZoomState(zoomState + 0.1)
+      } else if (type === "out") {
+        editor.zoom.zoomOut()
+        setZoomState(zoomState - 0.1)
+      }
+    },
+    [zoomState]
+  )
 
   return (
     <Flex
@@ -133,17 +146,19 @@ export default function Common() {
         >
           <PanningMode />
           <IconButton
+            isDisabled={Math.trunc(zoomState * 100) >= 15 ? false : true}
             variant={"ghost"}
             aria-label="Zoom out"
             icon={<Minus size={24} />}
-            onClick={() => editor.zoom.zoomOut()}
+            onClick={() => makeZoom("out")}
           />
           <Button variant={"ghost"}>{Math.trunc(zoomState * 100)}%</Button>
           <IconButton
+            isDisabled={Math.trunc(zoomState * 100) <= 390 ? false : true}
             variant={"ghost"}
             aria-label="Zoom in"
             icon={<Plus size={24} />}
-            onClick={() => editor.zoom.zoomIn()}
+            onClick={() => makeZoom("in")}
           />
         </Flex>
       </Flex>
