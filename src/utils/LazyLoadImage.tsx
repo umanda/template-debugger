@@ -1,5 +1,6 @@
 import { Flex, Image as CImage, Skeleton } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react"
+const backend: string = import.meta.env.VITE_API_CONNECTION
 
 export default function LazyLoadImage({ url, style = {} }: { url: string; style?: React.CSSProperties }) {
   const [state, setState] = useState<{ image: HTMLImageElement | null }>({ image: null })
@@ -24,7 +25,14 @@ export default function LazyLoadImage({ url, style = {} }: { url: string; style?
       {imageExists ? (
         <CImage sx={style} src={url} />
       ) : (
-        <CImage sx={style} src={"https://dev-drawify-v3.s3.eu-west-3.amazonaws.com/main/error.png"} />
+        <CImage
+          sx={style}
+          src={
+            backend?.includes("https://api.drawify.net")
+              ? "https://project-drawify-v2.s3.eu-west-3.amazonaws.com/error_page/not_found_403.png"
+              : "https://segregate-drawify-images.s3.eu-west-3.amazonaws.com/error_page/not_found_403.png"
+          }
+        />
       )}
     </Flex>
   )
