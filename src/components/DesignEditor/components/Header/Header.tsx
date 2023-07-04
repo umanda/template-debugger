@@ -435,7 +435,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
             setStateProgressValue(0)
             getURL(state.url)
             socketRef.current.emit("sendMessage", {
-              room: projectSelect.key,
+              room: id,
               message: JSON.stringify({ is_disconnect: true })
             })
             socketRef.current.disconnect()
@@ -446,7 +446,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
             setButtonsDownload(true)
             setStateProgressValue(0)
             socketRef.current.emit("sendMessage", {
-              room: projectSelect.key,
+              room: id,
               message: JSON.stringify({ is_disconnect: true })
             })
             socketRef.current.disconnect()
@@ -496,7 +496,6 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const getURL = useCallback(
     async (url: string) => {
       try {
-        console.log(url)
         fetch(url)
           .then((result) => result.blob())
           .then((blob) => {
@@ -530,7 +529,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
         socketRef.current.disconnect()
       }
     },
-    [type, stateProgress, id]
+    [type, stateProgress, id, projectSelect]
   )
 
   const handleDownload = async (type: string) => {
