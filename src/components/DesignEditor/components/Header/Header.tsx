@@ -416,7 +416,6 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   let socketRef = React.useRef<Socket>()
   let [stateProgress, setStateProgress] = useState<boolean[]>([])
   const [stateProgressValue, setStateProgressValue] = useState<number>(0)
-  const [generateURL, setGenerateURL] = useState<boolean>(false)
   const { id } = useParams()
   const scenes = useScenes()
   const projectSelect = useSelector(selectProject)
@@ -434,7 +433,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
           if (state.is_finished === true) {
             setButtonsDownload(true)
             setStateProgressValue(0)
-            setGenerateURL(false)
+            getURL(state.url)
             socketRef.current.emit("sendMessage", {
               room: projectSelect.key,
               message: JSON.stringify({ is_disconnect: true })
@@ -446,7 +445,6 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
           if (state.is_error === true) {
             setButtonsDownload(true)
             setStateProgressValue(0)
-            setGenerateURL(false)
             socketRef.current.emit("sendMessage", {
               room: projectSelect.key,
               message: JSON.stringify({ is_disconnect: true })
@@ -472,12 +470,10 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
           setStateProgressValue(stateValue * cont)
           if (stateReturn === true) {
             stateProgress = []
-            setGenerateURL(true)
           }
         } catch {
           setButtonsDownload(true)
           setStateProgressValue(0)
-          setGenerateURL(false)
           socketRef.current.emit("sendMessage", {
             room: projectSelect.key,
             message: JSON.stringify({ is_disconnect: true })
@@ -497,55 +493,45 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
     }
   }, [isOpen])
 
-  useEffect(() => {
-    generateURL === true && getURL()
-  }, [generateURL])
-
-  const getURL = useCallback(async () => {
-    try {
-      let resolve: any = null
-      stateProgress.every((a) => a === true) &&
-        (resolve = await api.getURLPreview({
-          key: id,
-          scene_ids: [],
-          type
-        }))
-      const url = resolve.url
-      fetch(url)
-        .then((result) => result.blob())
-        .then((blob) => {
-          if (blob != null) {
-            const url = window.URL.createObjectURL(blob)
-            const a = document.createElement("a")
-            a.href = url
-            a.download = projectSelect.name
-            document.body.appendChild(a)
-            a.click()
-          }
+  const getURL = useCallback(
+    async (url: string) => {
+      try {
+        console.log(url)
+        fetch(url)
+          .then((result) => result.blob())
+          .then((blob) => {
+            if (blob != null) {
+              const url = window.URL.createObjectURL(blob)
+              const a = document.createElement("a")
+              a.href = url
+              a.download = projectSelect.name
+              document.body.appendChild(a)
+              a.click()
+            }
+          })
+        setStateProgressValue(100)
+        toast.closeAll()
+        setStateProgress([])
+        socketRef.current.emit("sendMessage", {
+          room: projectSelect.key,
+          message: JSON.stringify({ is_disconnect: true })
         })
-      setStateProgressValue(100)
-      toast.closeAll()
-      setStateProgress([])
-      socketRef.current.emit("sendMessage", {
-        room: projectSelect.key,
-        message: JSON.stringify({ is_disconnect: true })
-      })
-      socketRef.current.disconnect()
-      setGenerateURL(false)
-      setButtonsDownload(true)
-      setTimeout(() => setStateProgressValue(0), 3000)
-      toast.closeAll()
-    } catch {
-      setStateProgressValue(0)
-      setButtonsDownload(true)
-      setGenerateURL(false)
-      socketRef.current.emit("sendMessage", {
-        room: projectSelect.key,
-        message: JSON.stringify({ is_disconnect: true })
-      })
-      socketRef.current.disconnect()
-    }
-  }, [type, stateProgress, id])
+        socketRef.current.disconnect()
+        setButtonsDownload(true)
+        setTimeout(() => setStateProgressValue(0), 3000)
+        toast.closeAll()
+      } catch {
+        setStateProgressValue(0)
+        setButtonsDownload(true)
+        socketRef.current.emit("sendMessage", {
+          room: projectSelect.key,
+          message: JSON.stringify({ is_disconnect: true })
+        })
+        socketRef.current.disconnect()
+      }
+    },
+    [type, stateProgress, id]
+  )
 
   const handleDownload = async (type: string) => {
     setStateProgressValue(0.1)
