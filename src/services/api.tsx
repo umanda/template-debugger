@@ -14,7 +14,7 @@ import {
   ICreateComponent,
   ISubscriptionMe
 } from "~/interfaces/editor"
-import { IExportProjectNoLogin, IGetPreview, listProjectsDTO, ShareTemplate } from "~/interfaces/template"
+import { IExportProjectNoLogin, IGetPreview, listProjectsDTO, previewParam, ShareTemplate } from "~/interfaces/template"
 import { IListComments, SaveCommentDTO } from "~/interfaces/comment"
 const baseURL = import.meta.env.VITE_API_CONNECTION
 const token = localStorage.getItem("token")
@@ -349,11 +349,11 @@ export const getPreviewProject = (props: any) => {
 }
 
 export const getURLPreview = (props: any) => {
-  return new Promise<IGetPreview>((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     base
       .post("/projects/get-preview", props)
       .then(({ data }) => {
-        resolve(data)
+        resolve(data.url)
       })
       .catch((err) => reject(err))
   })
@@ -381,12 +381,12 @@ export const deleteProject = (props: any) => {
   })
 }
 
-export const getExportProject = (props: any): Promise<{ url: string }> => {
+export const getExportProject = (props: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     base
-      .post("/projects/preview", props)
+      .post("/projects/preview", { key: props })
       .then(({ data }) => {
-        resolve(data)
+        resolve(data.signed_url)
       })
       .catch((err) => reject(err))
   })
@@ -688,6 +688,16 @@ export const useShapes = ({ project_id, resource_id }) => {
   return new Promise(() => {
     base.put(`/shapes/${resource_id}/use`, { project_id, resource_id })
   })
+}
+
+export const uploadArrayToAWS = async (presigned_url: string, arrayData: previewParam[]) => {
+  try {
+    const response = await axios.put(presigned_url, arrayData, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+  } catch (error) {}
 }
 
 export const favoriteResource = (id: string) => {

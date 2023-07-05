@@ -59,6 +59,7 @@ import { selectFonts } from "~/store/fonts/selector"
 import { initialOptions, TextState } from "../Toolbox/Text"
 import { loadFonts, loadGraphicTemplate } from "~/utils/fonts"
 import io, { Socket } from "socket.io-client"
+import { previewParam } from "~/interfaces/template"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectListProjects: string = import.meta.env.VITE_REDIRECT_PROJECTS
@@ -412,8 +413,8 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const { setInputActive } = useDesignEditorContext()
   const [email, setEmail] = useState<{ text: string; state: boolean }>({ text: "", state: true })
   const [typeModal, setTypeModal] = useState<string>("")
-  const socket = io(wss, { autoConnect: false })
-  let socketRef = React.useRef<Socket>()
+  // const socket = io(wss, { autoConnect: false })
+  // let socketRef = React.useRef<Socket>()
   let [stateProgress, setStateProgress] = useState<boolean[]>([])
   const [stateProgressValue, setStateProgressValue] = useState<number>(0)
   const { id } = useParams()
@@ -423,114 +424,117 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   useEffect(() => {
     if (isOpen) {
       setStateProgress(scenes.map(() => false))
-      socket.on("connect", () => {
-        setStateProgress(scenes.map((s) => false))
-      })
+      // socket.on("connect", () => {
+      //   setStateProgress(scenes.map((s) => false))
+      // })
 
-      socket.on("messageRoom", async (data: any) => {
-        try {
-          const state = JSON.parse(data)
-          if (state.is_finished === true) {
-            setButtonsDownload(true)
-            setStateProgressValue(0)
-            getURL(state.url)
-            socketRef.current.emit("sendMessage", {
-              room: id,
-              message: JSON.stringify({ is_disconnect: true })
-            })
-            socketRef.current.disconnect()
-            setStateProgress([])
-            return
-          }
-          if (state.is_error === true) {
-            setButtonsDownload(true)
-            setStateProgressValue(0)
-            socketRef.current.emit("sendMessage", {
-              room: id,
-              message: JSON.stringify({ is_disconnect: true })
-            })
-            socketRef.current.disconnect()
-            setStateProgress([])
-            return
-          }
-          const stateValue = 100 / (state.scenes + 1)
-          let cont = 0
-          let stateReturn = false
-          stateProgress[state.scene - 1] = true
-          setStateProgress(stateProgress)
-          for (var x = 0; x <= state.scenes - 1; x++) {
-            if (stateProgress[x] === undefined) {
-              stateReturn = false
-              x = state.scenes
-            } else {
-              stateReturn = true
-            }
-          }
-          stateProgress.map((a) => a === true && cont++)
-          setStateProgressValue(stateValue * cont)
-          if (stateReturn === true) {
-            stateProgress = []
-          }
-        } catch {
-          setButtonsDownload(true)
-          setStateProgressValue(0)
-          socketRef.current.emit("sendMessage", {
-            room: projectSelect.key,
-            message: JSON.stringify({ is_disconnect: true })
-          })
-          socketRef.current.disconnect()
-          setStateProgress([])
-        }
-      })
+      // socket.on("messageRoom", async (data: any) => {
+      //   try {
+      //     console.log(data)
+      //     const state = JSON.parse(data)
+      //     if (state.is_finished === true) {
+      //       setButtonsDownload(true)
+      //       setStateProgressValue(0)
+      //       getURL(state.url)
+      //       socketRef.current.emit("sendMessage", {
+      //         room: id,
+      //         message: JSON.stringify({ is_disconnect: true })
+      //       })
+      //       socketRef.current.disconnect()
+      //       setStateProgress([])
+      //       return
+      //     }
+      //     if (state.is_error === true) {
+      //       setButtonsDownload(true)
+      //       setStateProgressValue(0)
+      //       socketRef.current.emit("sendMessage", {
+      //         room: id,
+      //         message: JSON.stringify({ is_disconnect: true })
+      //       })
+      //       socketRef.current.disconnect()
+      //       setStateProgress([])
+      //       return
+      //     }
+      //     const stateValue = 100 / (state.scenes + 1)
+      //     let cont = 0
+      //     let stateReturn = false
+      //     stateProgress[state.scene - 1] = true
+      //     setStateProgress(stateProgress)
+      //     for (var x = 0; x <= state.scenes - 1; x++) {
+      //       if (stateProgress[x] === undefined) {
+      //         stateReturn = false
+      //         x = state.scenes
+      //       } else {
+      //         stateReturn = true
+      //       }
+      //     }
+      //     stateProgress.map((a) => a === true && cont++)
+      //     setStateProgressValue(stateValue * cont)
+      //     if (stateReturn === true) {
+      //       stateProgress = []
+      //     }
+      //   } catch {
+      //     setButtonsDownload(true)
+      //     setStateProgressValue(0)
+      //     socketRef.current.emit("sendMessage", {
+      //       room: projectSelect.key,
+      //       message: JSON.stringify({ is_disconnect: true })
+      //     })
+      //     socketRef.current.disconnect()
+      //     setStateProgress([])
+      //   }
+      // })
 
-      socket.off("disconnect", (a) => {})
+      // socket.off("disconnect", (a) => {})
 
-      socketRef.current = socket
+      // socketRef.current = socket
 
-      return () => {
-        socket.off("message", () => {})
-      }
+      // return () => {
+      //   socket.off("message", () => {})
+      // }
     }
   }, [isOpen])
 
-  const getURL = useCallback(
-    async (url: string) => {
-      try {
-        fetch(url)
-          .then((result) => result.blob())
-          .then((blob) => {
-            if (blob != null) {
-              const url = window.URL.createObjectURL(blob)
-              const a = document.createElement("a")
-              a.href = url
-              a.download = projectSelect.name
-              document.body.appendChild(a)
-              a.click()
-            }
-          })
-        setStateProgressValue(100)
-        toast.closeAll()
-        setStateProgress([])
-        socketRef.current.emit("sendMessage", {
-          room: projectSelect.key,
-          message: JSON.stringify({ is_disconnect: true })
-        })
-        socketRef.current.disconnect()
-        setButtonsDownload(true)
-        setTimeout(() => setStateProgressValue(0), 3000)
-        toast.closeAll()
-      } catch {
-        setStateProgressValue(0)
-        setButtonsDownload(true)
-        socketRef.current.emit("sendMessage", {
-          room: projectSelect.key,
-          message: JSON.stringify({ is_disconnect: true })
-        })
-        socketRef.current.disconnect()
-      }
-    },
-    [type, stateProgress, id, projectSelect]
-  )
+  // const getURL = useCallback(
+  //   async (url: string) => {
+  //     try {
+  //       fetch(url)
+  //         .then((result) => result.blob())
+  //         .then((blob) => {
+  //           if (blob != null) {
+  //             const url = window.URL.createObjectURL(blob)
+  //             const a = document.createElement("a")
+  //             a.href = url
+  //             a.download = projectSelect.name
+  //             document.body.appendChild(a)
+  //             a.click()
+  //           }
+  //         })
+  //       setStateProgressValue(100)
+  //       toast.closeAll()
+  //       setStateProgress([])
+  //       socketRef.current.emit("sendMessage", {
+  //         room: projectSelect.key,
+  //         message: JSON.stringify({ is_disconnect: true })
+  //       })
+  //       socketRef.current.disconnect()
+  //       setButtonsDownload(true)
+  //       setTimeout(() => setStateProgressValue(0), 3000)
+  //       toast.closeAll()
+  //     } catch {
+  //       setStateProgressValue(0)
+  //       setButtonsDownload(true)
+  //       socketRef.current.emit("sendMessage", {
+  //         room: projectSelect.key,
+  //         message: JSON.stringify({ is_disconnect: true })
+  //       })
+  //       socketRef.current.disconnect()
+  //     }
+  //   },
+  //   [type, stateProgress, id, projectSelect]
+  // )
+
+  // console.log(scenes)
 
   const handleDownload = async (type: string) => {
     setStateProgressValue(0.1)
@@ -543,19 +547,42 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
     })
     try {
       setButtonsDownload(false)
-      if (socketRef.current) {
-        setType(type)
-        socketRef.current.connect()
-        socketRef.current.emit("joinRoom", id)
-      }
       if (user?.plan !== "FREE" || type === "jpg") {
         await functionSave()
         if (editor && user) {
-          await api.getExportProject({
-            key: id,
-            scene_ids: [],
-            type
-          })
+          let cont = 0
+          const fileJson = new Array<previewParam>()
+          for (const scn of scenes) {
+            fileJson.push({
+              id: scn.id,
+              name: `${projectSelect.name}_${cont + 1}.${type === "png" ? "png" : "jpg"}`,
+              position: cont,
+              height: scn.frame.height,
+              width: scn.frame.width,
+              data: `${scn.preview.replace(/^.+,/, "")}"`
+            })
+            cont++
+          }
+          const signedURL = await api.getExportProject(projectSelect.key)
+          await api.uploadArrayToAWS(signedURL, fileJson)
+          const url = await api.getURLPreview({ key: projectSelect.key, type: type })
+          fetch(url)
+            .then((result) => result.blob())
+            .then((blob) => {
+              if (blob != null) {
+                const url = window.URL.createObjectURL(blob)
+                const a = document.createElement("a")
+                a.href = url
+                a.download = projectSelect.name
+                document.body.appendChild(a)
+                a.click()
+              }
+            })
+          setButtonsDownload(true)
+          setStateProgressValue(100)
+          toast.closeAll()
+          setStateProgress([])
+          setTimeout(() => setStateProgressValue(0), 3000)
         }
       } else {
         setStateProgressValue(0)
@@ -568,15 +595,6 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
       setStateProgressValue(0)
       setButtonsDownload(true)
       toast.closeAll()
-      socketRef.current.emit("sendMessage", {
-        room: projectSelect.key,
-        message: JSON.stringify({ is_disconnect: true })
-      })
-      socketRef.current.emit("sendMessage", {
-        room: projectSelect.key,
-        message: JSON.stringify({ is_disconnect: true })
-      })
-      socketRef.current.disconnect()
       toast({
         title: "Oops, there was an error, try again.",
         status: "error",

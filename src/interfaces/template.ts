@@ -31,3 +31,12 @@ export interface IGetPreview{
   has_preview:boolean
   url:string
 }
+
+export interface previewParam {
+  id: string;
+  name: string;
+  position: number;
+  width: number;
+  height: number;
+  data: any; //Buffer;
+}
