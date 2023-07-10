@@ -418,8 +418,10 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const { id } = useParams()
   const scenes = useScenes()
   const projectSelect = useSelector(selectProject)
+  const { setDownloadCanva } = useResourcesContext()
 
   const handleDownload = async (type: string) => {
+    setDownloadCanva(true)
     setStateProgressValue(0.1)
     toast({
       title: "Downloading your project.",
@@ -531,6 +533,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
         isClosable: true
       })
     }
+    setDownloadCanva(false)
   }
 
   const shareTemplate = useCallback(

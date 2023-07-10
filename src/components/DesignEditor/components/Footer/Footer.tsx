@@ -8,7 +8,7 @@ import Controls from "./PanningMode"
 export default function Footer() {
   const { isScenesVisible, setIsScenesVisible } = useDesignEditorContext()
   return (
-    <Box sx={{ position: "relative" ,borderTop: "1px solid #DDDFE5", }}>
+    <Box sx={{ position: "relative", borderTop: "1px solid #DDDFE5" }}>
       {isScenesVisible && (
         <Box
           onClick={() => setIsScenesVisible(false)}

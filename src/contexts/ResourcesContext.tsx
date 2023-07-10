@@ -13,6 +13,8 @@ interface IFont {
 }
 
 interface IResourcesContext {
+  downloadCanva: boolean
+  setDownloadCanva: React.Dispatch<React.SetStateAction<boolean>>
   draw: BrushOptions
   setDraw: React.Dispatch<React.SetStateAction<BrushOptions>>
   order: boolean
@@ -64,7 +66,9 @@ export const ResourcesContext = React.createContext<IResourcesContext>({
   previewCanva: null,
   setPreviewCanva: () => {},
   dimensionZoom: null,
-  setDimensionZoom: () => {}
+  setDimensionZoom: () => {},
+  downloadCanva: true,
+  setDownloadCanva: () => {}
 })
 
 export const ResourcesContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -81,6 +85,7 @@ export const ResourcesContextProvider = ({ children }: { children: React.ReactNo
   const [loadCanva, setLoadCanva] = React.useState<boolean>(false)
   const [previewCanva, setPreviewCanva] = React.useState<string | null>(null)
   const [dimensionZoom, setDimensionZoom] = React.useState<number>(null)
+  const [downloadCanva, setDownloadCanva] = React.useState<boolean>(false)
   const context = {
     draw,
     setDraw,
@@ -91,7 +96,9 @@ export const ResourcesContextProvider = ({ children }: { children: React.ReactNo
     previewCanva,
     setPreviewCanva,
     dimensionZoom,
-    setDimensionZoom
+    setDimensionZoom,
+    downloadCanva,
+    setDownloadCanva
   }
   return <ResourcesContext.Provider value={context}>{children}</ResourcesContext.Provider>
 }
