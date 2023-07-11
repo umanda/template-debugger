@@ -439,42 +439,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
           let progress = 100 / (scenes.length + 4)
           let currentProgress = 0
           let cont = 0
-          if (type === "png") {
-            for (const s of scenes) {
-              const scn = s as any
-              const staticCanvas = new fabric.StaticCanvas(null)
-              staticCanvas.setWidth(scn.frame.width).setHeight(scn.frame.height)
-              const objectImporter = new ObjectImporter()
-              let updatedLayers = scn.scene.layers.filter((layer: any) => layer && layer.type !== "BackgroundContainer")
-              updatedLayers = scn.scene.layers.filter((layer: any) => layer && layer.type !== "Frame")
-              for (const layer of updatedLayers) {
-                if (layer.type === "Background") {
-                  layer.fill = null
-                }
-                const element = await objectImporter.import(layer, {})
-                if (element) {
-                  staticCanvas.add(element)
-                }
-              }
-              const canvasImageBase64 = staticCanvas.toDataURL({
-                top: 0,
-                left: 0,
-                height: staticCanvas.getHeight(),
-                width: staticCanvas.getWidth()
-              })
-              fileJson.push({
-                id: scn.id,
-                name: `${projectSelect.name}_${cont + 1}.${type === "png" ? "png" : "jpg"}`,
-                position: cont,
-                height: scn.frame.height,
-                width: scn.frame.width,
-                data: `${canvasImageBase64.replace(/^.+,/, "")}"`
-              })
-              cont++
-              setStateProgressValue(currentProgress + progress)
-              currentProgress = progress + currentProgress
-            }
-          } else {
+          if (type !== "png") {
             for (const scn of scenes) {
               fileJson.push({
                 id: scn.id,
@@ -489,11 +454,13 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
           }
           setStateProgressValue(currentProgress + progress)
           currentProgress = progress + currentProgress
-          const signedURL = await api.getExportProject(projectSelect.key)
+          const signedURL = await api.getExportProject(projectSelect.key, type, [])
           setStateProgressValue(currentProgress + progress)
           currentProgress = progress + currentProgress
-          await api.uploadArrayToAWS(signedURL, fileJson)
-          setStateProgressValue(currentProgress + progress)
+          if (type !== "png") {
+            await api.uploadArrayToAWS(signedURL, fileJson)
+            setStateProgressValue(currentProgress + progress)
+          }
           currentProgress = progress + currentProgress
           const url = await api.getURLPreview({ key: projectSelect.key, type: type })
           setStateProgressValue(currentProgress + progress)

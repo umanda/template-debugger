@@ -381,10 +381,10 @@ export const deleteProject = (props: any) => {
   })
 }
 
-export const getExportProject = (props: string): Promise<string> => {
+export const getExportProject = (key: string, type: string, scene_ids: string[]): Promise<string> => {
   return new Promise((resolve, reject) => {
     base
-      .post("/projects/preview", { key: props })
+      .post("/projects/preview", { key, type, scene_ids })
       .then(({ data }) => {
         resolve(data.signed_url)
       })
