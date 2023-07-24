@@ -129,14 +129,19 @@ class Renderer {
 
     const updatedLayers = template.layers.filter(layer => layer && layer.type !== LayerType.BACKGROUND_CONTAINER)
 
-    for (const layer of updatedLayers) {
-      const element = await objectImporter.import(layer, params)
-      if (element) {
-        staticCanvas.add(element)
-      } else {
-        console.warn("UNABLE TO LOAD LAYER: ", layer)
-      }
-    }
+    const elements: fabric.Object[] = await Promise.all(
+            updatedLayers.map(async (layer: any) => {
+                const element = await objectImporter.import(layer, params)
+                if (element) {
+                    return element
+                } else {
+                    console.log("UNABLE TO LOAD OBJECT: ", layer)
+                    const object = new fabric.Object()
+                    return object
+                }
+            })
+        )
+        staticCanvas.add(...elements)
   }
 
   private setDimensions(staticCanvas: fabric.StaticCanvas, { width, height }: { width: number; height: number }) {

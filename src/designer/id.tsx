@@ -35,7 +35,6 @@ const Designer: any = () => {
   useTokenInterceptor()
 
   useEffect(() => {
-    console.log("id")
     design && lodaTemplateById()
   }, [design])
 

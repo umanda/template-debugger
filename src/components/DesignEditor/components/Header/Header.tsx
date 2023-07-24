@@ -421,86 +421,91 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const { setDownloadCanva } = useResourcesContext()
 
   const handleDownload = async (type: string) => {
-    setDownloadCanva(true)
-    setStateProgressValue(0.1)
-    toast({
-      title: "Downloading your project.",
-      status: "info",
-      position: "top",
-      duration: 1000000,
-      isClosable: true
-    })
-    try {
-      setButtonsDownload(false)
-      if (user?.plan !== "FREE") {
-        await functionSave()
-        if (editor && user) {
-          const fileJson = new Array<previewParam>()
-          let progress = 100 / (scenes.length + 4)
-          let currentProgress = 0
-          let cont = 0
-          if (type !== "png") {
-            for (const scn of scenes) {
-              fileJson.push({
-                id: scn.id,
-                name: `${projectSelect.name}_${cont + 1}.${type === "png" ? "png" : "jpg"}`,
-                position: cont,
-                height: scn.frame.height,
-                width: scn.frame.width,
-                data: `${scn.preview.replace(/^.+,/, "")}"`
-              })
-              cont++
-            }
-          }
-          setStateProgressValue(currentProgress + progress)
-          currentProgress = progress + currentProgress
-          const signedURL = await api.getExportProject(projectSelect.key, type, [])
-          setStateProgressValue(currentProgress + progress)
-          currentProgress = progress + currentProgress
-          if (type !== "png") {
-            await api.uploadArrayToAWS(signedURL, fileJson)
-            setStateProgressValue(currentProgress + progress)
-          }
-          currentProgress = progress + currentProgress
-          const url = await api.getURLPreview({ key: projectSelect.key, type: type })
-          setStateProgressValue(currentProgress + progress)
-          fetch(url)
-            .then((result) => result.blob())
-            .then((blob) => {
-              if (blob != null) {
-                const url = window.URL.createObjectURL(blob)
-                const a = document.createElement("a")
-                a.href = url
-                a.download = projectSelect.name
-                document.body.appendChild(a)
-                a.click()
+    if (user.plan === "FREE" || type === "jpg") {
+      console.log(type)
+      setDownloadCanva(true)
+      setStateProgressValue(0.1)
+      toast({
+        title: "Downloading your project.",
+        status: "info",
+        position: "top",
+        duration: 1000000,
+        isClosable: true
+      })
+      try {
+        setButtonsDownload(false)
+        if (user?.plan !== "FREE" || type === "jpg") {
+          await functionSave()
+          if (editor && user) {
+            const fileJson = new Array<previewParam>()
+            let progress = 100 / (scenes.length + 4)
+            let currentProgress = 0
+            let cont = 0
+            if (type !== "png") {
+              for (const scn of scenes) {
+                fileJson.push({
+                  id: scn.id,
+                  name: `${projectSelect.name}_${cont + 1}.${type === "png" ? "png" : "jpg"}`,
+                  position: cont,
+                  height: scn.frame.height,
+                  width: scn.frame.width,
+                  data: `${scn.preview.replace(/^.+,/, "")}"`
+                })
+                cont++
               }
-            })
+            }
+            setStateProgressValue(currentProgress + progress)
+            currentProgress = progress + currentProgress
+            const signedURL = await api.getExportProject(projectSelect.key, type, [])
+            setStateProgressValue(currentProgress + progress)
+            currentProgress = progress + currentProgress
+            if (type !== "png") {
+              await api.uploadArrayToAWS(signedURL, fileJson)
+              setStateProgressValue(currentProgress + progress)
+            }
+            currentProgress = progress + currentProgress
+            const url = await api.getURLPreview({ key: projectSelect.key, type: type })
+            setStateProgressValue(currentProgress + progress)
+            fetch(url)
+              .then((result) => result.blob())
+              .then((blob) => {
+                if (blob != null) {
+                  const url = window.URL.createObjectURL(blob)
+                  const a = document.createElement("a")
+                  a.href = url
+                  a.download = projectSelect.name
+                  document.body.appendChild(a)
+                  a.click()
+                }
+              })
+            setButtonsDownload(true)
+            setStateProgressValue(100)
+            toast.closeAll()
+            setTimeout(() => setStateProgressValue(0), 3000)
+          }
+        } else {
+          setStateProgressValue(0)
           setButtonsDownload(true)
-          setStateProgressValue(100)
           toast.closeAll()
-          setTimeout(() => setStateProgressValue(0), 3000)
+          setTypeModal(type.toLocaleUpperCase())
+          onOpenUpgradeUser()
         }
-      } else {
+      } catch (err: any) {
         setStateProgressValue(0)
         setButtonsDownload(true)
         toast.closeAll()
-        setTypeModal(type.toLocaleUpperCase())
-        onOpenUpgradeUser()
+        toast({
+          title: "Oops, there was an error, try again.",
+          status: "error",
+          position: "top",
+          duration: 2000,
+          isClosable: true
+        })
       }
-    } catch (err: any) {
-      setStateProgressValue(0)
-      setButtonsDownload(true)
-      toast.closeAll()
-      toast({
-        title: "Oops, there was an error, try again.",
-        status: "error",
-        position: "top",
-        duration: 2000,
-        isClosable: true
-      })
+      setDownloadCanva(false)
+    } else {
+      onOpenUpgradeUser()
     }
-    setDownloadCanva(false)
   }
 
   const shareTemplate = useCallback(

@@ -36,7 +36,11 @@ export default function Layer() {
   }, [changeOrder])
 
   useEffect(() => {
-    setObjects(activeScene.layers.filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom").reverse())
+    setObjects(
+      activeScene.layers
+        .filter((e: any) => e.name !== "Initial Frame" && e.name !== "Custom" && e.name !== "Background")
+        .reverse()
+    )
   }, [activeScene, activeObject, order])
 
   const handleChangeOrder = useCallback(() => {
