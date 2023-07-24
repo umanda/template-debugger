@@ -127,21 +127,20 @@ class Renderer {
     this.setDimensions(staticCanvas, frame)
     const objectImporter = new ObjectImporter()
 
-    const updatedLayers = template.layers.filter(layer => layer && layer.type !== LayerType.BACKGROUND_CONTAINER)
-
+    const updatedLayers = template.layers.filter((layer) => layer && layer.type !== LayerType.BACKGROUND_CONTAINER)
     const elements: fabric.Object[] = await Promise.all(
-            updatedLayers.map(async (layer: any) => {
-                const element = await objectImporter.import(layer, params)
-                if (element) {
-                    return element
-                } else {
-                    console.log("UNABLE TO LOAD OBJECT: ", layer)
-                    const object = new fabric.Object()
-                    return object
-                }
-            })
-        )
-        staticCanvas.add(...elements)
+      updatedLayers.map(async (layer: any) => {
+        const element = await objectImporter.import(layer, params)
+        if (element) {
+          return element
+        } else {
+          console.log("UNABLE TO LOAD OBJECT: ", layer)
+          const object = new fabric.Object()
+          return object
+        }
+      })
+    )
+    staticCanvas.add(...elements)
   }
 
   private setDimensions(staticCanvas: fabric.StaticCanvas, { width, height }: { width: number; height: number }) {

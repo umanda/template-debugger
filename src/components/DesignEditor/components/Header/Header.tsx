@@ -422,7 +422,6 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
 
   const handleDownload = async (type: string) => {
     if (user.plan === "FREE" || type === "jpg") {
-      console.log(type)
       setDownloadCanva(true)
       setStateProgressValue(0.1)
       toast({
