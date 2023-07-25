@@ -391,7 +391,6 @@ class ObjectImporter {
         const { item, options } = props
         const baseOptions = this.getBaseOptions(props)
         const { src, colorMap = {} } = item as IStaticVector
-        console.log(item.watermark)
 
         let watermarkObject = null
         if (item.watermark) {

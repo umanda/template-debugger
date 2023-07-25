@@ -27,7 +27,11 @@ import {
   useDisclosure,
   Textarea,
   Spacer,
-  useToast
+  useToast,
+  TabPanels,
+  TabPanel,
+  GridItem,
+  Image
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
@@ -121,6 +125,7 @@ export default function Ilustrations() {
   const [textArea, setTextArea] = useState<string>()
   const toast = useToast()
   const { id } = useParams()
+  const [stateTabs, setStateTabs] = useState<number>(0)
 
   useEffect(() => {
     initialState()
@@ -412,7 +417,40 @@ export default function Ilustrations() {
   }, [])
 
   return (
-    <Flex h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" flexDirection="column">
+    <Flex h="full" width="320px" borderRight="1px solid #ebebeb" flexDirection="column">
+      <Grid templateColumns="repeat(2, 1fr)" marginBottom="10px">
+        <GridItem
+          display="flex"
+          h="50px"
+          color={stateTabs === 0 ? "#5456F5" : "#545465"}
+          justifyContent="center"
+          alignItems="center"
+          _hover={{
+            cursor: "pointer",
+            color: "#5456F5"
+          }}
+          onClick={() => setStateTabs(0)}
+          borderRight="1px solid #ebebeb"
+          borderBottom={stateTabs === 0 ? null : "1px solid #ebebeb"}
+        >
+          Search
+        </GridItem>
+        <GridItem
+          _hover={{
+            cursor: "pointer",
+            color: "#5456F5"
+          }}
+          onClick={() => setStateTabs(1)}
+          color={stateTabs === 1 ? "#5456F5" : "#545465"}
+          display="flex"
+          h="50px"
+          justifyContent="center"
+          alignItems="center"
+          borderBottom={stateTabs === 1 ? null : "1px solid #ebebeb"}
+        >
+          Smart Search
+        </GridItem>
+      </Grid>
       <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
         <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
           <HStack width={"100%"}>
@@ -550,42 +588,72 @@ export default function Ilustrations() {
           </TabList>
         </Tabs>
       </Box>
-      <Flex w="full" h="full" flexDir="column">
-        {validateContent === null ? (
-          <Scrollable autoHide={true}>
-            <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
-              {load ? (
-                nameIllustration[0] !== "" ? (
-                  <Flex marginTop="20px" marginInline="20px" flexDir="column">
-                    {resourcesIllustration?.map((r, index) => (
-                      <Flex flexDir="column" key={index} gap="5px" alignItems="center">
-                        <Flex w="full">
-                          <Avatar marginLeft="10px" size="md" name={r?.drawifier_name} src={r?.avatar} />
-                          <Flex flexDir="column" w="full">
-                            <Center flexDirection="column">
-                              <Box sx={{ fontSize: "12px" }} fontWeight="bold">
-                                {limitCharacters(r?.drawifier_name)}
-                              </Box>
-                              <Box sx={{ fontSize: "12px" }}>{`Found ${r?.total_drawings ?? 0} drawings`}</Box>
-                            </Center>
-                            <Center
-                              color="#fa6400"
-                              fontWeight="600"
-                              fontSize="12px"
-                              _hover={{ cursor: "pointer" }}
-                              onClick={() => makeAllDraws(r)}
-                            >
-                              {`All ${r?.drawifier_name?.split(" ")[0] ?? null}'s drawings`}
-                            </Center>
+      {stateTabs === 0 ? (
+        <>
+          <Flex w="full" h="full" flexDir="column">
+            {validateContent === null ? (
+              <Scrollable autoHide={true}>
+                <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
+                  {load ? (
+                    nameIllustration[0] !== "" ? (
+                      <Flex marginTop="20px" marginInline="20px" flexDir="column">
+                        {resourcesIllustration?.map((r, index) => (
+                          <Flex flexDir="column" key={index} gap="5px" alignItems="center">
+                            <Flex w="full">
+                              <Avatar marginLeft="10px" size="md" name={r?.drawifier_name} src={r?.avatar} />
+                              <Flex flexDir="column" w="full">
+                                <Center flexDirection="column">
+                                  <Box sx={{ fontSize: "12px" }} fontWeight="bold">
+                                    {limitCharacters(r?.drawifier_name)}
+                                  </Box>
+                                  <Box sx={{ fontSize: "12px" }}>{`Found ${r?.total_drawings ?? 0} drawings`}</Box>
+                                </Center>
+                                <Center
+                                  color="#fa6400"
+                                  fontWeight="600"
+                                  fontSize="12px"
+                                  _hover={{ cursor: "pointer" }}
+                                  onClick={() => makeAllDraws(r)}
+                                >
+                                  {`All ${r?.drawifier_name?.split(" ")[0] ?? null}'s drawings`}
+                                </Center>
+                              </Flex>
+                            </Flex>
+                            <Flex
+                              h="1px"
+                              w="full"
+                              bg="linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5578606442577031) 27%, rgba(0,212,255,0) 100%)"
+                            ></Flex>
+                            <Grid w="full" gap="2px" templateColumns="repeat(2, 1fr)">
+                              {r?.drawings?.map(
+                                (illustration, index) =>
+                                  illustration && (
+                                    <IllustrationItem
+                                      makeFavorite={makeFavorite}
+                                      addObject={() => addObject(illustration)}
+                                      illustration={illustration}
+                                      key={index}
+                                      listFavorite={selectListFavoriteResources}
+                                    />
+                                  )
+                              )}
+                            </Grid>
                           </Flex>
-                        </Flex>
-                        <Flex
-                          h="1px"
+                        ))}
+                        <Button
                           w="full"
-                          bg="linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5578606442577031) 27%, rgba(0,212,255,0) 100%)"
-                        ></Flex>
-                        <Grid w="full" gap="2px" templateColumns="repeat(2, 1fr)">
-                          {r?.drawings?.map(
+                          variant="outline"
+                          isLoading={loadMoreResources}
+                          isDisabled={!more}
+                          onClick={fetchDataResource}
+                        >
+                          Load More
+                        </Button>
+                      </Flex>
+                    ) : (
+                      <Flex flexDir="column">
+                        <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
+                          {resourcesIllustration.map(
                             (illustration, index) =>
                               illustration && (
                                 <IllustrationItem
@@ -597,114 +665,101 @@ export default function Ilustrations() {
                                 />
                               )
                           )}
-                        </Grid>
+                        </Box>
+                        <Button
+                          w="full"
+                          variant="outline"
+                          isLoading={loadMoreResources}
+                          isDisabled={!more}
+                          onClick={fetchDataResource}
+                        >
+                          Load More
+                        </Button>
                       </Flex>
-                    ))}
-                    <Button
-                      w="full"
-                      variant="outline"
-                      isLoading={loadMoreResources}
-                      isDisabled={!more}
-                      onClick={fetchDataResource}
-                    >
-                      Load More
-                    </Button>
-                  </Flex>
-                ) : (
-                  <Flex flexDir="column">
-                    <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
-                      {resourcesIllustration.map(
-                        (illustration, index) =>
-                          illustration && (
-                            <IllustrationItem
-                              makeFavorite={makeFavorite}
-                              addObject={() => addObject(illustration)}
-                              illustration={illustration}
-                              key={index}
-                              listFavorite={selectListFavoriteResources}
-                            />
-                          )
-                      )}
-                    </Box>
-                    <Button
-                      w="full"
-                      variant="outline"
-                      isLoading={loadMoreResources}
-                      isDisabled={!more}
-                      onClick={fetchDataResource}
-                    >
-                      Load More
-                    </Button>
-                  </Flex>
-                )
-              ) : (
-                <Flex h="50%" w="full" align="end" justify="center">
-                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-                </Flex>
-              )}
-            </InfiniteScroll>
-          </Scrollable>
-        ) : (
-          <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
-            {stateFavorite !== true && stateRecent !== true && (
-              <Text fontSize="18px" fontWeight="700" color="#545465">
-                REQUEST A IMAGE
-              </Text>
-            )}
-            {stateFavorite === true ? (
-              <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
-            ) : stateRecent === true ? (
-              <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
+                    )
+                  ) : (
+                    <Flex h="50%" w="full" align="end" justify="center">
+                      <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+                    </Flex>
+                  )}
+                </InfiniteScroll>
+              </Scrollable>
             ) : (
-              user.plan !== "Hero" && (
-                <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noImages.png"} />
-              )
-            )}
-            <Flex w="full" padding="10px">
-              {validateContent === "noResult" ? (
-                user.plan !== "HERO" ? (
-                  <Flex flexDir="column" gap="20px" align="center">
-                    <Text>Sorry! Your current plan does not support this feature.</Text>
-                    <Text>
-                      To send your request for an image, <u>upgrade to Drawify Hero.</u>
-                    </Text>
-                    <Button
-                      w="-webkit-fit-content"
-                      onClick={() => (window.location.href = redirectPayments)}
-                      colorScheme={"brand"}
-                    >
-                      Upgrade
-                    </Button>
-                  </Flex>
+              <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+                {stateFavorite !== true && stateRecent !== true && (
+                  <Text fontSize="18px" fontWeight="700" color="#545465">
+                    REQUEST A IMAGE
+                  </Text>
+                )}
+                {stateFavorite === true ? (
+                  <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
+                ) : stateRecent === true ? (
+                  <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
                 ) : (
-                  <Flex flexDir="column" w="full" align="center" gap="20px">
-                    <Textarea
-                      ref={textAreaRef}
-                      onFocus={() => setInputActive(true)}
-                      onChange={(e) => setTextArea(e.target.value)}
-                      onBlur={() => setNameIllustration([textArea])}
-                      w="full"
-                      placeholder="Describe the image you would like"
-                    />
-                    <Button
-                      isDisabled={textAreaRef?.current?.value! === "" ? true : false}
-                      w="-webkit-fit-content"
-                      onClick={() => sendIllustrationRequest(textArea)}
-                      colorScheme={"brand"}
-                    >
-                      Send Image Request
-                    </Button>
-                  </Flex>
-                )
-              ) : (
-                <Flex w="full" justify="center">
-                  {validateContent}
+                  user.plan !== "Hero" && (
+                    <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noImages.png"} />
+                  )
+                )}
+                <Flex w="full" padding="10px">
+                  {validateContent === "noResult" ? (
+                    user.plan !== "HERO" ? (
+                      <Flex flexDir="column" gap="20px" align="center">
+                        <Text>Sorry! Your current plan does not support this feature.</Text>
+                        <Text>
+                          To send your request for an image, <u>upgrade to Drawify Hero.</u>
+                        </Text>
+                        <Button
+                          w="-webkit-fit-content"
+                          onClick={() => (window.location.href = redirectPayments)}
+                          colorScheme={"brand"}
+                        >
+                          Upgrade
+                        </Button>
+                      </Flex>
+                    ) : (
+                      <Flex flexDir="column" w="full" align="center" gap="20px">
+                        <Textarea
+                          ref={textAreaRef}
+                          onFocus={() => setInputActive(true)}
+                          onChange={(e) => setTextArea(e.target.value)}
+                          onBlur={() => setNameIllustration([textArea])}
+                          w="full"
+                          placeholder="Describe the image you would like"
+                        />
+                        <Button
+                          isDisabled={textAreaRef?.current?.value! === "" ? true : false}
+                          w="-webkit-fit-content"
+                          onClick={() => sendIllustrationRequest(textArea)}
+                          colorScheme={"brand"}
+                        >
+                          Send Image Request
+                        </Button>
+                      </Flex>
+                    )
+                  ) : (
+                    <Flex w="full" justify="center">
+                      {validateContent}
+                    </Flex>
+                  )}
                 </Flex>
-              )}
-            </Flex>
+              </Center>
+            )}
+          </Flex>
+        </>
+      ) : (
+        <>
+          <Center h="full" flexDir="column">
+            <Image src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/magic-search.png" />
+            <Text w="72%" textAlign="center">
+              Get inspired with <b>SmartSearch</b>, powered by AI.
+            </Text>
+            <Text w="72%" textAlign="center">
+              Search by phrase,and
+              <br /> discover more creative search results, faster
+            </Text>
           </Center>
-        )}
-      </Flex>
+        </>
+      )}
     </Flex>
   )
 }
