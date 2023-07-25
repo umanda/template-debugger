@@ -750,13 +750,29 @@ export default function Ilustrations() {
         <>
           <Center h="full" flexDir="column">
             <Image src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/magic-search.png" />
-            <Text w="72%" textAlign="center">
-              Get inspired with <b>SmartSearch</b>, powered by AI.
-            </Text>
-            <Text w="72%" textAlign="center">
-              Search by phrase,and
-              <br /> discover more creative search results, faster
-            </Text>
+            {user.plan === "HERO" ? (
+              <>
+                <Text w="72%" textAlign="center">
+                  Get inspired with <b>SmartSearch</b>, powered by AI.
+                </Text>
+                <Text w="72%" textAlign="center">
+                  Search by phrase,and
+                  <br /> discover more creative search results, faster
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text textAlign="center">Spark your imagination!</Text>
+                <br />
+                <Text textAlign="center">
+                  Discover more interesting search
+                  <br /> results with SmartSearch
+                </Text>
+                <Button variant="outline" borderColor="#5456F5" color="#5456F5" margin="20px">
+                  Upgrade to unlock
+                </Button>
+              </>
+            )}
           </Center>
         </>
       )}
