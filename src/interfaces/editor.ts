@@ -152,6 +152,7 @@ export interface SearchResourceDto {
     keywords?: string[]
     notIds?: number[]
     is_published?: boolean
+    text?: string
   }
   sorts?: string[]
 }
@@ -185,7 +186,7 @@ export interface SearchTemplateDto {
     resource_ids?: string[]
     plans?: string[]
     is_published?: boolean
-    keywords?:string[]
+    keywords?: string[]
   }
   sorts?: string[]
 }
