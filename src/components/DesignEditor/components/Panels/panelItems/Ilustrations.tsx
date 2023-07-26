@@ -26,12 +26,9 @@ import {
   Tooltip,
   useDisclosure,
   Textarea,
-  Spacer,
   useToast,
-  TabPanels,
-  TabPanel,
   GridItem,
-  Image
+  Image as CImage
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
@@ -62,6 +59,7 @@ import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import { updateProject } from "~/store/project/action"
 import { generateEmptyDesign } from "~/constants/consts"
 import { useParams } from "react-router-dom"
+import { nanoid } from "nanoid"
 
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 const redirectPayments = import.meta.env.VITE_PAYMENTS
@@ -180,29 +178,45 @@ export default function Ilustrations() {
     ) {
       let newQuery = initialQuery
       newQuery.page = selectListResources.length / 10 + 1
-      const resolve = (await (await dispatch(getListResourcesImages(newQuery))).payload) as IResource[]
+      let resolve = null
+      if (stateTabs === 0) {
+        resolve = (await (await dispatch(getListResourcesImages(newQuery))).payload) as IResource[]
+      } else {
+        resolve = await api.getListResourcesIA(newQuery)
+      }
       setResourcesIllustration(selectListResources.concat(resolve))
       resolve[0] !== undefined && setMore(true)
     } else {
-      let resolve = []
+      let resolve: any
       try {
-        resolve = await api.searchResources(
-          {
-            page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page,
+        if (stateTabs === 0) {
+          resolve = await api.searchResources(
+            {
+              page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page,
+              limit: 10,
+              query: {
+                drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
+                keywords:
+                  nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
+                is_published: true,
+                favorited: stateFavorite === true ? true : undefined,
+                used: stateRecent === true ? true : undefined,
+                notIds: notIds[0] === undefined ? undefined : notIds
+              },
+              sorts: stateRecent ? ["USED_AT"] : order
+            },
+            setNotIds,
+            notIds
+          )
+        } else {
+          resolve = await api.getListResourcesIA({
+            page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page + 1,
             limit: 10,
             query: {
-              drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
-              keywords: nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
-              is_published: true,
-              favorited: stateFavorite === true ? true : undefined,
-              used: stateRecent === true ? true : undefined,
-              notIds: notIds[0] === undefined ? undefined : notIds
-            },
-            sorts: stateRecent ? ["USED_AT"] : order
-          },
-          setNotIds,
-          notIds
-        )
+              text: nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration[0]
+            }
+          })
+        }
       } catch {}
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
         stateFavorite === true
@@ -219,20 +233,24 @@ export default function Ilustrations() {
           obj.id === resource.id && setMore(false)
         })
       })
-      if (nameIllustration[0] !== "") {
-        resolve?.sort((a, b) => b.count_drawings - a.count_drawings)
-        const lastDraw = resolve.find(
-          (r) => r?.drawifierId === resourcesIllustration[resourcesIllustration.length - 1]?.drawifierId
-        )
-        resourcesIllustration.map((r) => {
-          if (r?.drawifierId === lastDraw?.drawifierId) r.drawings = r.drawings?.concat(lastDraw?.drawings)
-        })
-        setResourcesIllustration(
-          resourcesIllustration.concat(resolve?.filter((r) => r?.drawifierId !== lastDraw?.drawifierId))
-        )
-      } else {
-        const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
-        setResourcesIllustration(validateResources)
+      if (stateTabs === 0) {
+        if (nameIllustration[0] !== "") {
+          resolve?.sort((a, b) => b.count_drawings - a.count_drawings)
+          const lastDraw = resolve.find(
+            (r) => r?.drawifierId === resourcesIllustration[resourcesIllustration.length - 1]?.drawifierId
+          )
+          resourcesIllustration.map((r) => {
+            if (r?.drawifierId === lastDraw?.drawifierId) r.drawings = r.drawings?.concat(lastDraw?.drawings)
+          })
+          setResourcesIllustration(
+            resourcesIllustration.concat(resolve?.filter((r) => r?.drawifierId !== lastDraw?.drawifierId))
+          )
+        } else {
+          const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
+          setResourcesIllustration(validateResources)
+        }
+      } else if (stateTabs === 1) {
+        setResourcesIllustration(resourcesIllustration.concat(resolve))
       }
       resolve[0] !== undefined ? setMore(true) : setMore(false)
       resolve[9] === undefined && nameIllustration[0] === "" && setMore(false)
@@ -249,13 +267,13 @@ export default function Ilustrations() {
         const options: any = {
           type: "StaticVector",
           name: "Illustration",
-          src: resource.url,
-          preview: resource.url,
+          src: resource.url.concat("?" + nanoid(6)),
+          preview: resource.url.concat("?" + nanoid(6)),
           erasable: false,
           watermark:
             resource.license === "paid" && user.plan === "FREE"
               ? `${watermarkURL}?${Math.random().toString(36).substring(2, 10)}`
-              : null
+              : undefined
         }
         if (editor) {
           await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
@@ -416,6 +434,50 @@ export default function Ilustrations() {
     api.viewDrawifier(drawifier?.drawifierId)
   }, [])
 
+  const dragObject = useCallback(
+    async (e: React.DragEvent<HTMLDivElement>, illustration: IResource) => {
+      try {
+        let img = new Image()
+        img.src = illustration.url
+        if (editor) {
+          e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
+          editor.dragger.onDragStart(
+            {
+              type: "StaticVector",
+              name: "Illustration",
+              erasable: false,
+              watermark: illustration.license === "paid" && user.plan === "FREE" ? watermarkURL : undefined,
+              preview: illustration.url,
+              src: `${illustration.url}?${Math.random().toString(36).substring(2, 10)}`
+            },
+            { desiredSize: 400 }
+          )
+        }
+        if (user && projectSelect) {
+          const ctx = { id: illustration.id }
+          api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
+        }
+      } catch {}
+    },
+    [editor, user, projectSelect]
+  )
+
+  const changeTab = useCallback(
+    (tab: number) => {
+      setStateTabs(tab)
+      if (tab === 0) {
+        setResourcesIllustration(selectListResources)
+        setNameIllustration([""])
+        setNameIllustrationPrev([""])
+      } else if (tab === 1) {
+        setResourcesIllustration([])
+        setNameIllustration([""])
+        setNameIllustrationPrev([""])
+      }
+    },
+    [stateTabs, selectListResources]
+  )
+
   return (
     <Flex h="full" width="320px" borderRight="1px solid #ebebeb" flexDirection="column">
       <Grid templateColumns="repeat(2, 1fr)" marginBottom="10px">
@@ -429,7 +491,7 @@ export default function Ilustrations() {
             cursor: "pointer",
             color: "#5456F5"
           }}
-          onClick={() => setStateTabs(0)}
+          onClick={() => changeTab(0)}
           borderRight="1px solid #ebebeb"
           borderBottom={stateTabs === 0 ? null : "1px solid #ebebeb"}
         >
@@ -440,7 +502,7 @@ export default function Ilustrations() {
             cursor: "pointer",
             color: "#5456F5"
           }}
-          onClick={() => setStateTabs(1)}
+          onClick={() => changeTab(1)}
           color={stateTabs === 1 ? "#5456F5" : "#545465"}
           display="flex"
           h="50px"
@@ -657,6 +719,7 @@ export default function Ilustrations() {
                             (illustration, index) =>
                               illustration && (
                                 <IllustrationItem
+                                  makeDragObject={dragObject}
                                   makeFavorite={makeFavorite}
                                   addObject={() => addObject(illustration)}
                                   illustration={illustration}
@@ -746,35 +809,72 @@ export default function Ilustrations() {
             )}
           </Flex>
         </>
+      ) : nameIllustration[0] === "" ? (
+        <Center h="full" flexDir="column">
+          <CImage src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/magic-search.png" />
+          {user.plan === "HERO" ? (
+            <>
+              <Text w="72%" textAlign="center">
+                Get inspired with <b>SmartSearch</b>, powered by AI.
+              </Text>
+              <Text w="72%" textAlign="center">
+                Search by phrase,and
+                <br /> discover more creative search results, faster
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text textAlign="center">Spark your imagination!</Text>
+              <br />
+              <Text textAlign="center">
+                Discover more interesting search
+                <br /> results with SmartSearch
+              </Text>
+              <Button variant="outline" borderColor="#5456F5" color="#5456F5" margin="20px">
+                Upgrade to unlock
+              </Button>
+            </>
+          )}
+        </Center>
       ) : (
-        <>
-          <Center h="full" flexDir="column">
-            <Image src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/magic-search.png" />
-            {user.plan === "HERO" ? (
-              <>
-                <Text w="72%" textAlign="center">
-                  Get inspired with <b>SmartSearch</b>, powered by AI.
-                </Text>
-                <Text w="72%" textAlign="center">
-                  Search by phrase,and
-                  <br /> discover more creative search results, faster
-                </Text>
-              </>
-            ) : (
-              <>
-                <Text textAlign="center">Spark your imagination!</Text>
-                <br />
-                <Text textAlign="center">
-                  Discover more interesting search
-                  <br /> results with SmartSearch
-                </Text>
-                <Button variant="outline" borderColor="#5456F5" color="#5456F5" margin="20px">
-                  Upgrade to unlock
+        <Scrollable autoHide={true}>
+          <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
+            {load ? (
+              <Grid gap="1rem" marginTop="20px" flex={1} marginInline="20px" templateColumns="repeat(2, 1fr)">
+                {resourcesIllustration?.map((r, index) => (
+                  <Flex
+                    onDragStart={(e) => dragObject(e, r)}
+                    draggable={true}
+                    sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+                    onClick={() => addObject(r)}
+                    key={index}
+                    border="1px #DDDFE5 solid"
+                    padding="2px"
+                    h="150px"
+                    _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
+                  >
+                    <Flex w="full" h="full">
+                      <LazyLoadImage url={r.url} />
+                    </Flex>
+                  </Flex>
+                ))}
+                <Button
+                  w="full"
+                  variant="outline"
+                  isLoading={loadMoreResources}
+                  isDisabled={!more}
+                  onClick={fetchDataResource}
+                >
+                  Load More
                 </Button>
-              </>
+              </Grid>
+            ) : (
+              <Flex h="50%" w="full" align="end" justify="center">
+                <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+              </Flex>
             )}
-          </Center>
-        </>
+          </InfiniteScroll>
+        </Scrollable>
       )}
     </Flex>
   )
@@ -784,12 +884,14 @@ function IllustrationItem({
   illustration,
   addObject,
   makeFavorite,
-  listFavorite
+  listFavorite,
+  makeDragObject
 }: {
   illustration: IResource
   addObject: () => void
   makeFavorite: (obj: IResource) => void
   listFavorite: IResource[]
+  makeDragObject?: (e: React.DragEvent<HTMLDivElement>, illustration: IResource) => Promise<void>
 }) {
   const user = useSelector(selectUser)
   const [isHovering, setIsHovering] = React.useState(false)
@@ -810,33 +912,33 @@ function IllustrationItem({
     onOpen()
   }, [])
 
-  const dragObject = useCallback(
-    async (e: React.DragEvent<HTMLDivElement>) => {
-      try {
-        let img = new Image()
-        img.src = illustration.url
-        if (editor) {
-          e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
-          editor.dragger.onDragStart(
-            {
-              type: "StaticVector",
-              name: "Illustration",
-              erasable: false,
-              watermark: illustration.license === "paid" && user.plan === "FREE" ? watermarkURL : null,
-              preview: illustration.url,
-              src: `${illustration.url}?${Math.random().toString(36).substring(2, 10)}`
-            },
-            { desiredSize: 400 }
-          )
-        }
-        if (user && projectSelect) {
-          const ctx = { id: illustration.id }
-          api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
-        }
-      } catch {}
-    },
-    [editor, user, projectSelect, illustration]
-  )
+  // const dragObject = useCallback(
+  //   async (e: React.DragEvent<HTMLDivElement>) => {
+  //     try {
+  //       let img = new Image()
+  //       img.src = illustration.url
+  //       if (editor) {
+  //         e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
+  //         editor.dragger.onDragStart(
+  //           {
+  //             type: "StaticVector",
+  //             name: "Illustration",
+  //             erasable: false,
+  //             watermark: illustration.license === "paid" && user.plan === "FREE" ? watermarkURL : null,
+  //             preview: illustration.url,
+  //             src: `${illustration.url}?${Math.random().toString(36).substring(2, 10)}`
+  //           },
+  //           { desiredSize: 400 }
+  //         )
+  //       }
+  //       if (user && projectSelect) {
+  //         const ctx = { id: illustration.id }
+  //         api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
+  //       }
+  //     } catch {}
+  //   },
+  //   [editor, user, projectSelect, illustration]
+  // )
 
   const ValidateIcon = () => {
     if (like) {
@@ -849,7 +951,7 @@ function IllustrationItem({
   return (
     <Flex
       onDragStart={(e) => {
-        dragObject(e)
+        makeDragObject(e, illustration)
       }}
       draggable={true}
       sx={{

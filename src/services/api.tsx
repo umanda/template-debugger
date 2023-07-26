@@ -717,6 +717,17 @@ export const getListResourcesImages = (props: Partial<SearchResourceDto>) => {
   })
 }
 
+export const getListResourcesIA = (props: Partial<SearchResourceDto>) => {
+  return new Promise((resolve, reject) => {
+    base
+      .post("/ia-resource/search", props)
+      .then(({ data }) => {
+        resolve(data.resources)
+      })
+      .catch((err) => reject(err))
+  })
+}
+
 export const listRecentResource = () => {
   return new Promise((resolve, reject) => {
     base
