@@ -415,7 +415,6 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const [email, setEmail] = useState<{ text: string; state: boolean }>({ text: "", state: true })
   const [typeModal, setTypeModal] = useState<string>("")
   const [stateProgressValue, setStateProgressValue] = useState<number>(0)
-  const { id } = useParams()
   const scenes = useScenes()
   const projectSelect = useSelector(selectProject)
   const { setDownloadCanva } = useResourcesContext()

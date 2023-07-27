@@ -124,7 +124,13 @@ function ContextMenu() {
             }}
             icon="Trash"
             label="Delete"
-            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
+            disabled={
+              activeObject
+                ? activeObject?.type === "Frame" || activeObject?.type === "activeSelection"
+                  ? true
+                  : false
+                : false
+            }
           />
           <ContextMenuItem
             onClick={() => {
@@ -133,7 +139,13 @@ function ContextMenu() {
             }}
             icon="BringToFront"
             label="Bring to front"
-            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
+            disabled={
+              activeObject
+                ? activeObject?.type === "Frame" || activeObject?.type === "activeSelection"
+                  ? true
+                  : false
+                : false
+            }
           />
           <ContextMenuItem
             onClick={() => {
@@ -142,7 +154,13 @@ function ContextMenu() {
             }}
             icon="BringForward"
             label="Bring forward"
-            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
+            disabled={
+              activeObject
+                ? activeObject?.type === "Frame" || activeObject?.type === "activeSelection"
+                  ? true
+                  : false
+                : false
+            }
           />
           <ContextMenuItem
             onClick={() => {
@@ -151,7 +169,13 @@ function ContextMenu() {
             }}
             icon="SendToBack"
             label="Send back"
-            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
+            disabled={
+              activeObject
+                ? activeObject?.type === "Frame" || activeObject?.type === "activeSelection"
+                  ? true
+                  : false
+                : false
+            }
           />
           <ContextMenuItem
             onClick={() => {

@@ -24,6 +24,7 @@ export default function Common() {
 
   React.useEffect(() => {
     if (activeObject) {
+      console.log(activeObject.type)
       setState({ isGroup: activeObject.type === "group", isMultiple: activeObject.type === "activeSelection" })
     }
   }, [activeObject])
@@ -31,7 +32,6 @@ export default function Common() {
   React.useEffect(() => {
     let watcher = async () => {
       if (activeObject) {
-        // @ts-ignore
         setState({ isGroup: activeObject.type === "group", isMultiple: activeObject.type === "activeSelection" })
       }
     }
