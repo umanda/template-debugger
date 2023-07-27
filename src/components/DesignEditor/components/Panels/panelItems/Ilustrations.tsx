@@ -124,6 +124,7 @@ export default function Ilustrations() {
   const toast = useToast()
   const { id } = useParams()
   const [stateTabs, setStateTabs] = useState<number>(0)
+  const refTab = useRef<any>()
 
   useEffect(() => {
     initialState()
@@ -469,13 +470,16 @@ export default function Ilustrations() {
         setResourcesIllustration(selectListResources)
         setNameIllustration([""])
         setNameIllustrationPrev([""])
+        setValidateContent(null)
       } else if (tab === 1) {
+        refTab.current.focus()
         setResourcesIllustration([])
         setNameIllustration([""])
         setNameIllustrationPrev([""])
+        setValidateContent(null)
       }
     },
-    [stateTabs, selectListResources]
+    [stateTabs, selectListResources, refTab]
   )
 
   return (
@@ -611,6 +615,7 @@ export default function Ilustrations() {
           <TabList>
             <Tab
               isDisabled={disableTab}
+              ref={refTab}
               onClick={() => {
                 setResourcesIllustration([])
                 setNameIllustrationPrev([""])
@@ -631,6 +636,7 @@ export default function Ilustrations() {
             </Tab>
             <Tab
               isDisabled={disableTab}
+              visibility={stateTabs === 1 ? "hidden" : "visible"}
               onClick={() => {
                 stateFavorite = false
                 user ? makeFilter({ stateRecents: true }) : setValidateContent("You need to login to see this panel.")
@@ -640,6 +646,7 @@ export default function Ilustrations() {
             </Tab>
             <Tab
               isDisabled={disableTab}
+              visibility={stateTabs === 1 ? "hidden" : "visible"}
               onClick={() => {
                 stateRecent = false
                 user ? makeFilter({ stateFavorites: true }) : setValidateContent("You need to login to see this panel.")

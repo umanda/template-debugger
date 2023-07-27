@@ -186,7 +186,7 @@ class Design {
       frame: frame,
       scenes: resizedScenes
     }
-
+    this.activeScene.history.save()
     await this.setDesign(newDesign)
   }
 
