@@ -87,6 +87,7 @@ export default function Header() {
     redo: 0
   })
   const { id } = useParams()
+  const aiGenerate = localStorage.getItem("ai_generated")
   const dispatch = useAppDispatch()
   const [autoSave, setAutoSave] = useState<boolean>(false)
   const [idScenesPrev, setIdScenesPrev] = useState<string[]>([])
@@ -107,6 +108,10 @@ export default function Header() {
     plan: projectSelect?.plan ? projectSelect.plan : "FREE",
     visibility: projectSelect?.frame?.visibility ? projectSelect.frame : "private"
   })
+
+  React.useEffect(() => {
+    !aiGenerate && functionSave()
+  }, [aiGenerate])
 
   React.useEffect(() => {
     let watcher = async () => {
