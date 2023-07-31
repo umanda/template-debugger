@@ -100,7 +100,7 @@ const Designer: any = () => {
   }, [id, editor, user, design, zoomRatio, aiGeneratedData, aiGenerate])
 
   return (
-    <Flex sx={{ height: "100vh", width: "100vw" }}>
+    <Flex sx={{ height: "100vh", width: "100vw" }} overflow="hidden">
       <SigninModal setType={setTypeSign} type={typeSign} onClose={onClose} isOpen={isOpen} onOpen={onOpen} />
       <Flex flex={1}>
         <DesignEditor />

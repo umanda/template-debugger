@@ -395,6 +395,8 @@ export default function Template() {
                 <Input
                   size="sm"
                   id="input"
+                  autoComplete="off"
+                  spellCheck="false"
                   ref={initialFocusRef}
                   value={nameTemplatePrev}
                   placeholder="Search"

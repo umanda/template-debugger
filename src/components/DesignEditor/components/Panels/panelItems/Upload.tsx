@@ -364,6 +364,8 @@ export default function Upload() {
       <Flex padding={"0 1rem"} gap={"0.5rem"}>
         <Input
           size="sm"
+          autoComplete="off"
+          spellCheck="false"
           ref={initialFocusRef}
           placeholder="Search"
           onFocus={() => {
@@ -380,26 +382,6 @@ export default function Upload() {
           }}
         />
       </Flex>
-      <Popover closeOnBlur={true} initialFocusRef={initialFocusRef} isOpen={isOpen} onClose={onClose}>
-        <PopoverTrigger>
-          <Button visibility="hidden" w="full" position="absolute">
-            Trigger
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent>
-          <PopoverArrow />
-          <PopoverBody>
-            <Flex flexDir="column" fontSize="12px" gap="5px">
-              <Flex>
-                <Text>Recent searches</Text>
-                <Spacer />
-                <Text>Erase</Text>
-              </Flex>
-              <Flex></Flex>
-            </Flex>
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
       <Flex padding={"0 1rem"} gap={"0.5rem"}>
         <Button
           bg={type.svg ? "#5456F5" : "#DDDFE5"}

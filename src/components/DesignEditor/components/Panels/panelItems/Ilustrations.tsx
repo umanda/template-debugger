@@ -531,6 +531,8 @@ export default function Ilustrations() {
               >
                 <Input
                   size="sm"
+                  autoComplete="off"
+                  spellCheck="false"
                   id="input"
                   ref={initialFocusRef}
                   value={nameIllustrationPrev}
