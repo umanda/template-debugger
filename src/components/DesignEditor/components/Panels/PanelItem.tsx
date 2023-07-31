@@ -34,7 +34,7 @@ export default function PanelItem() {
       {Panel ? (
         <Box
           sx={{
-            width: isSidebarVisible ? "320px" : "0px",
+            width: isSidebarVisible ? "400px" : "0px",
             overflow: "hidden",
             transition: "all 0.15s ease",
             position: "relative",

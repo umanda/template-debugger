@@ -14,17 +14,12 @@ export default function DesignEditor() {
     <Box display={"flex"} flex={1} h="100vh" w="100vw" flexDirection={"column"}>
       <Header />
       <PreviewDesign />
-      <Flex flex={1} w="100vw" h="100vh">
+      <Flex flex={1} h="100vh">
         <Panels />
-        <Flex
-          flexDirection="column"
-          sx={{
-            width: "calc(100vw - 392px)"
-          }}
-        >
+        <Flex flexDirection="column" w="full">
           <>
             <Toolbox />
-            <Flex flex={1} bg="red">
+            <Flex flex={1}>
               <Canvas />
             </Flex>
             <Footer />
