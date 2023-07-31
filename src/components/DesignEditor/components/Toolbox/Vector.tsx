@@ -1,16 +1,25 @@
 import { Box, Flex, Grid } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene } from "@layerhub-pro/react"
-import { useEffect, useRef } from "react"
+import React, { useEffect, useRef } from "react"
 import Common from "./Common"
 import groupBy from "lodash/groupBy"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 
 export default function Vector() {
-  const { setActiveMenu, indexColorPicker, setIndexColorPicker, colors, setColors, activeMenu } =
-    useDesignEditorContext()
+  const {
+    setActiveMenu,
+    indexColorPicker,
+    setIndexColorPicker,
+    colors,
+    setColors,
+    activeMenu,
+    isSidebarVisible,
+    setIsSidebarVisible
+  } = useDesignEditorContext()
   const activeObject = useActiveObject() as any
   const vectorPaths = useRef<any>({})
   const activeScene = useActiveScene()
+  const [statePrevSidebar, setStatePrevSidebar] = React.useState<boolean>(true)
 
   useEffect(() => {
     if (activeObject && activeObject.type === "StaticVector") {
@@ -24,6 +33,24 @@ export default function Vector() {
       setColors({ ...colors, colorMap: activeObject.colorMap })
     } else setIndexColorPicker(-1)
   }, [activeScene, activeObject])
+
+  const changeSidebar = React.useCallback(
+    (menu: string, index: number) => {
+      if (activeMenu !== menu) {
+        setActiveMenu(menu)
+        setStatePrevSidebar(isSidebarVisible)
+        setIsSidebarVisible(true)
+        setIndexColorPicker(index)
+      } else if (indexColorPicker === index) {
+        setIsSidebarVisible(statePrevSidebar)
+        setActiveMenu("")
+        setIndexColorPicker(-1)
+      } else {
+        setIndexColorPicker(index)
+      }
+    },
+    [isSidebarVisible, activeMenu, isSidebarVisible, statePrevSidebar, indexColorPicker]
+  )
 
   return (
     <Flex flex={1} alignItems={"center"} justifyContent={"space-between"}>
@@ -39,12 +66,7 @@ export default function Vector() {
                 borderStyle="solid"
                 borderColor={indexColorPicker === index ? "brand.500" : "#A9A9B2"}
                 onClick={() => {
-                  setIndexColorPicker(index)
-                  if (activeMenu !== "VectorColorPicker" || index !== indexColorPicker) {
-                    setActiveMenu("VectorColorPicker")
-                  } else {
-                    setActiveMenu("")
-                  }
+                  changeSidebar("VectorColorPicker", index)
                 }}
                 boxSize="30px"
                 borderRadius="20%"

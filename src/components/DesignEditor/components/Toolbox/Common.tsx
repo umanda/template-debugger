@@ -24,7 +24,6 @@ export default function Common() {
 
   React.useEffect(() => {
     if (activeObject) {
-      console.log(activeObject.type)
       setState({ isGroup: activeObject.type === "group", isMultiple: activeObject.type === "activeSelection" })
     }
   }, [activeObject])

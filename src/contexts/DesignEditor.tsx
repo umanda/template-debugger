@@ -59,7 +59,7 @@ export const DesignEditorContext = React.createContext<IDesignEditorContext>({
   setIsScenesVisible: () => {},
   isScenesVisible: false,
   setIsSidebarVisible: () => {},
-  isSidebarVisible: false,
+  isSidebarVisible: true,
   isOpenPreview: false,
   onOpenPreview: () => {},
   onClosePreview: () => {},

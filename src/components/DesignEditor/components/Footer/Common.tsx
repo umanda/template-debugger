@@ -43,12 +43,14 @@ const redirectFaq: string = import.meta.env.VITE_APP_DOMAIN + "/faq"
 const redirectTutorals: string = import.meta.env.VITE_APP_DOMAIN + "/tutorials"
 
 export default function Common() {
-  const { setActivePanel, isScenesVisible, setIsScenesVisible, activePanel } = useDesignEditorContext()
+  const { setActiveMenu, isScenesVisible, setIsScenesVisible, activeMenu, setIsSidebarVisible, isSidebarVisible } =
+    useDesignEditorContext()
   const { dimensionZoom } = useResourcesContext()
   const [zoomState, setZoomState] = useState<number>(0)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const zoomRatio = useZoomRatio() as number
   const editor = useEditor()
+  const [statePrevSidebar, setStatePrevSidebar] = useState<boolean>(true)
 
   useEffect(() => {
     setZoomState(zoomRatio / dimensionZoom)
@@ -59,15 +61,16 @@ export default function Common() {
       if (editor?.freeDrawer?.canvas?.isDrawingMode) {
         editor.freeDrawer.disable()
       }
-      if (setActivePanel && activePanel !== type) {
-        if (activePanel !== "Background" && activePanel !== "Layer") {
-        }
-        setActivePanel(type)
+      if (setActiveMenu && activeMenu !== type) {
+        isSidebarVisible ? setStatePrevSidebar(true) : setStatePrevSidebar(false)
+        setIsSidebarVisible(true)
+        setActiveMenu(type)
       } else {
-        setActivePanel("")
+        setIsSidebarVisible(statePrevSidebar)
+        setActiveMenu("")
       }
     },
-    [activePanel, setActivePanel, editor]
+    [activeMenu, setActiveMenu, editor, statePrevSidebar, isSidebarVisible]
   )
 
   const onOpenTutorals = () => {
@@ -115,8 +118,8 @@ export default function Common() {
         </Button>
         <Button
           size="sm"
-          color={activePanel === "Background" ? "white" : "inherit"}
-          background={activePanel === "Background" ? "brand.500" : "inherit"}
+          color={activeMenu === "Background" ? "white" : "inherit"}
+          background={activeMenu === "Background" ? "brand.500" : "inherit"}
           _hover={{}}
           leftIcon={<Background size={24} />}
           onClick={() => changePanel("Background")}
@@ -126,8 +129,8 @@ export default function Common() {
         </Button>
         <Button
           size="sm"
-          color={activePanel === "Layer" ? "white" : "inherit"}
-          background={activePanel === "Layer" ? "brand.500" : "inherit"}
+          color={activeMenu === "Layer" ? "white" : "inherit"}
+          background={activeMenu === "Layer" ? "brand.500" : "inherit"}
           _hover={{}}
           leftIcon={<Layers size={24} />}
           onClick={() => changePanel("Layer")}

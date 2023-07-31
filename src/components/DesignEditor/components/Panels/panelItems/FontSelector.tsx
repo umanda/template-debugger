@@ -35,13 +35,8 @@ export default function FontSelector() {
   const [content, setContent] = React.useState<string>("")
   const activeScene = useActiveScene()
   const activeObject: any = useActiveObject()
-  const { setActiveMenu } = useDesignEditorContext()
   const [typeFont, setTypeFont] = useState("4725")
   const scenes = useScenes()
-
-  useEffect(() => {
-    if (activeObject) activeObject.type !== "StaticText" && setActiveMenu("")
-  }, [activeObject])
 
   useEffect(() => {
     if (activeObject) {

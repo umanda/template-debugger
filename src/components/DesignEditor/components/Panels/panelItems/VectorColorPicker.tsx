@@ -23,7 +23,7 @@ import { useDebounce } from "use-debounce"
 import { stateRecentColors } from "~/utils/recentColors"
 
 export default function VectorColorPicker() {
-  const { setInputActive, indexColorPicker, colors, setColors, setActiveMenu } = useDesignEditorContext()
+  const { setInputActive, indexColorPicker, colors, setColors } = useDesignEditorContext()
   const editor = useEditor()
   const activeObject = useActiveObject() as any
   const [sliderValue, setSliderValue] = useState({
@@ -42,10 +42,6 @@ export default function VectorColorPicker() {
   useEffect(() => {
     changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
   }, [stateChange])
-
-  useEffect(() => {
-    if (activeObject) activeObject.type !== "StaticVector" && setActiveMenu("Illustrations")
-  }, [activeObject])
 
   const changeBackgroundColor = useCallback(
     (prev: string, next: string) => {

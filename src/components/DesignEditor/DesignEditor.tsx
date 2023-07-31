@@ -6,9 +6,11 @@ import Toolbox from "./components/Toolbox"
 import Canvas from "./components/Canvas"
 import Footer from "./components/Footer/Footer"
 import useResourcesContext from "~/hooks/useResourcesContext"
+import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 
 export default function DesignEditor() {
   const { loadCanva, downloadCanva } = useResourcesContext()
+  const { isSidebarVisible } = useDesignEditorContext()
 
   return (
     <Flex h="100vh" w="100vw" flexDirection={"column"}>
@@ -16,7 +18,7 @@ export default function DesignEditor() {
       <PreviewDesign />
       <Flex h="100vh">
         <Panels />
-        <Flex flexDirection="column" w="calc(100vw - 392px)">
+        <Flex flexDirection="column" w={isSidebarVisible ? "calc(100vw - 392px)" : "100vw"}>
           <>
             <Toolbox />
             <Flex flex={1} w="auto">

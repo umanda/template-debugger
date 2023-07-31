@@ -213,7 +213,7 @@ export default function Canva() {
           shortcuts: false
         }}
       />
-      <Center
+      {/* <Center
         onClick={() => onOpen()}
         display={["flex", "flex", "none", "none"]}
         borderRadius="50%"
@@ -229,8 +229,8 @@ export default function Canva() {
         }}
       >
         <Plus size={40} />
-      </Center>
-      <Drawer onClose={onClose} isOpen={isOpen} size={"sm"} placement="left">
+      </Center> */}
+      {/* <Drawer onClose={onClose} isOpen={isOpen} size={"sm"} placement="left">
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
@@ -238,7 +238,7 @@ export default function Canva() {
             <MobileModal />
           </DrawerBody>
         </DrawerContent>
-      </Drawer>
+      </Drawer> */}
     </Flex>
   )
 }
