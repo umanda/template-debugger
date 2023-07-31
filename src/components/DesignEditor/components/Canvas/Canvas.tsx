@@ -173,14 +173,7 @@ export default function Canva() {
   } catch {}
 
   return (
-    <Flex
-      ref={flexRef}
-      flex={1}
-      position="relative"
-      id="app"
-      onClick={onCloseContextMenu}
-      onAuxClick={onToggleContextMenu}
-    >
+    <Flex ref={flexRef} flex={1} onClick={onCloseContextMenu} onAuxClick={onToggleContextMenu}>
       {/* bottom-top-end-start */}
       <Popover
         isOpen={isOpenContextMenu}
@@ -204,25 +197,22 @@ export default function Canva() {
           <ContextMenu />
         </PopoverContent>
       </Popover>
-      {/* <ContextMenu /> */}
-      <Flex flex={1}>
-        <Canvas
-          config={{
-            margin: 240,
-            scroll: {
-              enabled: true,
-              limit: 10000000000000000
-            },
-            outsideVisible: true,
-            guidelines: {
-              enabled: true,
-              color: ""
-            },
-            zoomToMode: "POINT",
-            shortcuts: false
-          }}
-        />
-      </Flex>
+      <Canvas
+        config={{
+          margin: 240,
+          scroll: {
+            enabled: true,
+            limit: 10000000000000000
+          },
+          outsideVisible: true,
+          guidelines: {
+            enabled: true,
+            color: ""
+          },
+          zoomToMode: "POINT",
+          shortcuts: false
+        }}
+      />
       <Center
         onClick={() => onOpen()}
         display={["flex", "flex", "none", "none"]}

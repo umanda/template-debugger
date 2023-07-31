@@ -11,15 +11,15 @@ export default function DesignEditor() {
   const { loadCanva, downloadCanva } = useResourcesContext()
 
   return (
-    <Box display={"flex"} flex={1} h="100vh" w="100vw" flexDirection={"column"}>
+    <Flex h="100vh" w="100vw" flexDirection={"column"}>
       <Header />
       <PreviewDesign />
-      <Flex flex={1} h="100vh">
+      <Flex h="100vh">
         <Panels />
-        <Flex flexDirection="column" w="full">
+        <Flex flexDirection="column" w="calc(100vw - 392px)">
           <>
             <Toolbox />
-            <Flex flex={1}>
+            <Flex flex={1} w="auto">
               <Canvas />
             </Flex>
             <Footer />
@@ -28,7 +28,7 @@ export default function DesignEditor() {
           {downloadCanva && <Downloading />}
         </Flex>
       </Flex>
-    </Box>
+    </Flex>
   )
 }
 
