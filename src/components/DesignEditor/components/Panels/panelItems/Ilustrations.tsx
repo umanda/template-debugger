@@ -517,85 +517,87 @@ export default function Ilustrations() {
           Smart Search
         </GridItem>
       </Grid>
-      <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
-        <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
-          <HStack width={"100%"}>
-            <PopoverAnchor>
-              <Tooltip
-                isOpen={toolTip}
-                openDelay={500}
-                label="Enter at least 3 letters and wait for the result"
-                fontSize="md"
-                hasArrow
-                arrowSize={10}
-              >
-                <Input
-                  size="sm"
-                  autoComplete="off"
-                  spellCheck="false"
-                  id="input"
-                  ref={initialFocusRef}
-                  value={nameIllustrationPrev}
-                  placeholder="Search"
-                  sx={{
-                    _focusVisible: {
-                      boxShadow: "none"
-                    }
-                  }}
-                  onFocus={() => {
-                    onOpenInput()
-                    setInputActive(true)
-                  }}
-                  onBlur={makeBlur}
-                  onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
-                  onChange={(e) => makeChangeInput(e.target.value)}
-                />
-              </Tooltip>
-            </PopoverAnchor>
-            <PopoverTrigger>
-              <Button visibility="hidden" position="absolute">
-                Trigger
-              </Button>
-            </PopoverTrigger>
-          </HStack>
-          <PopoverContent id="input">
-            <PopoverArrow />
-            <PopoverBody id="input">
-              <Flex id="input" flexDir="column" fontSize="12px" gap="5px">
-                <Flex id="input">Suggestion</Flex>
-                {contentInput?.words.map(
-                  (obj, index) =>
-                    index <= 6 && (
-                      <Button
-                        id="input"
-                        size="xs"
-                        justifyItems="left"
-                        justifyContent="left"
-                        leftIcon={<Search size={15} />}
-                        variant="ghost"
-                        w="full"
-                        key={index}
-                        onClick={() => makeFilterBySeggestion(obj)}
-                      >
-                        {obj}
-                      </Button>
-                    )
-                )}
-              </Flex>
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
-        <Order
-          setFetching={setMore}
-          setResources={setResourcesIllustration}
-          setSkeleton={setLoad}
-          setOrder={setOrder}
-          setDrawifier={setOrderDrawifier}
-          order={order}
-          drawifier={orderDrawifier}
-          setPage={setPage}
-        />
-      </Flex>
+      {user.type !== "HERO" && stateTabs === 2 && (
+        <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
+          <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
+            <HStack width={"100%"}>
+              <PopoverAnchor>
+                <Tooltip
+                  isOpen={toolTip}
+                  openDelay={500}
+                  label="Enter at least 3 letters and wait for the result"
+                  fontSize="md"
+                  hasArrow
+                  arrowSize={10}
+                >
+                  <Input
+                    size="sm"
+                    autoComplete="off"
+                    spellCheck="false"
+                    id="input"
+                    ref={initialFocusRef}
+                    value={nameIllustrationPrev}
+                    placeholder="Search"
+                    sx={{
+                      _focusVisible: {
+                        boxShadow: "none"
+                      }
+                    }}
+                    onFocus={() => {
+                      onOpenInput()
+                      setInputActive(true)
+                    }}
+                    onBlur={makeBlur}
+                    onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
+                    onChange={(e) => makeChangeInput(e.target.value)}
+                  />
+                </Tooltip>
+              </PopoverAnchor>
+              <PopoverTrigger>
+                <Button visibility="hidden" position="absolute">
+                  Trigger
+                </Button>
+              </PopoverTrigger>
+            </HStack>
+            <PopoverContent id="input">
+              <PopoverArrow />
+              <PopoverBody id="input">
+                <Flex id="input" flexDir="column" fontSize="12px" gap="5px">
+                  <Flex id="input">Suggestion</Flex>
+                  {contentInput?.words.map(
+                    (obj, index) =>
+                      index <= 6 && (
+                        <Button
+                          id="input"
+                          size="xs"
+                          justifyItems="left"
+                          justifyContent="left"
+                          leftIcon={<Search size={15} />}
+                          variant="ghost"
+                          w="full"
+                          key={index}
+                          onClick={() => makeFilterBySeggestion(obj)}
+                        >
+                          {obj}
+                        </Button>
+                      )
+                  )}
+                </Flex>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+          <Order
+            setFetching={setMore}
+            setResources={setResourcesIllustration}
+            setSkeleton={setLoad}
+            setOrder={setOrder}
+            setDrawifier={setOrderDrawifier}
+            order={order}
+            drawifier={orderDrawifier}
+            setPage={setPage}
+          />
+        </Flex>
+      )}
       <Box>
         <HorizontalScroll>
           {listRecommend.words.map((obj, index) => (
