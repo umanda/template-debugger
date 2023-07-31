@@ -517,7 +517,7 @@ export default function Ilustrations() {
           Smart Search
         </GridItem>
       </Grid>
-      {user.type !== "HERO" && stateTabs === 2 && (
+      {user.type !== "HERO" && stateTabs === 1 && (
         <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
           <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
             <HStack width={"100%"}>
