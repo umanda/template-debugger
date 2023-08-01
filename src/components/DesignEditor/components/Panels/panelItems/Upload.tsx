@@ -10,17 +10,10 @@ import {
   GridItem,
   IconButton,
   Input,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverContent,
-  PopoverTrigger,
-  Spacer,
   Spinner,
   Tab,
   TabList,
   Tabs,
-  Text,
   useDisclosure,
   useToast
 } from "@chakra-ui/react"

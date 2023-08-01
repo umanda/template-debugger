@@ -1,9 +1,8 @@
-import { Box, Flex } from "@chakra-ui/react"
+import { Box } from "@chakra-ui/react"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import ChevronDown from "../../../Icons/ChevronDown"
 import Common from "./Common"
 import Scenes from "./Scenes"
-import Controls from "./PanningMode"
 
 export default function Footer() {
   const { isScenesVisible, setIsScenesVisible } = useDesignEditorContext()

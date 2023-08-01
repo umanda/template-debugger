@@ -1,4 +1,4 @@
-import { Box, Center, Flex, Image } from "@chakra-ui/react"
+import { Center, Flex, Image } from "@chakra-ui/react"
 import PreviewDesign from "../Modals/PreviewDesign"
 import Header from "./components/Header"
 import Panels from "./components/Panels"

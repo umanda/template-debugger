@@ -112,38 +112,3 @@ export const DEFAULT_COLORS = [
 ]
 
 export const DEFAULT_ORDER = ["A - Z", "Most recent", "Most favorites", "Most downloads"]
-
-export const DEFAULT_SHAPES = [
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_A_1.svg", type: "outfilled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_A_2.svg", type: "outfilled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_A_3.svg", type: "outfilled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_A_4.svg", type: "outfilled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_A_5.svg", type: "outfilled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_A_6.svg", type: "outfilled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_A_7.svg", type: "outfilled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_A_8.svg", type: "outfilled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_A_9.svg", type: "outfilled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_A_10.svg", type: "outfilled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_A_11.svg", type: "outfilled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_A_12.svg", type: "outfilled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_B_1.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_B_2.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_B_3.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_B_4.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_B_5.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_B_6.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_B_7.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_B_8.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_B_9.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_B_10.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_B_11.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_B_12.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_C_1.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_C_2.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_C_3.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_C_4.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_C_5.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_C_6.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_C_7.svg", type: "filled" },
-  { image: "https://ik.imagekit.io/jwzv5rwz9/frames/Frame_C_8.svg", type: "filled" }
-]

@@ -1,17 +1,6 @@
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  HStack,
-  IconButton,
-  Input,
-  PopoverArrow,
-  Spacer,
-  useDisclosure
-} from "@chakra-ui/react"
+import { Box, Button, Center, Flex, HStack, IconButton, Input, PopoverArrow, useDisclosure } from "@chakra-ui/react"
 import React, { useCallback } from "react"
-import { useActiveObject, useActiveScene, useDesign, useEditor, useScenes } from "@layerhub-pro/react"
+import { useActiveObject, useActiveScene, useEditor, useScenes } from "@layerhub-pro/react"
 import Common from "./Common"
 import { Popover, PopoverTrigger, PopoverContent } from "@chakra-ui/react"
 import Scrollbar from "@layerhub-io/react-custom-scrollbar"
@@ -357,14 +346,6 @@ function LetterCase() {
 function TextAlign() {
   const activeScene = useActiveScene()
   const activeObject = useActiveObject()
-  const [state, setState] = React.useState<{ align: string }>({ align: "left" })
-
-  React.useEffect(() => {
-    if (activeObject) {
-      // @ts-ignore
-      setState({ align: activeObject.textAlign })
-    }
-  }, [activeObject])
 
   return (
     <Popover placement="bottom-end">
@@ -392,7 +373,6 @@ function TextAlign() {
           onClick={() => {
             // @ts-ignore
             activeScene.objects.update({ textAlign: TEXT_ALIGNS[0] })
-            setState({ align: TEXT_ALIGNS[0] })
           }}
         >
           <TextAlignLeft size={24} />
@@ -406,7 +386,6 @@ function TextAlign() {
           onClick={() => {
             // @ts-ignore
             activeScene.objects.update({ textAlign: TEXT_ALIGNS[1] })
-            setState({ align: TEXT_ALIGNS[1] })
           }}
         >
           <TextAlignCenter size={24} />
@@ -420,7 +399,6 @@ function TextAlign() {
           onClick={() => {
             // @ts-ignore
             activeScene.objects.update({ textAlign: TEXT_ALIGNS[2] })
-            setState({ align: TEXT_ALIGNS[2] })
           }}
         >
           <TextAlignRight size={24} />
@@ -434,7 +412,6 @@ function TextAlign() {
           onClick={() => {
             // @ts-ignore
             activeScene.objects.update({ textAlign: TEXT_ALIGNS[3] })
-            setState({ align: TEXT_ALIGNS[3] })
           }}
         >
           <TextAlignJustify size={24} />

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react"
 import {
-  Box,
   Button,
   Flex,
   Modal,
@@ -27,7 +26,6 @@ export default function Scenes() {
   const { setActiveScene: makeActiveScene } = useDesignEditorContext()
   const activeScene = useActiveScene()
   const editor = useEditor()
-  const [draggedScene, setDraggedScene] = React.useState<any | null>(null)
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   useEffect(() => {
@@ -45,7 +43,6 @@ export default function Scenes() {
   const handleDragStart = (event: any) => {
     const draggedScene = scenes.find((s) => s.id === event.active.id)
     if (draggedScene) {
-      setDraggedScene(draggedScene)
     }
   }
 
@@ -72,7 +69,6 @@ export default function Scenes() {
       const newIndex = scenes.findIndex((s) => s.id === over.id)
       await editor.design.setScenes(arrayMove(scenes, oldIndex, newIndex))
     }
-    setDraggedScene(null)
   }
 
   return (

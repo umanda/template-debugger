@@ -77,7 +77,6 @@ export default function Common() {
 }
 
 function CommonAlignment() {
-  const editor = useEditor()
   const activeScene = useActiveScene()
   return (
     <Popover placement="bottom-end">

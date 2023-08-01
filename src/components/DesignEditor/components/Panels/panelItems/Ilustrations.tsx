@@ -99,7 +99,6 @@ export default function Ilustrations() {
   const [order, setOrder] = useState<string[]>(["LAST_UPDATE"])
   const user = useSelector(selectUser)
   const { isOpen: isOpenInput, onOpen: onOpenInput, onClose: onCloseInput } = useDisclosure()
-  const { isOpen: isOpenSearchFound, onOpen: onOpenSearchFound, onClose: onCloseSearchFound } = useDisclosure()
   const [resourcesIllustration, setResourcesIllustration] = useState<any[]>([])
   const [load, setLoad] = useState(false)
   const [more, setMore] = useState(false)

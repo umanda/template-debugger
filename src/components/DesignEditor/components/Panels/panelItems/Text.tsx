@@ -1,5 +1,5 @@
 import { Box, Center, Flex, Grid, IconButton, Spinner } from "@chakra-ui/react"
-import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
+import { useActiveScene, useEditor } from "@layerhub-pro/react"
 import React, { useEffect, useState } from "react"
 import { nanoid } from "nanoid"
 import { useSelector } from "react-redux"
@@ -31,7 +31,6 @@ export default function Text() {
   const activeScene = useActiveScene()
   const [font, setFont] = useState<any>(defaultFont)
   const useFont = useSelector(selectListUseFonts)
-  const activeObject: any = useActiveObject()
 
   useEffect(() => {
     useFont[0] &&

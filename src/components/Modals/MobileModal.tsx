@@ -2,14 +2,11 @@ import { Box, Flex } from "@chakra-ui/react"
 import Icons from ".././Icons"
 import React from "react"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
-import { useSelector } from "react-redux"
 import * as PanelItems from "../DesignEditor/components/Panels/panelItems"
-import { selectUser } from "~/store/user/selector"
 import { PANEL_ITEMS } from "~/constants/panel-items"
 
 const MobileModal = () => {
   const { setActivePanel, activePanel, setIsSidebarVisible } = useDesignEditorContext()
-  const user = useSelector(selectUser)
   return (
     <Box display={"flex"}>
       <Flex

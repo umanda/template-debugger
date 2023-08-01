@@ -43,18 +43,17 @@ export default function Order({
   setPage?: React.Dispatch<React.SetStateAction<number>>
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { isOpen: isOpenDrawifier, onOpen: onOpenDrawifier, onClose: onCloseDrawifier } = useDisclosure()
-  const [drawifiers, setDrawifiers] = useState<any[]>([useSelector(selectListDrawifiers)])
+  // const { isOpen: isOpenDrawifier, onOpen: onOpenDrawifier, onClose: onCloseDrawifier } = useDisclosure()
+  // const [drawifiers, setDrawifiers] = useState<any[]>([useSelector(selectListDrawifiers)])
   const listDrawifiers = useSelector(selectListDrawifiers)
   const getListDraw = async () => {}
   const [id, setId] = useState<string>("")
   const [name, setName] = useState<string>("")
   const [value, setValue] = useState<string>("")
-  const initialFocusRef = useRef<any>()
 
-  useEffect(() => {
-    listDrawifiers ? setDrawifiers(listDrawifiers) : getListDraw()
-  }, [getListDraw])
+  // useEffect(() => {
+  //   listDrawifiers ? setDrawifiers(listDrawifiers) : getListDraw()
+  // }, [getListDraw])
 
   useEffect(() => {
     order[0] === "ALPHABETIC" && setValue("A - Z")
@@ -63,7 +62,7 @@ export default function Order({
 
   useEffect(() => {
     name === "" && setId("")
-    name === "" && onCloseDrawifier()
+    // name === "" && onCloseDrawifier()
   }, [name])
 
   const orderByStats = () => {

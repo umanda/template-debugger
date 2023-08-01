@@ -21,7 +21,6 @@ import { generateId } from "../../utils/unique"
 import { AuthType } from "./AuthModal"
 import * as api from "../../services/api"
 import { useEditor } from "@layerhub-pro/react"
-import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 
 export default function SignIn({
   setAuthtype,

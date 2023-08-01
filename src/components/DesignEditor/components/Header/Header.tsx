@@ -16,8 +16,6 @@ import {
   useDisclosure,
   useToast
 } from "@chakra-ui/react"
-import { fabric } from "@layerhub-pro/react"
-import ObjectImporter from "~/layerhub/core/utils/object-importer-render"
 import { Popover, PopoverArrow, PopoverContent, PopoverTrigger } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useDesign, useEditor, useScenes, useZoomRatio } from "@layerhub-pro/react"
 import { useSelector } from "react-redux"
@@ -60,20 +58,11 @@ import { getTextProperties } from "~/utils/text"
 import { selectFonts } from "~/store/fonts/selector"
 import { initialOptions, TextState } from "../Toolbox/Text"
 import { loadFonts, loadGraphicTemplate } from "~/utils/fonts"
-import io, { Socket } from "socket.io-client"
 import { previewParam } from "~/interfaces/template"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectListProjects: string = import.meta.env.VITE_REDIRECT_PROJECTS
 const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
-let apiDomain: string = ""
-const wss: string = import.meta.env.VITE_WSS
-
-if ((import.meta.env.VITE_API_CONNECTION as String).includes("/v1/")) {
-  apiDomain = (import.meta.env.VITE_API_CONNECTION as String).replace("/v1/", "/")
-} else if ((import.meta.env.VITE_API_CONNECTION as String).includes("/v1")) {
-  apiDomain = (import.meta.env.VITE_API_CONNECTION as String).replace("/v1", "/")
-}
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()

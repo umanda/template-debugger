@@ -650,62 +650,62 @@ function IconButtonLike({
   )
 }
 
-function PopOverInput({
-  isOpen,
-  onClose,
-  refInput,
-  content,
-  setName
-}: {
-  isOpen: boolean
-  onClose: () => void
-  refInput: any
-  content: IResolveRecommend
-  setName: React.Dispatch<React.SetStateAction<string[]>>
-}) {
-  const makeFilterBySeggestion = (e: string) => {
-    setName([e])
-    onClose()
-  }
+// function PopOverInput({
+//   isOpen,
+//   onClose,
+//   refInput,
+//   content,
+//   setName
+// }: {
+//   isOpen: boolean
+//   onClose: () => void
+//   refInput: any
+//   content: IResolveRecommend
+//   setName: React.Dispatch<React.SetStateAction<string[]>>
+// }) {
+//   const makeFilterBySeggestion = (e: string) => {
+//     setName([e])
+//     onClose()
+//   }
 
-  return (
-    <Popover initialFocusRef={refInput} isOpen={isOpen} returnFocusOnClose={false} onClose={onClose}>
-      <PopoverTrigger>
-        <Button visibility="hidden" position="absolute">
-          Trigger
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent>
-        <PopoverArrow />
-        <PopoverBody>
-          <Flex flexDir="column" fontSize="12px" gap="5px">
-            <Flex>
-              <Text>Recent searches</Text>
-              <Spacer />
-              <Text>Erase</Text>
-            </Flex>
-            <Flex></Flex>
-            <Flex>Suggestion</Flex>
-            {content?.words.map(
-              (obj, index) =>
-                index <= 6 && (
-                  <Button
-                    size="xs"
-                    justifyItems="left"
-                    justifyContent="left"
-                    leftIcon={<Search size={15} />}
-                    variant="ghost"
-                    w="full"
-                    key={index}
-                    onClick={() => makeFilterBySeggestion(obj)}
-                  >
-                    {obj}
-                  </Button>
-                )
-            )}
-          </Flex>
-        </PopoverBody>
-      </PopoverContent>
-    </Popover>
-  )
-}
+//   return (
+//     <Popover initialFocusRef={refInput} isOpen={isOpen} returnFocusOnClose={false} onClose={onClose}>
+//       <PopoverTrigger>
+//         <Button visibility="hidden" position="absolute">
+//           Trigger
+//         </Button>
+//       </PopoverTrigger>
+//       <PopoverContent>
+//         <PopoverArrow />
+//         <PopoverBody>
+//           <Flex flexDir="column" fontSize="12px" gap="5px">
+//             <Flex>
+//               <Text>Recent searches</Text>
+//               <Spacer />
+//               <Text>Erase</Text>
+//             </Flex>
+//             <Flex></Flex>
+//             <Flex>Suggestion</Flex>
+//             {content?.words.map(
+//               (obj, index) =>
+//                 index <= 6 && (
+//                   <Button
+//                     size="xs"
+//                     justifyItems="left"
+//                     justifyContent="left"
+//                     leftIcon={<Search size={15} />}
+//                     variant="ghost"
+//                     w="full"
+//                     key={index}
+//                     onClick={() => makeFilterBySeggestion(obj)}
+//                   >
+//                     {obj}
+//                   </Button>
+//                 )
+//             )}
+//           </Flex>
+//         </PopoverBody>
+//       </PopoverContent>
+//     </Popover>
+//   )
+// }

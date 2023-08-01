@@ -12,7 +12,7 @@ import {
 import { Grid, Popover, PopoverContent, PopoverTrigger, Portal } from "@chakra-ui/react"
 import { HexColorPicker } from "react-colorful"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import { DEFAULT_COLORS } from "~/constants/consts"
 import { stateRecentColors } from "~/utils/recentColors"

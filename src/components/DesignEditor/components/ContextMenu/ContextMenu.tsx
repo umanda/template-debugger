@@ -1,9 +1,8 @@
 import { useActiveObject, useActiveScene, useContextMenuRequest, useEditor } from "@layerhub-pro/react"
-import { Box, Flex } from "@chakra-ui/react"
-import Mail from "../../../Icons/Mail"
+import { Flex } from "@chakra-ui/react"
 import { useAppDispatch } from "~/store/store"
-import { createResourceComposite } from "~/store/resources/action"
-import { generateId } from "../../../../utils/unique"
+// import { createResourceComposite } from "~/store/resources/action"
+// import { generateId } from "../../../../utils/unique"
 import Lock from "../../../Icons/Lock"
 import LayerForward from "../../../Icons/LayerForward"
 import LayerToFront from "../../../Icons/LayerToFront"
@@ -24,22 +23,22 @@ function ContextMenu() {
   const dispath = useAppDispatch()
   const activeObject: any = useActiveObject()
 
-  const saveAsComponentHandler = async () => {
-    if (activeScene) {
-      const component: any = await activeScene.exportComponent()
-      if (component) {
-        dispath(
-          createResourceComposite({
-            id: generateId("", 10),
-            name: "",
-            category: "MIXED",
-            types: component.metadata.types,
-            component: component
-          })
-        )
-      }
-    }
-  }
+  // const saveAsComponentHandler = async () => {
+  //   if (activeScene) {
+  //     const component: any = await activeScene.exportComponent()
+  //     if (component) {
+  //       dispath(
+  //         createResourceComposite({
+  //           id: generateId("", 10),
+  //           name: "",
+  //           category: "MIXED",
+  //           types: component.metadata.types,
+  //           component: component
+  //         })
+  //       )
+  //     }
+  //   }
+  // }
 
   if (!contextMenuRequest || !contextMenuRequest?.target) {
     return <></>
