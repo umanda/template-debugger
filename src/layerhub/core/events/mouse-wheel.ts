@@ -38,13 +38,13 @@ class MouseWheel {
 
     // @ts-ignore
     this.canvas.on({
-      "mouse:wheel": this.onMouseWheel,
+      "mouse:wheel": this.onMouseWheel
     })
   }
 
   public disableEvents() {
     this.canvas.off({
-      "mouse:wheel": this.onMouseWheel,
+      "mouse:wheel": this.onMouseWheel
     })
   }
 
