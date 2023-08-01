@@ -5,11 +5,12 @@ import { Scene } from "../core"
 class StaticVectorObject extends fabric.Group {
   static type = "StaticVector"
   public src: string
-  public scene:Scene
+  public scene: Scene
   public objectColors: Record<string, any[]> = {}
   public colorMap = {}
   private watermark: string
   private _watermark: fabric.Group | fabric.Object
+  private watermarkObject: fabric.Group
 
   public updateLayerColor(prev: string, next: string) {
     const sameObjects = this.objectColors[prev]
@@ -28,7 +29,7 @@ class StaticVectorObject extends fabric.Group {
 
   //@ts-ignore
   initialize(objects, options, others) {
-    this.watermark = others.watermark
+    this.watermarkObject = others.watermarkObject
     // console.log({ objects, options, others })
     const existingColorMap = others.colorMap
     const objectColors = groupBy(objects, "fill")
@@ -62,27 +63,17 @@ class StaticVectorObject extends fabric.Group {
     const object = fabric.util.groupSVGElements(objects, options)
 
     this.on("added", () => {
-      setTimeout(() => {
-        if (this.watermark) {
-          fabric.loadSVGFromURL(
-            this.watermark,
-            (watermarkObjects, waterMarkOptions) => {
-              const watermarkGroup = fabric.util.groupSVGElements(watermarkObjects, {
-                ...waterMarkOptions,
-                opacity: 0.5,
-                top: this.top! + this.getScaledHeight() / 2 - waterMarkOptions.height / 2,
-                left: this.left! + this.getScaledWidth() / 2 - waterMarkOptions.width / 2
-              })
-              this._watermark = watermarkGroup
-              this.add(...watermarkObjects)
-              this.canvas?.requestRenderAll()
-            },
-            // @ts-ignore
-            null,
-            { crossOrigin: "Anonymous" }
-          )
-        }
-      }, 0)
+      if (this.watermarkObject) {
+        this.watermarkObject.set({
+          top: 0,
+          left: 0,
+          originX: "center",
+          originY: "center",
+          opacity: 1
+        })
+        this.add(others.watermarkObject)
+        this.canvas?.requestRenderAll()
+      }
     })
     // @ts-ignore
     super.initialize([object], {

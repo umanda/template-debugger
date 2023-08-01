@@ -1,5 +1,5 @@
 import React from "react"
-import { Modal, ModalOverlay, ModalContent, ModalFooter, Text, Flex, ModalCloseButton } from "@chakra-ui/react"
+import { Modal, ModalOverlay, ModalContent, ModalFooter, Text, Flex } from "@chakra-ui/react"
 import Signin from "./Signin"
 import Signup from "./Signup"
 
@@ -9,14 +9,12 @@ function SigninModal({
   isOpen,
   onClose,
   type,
-  onComplete,
   setType
 }: {
   isOpen: boolean
   onOpen: () => void
   onClose: () => void
   type: string
-  onComplete?: () => void
   setType: React.Dispatch<React.SetStateAction<AuthType>>
 }) {
   return (

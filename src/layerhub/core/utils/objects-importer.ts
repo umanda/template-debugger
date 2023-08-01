@@ -57,17 +57,8 @@ class ObjectImporter {
 
         const metadata = item.metadata
 
-        const {
-          textAlign,
-          fontFamily,
-          fontSize,
-          charSpacing,
-          lineHeight,
-          text,
-          underline,
-          fill,
-          fontURL
-        } = item as IStaticText
+        const { textAlign, fontFamily, fontSize, charSpacing, lineHeight, text, underline, fill, fontURL } =
+          item as IStaticText
         const textOptions = {
           ...baseOptions,
           underline,
@@ -145,12 +136,12 @@ class ObjectImporter {
           baseOptions.height = videoElement.videoHeight
         }
 
-        const element = (new fabric.StaticVideo(videoElement, {
+        const element = new fabric.StaticVideo(videoElement, {
           ...baseOptions,
           src: src,
           duration: videoElement.duration,
           totalDuration: videoElement.duration
-        }) as unknown) as any
+        }) as unknown as any
 
         element.set("time", 10)
         videoElement.currentTime = 10
@@ -298,7 +289,7 @@ class ObjectImporter {
     return new Promise(async (resolve, reject) => {
       try {
         const { item, options } = props
-        const baseOptions = (this.getBaseOptions(props) as unknown) as fabric.ILineOptions
+        const baseOptions = this.getBaseOptions(props) as unknown as fabric.ILineOptions
         const { x1, y1, x2, y2 } = item as any
 
         const element = new fabric.Line([x1, y1, x2, y2], baseOptions)
@@ -395,11 +386,25 @@ class ObjectImporter {
   }
 
   public vector(props: ImportOptions) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const { item, options } = props
         const baseOptions = this.getBaseOptions(props)
         const { src, colorMap = {} } = item as IStaticVector
+
+        let watermarkObject = null
+        if (item.watermark) {
+          watermarkObject = await new Promise((resolve, reject) => {
+            fabric.loadSVGFromURL(item.watermark, (object, option) => {
+              const watermarkGroup = fabric.util.groupSVGElements(object, {
+                ...option,
+                opacity: 0.5
+              })
+              // return new Promise((resolve, reject) => resolve(watermarkGroup))
+              resolve(watermarkGroup)
+            })
+          })
+        }
 
         fabric.loadSVGFromURL(src, (objects, opts) => {
           const { width, height } = baseOptions
@@ -413,7 +418,8 @@ class ObjectImporter {
           const element = new fabric.StaticVector(objects, opts, {
             ...baseOptions,
             src,
-            colorMap
+            colorMap,
+            watermarkObject
           })
 
           updateObjectBounds(element, options)
@@ -476,7 +482,7 @@ class ObjectImporter {
 
       // eraser,
     })
-    return (baseOptions as unknown) as Required<ILayer>
+    return baseOptions as unknown as Required<ILayer>
   }
 }
 export default ObjectImporter

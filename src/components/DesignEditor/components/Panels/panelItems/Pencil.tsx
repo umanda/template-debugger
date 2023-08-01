@@ -116,7 +116,7 @@ export default function Pencil() {
   }, [editor, draw, typeDraw])
 
   return (
-    <Flex h="full" flexDir="column" sx={{ width: "full", borderRight: "1px solid #ebebeb" }}>
+    <Flex h="full" width="320px" flexDir="column" sx={{ borderRight: "1px solid #ebebeb" }}>
       <Box>
         <Text margin="10px" color="#A9A9B2">
           PENS & ERASER

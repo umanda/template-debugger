@@ -70,16 +70,8 @@ class ObjectImporter {
       try {
         const baseOptions = this.getBaseOptions(item)
         const metadata = item.metadata
-        const {
-          textAlign,
-          fontFamily,
-          fontSize,
-          charSpacing,
-          lineHeight,
-          underline,
-          fill,
-          styles
-        } = item as IStaticText
+        const { textAlign, fontFamily, fontSize, charSpacing, lineHeight, underline, fill, styles } =
+          item as IStaticText
         // @ts-ignore
         let text = replaceParamWithValue(item as IStaticText, params)
 
@@ -342,8 +334,21 @@ class ObjectImporter {
   public staticVector(item: ILayer): Promise<fabric.StaticVector> {
     return new Promise(async (resolve, reject) => {
       try {
-        const baseOptions = this.getBaseOptions(item)
+        const baseOptions = await this.getBaseOptions(item)
         const { src, colorMap = {}, watermark } = item as IStaticVector
+        let watermarkObject = null
+        if (watermark) {
+          watermarkObject = await new Promise((resolve, reject) => {
+            fabric.loadSVGFromURL(watermark, (object, option) => {
+              const watermarkGroup = fabric.util.groupSVGElements(object, {
+                ...option,
+                opacity: 0.5
+              })
+              // return new Promise((resolve, reject) => resolve(watermarkGroup))
+              resolve(watermarkGroup)
+            })
+          })
+        }
 
         fabric.loadSVGFromURL(src, (objects, opts) => {
           const { width, height } = baseOptions
@@ -356,7 +361,7 @@ class ObjectImporter {
             ...baseOptions,
             src,
             colorMap,
-            watermark
+            watermarkObject
           })
 
           updateObjectShadow(element, item.shadow)

@@ -1,17 +1,6 @@
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  HStack,
-  IconButton,
-  Input,
-  PopoverArrow,
-  Spacer,
-  useDisclosure
-} from "@chakra-ui/react"
-import React from "react"
-import { useActiveObject, useActiveScene, useDesign, useEditor, useScenes } from "@layerhub-pro/react"
+import { Box, Button, Center, Flex, HStack, IconButton, Input, PopoverArrow, useDisclosure } from "@chakra-ui/react"
+import React, { useCallback } from "react"
+import { useActiveObject, useActiveScene, useEditor, useScenes } from "@layerhub-pro/react"
 import Common from "./Common"
 import { Popover, PopoverTrigger, PopoverContent } from "@chakra-ui/react"
 import Scrollbar from "@layerhub-io/react-custom-scrollbar"
@@ -69,9 +58,11 @@ export default function Text() {
   const activeObject = useActiveObject() as Required<IStaticText>
   const editor = useEditor()
   const fonts = useSelector(selectFonts)
-  const { setActiveMenu, colorText, setColorText, activeMenu } = useDesignEditorContext()
+  const { setActiveMenu, colorText, setColorText, activeMenu, isSidebarVisible, setIsSidebarVisible } =
+    useDesignEditorContext()
   const activeScene = useActiveScene()
   const scenes = useScenes()
+  const [statePrevSidebar, setStatePrevSidebar] = React.useState<boolean>(true)
 
   React.useEffect(() => {
     if (activeObject && activeObject.type === "StaticText") {
@@ -216,6 +207,20 @@ export default function Text() {
     setState({ ...state, underline: !state.underline })
   }, [editor, state])
 
+  const changeSidebar = useCallback(
+    (menu: string) => {
+      if (activeMenu !== menu) {
+        setActiveMenu(menu)
+        setStatePrevSidebar(isSidebarVisible)
+        setIsSidebarVisible(true)
+      } else {
+        setIsSidebarVisible(statePrevSidebar)
+        setActiveMenu("")
+      }
+    },
+    [isSidebarVisible, activeMenu, isSidebarVisible, statePrevSidebar]
+  )
+
   return (
     <Flex flex={1} alignItems={"center"} justifyContent={"space-between"} gap="10px">
       <Flex gap={"0.5rem"} alignItems={"center"} w="full">
@@ -225,11 +230,10 @@ export default function Text() {
           _hover={{ cursor: "pointer" }}
           borderWidth="2px"
           borderStyle="solid"
-          onClick={() => (activeMenu !== "TextColorPicker" ? setActiveMenu("TextColorPicker") : setActiveMenu(""))}
+          onClick={() => changeSidebar("TextColorPicker")}
         ></Flex>
-
         <Button
-          onClick={() => setActiveMenu("FontSelector")}
+          onClick={() => changeSidebar("FontSelector")}
           variant={"outline"}
           size={"sm"}
           rightIcon={<Down size={24} />}
@@ -342,14 +346,6 @@ function LetterCase() {
 function TextAlign() {
   const activeScene = useActiveScene()
   const activeObject = useActiveObject()
-  const [state, setState] = React.useState<{ align: string }>({ align: "left" })
-
-  React.useEffect(() => {
-    if (activeObject) {
-      // @ts-ignore
-      setState({ align: activeObject.textAlign })
-    }
-  }, [activeObject])
 
   return (
     <Popover placement="bottom-end">
@@ -377,7 +373,6 @@ function TextAlign() {
           onClick={() => {
             // @ts-ignore
             activeScene.objects.update({ textAlign: TEXT_ALIGNS[0] })
-            setState({ align: TEXT_ALIGNS[0] })
           }}
         >
           <TextAlignLeft size={24} />
@@ -391,7 +386,6 @@ function TextAlign() {
           onClick={() => {
             // @ts-ignore
             activeScene.objects.update({ textAlign: TEXT_ALIGNS[1] })
-            setState({ align: TEXT_ALIGNS[1] })
           }}
         >
           <TextAlignCenter size={24} />
@@ -405,7 +399,6 @@ function TextAlign() {
           onClick={() => {
             // @ts-ignore
             activeScene.objects.update({ textAlign: TEXT_ALIGNS[2] })
-            setState({ align: TEXT_ALIGNS[2] })
           }}
         >
           <TextAlignRight size={24} />
@@ -419,7 +412,6 @@ function TextAlign() {
           onClick={() => {
             // @ts-ignore
             activeScene.objects.update({ textAlign: TEXT_ALIGNS[3] })
-            setState({ align: TEXT_ALIGNS[3] })
           }}
         >
           <TextAlignJustify size={24} />

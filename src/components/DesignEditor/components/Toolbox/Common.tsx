@@ -31,7 +31,6 @@ export default function Common() {
   React.useEffect(() => {
     let watcher = async () => {
       if (activeObject) {
-        // @ts-ignore
         setState({ isGroup: activeObject.type === "group", isMultiple: activeObject.type === "activeSelection" })
       }
     }
@@ -78,7 +77,6 @@ export default function Common() {
 }
 
 function CommonAlignment() {
-  const editor = useEditor()
   const activeScene = useActiveScene()
   return (
     <Popover placement="bottom-end">

@@ -12,7 +12,7 @@ import {
 import { Grid, Popover, PopoverContent, PopoverTrigger, Portal } from "@chakra-ui/react"
 import { HexColorPicker } from "react-colorful"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import { DEFAULT_COLORS } from "~/constants/consts"
 import { stateRecentColors } from "~/utils/recentColors"
@@ -21,19 +21,14 @@ export default function TextColorPicker() {
   const recentColors: string[] | null = JSON.parse(localStorage.getItem("recentColors"))
   const editor = useEditor()
   const activeObject = useActiveObject() as any
-  const { setColorText, setActiveMenu, setInputActive } = useDesignEditorContext()
+  const { setColorText, setInputActive } = useDesignEditorContext()
   const activeScene = useActiveScene()
-  const [colorHex, setColorHex] = useState<string>("")
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [state, setState] = React.useState<{
     color: string
     opacity: number
     opacityTemp: number
   }>({ color: activeObject?.fill, opacity: activeObject?.opacity * 100, opacityTemp: activeObject?.opacity * 100 })
-
-  useEffect(() => {
-    if (activeObject) activeObject.type !== "StaticText" && setActiveMenu("Text")
-  }, [activeObject])
 
   const onChange = (type: string, value: number) => {
     if (editor) {
@@ -95,10 +90,7 @@ export default function TextColorPicker() {
                 <HexColorPicker
                   style={{ width: "100%" }}
                   color={state.color}
-                  onChange={(color) => {
-                    setColorHex(color)
-                    updateObjectFill(color)
-                  }}
+                  onChange={(color) => updateObjectFill(color)}
                 />
                 <Box sx={{ padding: "1rem 0", display: "grid", gridTemplateColumns: "40px 1fr", alignItems: "center" }}>
                   <Box sx={{ color: "#A9A9B2" }}>HEX</Box>
@@ -125,9 +117,7 @@ export default function TextColorPicker() {
               borderColor={state.color === color ? "brand.500" : "#A9A9B2"}
               _hover={{ cursor: "pointer" }}
               bg={color}
-              onClick={() => {
-                updateObjectFill(color)
-              }}
+              onClick={() => updateObjectFill(color)}
               key={index}
             ></GridItem>
           )
@@ -144,9 +134,7 @@ export default function TextColorPicker() {
               borderColor={state.color === color ? "brand.500" : "#A9A9B2"}
               _hover={{ cursor: "pointer" }}
               bg={color}
-              onClick={() => {
-                updateObjectFill(color)
-              }}
+              onClick={() => updateObjectFill(color)}
               key={color}
               sx={{ backgroundColor: color, height: "34px", borderRadius: "4px", cursor: "pointer" }}
             ></Box>

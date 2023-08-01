@@ -26,8 +26,9 @@ import {
   Tooltip,
   useDisclosure,
   Textarea,
-  Spacer,
-  useToast
+  useToast,
+  GridItem,
+  Image as CImage
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
@@ -58,6 +59,7 @@ import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import { updateProject } from "~/store/project/action"
 import { generateEmptyDesign } from "~/constants/consts"
 import { useParams } from "react-router-dom"
+import { nanoid } from "nanoid"
 
 const watermarkURL = import.meta.env.VITE_APP_WATERMARK
 const redirectPayments = import.meta.env.VITE_PAYMENTS
@@ -97,7 +99,6 @@ export default function Ilustrations() {
   const [order, setOrder] = useState<string[]>(["LAST_UPDATE"])
   const user = useSelector(selectUser)
   const { isOpen: isOpenInput, onOpen: onOpenInput, onClose: onCloseInput } = useDisclosure()
-  const { isOpen: isOpenSearchFound, onOpen: onOpenSearchFound, onClose: onCloseSearchFound } = useDisclosure()
   const [resourcesIllustration, setResourcesIllustration] = useState<any[]>([])
   const [load, setLoad] = useState(false)
   const [more, setMore] = useState(false)
@@ -121,6 +122,8 @@ export default function Ilustrations() {
   const [textArea, setTextArea] = useState<string>()
   const toast = useToast()
   const { id } = useParams()
+  const [stateTabs, setStateTabs] = useState<number>(0)
+  const refTab = useRef<any>()
 
   useEffect(() => {
     initialState()
@@ -175,29 +178,45 @@ export default function Ilustrations() {
     ) {
       let newQuery = initialQuery
       newQuery.page = selectListResources.length / 10 + 1
-      const resolve = (await (await dispatch(getListResourcesImages(newQuery))).payload) as IResource[]
+      let resolve = null
+      if (stateTabs === 0) {
+        resolve = (await (await dispatch(getListResourcesImages(newQuery))).payload) as IResource[]
+      } else {
+        resolve = await api.getListResourcesIA(newQuery)
+      }
       setResourcesIllustration(selectListResources.concat(resolve))
       resolve[0] !== undefined && setMore(true)
     } else {
-      let resolve = []
+      let resolve: any
       try {
-        resolve = await api.searchResources(
-          {
-            page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page,
+        if (stateTabs === 0) {
+          resolve = await api.searchResources(
+            {
+              page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page,
+              limit: 10,
+              query: {
+                drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
+                keywords:
+                  nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
+                is_published: true,
+                favorited: stateFavorite === true ? true : undefined,
+                used: stateRecent === true ? true : undefined,
+                notIds: notIds[0] === undefined ? undefined : notIds
+              },
+              sorts: stateRecent ? ["USED_AT"] : order
+            },
+            setNotIds,
+            notIds
+          )
+        } else {
+          resolve = await api.getListResourcesIA({
+            page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page + 1,
             limit: 10,
             query: {
-              drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
-              keywords: nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
-              is_published: true,
-              favorited: stateFavorite === true ? true : undefined,
-              used: stateRecent === true ? true : undefined,
-              notIds: notIds[0] === undefined ? undefined : notIds
-            },
-            sorts: stateRecent ? ["USED_AT"] : order
-          },
-          setNotIds,
-          notIds
-        )
+              text: nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration[0]
+            }
+          })
+        }
       } catch {}
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
         stateFavorite === true
@@ -214,20 +233,24 @@ export default function Ilustrations() {
           obj.id === resource.id && setMore(false)
         })
       })
-      if (nameIllustration[0] !== "") {
-        resolve?.sort((a, b) => b.count_drawings - a.count_drawings)
-        const lastDraw = resolve.find(
-          (r) => r?.drawifierId === resourcesIllustration[resourcesIllustration.length - 1]?.drawifierId
-        )
-        resourcesIllustration.map((r) => {
-          if (r?.drawifierId === lastDraw?.drawifierId) r.drawings = r.drawings?.concat(lastDraw?.drawings)
-        })
-        setResourcesIllustration(
-          resourcesIllustration.concat(resolve?.filter((r) => r?.drawifierId !== lastDraw?.drawifierId))
-        )
-      } else {
-        const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
-        setResourcesIllustration(validateResources)
+      if (stateTabs === 0) {
+        if (nameIllustration[0] !== "") {
+          resolve?.sort((a, b) => b.count_drawings - a.count_drawings)
+          const lastDraw = resolve.find(
+            (r) => r?.drawifierId === resourcesIllustration[resourcesIllustration.length - 1]?.drawifierId
+          )
+          resourcesIllustration.map((r) => {
+            if (r?.drawifierId === lastDraw?.drawifierId) r.drawings = r.drawings?.concat(lastDraw?.drawings)
+          })
+          setResourcesIllustration(
+            resourcesIllustration.concat(resolve?.filter((r) => r?.drawifierId !== lastDraw?.drawifierId))
+          )
+        } else {
+          const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
+          setResourcesIllustration(validateResources)
+        }
+      } else if (stateTabs === 1) {
+        setResourcesIllustration(resourcesIllustration.concat(resolve))
       }
       resolve[0] !== undefined ? setMore(true) : setMore(false)
       resolve[9] === undefined && nameIllustration[0] === "" && setMore(false)
@@ -244,13 +267,13 @@ export default function Ilustrations() {
         const options: any = {
           type: "StaticVector",
           name: "Illustration",
-          src: resource.url,
-          preview: resource.url,
+          src: resource.url.concat("?" + nanoid(6)),
+          preview: resource.url.concat("?" + nanoid(6)),
           erasable: false,
           watermark:
             resource.license === "paid" && user.plan === "FREE"
               ? `${watermarkURL}?${Math.random().toString(36).substring(2, 10)}`
-              : null
+              : undefined
         }
         if (editor) {
           await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
@@ -411,85 +434,169 @@ export default function Ilustrations() {
     api.viewDrawifier(drawifier?.drawifierId)
   }, [])
 
+  const dragObject = useCallback(
+    async (e: React.DragEvent<HTMLDivElement>, illustration: IResource) => {
+      try {
+        let img = new Image()
+        img.src = illustration.url
+        if (editor) {
+          e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
+          editor.dragger.onDragStart(
+            {
+              type: "StaticVector",
+              name: "Illustration",
+              erasable: false,
+              watermark: illustration.license === "paid" && user.plan === "FREE" ? watermarkURL : undefined,
+              preview: illustration.url,
+              src: `${illustration.url}?${Math.random().toString(36).substring(2, 10)}`
+            },
+            { desiredSize: 400 }
+          )
+        }
+        if (user && projectSelect) {
+          const ctx = { id: illustration.id }
+          api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
+        }
+      } catch {}
+    },
+    [editor, user, projectSelect]
+  )
+
+  const changeTab = useCallback(
+    (tab: number) => {
+      setStateTabs(tab)
+      if (tab === 0) {
+        setResourcesIllustration(selectListResources)
+        setNameIllustration([""])
+        setNameIllustrationPrev([""])
+        setValidateContent(null)
+      } else if (tab === 1) {
+        refTab.current.focus()
+        setResourcesIllustration([])
+        setNameIllustration([""])
+        setNameIllustrationPrev([""])
+        setValidateContent(null)
+      }
+    },
+    [stateTabs, selectListResources, refTab]
+  )
+
   return (
     <Flex h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" flexDirection="column">
-      <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
-        <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
-          <HStack width={"100%"}>
-            <PopoverAnchor>
-              <Tooltip
-                isOpen={toolTip}
-                openDelay={500}
-                label="Enter at least 3 letters and wait for the result"
-                fontSize="md"
-                hasArrow
-                arrowSize={10}
-              >
-                <Input
-                  size="sm"
-                  id="input"
-                  ref={initialFocusRef}
-                  value={nameIllustrationPrev}
-                  placeholder="Search"
-                  sx={{
-                    _focusVisible: {
-                      boxShadow: "none"
-                    }
-                  }}
-                  onFocus={() => {
-                    onOpenInput()
-                    setInputActive(true)
-                  }}
-                  onBlur={makeBlur}
-                  onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
-                  onChange={(e) => makeChangeInput(e.target.value)}
-                />
-              </Tooltip>
-            </PopoverAnchor>
-            <PopoverTrigger>
-              <Button visibility="hidden" position="absolute">
-                Trigger
-              </Button>
-            </PopoverTrigger>
-          </HStack>
-          <PopoverContent id="input">
-            <PopoverArrow />
-            <PopoverBody id="input">
-              <Flex id="input" flexDir="column" fontSize="12px" gap="5px">
-                <Flex id="input">Suggestion</Flex>
-                {contentInput?.words.map(
-                  (obj, index) =>
-                    index <= 6 && (
-                      <Button
-                        id="input"
-                        size="xs"
-                        justifyItems="left"
-                        justifyContent="left"
-                        leftIcon={<Search size={15} />}
-                        variant="ghost"
-                        w="full"
-                        key={index}
-                        onClick={() => makeFilterBySeggestion(obj)}
-                      >
-                        {obj}
-                      </Button>
-                    )
-                )}
-              </Flex>
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
-        <Order
-          setFetching={setMore}
-          setResources={setResourcesIllustration}
-          setSkeleton={setLoad}
-          setOrder={setOrder}
-          setDrawifier={setOrderDrawifier}
-          order={order}
-          drawifier={orderDrawifier}
-          setPage={setPage}
-        />
-      </Flex>
+      {/* <Grid templateColumns="repeat(2, 1fr)" marginBottom="10px">
+        <GridItem
+          display="flex"
+          h="50px"
+          color={stateTabs === 0 ? "#5456F5" : "#545465"}
+          justifyContent="center"
+          alignItems="center"
+          _hover={{
+            cursor: "pointer",
+            color: "#5456F5"
+          }}
+          onClick={() => changeTab(0)}
+          borderRight="1px solid #ebebeb"
+          borderBottom={stateTabs === 0 ? null : "1px solid #ebebeb"}
+        >
+          Search
+        </GridItem>
+        <GridItem
+          _hover={{
+            cursor: "pointer",
+            color: "#5456F5"
+          }}
+          onClick={() => changeTab(1)}
+          color={stateTabs === 1 ? "#5456F5" : "#545465"}
+          display="flex"
+          h="50px"
+          justifyContent="center"
+          alignItems="center"
+          borderBottom={stateTabs === 1 ? null : "1px solid #ebebeb"}
+        >
+          Smart Search
+        </GridItem>
+      </Grid> */}
+      {(user.plan === "HERO" || stateTabs === 0) && (
+        <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
+          <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
+            <HStack width={"100%"}>
+              <PopoverAnchor>
+                <Tooltip
+                  isOpen={toolTip}
+                  openDelay={500}
+                  label="Enter at least 3 letters and wait for the result"
+                  fontSize="md"
+                  hasArrow
+                  arrowSize={10}
+                >
+                  <Input
+                    size="sm"
+                    autoComplete="off"
+                    spellCheck="false"
+                    id="input"
+                    ref={initialFocusRef}
+                    value={nameIllustrationPrev}
+                    placeholder="Search"
+                    sx={{
+                      _focusVisible: {
+                        boxShadow: "none"
+                      }
+                    }}
+                    onFocus={() => {
+                      onOpenInput()
+                      setInputActive(true)
+                    }}
+                    onBlur={makeBlur}
+                    onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
+                    onChange={(e) => makeChangeInput(e.target.value)}
+                  />
+                </Tooltip>
+              </PopoverAnchor>
+              <PopoverTrigger>
+                <Button visibility="hidden" position="absolute">
+                  Trigger
+                </Button>
+              </PopoverTrigger>
+            </HStack>
+            <PopoverContent id="input">
+              <PopoverArrow />
+              <PopoverBody id="input">
+                <Flex id="input" flexDir="column" fontSize="12px" gap="5px">
+                  <Flex id="input">Suggestion</Flex>
+                  {contentInput?.words.map(
+                    (obj, index) =>
+                      index <= 6 && (
+                        <Button
+                          id="input"
+                          size="xs"
+                          justifyItems="left"
+                          justifyContent="left"
+                          leftIcon={<Search size={15} />}
+                          variant="ghost"
+                          w="full"
+                          key={index}
+                          onClick={() => makeFilterBySeggestion(obj)}
+                        >
+                          {obj}
+                        </Button>
+                      )
+                  )}
+                </Flex>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
+          <Order
+            setFetching={setMore}
+            setResources={setResourcesIllustration}
+            setSkeleton={setLoad}
+            setOrder={setOrder}
+            setDrawifier={setOrderDrawifier}
+            order={order}
+            drawifier={orderDrawifier}
+            setPage={setPage}
+          />
+        </Flex>
+      )}
       <Box>
         <HorizontalScroll>
           {listRecommend.words.map((obj, index) => (
@@ -511,6 +618,7 @@ export default function Ilustrations() {
           <TabList>
             <Tab
               isDisabled={disableTab}
+              ref={refTab}
               onClick={() => {
                 setResourcesIllustration([])
                 setNameIllustrationPrev([""])
@@ -531,6 +639,7 @@ export default function Ilustrations() {
             </Tab>
             <Tab
               isDisabled={disableTab}
+              visibility={stateTabs === 1 ? "hidden" : "visible"}
               onClick={() => {
                 stateFavorite = false
                 user ? makeFilter({ stateRecents: true }) : setValidateContent("You need to login to see this panel.")
@@ -540,6 +649,7 @@ export default function Ilustrations() {
             </Tab>
             <Tab
               isDisabled={disableTab}
+              visibility={stateTabs === 1 ? "hidden" : "visible"}
               onClick={() => {
                 stateRecent = false
                 user ? makeFilter({ stateFavorites: true }) : setValidateContent("You need to login to see this panel.")
@@ -550,45 +660,76 @@ export default function Ilustrations() {
           </TabList>
         </Tabs>
       </Box>
-      <Flex w="full" h="full" flexDir="column">
-        {validateContent === null ? (
-          <Scrollable autoHide={true}>
-            <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
-              {load ? (
-                nameIllustration[0] !== "" ? (
-                  <Flex marginTop="20px" marginInline="20px" flexDir="column">
-                    {resourcesIllustration?.map((r, index) => (
-                      <Flex flexDir="column" key={index} gap="5px" alignItems="center">
-                        <Flex w="full">
-                          <Avatar marginLeft="10px" size="md" name={r?.drawifier_name} src={r?.avatar} />
-                          <Flex flexDir="column" w="full">
-                            <Center flexDirection="column">
-                              <Box sx={{ fontSize: "12px" }} fontWeight="bold">
-                                {limitCharacters(r?.drawifier_name)}
-                              </Box>
-                              <Box sx={{ fontSize: "12px" }}>{`Found ${r?.total_drawings ?? 0} drawings`}</Box>
-                            </Center>
-                            <Center
-                              color="#fa6400"
-                              fontWeight="600"
-                              fontSize="12px"
-                              _hover={{ cursor: "pointer" }}
-                              onClick={() => makeAllDraws(r)}
-                            >
-                              {`All ${r?.drawifier_name?.split(" ")[0] ?? null}'s drawings`}
-                            </Center>
+      {stateTabs === 0 ? (
+        <>
+          <Flex w="full" h="full" flexDir="column">
+            {validateContent === null ? (
+              <Scrollable autoHide={true}>
+                <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
+                  {load ? (
+                    nameIllustration[0] !== "" ? (
+                      <Flex marginTop="20px" marginInline="20px" flexDir="column">
+                        {resourcesIllustration?.map((r, index) => (
+                          <Flex flexDir="column" key={index} gap="5px" alignItems="center">
+                            <Flex w="full">
+                              <Avatar marginLeft="10px" size="md" name={r?.drawifier_name} src={r?.avatar} />
+                              <Flex flexDir="column" w="full">
+                                <Center flexDirection="column">
+                                  <Box sx={{ fontSize: "12px" }} fontWeight="bold">
+                                    {limitCharacters(r?.drawifier_name)}
+                                  </Box>
+                                  <Box sx={{ fontSize: "12px" }}>{`Found ${r?.total_drawings ?? 0} drawings`}</Box>
+                                </Center>
+                                <Center
+                                  color="#fa6400"
+                                  fontWeight="600"
+                                  fontSize="12px"
+                                  _hover={{ cursor: "pointer" }}
+                                  onClick={() => makeAllDraws(r)}
+                                >
+                                  {`All ${r?.drawifier_name?.split(" ")[0] ?? null}'s drawings`}
+                                </Center>
+                              </Flex>
+                            </Flex>
+                            <Flex
+                              h="1px"
+                              w="full"
+                              bg="linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5578606442577031) 27%, rgba(0,212,255,0) 100%)"
+                            ></Flex>
+                            <Grid w="full" gap="2px" templateColumns="repeat(2, 1fr)">
+                              {r?.drawings?.map(
+                                (illustration, index) =>
+                                  illustration && (
+                                    <IllustrationItem
+                                      makeFavorite={makeFavorite}
+                                      addObject={() => addObject(illustration)}
+                                      illustration={illustration}
+                                      key={index}
+                                      listFavorite={selectListFavoriteResources}
+                                    />
+                                  )
+                              )}
+                            </Grid>
                           </Flex>
-                        </Flex>
-                        <Flex
-                          h="1px"
+                        ))}
+                        <Button
                           w="full"
-                          bg="linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5578606442577031) 27%, rgba(0,212,255,0) 100%)"
-                        ></Flex>
-                        <Grid w="full" gap="2px" templateColumns="repeat(2, 1fr)">
-                          {r?.drawings?.map(
+                          variant="outline"
+                          isLoading={loadMoreResources}
+                          isDisabled={!more}
+                          onClick={fetchDataResource}
+                        >
+                          Load More
+                        </Button>
+                      </Flex>
+                    ) : (
+                      <Flex flexDir="column">
+                        <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
+                          {resourcesIllustration.map(
                             (illustration, index) =>
                               illustration && (
                                 <IllustrationItem
+                                  makeDragObject={dragObject}
                                   makeFavorite={makeFavorite}
                                   addObject={() => addObject(illustration)}
                                   illustration={illustration}
@@ -597,114 +738,154 @@ export default function Ilustrations() {
                                 />
                               )
                           )}
-                        </Grid>
+                        </Box>
+                        <Button
+                          w="full"
+                          variant="outline"
+                          isLoading={loadMoreResources}
+                          isDisabled={!more}
+                          onClick={fetchDataResource}
+                        >
+                          Load More
+                        </Button>
                       </Flex>
-                    ))}
-                    <Button
-                      w="full"
-                      variant="outline"
-                      isLoading={loadMoreResources}
-                      isDisabled={!more}
-                      onClick={fetchDataResource}
-                    >
-                      Load More
-                    </Button>
-                  </Flex>
-                ) : (
-                  <Flex flexDir="column">
-                    <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
-                      {resourcesIllustration.map(
-                        (illustration, index) =>
-                          illustration && (
-                            <IllustrationItem
-                              makeFavorite={makeFavorite}
-                              addObject={() => addObject(illustration)}
-                              illustration={illustration}
-                              key={index}
-                              listFavorite={selectListFavoriteResources}
-                            />
-                          )
-                      )}
-                    </Box>
-                    <Button
-                      w="full"
-                      variant="outline"
-                      isLoading={loadMoreResources}
-                      isDisabled={!more}
-                      onClick={fetchDataResource}
-                    >
-                      Load More
-                    </Button>
-                  </Flex>
-                )
-              ) : (
-                <Flex h="50%" w="full" align="end" justify="center">
-                  <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-                </Flex>
-              )}
-            </InfiniteScroll>
-          </Scrollable>
-        ) : (
-          <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
-            {stateFavorite !== true && stateRecent !== true && (
-              <Text fontSize="18px" fontWeight="700" color="#545465">
-                REQUEST A IMAGE
-              </Text>
-            )}
-            {stateFavorite === true ? (
-              <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
-            ) : stateRecent === true ? (
-              <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
+                    )
+                  ) : (
+                    <Flex h="50%" w="full" align="end" justify="center">
+                      <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+                    </Flex>
+                  )}
+                </InfiniteScroll>
+              </Scrollable>
             ) : (
-              user.plan !== "Hero" && (
-                <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noImages.png"} />
-              )
-            )}
-            <Flex w="full" padding="10px">
-              {validateContent === "noResult" ? (
-                user.plan !== "HERO" ? (
-                  <Flex flexDir="column" gap="20px" align="center">
-                    <Text>Sorry! Your current plan does not support this feature.</Text>
-                    <Text>
-                      To send your request for an image, <u>upgrade to Drawify Hero.</u>
-                    </Text>
-                    <Button
-                      w="-webkit-fit-content"
-                      onClick={() => (window.location.href = redirectPayments)}
-                      colorScheme={"brand"}
-                    >
-                      Upgrade
-                    </Button>
-                  </Flex>
+              <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+                {stateFavorite !== true && stateRecent !== true && (
+                  <Text fontSize="18px" fontWeight="700" color="#545465">
+                    REQUEST A IMAGE
+                  </Text>
+                )}
+                {stateFavorite === true ? (
+                  <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
+                ) : stateRecent === true ? (
+                  <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
                 ) : (
-                  <Flex flexDir="column" w="full" align="center" gap="20px">
-                    <Textarea
-                      ref={textAreaRef}
-                      onFocus={() => setInputActive(true)}
-                      onChange={(e) => setTextArea(e.target.value)}
-                      onBlur={() => setNameIllustration([textArea])}
-                      w="full"
-                      placeholder="Describe the image you would like"
-                    />
-                    <Button
-                      isDisabled={textAreaRef?.current?.value! === "" ? true : false}
-                      w="-webkit-fit-content"
-                      onClick={() => sendIllustrationRequest(textArea)}
-                      colorScheme={"brand"}
-                    >
-                      Send Image Request
-                    </Button>
-                  </Flex>
-                )
-              ) : (
-                <Flex w="full" justify="center">
-                  {validateContent}
+                  user.plan !== "Hero" && (
+                    <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noImages.png"} />
+                  )
+                )}
+                <Flex w="full" padding="10px">
+                  {validateContent === "noResult" ? (
+                    user.plan !== "HERO" ? (
+                      <Flex flexDir="column" gap="20px" align="center">
+                        <Text>Sorry! Your current plan does not support this feature.</Text>
+                        <Text>
+                          To send your request for an image, <u>upgrade to Drawify Hero.</u>
+                        </Text>
+                        <Button
+                          w="-webkit-fit-content"
+                          onClick={() => (window.location.href = redirectPayments)}
+                          colorScheme={"brand"}
+                        >
+                          Upgrade
+                        </Button>
+                      </Flex>
+                    ) : (
+                      <Flex flexDir="column" w="full" align="center" gap="20px">
+                        <Textarea
+                          ref={textAreaRef}
+                          onFocus={() => setInputActive(true)}
+                          onChange={(e) => setTextArea(e.target.value)}
+                          onBlur={() => setNameIllustration([textArea])}
+                          w="full"
+                          placeholder="Describe the image you would like"
+                        />
+                        <Button
+                          isDisabled={textAreaRef?.current?.value! === "" ? true : false}
+                          w="-webkit-fit-content"
+                          onClick={() => sendIllustrationRequest(textArea)}
+                          colorScheme={"brand"}
+                        >
+                          Send Image Request
+                        </Button>
+                      </Flex>
+                    )
+                  ) : (
+                    <Flex w="full" justify="center">
+                      {validateContent}
+                    </Flex>
+                  )}
                 </Flex>
-              )}
-            </Flex>
-          </Center>
-        )}
-      </Flex>
+              </Center>
+            )}
+          </Flex>
+        </>
+      ) : nameIllustration[0] === "" ? (
+        <Center h="full" flexDir="column">
+          <CImage src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/magic-search.png" />
+          {user.plan === "HERO" ? (
+            <>
+              <Text w="72%" textAlign="center">
+                Get inspired with <b>SmartSearch</b>, powered by AI.
+              </Text>
+              <Text w="72%" textAlign="center">
+                Search by phrase,and
+                <br /> discover more creative search results, faster
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text textAlign="center">Spark your imagination!</Text>
+              <br />
+              <Text textAlign="center">
+                Discover more interesting search
+                <br /> results with SmartSearch
+              </Text>
+              <Button variant="outline" borderColor="#5456F5" color="#5456F5" margin="20px">
+                Upgrade to unlock
+              </Button>
+            </>
+          )}
+        </Center>
+      ) : (
+        <Scrollable autoHide={true}>
+          <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
+            {load ? (
+              <Grid gap="1rem" marginTop="20px" flex={1} marginInline="20px" templateColumns="repeat(2, 1fr)">
+                {resourcesIllustration?.map((r, index) => (
+                  <Flex
+                    onDragStart={(e) => dragObject(e, r)}
+                    draggable={true}
+                    sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+                    onClick={() => addObject(r)}
+                    key={index}
+                    border="1px #DDDFE5 solid"
+                    padding="2px"
+                    h="150px"
+                    _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
+                  >
+                    <Flex w="full" h="full">
+                      <LazyLoadImage url={r.url} />
+                    </Flex>
+                  </Flex>
+                ))}
+                <Button
+                  w="full"
+                  variant="outline"
+                  isLoading={loadMoreResources}
+                  isDisabled={!more}
+                  onClick={fetchDataResource}
+                >
+                  Load More
+                </Button>
+              </Grid>
+            ) : (
+              <Flex h="50%" w="full" align="end" justify="center">
+                <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+              </Flex>
+            )}
+          </InfiniteScroll>
+        </Scrollable>
+      )}
     </Flex>
   )
 }
@@ -713,12 +894,14 @@ function IllustrationItem({
   illustration,
   addObject,
   makeFavorite,
-  listFavorite
+  listFavorite,
+  makeDragObject
 }: {
   illustration: IResource
   addObject: () => void
   makeFavorite: (obj: IResource) => void
   listFavorite: IResource[]
+  makeDragObject?: (e: React.DragEvent<HTMLDivElement>, illustration: IResource) => Promise<void>
 }) {
   const user = useSelector(selectUser)
   const [isHovering, setIsHovering] = React.useState(false)
@@ -739,33 +922,33 @@ function IllustrationItem({
     onOpen()
   }, [])
 
-  const dragObject = useCallback(
-    async (e: React.DragEvent<HTMLDivElement>) => {
-      try {
-        let img = new Image()
-        img.src = illustration.url
-        if (editor) {
-          e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
-          editor.dragger.onDragStart(
-            {
-              type: "StaticVector",
-              name: "Illustration",
-              erasable: false,
-              watermark: illustration.license === "paid" && user.plan === "FREE" ? watermarkURL : null,
-              preview: illustration.url,
-              src: `${illustration.url}?${Math.random().toString(36).substring(2, 10)}`
-            },
-            { desiredSize: 400 }
-          )
-        }
-        if (user && projectSelect) {
-          const ctx = { id: illustration.id }
-          api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
-        }
-      } catch {}
-    },
-    [editor, user, projectSelect, illustration]
-  )
+  // const dragObject = useCallback(
+  //   async (e: React.DragEvent<HTMLDivElement>) => {
+  //     try {
+  //       let img = new Image()
+  //       img.src = illustration.url
+  //       if (editor) {
+  //         e.dataTransfer.setDragImage(img, img.width / 2, img.height / 2)
+  //         editor.dragger.onDragStart(
+  //           {
+  //             type: "StaticVector",
+  //             name: "Illustration",
+  //             erasable: false,
+  //             watermark: illustration.license === "paid" && user.plan === "FREE" ? watermarkURL : null,
+  //             preview: illustration.url,
+  //             src: `${illustration.url}?${Math.random().toString(36).substring(2, 10)}`
+  //           },
+  //           { desiredSize: 400 }
+  //         )
+  //       }
+  //       if (user && projectSelect) {
+  //         const ctx = { id: illustration.id }
+  //         api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
+  //       }
+  //     } catch {}
+  //   },
+  //   [editor, user, projectSelect, illustration]
+  // )
 
   const ValidateIcon = () => {
     if (like) {
@@ -778,7 +961,7 @@ function IllustrationItem({
   return (
     <Flex
       onDragStart={(e) => {
-        dragObject(e)
+        makeDragObject(e, illustration)
       }}
       draggable={true}
       sx={{

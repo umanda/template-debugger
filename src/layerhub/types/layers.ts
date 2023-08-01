@@ -36,7 +36,7 @@ export enum LayerType {
   GROUP = "Group",
   ACTIVE_SELECTION = "activeSelection",
   SEPARATOR = "Separator",
-  PLACEHOLDER = "Placeholder",
+  PLACEHOLDER = "Placeholder"
 }
 
 export interface IKeyValue {
@@ -92,6 +92,7 @@ interface LayerBaseOptions {
   preview?: string
   duration?: number
   display?: TimeRange
+  watermark?: string
   cut?: TimeRange
   gradient?: any
   eraser?: any

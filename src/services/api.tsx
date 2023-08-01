@@ -14,7 +14,7 @@ import {
   ICreateComponent,
   ISubscriptionMe
 } from "~/interfaces/editor"
-import { IExportProjectNoLogin, IGetPreview, listProjectsDTO, ShareTemplate } from "~/interfaces/template"
+import { IExportProjectNoLogin, IGetPreview, listProjectsDTO, previewParam, ShareTemplate } from "~/interfaces/template"
 import { IListComments, SaveCommentDTO } from "~/interfaces/comment"
 const baseURL = import.meta.env.VITE_API_CONNECTION
 const token = localStorage.getItem("token")
@@ -349,11 +349,11 @@ export const getPreviewProject = (props: any) => {
 }
 
 export const getURLPreview = (props: any) => {
-  return new Promise<IGetPreview>((resolve, reject) => {
+  return new Promise<string>((resolve, reject) => {
     base
       .post("/projects/get-preview", props)
       .then(({ data }) => {
-        resolve(data)
+        resolve(data.url)
       })
       .catch((err) => reject(err))
   })
@@ -381,12 +381,12 @@ export const deleteProject = (props: any) => {
   })
 }
 
-export const getExportProject = (props: any): Promise<{ url: string }> => {
+export const getExportProject = (key: string, type: string, scene_ids: string[]): Promise<string> => {
   return new Promise((resolve, reject) => {
     base
-      .post("/projects/preview", props)
+      .post("/projects/preview", { key, type, scene_ids })
       .then(({ data }) => {
-        resolve(data)
+        resolve(data.signed_url)
       })
       .catch((err) => reject(err))
   })
@@ -690,6 +690,16 @@ export const useShapes = ({ project_id, resource_id }) => {
   })
 }
 
+export const uploadArrayToAWS = async (presigned_url: string, arrayData: previewParam[]) => {
+  try {
+    const response = await axios.put(presigned_url, arrayData, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+  } catch (error) {}
+}
+
 export const favoriteResource = (id: string) => {
   return new Promise(() => {
     base.put("/resource/" + id + "/favorite")
@@ -700,6 +710,17 @@ export const getListResourcesImages = (props: Partial<SearchResourceDto>) => {
   return new Promise((resolve, reject) => {
     base
       .post("/es/resource", props)
+      .then(({ data }) => {
+        resolve(data.resources)
+      })
+      .catch((err) => reject(err))
+  })
+}
+
+export const getListResourcesIA = (props: Partial<SearchResourceDto>) => {
+  return new Promise((resolve, reject) => {
+    base
+      .post("/ia-resource/search", props)
       .then(({ data }) => {
         resolve(data.resources)
       })

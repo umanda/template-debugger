@@ -7,11 +7,10 @@ import { useDesign, useEditor, useZoomRatio } from "@layerhub-pro/react"
 import { useAppDispatch } from "~/store/store"
 import { useSelector } from "react-redux"
 import { selectUser } from "~/store/user/selector"
-import { getProjectByKey, updateProject } from "~/store/project/action"
+import { getProjectByKey } from "~/store/project/action"
 import { loadGraphicTemplate } from "../utils/fonts"
 import useResourcesContext from "~/hooks/useResourcesContext"
 import { useTokenInterceptor } from "~/hooks/useTokenInterceptor"
-import * as api from "~/services/api"
 import { putTemplate } from "~/store/templates/action"
 import { generateId } from "~/utils/unique"
 
@@ -27,7 +26,6 @@ const Designer: any = () => {
   const aiGeneratedData = localStorage.getItem("ai_generated_data")
   const aiGenerate = localStorage.getItem("ai_generated")
   const templateId = localStorage.getItem("template_id")
-  const isNewProject = localStorage.getItem("is_new_project")
   const navigate = useNavigate()
   const toast = useToast()
   const zoomRatio = useZoomRatio() as number
@@ -100,7 +98,7 @@ const Designer: any = () => {
   }, [id, editor, user, design, zoomRatio, aiGeneratedData, aiGenerate])
 
   return (
-    <Flex sx={{ height: "100vh", width: "100vw" }}>
+    <Flex sx={{ height: "100vh", width: "100vw" }} overflow="hidden">
       <SigninModal setType={setTypeSign} type={typeSign} onClose={onClose} isOpen={isOpen} onOpen={onOpen} />
       <Flex flex={1}>
         <DesignEditor />

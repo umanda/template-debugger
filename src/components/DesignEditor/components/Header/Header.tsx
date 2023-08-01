@@ -58,19 +58,11 @@ import { getTextProperties } from "~/utils/text"
 import { selectFonts } from "~/store/fonts/selector"
 import { initialOptions, TextState } from "../Toolbox/Text"
 import { loadFonts, loadGraphicTemplate } from "~/utils/fonts"
-import io, { Socket } from "socket.io-client"
+import { previewParam } from "~/interfaces/template"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectListProjects: string = import.meta.env.VITE_REDIRECT_PROJECTS
 const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
-let apiDomain: string = ""
-const wss: string = import.meta.env.VITE_WSS
-
-if ((import.meta.env.VITE_API_CONNECTION as String).includes("/v1/")) {
-  apiDomain = (import.meta.env.VITE_API_CONNECTION as String).replace("/v1/", "/")
-} else if ((import.meta.env.VITE_API_CONNECTION as String).includes("/v1")) {
-  apiDomain = (import.meta.env.VITE_API_CONNECTION as String).replace("/v1", "/")
-}
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -84,6 +76,7 @@ export default function Header() {
     redo: 0
   })
   const { id } = useParams()
+  const aiGenerate = localStorage.getItem("ai_generated")
   const dispatch = useAppDispatch()
   const [autoSave, setAutoSave] = useState<boolean>(false)
   const [idScenesPrev, setIdScenesPrev] = useState<string[]>([])
@@ -104,6 +97,10 @@ export default function Header() {
     plan: projectSelect?.plan ? projectSelect.plan : "FREE",
     visibility: projectSelect?.frame?.visibility ? projectSelect.frame : "private"
   })
+
+  React.useEffect(() => {
+    !aiGenerate && functionSave()
+  }, [aiGenerate])
 
   React.useEffect(() => {
     let watcher = async () => {
@@ -408,197 +405,94 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const user: any = useSelector(selectUser)
   const [valueInput, setValueInput] = useState<string>("")
   const currentScene = useActiveScene()
-  const [type, setType] = useState<string>(null)
   const { setInputActive } = useDesignEditorContext()
   const [email, setEmail] = useState<{ text: string; state: boolean }>({ text: "", state: true })
   const [typeModal, setTypeModal] = useState<string>("")
-  const socket = io(wss, { autoConnect: false })
-  let socketRef = React.useRef<Socket>()
-  let [stateProgress, setStateProgress] = useState<boolean[]>([])
   const [stateProgressValue, setStateProgressValue] = useState<number>(0)
-  const [generateURL, setGenerateURL] = useState<boolean>(false)
-  const { id } = useParams()
   const scenes = useScenes()
   const projectSelect = useSelector(selectProject)
-
-  useEffect(() => {
-    if (isOpen) {
-      setStateProgress(scenes.map(() => false))
-      socket.on("connect", () => {
-        setStateProgress(scenes.map((s) => false))
-      })
-
-      socket.on("messageRoom", async (data: any) => {
-        try {
-          const state = JSON.parse(data)
-          if (state.is_finished === true) {
-            setButtonsDownload(true)
-            setStateProgressValue(0)
-            setGenerateURL(false)
-            socketRef.current.emit("sendMessage", {
-              room: projectSelect.key,
-              message: JSON.stringify({ is_disconnect: true })
-            })
-            socketRef.current.disconnect()
-            setStateProgress([])
-            return
-          }
-          if (state.is_error === true) {
-            setButtonsDownload(true)
-            setStateProgressValue(0)
-            setGenerateURL(false)
-            socketRef.current.emit("sendMessage", {
-              room: projectSelect.key,
-              message: JSON.stringify({ is_disconnect: true })
-            })
-            socketRef.current.disconnect()
-            setStateProgress([])
-            return
-          }
-          const stateValue = 100 / (state.scenes + 1)
-          let cont = 0
-          let stateReturn = false
-          stateProgress[state.scene - 1] = true
-          setStateProgress(stateProgress)
-          for (var x = 0; x <= state.scenes - 1; x++) {
-            if (stateProgress[x] === undefined) {
-              stateReturn = false
-              x = state.scenes
-            } else {
-              stateReturn = true
-            }
-          }
-          stateProgress.map((a) => a === true && cont++)
-          setStateProgressValue(stateValue * cont)
-          if (stateReturn === true) {
-            stateProgress = []
-            setGenerateURL(true)
-          }
-        } catch {
-          setButtonsDownload(true)
-          setStateProgressValue(0)
-          setGenerateURL(false)
-          socketRef.current.emit("sendMessage", {
-            room: projectSelect.key,
-            message: JSON.stringify({ is_disconnect: true })
-          })
-          socketRef.current.disconnect()
-          setStateProgress([])
-        }
-      })
-
-      socket.off("disconnect", (a) => {})
-
-      socketRef.current = socket
-
-      return () => {
-        socket.off("message", () => {})
-      }
-    }
-  }, [isOpen])
-
-  useEffect(() => {
-    generateURL === true && getURL()
-  }, [generateURL])
-
-  const getURL = useCallback(async () => {
-    try {
-      let resolve: any = null
-      stateProgress.every((a) => a === true) &&
-        (resolve = await api.getURLPreview({
-          key: id,
-          scene_ids: [],
-          type
-        }))
-      const url = resolve.url
-      fetch(url)
-        .then((result) => result.blob())
-        .then((blob) => {
-          if (blob != null) {
-            const url = window.URL.createObjectURL(blob)
-            const a = document.createElement("a")
-            a.href = url
-            a.download = projectSelect.name
-            document.body.appendChild(a)
-            a.click()
-          }
-        })
-      setStateProgressValue(100)
-      toast.closeAll()
-      setStateProgress([])
-      socketRef.current.emit("sendMessage", {
-        room: projectSelect.key,
-        message: JSON.stringify({ is_disconnect: true })
-      })
-      socketRef.current.disconnect()
-      setGenerateURL(false)
-      setButtonsDownload(true)
-      setTimeout(() => setStateProgressValue(0), 3000)
-      toast.closeAll()
-    } catch {
-      setStateProgressValue(0)
-      setButtonsDownload(true)
-      setGenerateURL(false)
-      socketRef.current.emit("sendMessage", {
-        room: projectSelect.key,
-        message: JSON.stringify({ is_disconnect: true })
-      })
-      socketRef.current.disconnect()
-    }
-  }, [type, stateProgress, id])
+  const { setDownloadCanva } = useResourcesContext()
 
   const handleDownload = async (type: string) => {
-    setStateProgressValue(0.1)
-    toast({
-      title: "Downloading your project.",
-      status: "info",
-      position: "top",
-      duration: 1000000,
-      isClosable: true
-    })
-    try {
-      setButtonsDownload(false)
-      if (socketRef.current) {
-        setType(type)
-        socketRef.current.connect()
-        socketRef.current.emit("joinRoom", id)
-      }
-      if (user?.plan !== "FREE" || type === "jpg") {
+    if (user.plan !== "FREE" || type === "jpg") {
+      setDownloadCanva(true)
+      setStateProgressValue(0.1)
+      toast({
+        title: "Downloading your project.",
+        status: "info",
+        position: "top",
+        duration: 1000000,
+        isClosable: true
+      })
+      try {
+        setButtonsDownload(false)
         await functionSave()
         if (editor && user) {
-          await api.getExportProject({
-            key: id,
-            scene_ids: [],
-            type
-          })
+          const fileJson = new Array<previewParam>()
+          let progress = 100 / (scenes.length + 4)
+          let currentProgress = 0
+          let cont = 0
+          if (type !== "png") {
+            for (const scn of scenes) {
+              fileJson.push({
+                id: scn.id,
+                name: `${projectSelect.name}_${cont + 1}.${type === "png" ? "png" : "jpg"}`,
+                position: cont,
+                height: scn.frame.height,
+                width: scn.frame.width,
+                data: `${scn.preview.replace(/^.+,/, "")}"`
+              })
+              cont++
+            }
+          }
+          setStateProgressValue(currentProgress + progress)
+          currentProgress = progress + currentProgress
+          const signedURL = await api.getExportProject(projectSelect.key, type, [])
+          setStateProgressValue(currentProgress + progress)
+          currentProgress = progress + currentProgress
+          if (type !== "png") {
+            await api.uploadArrayToAWS(signedURL, fileJson)
+            setStateProgressValue(currentProgress + progress)
+          }
+          currentProgress = progress + currentProgress
+          const url = await api.getURLPreview({ key: projectSelect.key, type: type })
+          setStateProgressValue(currentProgress + progress)
+          fetch(url)
+            .then((result) => result.blob())
+            .then((blob) => {
+              if (blob != null) {
+                const url = window.URL.createObjectURL(blob)
+                const a = document.createElement("a")
+                a.href = url
+                a.download = projectSelect.name
+                document.body.appendChild(a)
+                a.click()
+              }
+            })
+          setButtonsDownload(true)
+          setStateProgressValue(100)
+          toast.closeAll()
+          setTimeout(() => setStateProgressValue(0), 3000)
         }
-      } else {
+      } catch (err: any) {
         setStateProgressValue(0)
         setButtonsDownload(true)
         toast.closeAll()
-        setTypeModal(type.toLocaleUpperCase())
-        onOpenUpgradeUser()
+        toast({
+          title: "Oops, there was an error, try again.",
+          status: "error",
+          position: "top",
+          duration: 2000,
+          isClosable: true
+        })
       }
-    } catch (err: any) {
+      setDownloadCanva(false)
+    } else {
       setStateProgressValue(0)
       setButtonsDownload(true)
       toast.closeAll()
-      socketRef.current.emit("sendMessage", {
-        room: projectSelect.key,
-        message: JSON.stringify({ is_disconnect: true })
-      })
-      socketRef.current.emit("sendMessage", {
-        room: projectSelect.key,
-        message: JSON.stringify({ is_disconnect: true })
-      })
-      socketRef.current.disconnect()
-      toast({
-        title: "Oops, there was an error, try again.",
-        status: "error",
-        position: "top",
-        duration: 2000,
-        isClosable: true
-      })
+      setTypeModal(type.toLocaleUpperCase())
+      onOpenUpgradeUser()
     }
   }
 

@@ -1,33 +1,37 @@
-import React from "react"
+import React, { useCallback } from "react"
 import { Box, Portal } from "@chakra-ui/react"
 import * as PanelItems from "./panelItems"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import ChevronLeft from "../../../Icons/ChevronLeft"
 
 export default function PanelItem() {
-  const [state, setState] = React.useState({ selected: "Templates" })
+  const [statePanel, setStatePanel] = React.useState({ selected: "Templates" })
+  const [stateMenu, setStateMenu] = React.useState({ selected: "" })
   const { activeMenu, activePanel, isSidebarVisible, setIsSidebarVisible, setActivePanel } = useDesignEditorContext()
   const filterResource = localStorage.getItem("drawing_filter")
 
   React.useEffect(() => {
-    setState({ selected: activePanel })
+    setStatePanel({ selected: activePanel })
   }, [activePanel])
 
   React.useEffect(() => {
     if (activeMenu) {
-      setState({ selected: activeMenu })
+      setStateMenu({ selected: activeMenu })
     } else if (filterResource) {
       setActivePanel("Illustrations")
     } else {
-      setState({ selected: activePanel })
+      setStateMenu({ selected: "" })
     }
   }, [activeMenu])
 
-  React.useEffect(() => {
-    setIsSidebarVisible(true)
-  }, [state])
-  // @ts-ignore
-  const Panel = PanelItems[state.selected]
+  const makeSidebarVisible = useCallback(() => {
+    setIsSidebarVisible(false)
+  }, [isSidebarVisible])
+
+  //@ts-ignore
+  const Panel = PanelItems[statePanel.selected]
+
+  const Menu = PanelItems[stateMenu.selected]
 
   return (
     <>
@@ -37,7 +41,6 @@ export default function PanelItem() {
             width: isSidebarVisible ? "320px" : "0px",
             overflow: "hidden",
             transition: "all 0.15s ease",
-            position: "relative",
             borderRight: "1px solid #ebebeb",
             display: ["none", "none", "block", "block"]
           }}
@@ -45,9 +48,7 @@ export default function PanelItem() {
           {isSidebarVisible && (
             <Portal>
               <Box
-                onClick={() => {
-                  setIsSidebarVisible(false)
-                }}
+                onClick={makeSidebarVisible}
                 sx={{
                   position: "absolute",
                   height: "24px",
@@ -68,7 +69,18 @@ export default function PanelItem() {
               </Box>
             </Portal>
           )}
-          <Panel />
+          {stateMenu.selected !== "" && (
+            <Box h="full">
+              <Menu />
+            </Box>
+          )}
+          <Box
+            visibility={isSidebarVisible ? "visible" : "hidden"}
+            position={stateMenu.selected !== "" ? "fixed" : "absolute"}
+            h="92vh"
+          >
+            <Panel />
+          </Box>
         </Box>
       ) : null}
     </>

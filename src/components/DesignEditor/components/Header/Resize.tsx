@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Box, Button, Flex, Input, useDisclosure, IconButton, Portal, Grid } from "@chakra-ui/react"
+import { Box, Button, Flex, Input, useDisclosure, IconButton, Portal } from "@chakra-ui/react"
 import { Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from "@chakra-ui/react"
 import { useActiveScene, useDesign, useObjects, useZoomRatio } from "@layerhub-pro/react"
 import { IFrame } from "@layerhub-pro/types"
