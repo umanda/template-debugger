@@ -413,10 +413,10 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const scenes: any[] = useScenes()
   const projectSelect = useSelector(selectProject)
   const { setDownloadCanva } = useResourcesContext()
+  const selectElement = useRef(null)
 
   useEffect(() => {
-    let element: any = document.getElementById("selectElement")
-    element.value = scenes?.findIndex((s) => s?.id === currentScene?.id && s)
+    selectElement.current.value = scenes?.findIndex((s) => s?.id === currentScene?.id && s)
   }, [currentScene])
 
   const handleDownload = async (type: string) => {
@@ -516,7 +516,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
           const resolve: any = await functionSave()
           const getPreview = await api.getPreviewTemplate({
             id: resolve.id,
-            scene_ids: [resolve.scenes.find((s) => s.id === currentScene.id && s.id).id],
+            scene_ids: [resolve.scenes.find((s, i) => i === Number(selectElement.current.value) && s).id],
             type: "png"
           })
           if (getPreview.has_preview === true) {
@@ -732,7 +732,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
                 icon={<Facebook size={20} />}
               />
             </Center>
-            <Select id="selectElement" size="sm">
+            <Select id="selectElement" ref={selectElement} size="sm">
               {scenes?.map((s, index) => (
                 <option value={index} key={index} spellCheck={true}>
                   {s?.scene?.name + " - " + (index + 1)}
