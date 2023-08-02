@@ -482,8 +482,8 @@ export default function Ilustrations() {
   )
 
   return (
-    <Flex h="full" width="320px" borderRight="1px solid #ebebeb" padding="1rem 0" flexDirection="column">
-      {/* <Grid templateColumns="repeat(2, 1fr)" marginBottom="10px">
+    <Flex h="full" width="320px" borderRight="1px solid #ebebeb" flexDirection="column">
+      <Grid templateColumns="repeat(2, 1fr)" marginBottom="10px">
         <GridItem
           display="flex"
           h="50px"
@@ -515,7 +515,7 @@ export default function Ilustrations() {
         >
           Smart Search
         </GridItem>
-      </Grid> */}
+      </Grid>
       {(user.plan === "HERO" || stateTabs === 0) && (
         <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
           <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
