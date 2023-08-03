@@ -82,6 +82,7 @@ const Designer: any = () => {
         setLoadCanva(true)
         design.activeScene.applyFit()
       } catch (err) {
+        console.log(err)
         if (err.message.content("The specified key does not exist")) {
           toast({
             title: "The template does not exist, please try again later.",
