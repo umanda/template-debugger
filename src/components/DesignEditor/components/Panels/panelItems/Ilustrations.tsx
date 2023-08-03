@@ -536,7 +536,7 @@ export default function Ilustrations() {
                     id="input"
                     ref={initialFocusRef}
                     value={nameIllustrationPrev}
-                    placeholder="Search"
+                    placeholder={stateTabs === 0 ? "Search" : "Search by single word or phrase"}
                     sx={{
                       _focusVisible: {
                         boxShadow: "none"
@@ -706,6 +706,7 @@ export default function Ilustrations() {
                                       illustration={illustration}
                                       key={index}
                                       listFavorite={selectListFavoriteResources}
+                                      makeDragObject={dragObject}
                                     />
                                   )
                               )}
@@ -824,7 +825,7 @@ export default function Ilustrations() {
           <CImage src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/magic-search.png" />
           {user.plan === "HERO" ? (
             <>
-              <Text w="72%" textAlign="center">
+              <Text w="72%" textAlign="center" marginBottom="20px">
                 Get inspired with <b>SmartSearch</b>, powered by AI.
               </Text>
               <Text w="72%" textAlign="center">

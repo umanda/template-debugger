@@ -81,18 +81,30 @@ const Designer: any = () => {
         }
         setLoadCanva(true)
         design.activeScene.applyFit()
-      } catch {
-        toast({
-          title: "You need to upgrade your current subscription plan to customize this template.",
-          status: "error",
-          position: "top",
-          duration: 2000,
-          isClosable: true
-        })
-        localStorage.removeItem("template_id")
-
-        design.activeScene.applyFit()
-        setLoadCanva(true)
+      } catch (err) {
+        if (err.message.content("The specified key does not exist")) {
+          toast({
+            title: "The template does not exist, please try again later.",
+            status: "error",
+            position: "top",
+            duration: 2000,
+            isClosable: true
+          })
+          localStorage.removeItem("template_id")
+          design.activeScene.applyFit()
+          setLoadCanva(true)
+        } else {
+          toast({
+            title: "You need to upgrade your current subscription plan to customize this template.",
+            status: "error",
+            position: "top",
+            duration: 2000,
+            isClosable: true
+          })
+          localStorage.removeItem("template_id")
+          design.activeScene.applyFit()
+          setLoadCanva(true)
+        }
       }
     }
   }, [id, editor, user, design, zoomRatio, aiGeneratedData, aiGenerate])
