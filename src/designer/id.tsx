@@ -61,52 +61,41 @@ const Designer: any = () => {
         let template: any
         if (templateId) {
           template = (await dispatch(putTemplate(templateId))).payload
-          console.log(template)
-          const indexPlanTemplate = plans.findIndex((p) => p === template?.plan)
-          const indexPlanUser = plans.findIndex((p) => p === user.plan)
-          if (indexPlanUser >= indexPlanTemplate) {
-            setTimeout(async () => {
-              try {
-                await loadGraphicTemplate(template)
-                await design.setDesign(template)
-                localStorage.removeItem("template_id")
-              } catch {}
-            }, 100)
+          if (!template) {
+            const indexPlanTemplate = plans.findIndex((p) => p === template?.plan)
+            const indexPlanUser = plans.findIndex((p) => p === user.plan)
+            if (indexPlanUser >= indexPlanTemplate) {
+              setTimeout(async () => {
+                try {
+                  await loadGraphicTemplate(template)
+                  await design.setDesign(template)
+                  localStorage.removeItem("template_id")
+                } catch {}
+              }, 100)
+            }
+          } else {
+            localStorage.removeItem("template_id")
           }
-        }
-        if (aiGenerate === "true") {
-          const jsonAI = JSON.parse(aiGeneratedData)
-          await design.setDesign(jsonAI)
-          localStorage.removeItem("ai_generated")
-          localStorage.removeItem("ai_generated_data")
+          if (aiGenerate === "true") {
+            const jsonAI = JSON.parse(aiGeneratedData)
+            await design.setDesign(jsonAI)
+            localStorage.removeItem("ai_generated")
+            localStorage.removeItem("ai_generated_data")
+          }
         }
         setLoadCanva(true)
         design.activeScene.applyFit()
       } catch (err) {
-        console.log(err)
-        if (err.message.content("The specified key does not exist")) {
-          toast({
-            title: "The template does not exist, please try again later.",
-            status: "error",
-            position: "top",
-            duration: 2000,
-            isClosable: true
-          })
-          localStorage.removeItem("template_id")
-          design.activeScene.applyFit()
-          setLoadCanva(true)
-        } else {
-          toast({
-            title: "You need to upgrade your current subscription plan to customize this template.",
-            status: "error",
-            position: "top",
-            duration: 2000,
-            isClosable: true
-          })
-          localStorage.removeItem("template_id")
-          design.activeScene.applyFit()
-          setLoadCanva(true)
-        }
+        toast({
+          title: "You need to upgrade your current subscription plan to customize this template.",
+          status: "error",
+          position: "top",
+          duration: 2000,
+          isClosable: true
+        })
+        localStorage.removeItem("template_id")
+        design.activeScene.applyFit()
+        setLoadCanva(true)
       }
     }
   }, [id, editor, user, design, zoomRatio, aiGeneratedData, aiGenerate])
