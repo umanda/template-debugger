@@ -62,7 +62,7 @@ const Designer: any = () => {
         if (templateId) {
           template = (await dispatch(putTemplate(templateId))).payload
           console.log(template, "template")
-          if (!template) {
+          if (template) {
             const indexPlanTemplate = plans.findIndex((p) => p === template?.plan)
             const indexPlanUser = plans.findIndex((p) => p === user.plan)
             if (indexPlanUser >= indexPlanTemplate) {
@@ -76,7 +76,8 @@ const Designer: any = () => {
             }
           } else {
             toast({
-              title: "The template does not exist, please try again later.",
+              title:
+                "The template does not exist, please try again later, if the problem persists, please contact info@drawify.com ..",
               status: "error",
               position: "top",
               duration: 2000,
