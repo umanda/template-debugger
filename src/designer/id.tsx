@@ -61,7 +61,8 @@ const Designer: any = () => {
         let template: any
         if (templateId) {
           template = (await dispatch(putTemplate(templateId))).payload
-          const indexPlanTemplate = plans.findIndex((p) => p === template.plan)
+          console.log(template)
+          const indexPlanTemplate = plans.findIndex((p) => p === template?.plan)
           const indexPlanUser = plans.findIndex((p) => p === user.plan)
           if (indexPlanUser >= indexPlanTemplate) {
             setTimeout(async () => {
