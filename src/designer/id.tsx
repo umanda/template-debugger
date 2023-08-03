@@ -61,6 +61,7 @@ const Designer: any = () => {
         let template: any
         if (templateId) {
           template = (await dispatch(putTemplate(templateId))).payload
+          console.log(template, "template")
           if (!template) {
             const indexPlanTemplate = plans.findIndex((p) => p === template?.plan)
             const indexPlanUser = plans.findIndex((p) => p === user.plan)
@@ -74,6 +75,13 @@ const Designer: any = () => {
               }, 100)
             }
           } else {
+            toast({
+              title: "The template does not exist, please try again later.",
+              status: "error",
+              position: "top",
+              duration: 2000,
+              isClosable: true
+            })
             localStorage.removeItem("template_id")
           }
           if (aiGenerate === "true") {
