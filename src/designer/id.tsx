@@ -13,6 +13,7 @@ import useResourcesContext from "~/hooks/useResourcesContext"
 import { useTokenInterceptor } from "~/hooks/useTokenInterceptor"
 import { putTemplate } from "~/store/templates/action"
 import { generateId } from "~/utils/unique"
+import { IDesign } from "~/layerhub/types"
 
 const Designer: any = () => {
   const { setLoadCanva, setDimensionZoom, loadCanva } = useResourcesContext()
@@ -45,7 +46,7 @@ const Designer: any = () => {
     try {
       if (design && user) {
         setLoadCanva(false)
-        const resolve: any = (await dispatch(getProjectByKey(id))).payload
+        const resolve = (await dispatch(getProjectByKey(id))).payload as IDesign
         await loadGraphicTemplate(resolve)
         await design.setDesign(resolve)
         design.activeScene.applyFit()
@@ -61,7 +62,6 @@ const Designer: any = () => {
         let template: any
         if (templateId) {
           template = (await dispatch(putTemplate(templateId))).payload
-          console.log(template, "template")
           if (template) {
             const indexPlanTemplate = plans.findIndex((p) => p === template?.plan)
             const indexPlanUser = plans.findIndex((p) => p === user.plan)
@@ -77,7 +77,7 @@ const Designer: any = () => {
           } else {
             toast({
               title:
-                "The template does not exist, please try again later, if the problem persists, please contact info@drawify.com ..",
+                "The template does not exist, please try again later, if the problem persists, please contact info@drawify.com .",
               status: "error",
               position: "top",
               duration: 2000,
@@ -85,12 +85,11 @@ const Designer: any = () => {
             })
             localStorage.removeItem("template_id")
           }
-          if (aiGenerate === "true") {
-            const jsonAI = JSON.parse(aiGeneratedData)
-            await design.setDesign(jsonAI)
-            localStorage.removeItem("ai_generated")
-            localStorage.removeItem("ai_generated_data")
-          }
+        } else if (aiGenerate === "true") {
+          const jsonAI = JSON.parse(aiGeneratedData)
+          await design.setDesign(jsonAI)
+          localStorage.removeItem("ai_generated")
+          localStorage.removeItem("ai_generated_data")
         }
         setLoadCanva(true)
         design.activeScene.applyFit()
