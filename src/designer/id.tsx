@@ -61,6 +61,7 @@ const Designer: any = () => {
       try {
         let template: any
         if (templateId) {
+          console.log(templateId)
           template = (await dispatch(putTemplate(templateId))).payload
           if (template) {
             const indexPlanTemplate = plans.findIndex((p) => p === template?.plan)
