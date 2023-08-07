@@ -42,7 +42,6 @@ const Designer: any = () => {
   }, [loadCanva])
 
   const lodaTemplateById = useCallback(async () => {
-    const plans = ["FREE", "PRO", "HERO"]
     try {
       if (design && user) {
         setLoadCanva(false)
@@ -61,12 +60,9 @@ const Designer: any = () => {
       try {
         let template: any
         if (templateId) {
-          console.log(templateId)
           template = (await dispatch(putTemplate(templateId))).payload
           if (template) {
-            const indexPlanTemplate = plans.findIndex((p) => p === template?.plan)
-            const indexPlanUser = plans.findIndex((p) => p === user.plan)
-            if (indexPlanUser >= indexPlanTemplate) {
+            if (user.type === "admin") {
               setTimeout(async () => {
                 try {
                   await loadGraphicTemplate(template)

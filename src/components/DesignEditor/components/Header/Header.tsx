@@ -119,7 +119,7 @@ export default function Header() {
 
   useEffect(() => {
     try {
-      if (activeScene) {
+      if (activeScene && user.type !== "admin") {
         functionSave()
       }
     } catch {}
