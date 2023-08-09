@@ -132,7 +132,7 @@ export default function Ilustrations() {
   }, [])
 
   useEffect(() => {
-    if (resourcesIllustration.length === 0) {
+    if (resourcesIllustration.length === 0 && load === true) {
       stateFavorite === true && setValidateContent("No favorite illustrations to display")
       stateRecent === true && setValidateContent("No recent illustrations to display")
     }
@@ -897,7 +897,15 @@ export default function Ilustrations() {
           <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
             {load ? (
               <Flex flexDir="column">
-                <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
+                <Box
+                  display="grid"
+                  gridTemplateColumns="1fr 1fr"
+                  gap="1rem"
+                  padding="1rem"
+                  w="full"
+                  h="full"
+                  bg="yellow"
+                >
                   {resourcesIllustration?.map((r, index) => (
                     <IllustrationItem
                       makeDragObject={dragObject}
@@ -1006,8 +1014,8 @@ function IllustrationItem({
         makeDragObject(e, illustration)
       }}
       draggable={true}
+      maxH={illustration?.drawifier?.name ? "180px" : "130px"}
       sx={{
-        maxHeight: "180px",
         minHeight: "134px",
         flexDirection: "column"
       }}
