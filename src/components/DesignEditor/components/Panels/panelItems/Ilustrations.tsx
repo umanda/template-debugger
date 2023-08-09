@@ -676,7 +676,7 @@ export default function Ilustrations() {
             </Tab>
             <Tab
               isDisabled={disableTab}
-              visibility={stateTabs === 1 && user.type !== "HERO" ? "hidden" : "visible"}
+              visibility={stateTabs === 1 && user.plan !== "HERO" ? "hidden" : "visible"}
               onClick={() => {
                 stateFavorite = false
                 user ? makeFilter({ stateRecents: true }) : setValidateContent("You need to login to see this panel.")
@@ -686,7 +686,7 @@ export default function Ilustrations() {
             </Tab>
             <Tab
               isDisabled={disableTab}
-              visibility={stateTabs === 1 && user.type !== "HERO" ? "hidden" : "visible"}
+              visibility={stateTabs === 1 && user.plan !== "HERO" ? "hidden" : "visible"}
               onClick={() => {
                 stateRecent = false
                 user ? makeFilter({ stateFavorites: true }) : setValidateContent("You need to login to see this panel.")
@@ -744,6 +744,7 @@ export default function Ilustrations() {
                                       key={index}
                                       listFavorite={selectListFavoriteResources}
                                       makeDragObject={dragObject}
+                                      stateTabs={stateTabs}
                                     />
                                   )
                               )}
@@ -773,6 +774,7 @@ export default function Ilustrations() {
                                   illustration={illustration}
                                   key={index}
                                   listFavorite={selectListFavoriteResources}
+                                  stateTabs={stateTabs}
                                 />
                               )
                           )}
@@ -904,6 +906,7 @@ export default function Ilustrations() {
                       illustration={r}
                       key={index}
                       listFavorite={selectListFavoriteResources}
+                      stateTabs={stateTabs}
                     />
                   ))}
                 </Box>
@@ -934,13 +937,15 @@ function IllustrationItem({
   addObject,
   makeFavorite,
   listFavorite,
-  makeDragObject
+  makeDragObject,
+  stateTabs
 }: {
   illustration: IResource
   addObject: () => void
   makeFavorite: (obj: IResource) => void
   listFavorite: IResource[]
   makeDragObject?: (e: React.DragEvent<HTMLDivElement>, illustration: IResource) => Promise<void>
+  stateTabs: number
 }) {
   const user = useSelector(selectUser)
   // const [isHovering, setIsHovering] = React.useState(false)
@@ -1094,10 +1099,12 @@ function IllustrationItem({
             <Pro size={40} />
           </Center>
           <Flex
-            marginTop="115px"
-            marginLeft="5px"
+            marginTop={stateTabs === 0 ? "115px" : "110px"}
+            marginLeft={stateTabs === 0 ? "5px" : "110px"}
             position="absolute"
-            boxSize="21px"
+            boxSize="20px"
+            borderRadius="4px"
+            background={stateTabs === 1 && "#CFCFCF"}
             _hover={{ cursor: "pointer" }}
             onClick={() => {
               makeFavorite(illustration)
