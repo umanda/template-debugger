@@ -755,10 +755,10 @@ export default function Ilustrations() {
                           w="full"
                           variant="outline"
                           isLoading={loadMoreResources}
-                          isDisabled={!more}
+                          visibility={more ? "visible" : "hidden"}
                           onClick={fetchDataResource}
                         >
-                          Load More
+                          Load more More
                         </Button>
                       </Flex>
                     ) : (
@@ -783,7 +783,7 @@ export default function Ilustrations() {
                           w="full"
                           variant="outline"
                           isLoading={loadMoreResources}
-                          isDisabled={!more}
+                          visibility={more ? "visible" : "hidden"}
                           onClick={fetchDataResource}
                         >
                           Load More
@@ -914,7 +914,7 @@ export default function Ilustrations() {
                   w="full"
                   variant="outline"
                   isLoading={loadMoreResources}
-                  isDisabled={!more}
+                  visibility={more ? "visible" : "hidden"}
                   onClick={fetchDataResource}
                 >
                   Load More

@@ -538,7 +538,7 @@ export default function Upload() {
                         w="full"
                         variant="outline"
                         isLoading={loadMoreResources}
-                        isDisabled={fetching}
+                        visibility={fetching ? "hidden" : "visible"}
                         onClick={fetchDataResource}
                       >
                         Load More
