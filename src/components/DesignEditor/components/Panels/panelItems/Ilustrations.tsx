@@ -150,7 +150,7 @@ export default function Ilustrations() {
       resolve && setResourcesIllustration(resolve)
       resolve ? setMore(true) : setMore(false)
     } else {
-      setResourcesIllustration(selectListResources)
+      stateTabs === 0 ? setResourcesIllustration(selectListResources) : setResourcesIllustration([])
       setMore(true)
     }
     if (user) {
@@ -341,6 +341,7 @@ export default function Ilustrations() {
       setResourcesIllustration([])
       if (input[0] === "") {
         setListRecommend({ words: [] })
+        stateTabs === 1 && setDisableTab(false)
       }
     }
 
@@ -354,7 +355,7 @@ export default function Ilustrations() {
 
     try {
       //@ts-ignore
-      if (!stateFavorite && !stateRecent && input[0] === undefined) {
+      if (!stateFavorite && !stateRecent && input[0] === undefined && stateTabs === 0) {
         setResourcesIllustration(selectListResources)
       } else {
         setResourcesIllustration([])
@@ -658,8 +659,10 @@ export default function Ilustrations() {
               ref={refTab}
               onClick={() => {
                 setResourcesIllustration([])
-                setNameIllustrationPrev([""])
-                setNameIllustration([""])
+                if (stateTabs === 0) {
+                  setNameIllustrationPrev([""])
+                  setNameIllustration([""])
+                }
                 setStateFavorite(false)
                 setStateRecent(false)
                 setValidateContent(null)
@@ -896,38 +899,91 @@ export default function Ilustrations() {
         <Scrollable autoHide={true}>
           <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
             {load ? (
-              <Flex flexDir="column">
-                <Box
-                  display="grid"
-                  gridTemplateColumns="1fr 1fr"
-                  gap="1rem"
-                  padding="1rem"
-                  w="full"
-                  h="full"
-                  bg="yellow"
-                >
-                  {resourcesIllustration?.map((r, index) => (
-                    <IllustrationItem
-                      makeDragObject={dragObject}
-                      makeFavorite={makeFavorite}
-                      addObject={() => addObject(r)}
-                      illustration={r}
-                      key={index}
-                      listFavorite={selectListFavoriteResources}
-                      stateTabs={stateTabs}
-                    />
-                  ))}
-                </Box>
-                <Button
-                  w="full"
-                  variant="outline"
-                  isLoading={loadMoreResources}
-                  visibility={more ? "visible" : "hidden"}
-                  onClick={fetchDataResource}
-                >
-                  Load More
-                </Button>
-              </Flex>
+              validateContent === null ? (
+                <Flex flexDir="column">
+                  <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
+                    {resourcesIllustration?.map((r, index) => (
+                      <IllustrationItem
+                        makeDragObject={dragObject}
+                        makeFavorite={makeFavorite}
+                        addObject={() => addObject(r)}
+                        illustration={r}
+                        key={index}
+                        listFavorite={selectListFavoriteResources}
+                        stateTabs={stateTabs}
+                      />
+                    ))}
+                  </Box>
+                  <Button
+                    w="full"
+                    variant="outline"
+                    isLoading={loadMoreResources}
+                    visibility={more ? "visible" : "hidden"}
+                    onClick={fetchDataResource}
+                  >
+                    Load More
+                  </Button>
+                </Flex>
+              ) : (
+                <Center flexDirection="column" h="full" w="full" textAlign="center" gap="20px">
+                  {stateFavorite !== true && stateRecent !== true && (
+                    <Text fontSize="18px" fontWeight="700" color="#545465">
+                      REQUEST A IMAGE
+                    </Text>
+                  )}
+                  {stateFavorite === true ? (
+                    <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
+                  ) : stateRecent === true ? (
+                    <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
+                  ) : (
+                    user.plan !== "Hero" && (
+                      <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noImages.png"} />
+                    )
+                  )}
+                  <Flex w="full" padding="10px">
+                    {validateContent === "noResult" ? (
+                      user.plan !== "HERO" ? (
+                        <Flex flexDir="column" gap="20px" align="center">
+                          <Text>Sorry! Your current plan does not support this feature.</Text>
+                          <Text>
+                            To send your request for an image, <u>upgrade to Drawify Hero.</u>
+                          </Text>
+                          <Button
+                            w="-webkit-fit-content"
+                            onClick={() => (window.location.href = redirectPayments)}
+                            colorScheme={"brand"}
+                          >
+                            Upgrade
+                          </Button>
+                        </Flex>
+                      ) : (
+                        <Flex flexDir="column" w="full" align="center" gap="20px">
+                          <Textarea
+                            ref={textAreaRef}
+                            onFocus={() => setInputActive(true)}
+                            onChange={(e) => setTextArea(e.target.value)}
+                            onBlur={() => setNameIllustration([textArea])}
+                            w="full"
+                            placeholder="Describe the image you would like"
+                          />
+                          <Button
+                            isDisabled={textAreaRef?.current?.value! === "" ? true : false}
+                            w="-webkit-fit-content"
+                            onClick={() => sendIllustrationRequest(textArea)}
+                            colorScheme={"brand"}
+                          >
+                            Send Image Request
+                          </Button>
+                        </Flex>
+                      )
+                    ) : (
+                      <Flex w="full" justify="center">
+                        {validateContent}
+                      </Flex>
+                    )}
+                  </Flex>
+                </Center>
+              )
             ) : (
               <Flex h="50%" w="full" align="end" justify="center">
                 <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
