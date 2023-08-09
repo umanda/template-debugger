@@ -16,8 +16,8 @@ export default function () {
   const generateDesign = useCallback(async () => {
     try {
       onOpen()
-      await editor.design.addScene()
       const resolve: any = await api.getDesignIA(dataText)
+      await editor.design.addScene()
       await editor.design.scenes[editor.design.scenes.length - 1].setScene(resolve.project.scenes[0])
       onClose()
     } catch (err) {
