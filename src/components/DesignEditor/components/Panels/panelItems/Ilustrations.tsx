@@ -878,7 +878,13 @@ export default function Ilustrations() {
                 Discover more interesting search
                 <br /> results with SmartSearch
               </Text>
-              <Button variant="outline" borderColor="#5456F5" color="#5456F5" margin="20px">
+              <Button
+                variant="outline"
+                onClick={() => (window.location.href = redirectPayments)}
+                borderColor="#5456F5"
+                color="#5456F5"
+                margin="20px"
+              >
                 Upgrade to unlock
               </Button>
             </>
