@@ -676,7 +676,7 @@ export default function Ilustrations() {
             </Tab>
             <Tab
               isDisabled={disableTab}
-              // visibility={stateTabs === 1 ? "hidden" : "visible"}
+              visibility={stateTabs === 1 && user.type !== "HERO" ? "hidden" : "visible"}
               onClick={() => {
                 stateFavorite = false
                 user ? makeFilter({ stateRecents: true }) : setValidateContent("You need to login to see this panel.")
@@ -686,7 +686,7 @@ export default function Ilustrations() {
             </Tab>
             <Tab
               isDisabled={disableTab}
-              // visibility={stateTabs === 1 ? "hidden" : "visible"}
+              visibility={stateTabs === 1 && user.type !== "HERO" ? "hidden" : "visible"}
               onClick={() => {
                 stateRecent = false
                 user ? makeFilter({ stateFavorites: true }) : setValidateContent("You need to login to see this panel.")
@@ -895,7 +895,7 @@ export default function Ilustrations() {
           <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
             {load ? (
               <>
-                <Grid gap="1rem" marginTop="20px" flex={1} marginInline="20px" templateColumns="repeat(2, 1fr)">
+                <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
                   {resourcesIllustration?.map((r, index) => (
                     <IllustrationItem
                       makeDragObject={dragObject}
@@ -906,7 +906,7 @@ export default function Ilustrations() {
                       listFavorite={selectListFavoriteResources}
                     />
                   ))}
-                </Grid>
+                </Box>
                 <Button
                   w="full"
                   variant="outline"
