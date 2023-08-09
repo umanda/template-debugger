@@ -14,10 +14,12 @@ import { useTokenInterceptor } from "~/hooks/useTokenInterceptor"
 import { putTemplate } from "~/store/templates/action"
 import { generateId } from "~/utils/unique"
 import { IDesign } from "~/layerhub/types"
+import IAGenerate from "~/components/Modals/IAGenerate"
 
 const Designer: any = () => {
   const { setLoadCanva, setDimensionZoom, loadCanva } = useResourcesContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen: isOpenIAGenerate, onOpen: onOpenIAGenerate, onClose: onCloseIAGenerate } = useDisclosure()
   const [typeSign, setTypeSign] = useState("signin")
   const { id } = useParams()
   const editor = useEditor()
@@ -40,6 +42,10 @@ const Designer: any = () => {
   useEffect(() => {
     loadCanva === true && setDimensionZoom(zoomRatio)
   }, [loadCanva])
+
+  useEffect(() => {
+    aiGenerate === "true" && onOpenIAGenerate()
+  }, [aiGenerate])
 
   const lodaTemplateById = useCallback(async () => {
     try {
@@ -107,6 +113,7 @@ const Designer: any = () => {
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }} overflow="hidden">
+      <IAGenerate onClose={onCloseIAGenerate} isOpen={isOpenIAGenerate} />
       <SigninModal setType={setTypeSign} type={typeSign} onClose={onClose} isOpen={isOpen} onOpen={onOpen} />
       <Flex flex={1}>
         <DesignEditor />

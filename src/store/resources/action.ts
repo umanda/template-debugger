@@ -56,7 +56,7 @@ export const makeFavoriteResource = createAsyncThunk<any, IResource, { rejectVal
   async (args, { dispatch }) => {
     try {
       dispatch(setMakeFavoriteResource(args))
-      const resolve = await api.favoriteResource(args.id)
+      api.favoriteResource({ name: args.name, is_ia: args.is_ia })
     } catch (error) {}
   }
 )

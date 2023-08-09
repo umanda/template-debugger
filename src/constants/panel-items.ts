@@ -5,6 +5,11 @@ export const PANEL_ITEMS = [
     icon: "Templates"
   },
   {
+    id: "MagicLink",
+    label: "Generate",
+    icon: "MagicLink"
+  },
+  {
     id: "Pencil",
     label: "Draw",
     icon: "Pencil"

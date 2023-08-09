@@ -4,10 +4,13 @@ import { useEditor } from "@layerhub-pro/react"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import { PANEL_ITEMS } from "~/constants/panel-items"
 import { useCallback } from "react"
+import { useSelector } from "react-redux"
+import { selectUser } from "~/store/user/selector"
 
 export default function PaneList() {
   const { setActivePanel, activePanel, setIsSidebarVisible, isSidebarVisible } = useDesignEditorContext()
   const editor = useEditor()
+  const user = useSelector(selectUser)
 
   const openSidebar = useCallback(
     (id: string) => {
@@ -38,6 +41,10 @@ export default function PaneList() {
       {PANEL_ITEMS.map((item, index) => {
         //@ts-ignore
         const Icon = Icons[item.icon]
+
+        if (user.plan !== "HERO" && item.icon === "MagicLink") {
+          return null
+        }
         return (
           <Flex
             onClick={() => openSidebar(item.id)}

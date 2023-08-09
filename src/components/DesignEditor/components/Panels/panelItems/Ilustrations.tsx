@@ -8,20 +8,13 @@ import {
   Grid,
   HStack,
   Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
   Popover,
   PopoverAnchor,
   PopoverArrow,
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
-  Radio,
-  RadioGroup,
   Spinner,
-  Stack,
   Text,
   Tooltip,
   useDisclosure,
@@ -39,9 +32,9 @@ import { useEffect } from "react"
 import lodash from "lodash"
 import { IResolveRecommend, IResource } from "~/interfaces/editor"
 import { useAppDispatch } from "~/store/store"
-import { selectListDrawifiers, selectUser } from "~/store/user/selector"
+import { selectUser } from "~/store/user/selector"
 import { selectListRecommendResource } from "~/store/recommend/selector"
-import Order, { FilterByDrawifier } from "~/components/Modals/Order"
+import Order from "~/components/Modals/Order"
 import HorizontalScroll from "~/utils/HorizontaScroll"
 import Scrollable from "~/components/Scrollable"
 import InfiniteScroll from "~/utils/InfiniteScroll"
@@ -51,7 +44,6 @@ import LazyLoadImage from "~/utils/LazyLoadImage"
 import { getListRecommend } from "~/store/recommend/action"
 import Search from "~/components/Icons/Search"
 import Pro from "~/components/Icons/Pro"
-import FilterByTags from "~/components/Icons/FilterByTags"
 import { selectResourceImages } from "~/store/resources/selector"
 import { getFavoritedResources, getListResourcesImages, makeFavoriteResource } from "~/store/resources/action"
 import { selectProject } from "~/store/project/selector"
@@ -82,6 +74,7 @@ const initialQuery = {
   page: 0,
   limit: 10,
   query: {
+    is_ia: false,
     is_published: true
   },
   sorts: ["LAST_UPDATE"]
@@ -124,6 +117,7 @@ export default function Ilustrations() {
   const { id } = useParams()
   const [stateTabs, setStateTabs] = useState<number>(0)
   const refTab = useRef<any>()
+  const [idPrediction, setIdPrediction] = useState<string>(null)
 
   useEffect(() => {
     initialState()
@@ -177,6 +171,7 @@ export default function Ilustrations() {
       order[0] === "LAST_UPDATE"
     ) {
       let newQuery = initialQuery
+      newQuery.query.is_ia = stateTabs === 0 ? false : true
       newQuery.page = selectListResources.length / 10 + 1
       let resolve = null
       if (stateTabs === 0) {
@@ -199,6 +194,7 @@ export default function Ilustrations() {
                 keywords:
                   nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
                 is_published: true,
+                is_ia: stateTabs === 0 ? false : true,
                 favorited: stateFavorite === true ? true : undefined,
                 used: stateRecent === true ? true : undefined,
                 notIds: notIds[0] === undefined ? undefined : notIds
@@ -209,13 +205,38 @@ export default function Ilustrations() {
             notIds
           )
         } else {
-          resolve = await api.getListResourcesIA({
-            page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page + 1,
-            limit: 10,
-            query: {
-              text: nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration[0]
-            }
-          })
+          if (stateFavorite === false && stateRecent === false) {
+            resolve = await api.getListResourcesIA({
+              page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page + 1,
+              limit: 10,
+              query: {
+                prompt:
+                  nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration[0]
+              }
+            })
+            setIdPrediction(resolve.prediction_id)
+            resolve = resolve.images
+          } else {
+            resolve = await api.searchResources(
+              {
+                page: nameIllustration[0] === "" ? Math.round(resourcesIllustration.length) / 10 + 1 : page,
+                limit: 10,
+                query: {
+                  drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
+                  keywords:
+                    nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
+                  is_published: true,
+                  is_ia: stateTabs === 0 ? false : true,
+                  favorited: stateFavorite === true ? true : undefined,
+                  used: stateRecent === true ? true : undefined,
+                  notIds: notIds[0] === undefined ? undefined : notIds
+                },
+                sorts: stateRecent ? ["USED_AT"] : order
+              },
+              setNotIds,
+              notIds
+            )
+          }
         }
       } catch {}
       if (resolve[0] === undefined && resourcesIllustration[0] === undefined) {
@@ -263,7 +284,6 @@ export default function Ilustrations() {
   const addObject = useCallback(
     async (resource: IResource) => {
       try {
-        const ctx = { id: resource.id }
         const options: any = {
           type: "StaticVector",
           name: "Illustration",
@@ -279,15 +299,26 @@ export default function Ilustrations() {
           await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
         }
         if (user && projectSelect) {
-          api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
+          api.recentResource({
+            project_id: projectSelect.id,
+            name: resource.name,
+            is_ia: stateTabs === 0 ? false : true
+          })
         } else if (user) {
           const emptyDesign = generateEmptyDesign({ width: 1920, height: 1080 })
-          const resolve = await dispatch(updateProject({ ...emptyDesign, key: id }))
-          api.recentResource({ project_id: resolve?.payload.id, resource_id: ctx.id })
+          await dispatch(updateProject({ ...emptyDesign, key: id }))
+          api.recentResource({
+            project_id: projectSelect.id,
+            name: resource.name,
+            is_ia: stateTabs === 0 ? false : true
+          })
+        }
+        if (stateTabs === 1 && stateFavorite === false && stateRecent === false) {
+          api.deefbackResource({ prediction_id: idPrediction, image_ids: resource.id })
         }
       } catch {}
     },
-    [activeScene, editor, activeObject, projectSelect, user, id]
+    [activeScene, editor, activeObject, projectSelect, user, id, stateTabs]
   )
 
   const makeFilter = async ({
@@ -336,12 +367,12 @@ export default function Ilustrations() {
 
   const makeFavorite = useCallback(
     async (obj: IResource) => {
-      dispatch(makeFavoriteResource(obj))
+      dispatch(makeFavoriteResource({ ...obj, is_ia: stateTabs === 0 ? false : true }))
       if (stateFavorite === true) {
         setResourcesIllustration(resourcesIllustration.filter((resource) => obj.id !== resource.id))
       }
     },
-    [stateFavorite, resourcesIllustration]
+    [stateFavorite, resourcesIllustration, stateTabs]
   )
 
   const makeChangeInput = useCallback(async (valueInput: string) => {
@@ -454,29 +485,35 @@ export default function Ilustrations() {
           )
         }
         if (user && projectSelect) {
-          const ctx = { id: illustration.id }
-          api.recentResource({ project_id: illustration.id, resource_id: ctx.id })
+          api.recentResource({
+            project_id: projectSelect.id,
+            name: illustration.name,
+            is_ia: stateTabs === 0 ? false : true
+          })
+        }
+        if (stateTabs === 1 && stateFavorite === false && stateRecent === false) {
+          api.deefbackResource({ prediction_id: idPrediction, image_ids: illustration.id })
         }
       } catch {}
     },
-    [editor, user, projectSelect]
+    [editor, user, projectSelect, stateTabs, idPrediction]
   )
 
   const changeTab = useCallback(
     (tab: number) => {
+      setStateRecent(false)
+      setStateFavorite(false)
       setStateTabs(tab)
       if (tab === 0) {
         setResourcesIllustration(selectListResources)
-        setNameIllustration([""])
-        setNameIllustrationPrev([""])
-        setValidateContent(null)
       } else if (tab === 1) {
-        refTab.current.focus()
         setResourcesIllustration([])
-        setNameIllustration([""])
-        setNameIllustrationPrev([""])
-        setValidateContent(null)
       }
+      setValidateContent(null)
+      setNameIllustrationPrev([""])
+      setNameIllustration([""])
+      setDisableTab(false)
+      refTab.current.focus()
     },
     [stateTabs, selectListResources, refTab]
   )
@@ -639,7 +676,7 @@ export default function Ilustrations() {
             </Tab>
             <Tab
               isDisabled={disableTab}
-              visibility={stateTabs === 1 ? "hidden" : "visible"}
+              // visibility={stateTabs === 1 ? "hidden" : "visible"}
               onClick={() => {
                 stateFavorite = false
                 user ? makeFilter({ stateRecents: true }) : setValidateContent("You need to login to see this panel.")
@@ -649,7 +686,7 @@ export default function Ilustrations() {
             </Tab>
             <Tab
               isDisabled={disableTab}
-              visibility={stateTabs === 1 ? "hidden" : "visible"}
+              // visibility={stateTabs === 1 ? "hidden" : "visible"}
               onClick={() => {
                 stateRecent = false
                 user ? makeFilter({ stateFavorites: true }) : setValidateContent("You need to login to see this panel.")
@@ -820,7 +857,7 @@ export default function Ilustrations() {
             )}
           </Flex>
         </>
-      ) : nameIllustration[0] === "" ? (
+      ) : nameIllustration[0] === "" && stateFavorite === false && stateRecent === false ? (
         <Center h="full" flexDir="column">
           <CImage src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/magic-search.png" />
           {user.plan === "HERO" ? (
@@ -851,24 +888,19 @@ export default function Ilustrations() {
         <Scrollable autoHide={true}>
           <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
             {load ? (
-              <Grid gap="1rem" marginTop="20px" flex={1} marginInline="20px" templateColumns="repeat(2, 1fr)">
-                {resourcesIllustration?.map((r, index) => (
-                  <Flex
-                    onDragStart={(e) => dragObject(e, r)}
-                    draggable={true}
-                    sx={{ display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
-                    onClick={() => addObject(r)}
-                    key={index}
-                    border="1px #DDDFE5 solid"
-                    padding="2px"
-                    h="150px"
-                    _hover={{ cursor: "pointer", border: "3px solid #5456F5" }}
-                  >
-                    <Flex w="full" h="full">
-                      <LazyLoadImage url={r.url} />
-                    </Flex>
-                  </Flex>
-                ))}
+              <>
+                <Grid gap="1rem" marginTop="20px" flex={1} marginInline="20px" templateColumns="repeat(2, 1fr)">
+                  {resourcesIllustration?.map((r, index) => (
+                    <IllustrationItem
+                      makeDragObject={dragObject}
+                      makeFavorite={makeFavorite}
+                      addObject={() => addObject(r)}
+                      illustration={r}
+                      key={index}
+                      listFavorite={selectListFavoriteResources}
+                    />
+                  ))}
+                </Grid>
                 <Button
                   w="full"
                   variant="outline"
@@ -878,7 +910,7 @@ export default function Ilustrations() {
                 >
                   Load More
                 </Button>
-              </Grid>
+              </>
             ) : (
               <Flex h="50%" w="full" align="end" justify="center">
                 <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
@@ -905,23 +937,21 @@ function IllustrationItem({
   makeDragObject?: (e: React.DragEvent<HTMLDivElement>, illustration: IResource) => Promise<void>
 }) {
   const user = useSelector(selectUser)
-  const [isHovering, setIsHovering] = React.useState(false)
+  // const [isHovering, setIsHovering] = React.useState(false)
   const [like, setLike] = React.useState(false)
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [type, setType] = useState("")
-  const [typeFilter, setTypeFilter] = useState<any>()
-  const editor = useEditor()
-  const projectSelect = useSelector(selectProject)
+  // const { isOpen, onOpen, onClose } = useDisclosure()
+  // const [type, setType] = useState("")
+  // const [typeFilter, setTypeFilter] = useState<any>()
 
   useEffect(() => {
-    listFavorite.find((resource) => resource.id === illustration.id) ? setLike(true) : setLike(false)
+    listFavorite.find((resource) => resource.name === illustration.name) ? setLike(true) : setLike(false)
   }, [makeFavorite])
 
-  const OpenModalIllustration = useCallback(async (type: string, illustration: IResource) => {
-    setType(type)
-    setTypeFilter(illustration)
-    onOpen()
-  }, [])
+  // const OpenModalIllustration = useCallback(async (type: string, illustration: IResource) => {
+  //   setType(type)
+  //   setTypeFilter(illustration)
+  //   onOpen()
+  // }, [])
 
   // const dragObject = useCallback(
   //   async (e: React.DragEvent<HTMLDivElement>) => {
@@ -971,15 +1001,16 @@ function IllustrationItem({
         flexDirection: "column"
       }}
     >
-      <ModalIllustration
+      {/* <ModalIllustration
+      stateTab=
         isOpen={isOpen}
         onClose={onClose}
         type={type}
         typeFilter={typeFilter}
         listFavorite={listFavorite}
-      />
+      /> */}
       <Flex flex={1} overflow={"hidden"} _hover={{ cursor: "pointer" }} justifyContent={"center"}>
-        <Flex
+        {/* <Flex
           onClick={() => OpenModalIllustration("tag", illustration)}
           zIndex={5}
           visibility={isHovering ? "visible" : "hidden"}
@@ -991,9 +1022,9 @@ function IllustrationItem({
           borderRadius="10px"
         >
           <FilterByTags size={30} />
-        </Flex>
+        </Flex> */}
         <Flex
-          opacity={isHovering ? "0.2" : "1"}
+          // opacity={isHovering ? "0.2" : "1"}
           w="full"
           h="full"
           onClick={addObject}
@@ -1075,284 +1106,285 @@ function IllustrationItem({
   )
 }
 
-function ModalIllustration({
-  isOpen,
-  onClose,
-  type,
-  typeFilter,
-  listFavorite
-}: {
-  isOpen: boolean
-  onClose: () => void
-  type: string
-  typeFilter: any
-  listFavorite: IResource[]
-}) {
-  const { setInputActive } = useDesignEditorContext()
-  const [like, setLike] = React.useState(false)
-  const user = useSelector(selectUser)
-  const editor = useEditor()
-  const activeScene = useActiveScene()
-  const [resources, setResources] = useState<IResource[]>([])
-  const [load, setLoad] = useState(false)
-  const [sort, setSort] = useState<string>("USED_AT")
-  const [idDrawifier, setIdDrawifier] = useState<string>("")
-  const initialFocusRef = useRef<any>()
-  const refInputName = useRef<any>()
-  const [name, setName] = useState<string>("")
-  const { isOpen: isOpenDrawifier, onOpen: onOpenDrawifier, onClose: onCloseDrawifier } = useDisclosure()
-  const drawifiers = useSelector(selectListDrawifiers)
-  const [resourcesPrev, setResourcesPrev] = useState<IResource[]>([])
-  const [nameResource, setNameResource] = useState<string>("")
-  const projectSelect = useSelector(selectProject)
-  const activeObject = useActiveObject()
+// function ModalIllustration({
+//   isOpen,
+//   onClose,
+//   type,
+//   typeFilter,
+//   listFavorite,
+//   stateTab
+// }: {
+//   isOpen: boolean
+//   onClose: () => void
+//   type: string
+//   typeFilter: any
+//   listFavorite: IResource[]
+//   stateTab:boolean
+// }) {
+//   const { setInputActive } = useDesignEditorContext()
+//   const user = useSelector(selectUser)
+//   const editor = useEditor()
+//   const activeScene = useActiveScene()
+//   const [resources, setResources] = useState<IResource[]>([])
+//   const [load, setLoad] = useState(false)
+//   const [sort, setSort] = useState<string>("USED_AT")
+//   const [idDrawifier, setIdDrawifier] = useState<string>("")
+//   const initialFocusRef = useRef<any>()
+//   const refInputName = useRef<any>()
+//   const [name, setName] = useState<string>("")
+//   const { isOpen: isOpenDrawifier, onOpen: onOpenDrawifier, onClose: onCloseDrawifier } = useDisclosure()
+//   const drawifiers = useSelector(selectListDrawifiers)
+//   const [resourcesPrev, setResourcesPrev] = useState<IResource[]>([])
+//   const [nameResource, setNameResource] = useState<string>("")
+//   const projectSelect = useSelector(selectProject)
+//   const activeObject = useActiveObject()
 
-  useEffect(() => {
-    setSort("USED_AT")
-    initialState()
-    setIdDrawifier("")
-  }, [isOpen])
+//   useEffect(() => {
+//     setSort("USED_AT")
+//     initialState()
+//     setIdDrawifier("")
+//   }, [isOpen])
 
-  useEffect(() => {
-    name === "" && onCloseDrawifier()
-    name === "" && setIdDrawifier("")
-  }, [name])
+//   useEffect(() => {
+//     name === "" && onCloseDrawifier()
+//     name === "" && setIdDrawifier("")
+//   }, [name])
 
-  const initialState = useCallback(async () => {
-    if (isOpen) {
-      setLoad(false)
-      const resolve: any[] = await api.searchResources({
-        page: 1,
-        limit: 10,
-        query: {
-          drawifier_ids:
-            type === "id" ? [Number(typeFilter.drawifier.id)] : idDrawifier !== "" ? [idDrawifier] : undefined,
-          tags: type === "tag" ? typeFilter.tags : undefined
-        },
-        sorts: [sort]
-      })
-      setResourcesPrev(resolve)
-      setResources(resolve)
-      setLoad(true)
-    }
-  }, [resources, isOpen, sort, idDrawifier, typeFilter, type])
+//   const initialState = useCallback(async () => {
+//     if (isOpen) {
+//       setLoad(false)
+//       const resolve: any[] = await api.searchResources({
+//         page: 1,
+//         limit: 10,
+//         query: {
+//           drawifier_ids:
+//             type === "id" ? [Number(typeFilter.drawifier.id)] : idDrawifier !== "" ? [idDrawifier] : undefined,
+//           tags: type === "tag" ? typeFilter.tags : undefined
+//         },
+//         sorts: [sort]
+//       })
+//       setResourcesPrev(resolve)
+//       setResources(resolve)
+//       setLoad(true)
+//     }
+//   }, [resources, isOpen, sort, idDrawifier, typeFilter, type])
 
-  const makeFilter = useCallback(() => {
-    setNameResource("")
-    initialState()
-  }, [listFavorite, resources, resourcesPrev, typeFilter, type, idDrawifier, sort])
+//   const makeFilter = useCallback(() => {
+//     setNameResource("")
+//     initialState()
+//   }, [listFavorite, resources, resourcesPrev, typeFilter, type, idDrawifier, sort])
 
-  const addObject = useCallback(
-    async (resource: IResource) => {
-      if (user) {
-        const ctx = { id: resource.id }
-        api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
-      }
-      const options: any = {
-        type: "StaticVector",
-        name: "Illustration",
-        src: `${resource.url}?${Math.random().toString(36).substring(2, 10)}`,
-        erasable: false,
-        watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
-      }
-      if (editor) {
-        await activeScene.objects.add(options, { desiredSize: 200 })
-      }
-    },
-    [activeScene, editor, activeObject, projectSelect, user]
-  )
+//   const addObject = useCallback(
+//     async (resource: IResource) => {
+//       if (user) {
+//         const ctx = { id: resource.id }
+//         // api.recentResource({ project_id: projectSelect.id, resource_id: ctx.id })
+//       }
+//       const options: any = {
+//         type: "StaticVector",
+//         name: "Illustration",
+//         src: `${resource.url}?${Math.random().toString(36).substring(2, 10)}`,
+//         erasable: false,
+//         watermark: resource.license === "paid" ? user.plan !== "HERO" && watermarkURL : null
+//       }
+//       if (editor) {
+//         await activeScene.objects.add(options, { desiredSize: 200 })
+//       }
+//     },
+//     [activeScene, editor, activeObject, projectSelect, user]
+//   )
 
-  const filterByName = useCallback(
-    async (e: string) => {
-      setLoad(false)
-      setNameResource(e)
-      const resolve: any[] = await api.searchResources({
-        page: 1,
-        limit: 10,
-        query: {
-          drawifier_ids:
-            type === "id" ? [Number(typeFilter.drawifier.id)] : idDrawifier !== "" ? [idDrawifier] : undefined,
-          tags: type === "tag" ? typeFilter.tags : undefined,
-          names: [e]
-        },
-        sorts: [sort]
-      })
-      setResources(resolve)
-      setLoad(true)
-    },
-    [resourcesPrev, resources]
-  )
+//   const filterByName = useCallback(
+//     async (e: string) => {
+//       setLoad(false)
+//       setNameResource(e)
+//       const resolve: any[] = await api.searchResources({
+//         page: 1,
+//         limit: 10,
+//         query: {
+//           drawifier_ids:
+//             type === "id" ? [Number(typeFilter.drawifier.id)] : idDrawifier !== "" ? [idDrawifier] : undefined,
+//           tags: type === "tag" ? typeFilter.tags : undefined,
+//           names: [e]
+//         },
+//         sorts: [sort]
+//       })
+//       setResources(resolve)
+//       setLoad(true)
+//     },
+//     [resourcesPrev, resources]
+//   )
 
-  return (
-    <Modal isOpen={isOpen} size={"full"} onClose={onClose}>
-      <ModalContent
-        style={{
-          backgroundColor: "rgba(255, 255, 255, 0.7)",
-          WebkitBackdropFilter: "blur(5px)",
-          backdropFilter: "blur(5px)"
-        }}
-      >
-        <ModalCloseButton />
-        <ModalBody>
-          <Flex gap="10px" border="1px solid #DDDFE5" flexDir="column" bg="white" padding="20px">
-            <Center>
-              <Input
-                w="40%"
-                ref={refInputName}
-                value={nameResource}
-                onChange={(e) => setNameResource(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && refInputName.current.blur()}
-                onBlur={(e) => {
-                  setInputActive(false)
-                  filterByName(nameResource)
-                }}
-                onFocus={() => setInputActive(true)}
-                placeholder="Search"
-                bg="white"
-              />
-            </Center>
-            <Center gap="10px">
-              <Text color="#A9A9B2" fontSize="sm">
-                FILTER BY STATS
-              </Text>
-              <RadioGroup onChange={setSort} value={sort}>
-                <Stack direction="row" gap="10px">
-                  <Radio size="sm" value="ALPHABETIC">
-                    A - Z
-                  </Radio>
-                  <Radio size="sm" value="USED_AT">
-                    Most Recent
-                  </Radio>
-                  <Radio size="sm" value="LIKED">
-                    Most Favorite
-                  </Radio>
-                  <Radio size="sm" value="DOWNLOADED">
-                    Most Downloads
-                  </Radio>
-                </Stack>
-              </RadioGroup>
-              <Text
-                visibility={type === "tag" ? "visible" : "hidden"}
-                position={type !== "tag" ? "absolute" : "relative"}
-                color="#A9A9B2"
-                fontSize="sm"
-              >
-                FILTER BY DRAWIFIER
-              </Text>
-              <Popover
-                initialFocusRef={initialFocusRef}
-                isOpen={isOpenDrawifier}
-                returnFocusOnClose={false}
-                onClose={onCloseDrawifier}
-                placement="right-start"
-              >
-                <HStack>
-                  <PopoverAnchor>
-                    <Input
-                      ref={initialFocusRef}
-                      position={type !== "tag" ? "absolute" : "relative"}
-                      visibility={type === "tag" ? "visible" : "hidden"}
-                      placeholder="Start typing..."
-                      value={name}
-                      onFocus={() => {
-                        setName("")
-                        setInputActive(true)
-                        setIdDrawifier("")
-                      }}
-                      onBlur={() => {
-                        onCloseDrawifier()
-                        setInputActive(false)
-                      }}
-                      onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
-                      onChange={(e) => {
-                        onOpenDrawifier()
-                        setName(e.target.value)
-                      }}
-                      zIndex={999}
-                    ></Input>
-                  </PopoverAnchor>
-                </HStack>
-                <PopoverContent>
-                  <PopoverArrow />
-                  <PopoverBody>
-                    <FilterByDrawifier
-                      setId={setIdDrawifier}
-                      onClose={onCloseDrawifier}
-                      listDrawifiers={drawifiers}
-                      setName={setName}
-                      name={name}
-                    />
-                  </PopoverBody>
-                </PopoverContent>
-              </Popover>
-              <Button
-                marginInline="10px"
-                variant="outline"
-                size="sm"
-                bg="white"
-                _hover={{ bg: "white" }}
-                onClick={makeFilter}
-              >
-                Filter
-              </Button>
-            </Center>
+//   return (
+//     <Modal isOpen={isOpen} size={"full"} onClose={onClose}>
+//       <ModalContent
+//         style={{
+//           backgroundColor: "rgba(255, 255, 255, 0.7)",
+//           WebkitBackdropFilter: "blur(5px)",
+//           backdropFilter: "blur(5px)"
+//         }}
+//       >
+//         <ModalCloseButton />
+//         <ModalBody>
+//           <Flex gap="10px" border="1px solid #DDDFE5" flexDir="column" bg="white" padding="20px">
+//             <Center>
+//               <Input
+//                 w="40%"
+//                 ref={refInputName}
+//                 value={nameResource}
+//                 onChange={(e) => setNameResource(e.target.value)}
+//                 onKeyDown={(e) => e.key === "Enter" && refInputName.current.blur()}
+//                 onBlur={(e) => {
+//                   setInputActive(false)
+//                   filterByName(nameResource)
+//                 }}
+//                 onFocus={() => setInputActive(true)}
+//                 placeholder="Search"
+//                 bg="white"
+//               />
+//             </Center>
+//             <Center gap="10px">
+//               <Text color="#A9A9B2" fontSize="sm">
+//                 FILTER BY STATS
+//               </Text>
+//               <RadioGroup onChange={setSort} value={sort}>
+//                 <Stack direction="row" gap="10px">
+//                   <Radio size="sm" value="ALPHABETIC">
+//                     A - Z
+//                   </Radio>
+//                   <Radio size="sm" value="USED_AT">
+//                     Most Recent
+//                   </Radio>
+//                   <Radio size="sm" value="LIKED">
+//                     Most Favorite
+//                   </Radio>
+//                   <Radio size="sm" value="DOWNLOADED">
+//                     Most Downloads
+//                   </Radio>
+//                 </Stack>
+//               </RadioGroup>
+//               <Text
+//                 visibility={type === "tag" ? "visible" : "hidden"}
+//                 position={type !== "tag" ? "absolute" : "relative"}
+//                 color="#A9A9B2"
+//                 fontSize="sm"
+//               >
+//                 FILTER BY DRAWIFIER
+//               </Text>
+//               <Popover
+//                 initialFocusRef={initialFocusRef}
+//                 isOpen={isOpenDrawifier}
+//                 returnFocusOnClose={false}
+//                 onClose={onCloseDrawifier}
+//                 placement="right-start"
+//               >
+//                 <HStack>
+//                   <PopoverAnchor>
+//                     <Input
+//                       ref={initialFocusRef}
+//                       position={type !== "tag" ? "absolute" : "relative"}
+//                       visibility={type === "tag" ? "visible" : "hidden"}
+//                       placeholder="Start typing..."
+//                       value={name}
+//                       onFocus={() => {
+//                         setName("")
+//                         setInputActive(true)
+//                         setIdDrawifier("")
+//                       }}
+//                       onBlur={() => {
+//                         onCloseDrawifier()
+//                         setInputActive(false)
+//                       }}
+//                       onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
+//                       onChange={(e) => {
+//                         onOpenDrawifier()
+//                         setName(e.target.value)
+//                       }}
+//                       zIndex={999}
+//                     ></Input>
+//                   </PopoverAnchor>
+//                 </HStack>
+//                 <PopoverContent>
+//                   <PopoverArrow />
+//                   <PopoverBody>
+//                     <FilterByDrawifier
+//                       setId={setIdDrawifier}
+//                       onClose={onCloseDrawifier}
+//                       listDrawifiers={drawifiers}
+//                       setName={setName}
+//                       name={name}
+//                     />
+//                   </PopoverBody>
+//                 </PopoverContent>
+//               </Popover>
+//               <Button
+//                 marginInline="10px"
+//                 variant="outline"
+//                 size="sm"
+//                 bg="white"
+//                 _hover={{ bg: "white" }}
+//                 onClick={makeFilter}
+//               >
+//                 Filter
+//               </Button>
+//             </Center>
 
-            {load ? (
-              <Box
-                w="full"
-                h="full"
-                sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", gap: "2rem", paddingY: "0.5rem" }}
-              >
-                {resources.map((e, index) => (
-                  <Flex
-                    flexDir="column"
-                    border="1px solid #DDDFE5"
-                    boxShadow="rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"
-                    key={index}
-                  >
-                    <Flex
-                      maxH="full"
-                      minH="300px"
-                      w="full"
-                      onClick={() => {
-                        addObject(e)
-                        onClose()
-                      }}
-                      _hover={{ cursor: "pointer" }}
-                    >
-                      <LazyLoadImage url={e.preview} />
-                    </Flex>
-                    <Flex
-                      marginInline="10px"
-                      sx={{
-                        justifyContent: "space-between",
-                        height: "40px",
-                        alignItems: "center"
-                      }}
-                    >
-                      <Flex gap="5px" alignItems="center">
-                        <Avatar size={"xs"} name={e.drawifier.name} src={e.drawifier.avatar} />
-                        <Box sx={{ fontSize: "12px" }}>{limitCharacters(e.drawifier.name)}</Box>
-                      </Flex>
-                      <Center gap={"0.25rem"}>
-                        {e.license === "paid" && (
-                          <Center boxSize="21px" sx={{ background: "#F6D056", color: "#FFFFFF", borderRadius: "4px" }}>
-                            <Pro size={40} />
-                          </Center>
-                        )}
-                      </Center>
-                    </Flex>
-                  </Flex>
-                ))}
-              </Box>
-            ) : (
-              <Center h="500px">
-                <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
-              </Center>
-            )}
-          </Flex>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
-  )
-}
+//             {load ? (
+//               <Box
+//                 w="full"
+//                 h="full"
+//                 sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr", gap: "2rem", paddingY: "0.5rem" }}
+//               >
+//                 {resources.map((e, index) => (
+//                   <Flex
+//                     flexDir="column"
+//                     border="1px solid #DDDFE5"
+//                     boxShadow="rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px"
+//                     key={index}
+//                   >
+//                     <Flex
+//                       maxH="full"
+//                       minH="300px"
+//                       w="full"
+//                       onClick={() => {
+//                         addObject(e)
+//                         onClose()
+//                       }}
+//                       _hover={{ cursor: "pointer" }}
+//                     >
+//                       <LazyLoadImage url={e.preview} />
+//                     </Flex>
+//                     <Flex
+//                       marginInline="10px"
+//                       sx={{
+//                         justifyContent: "space-between",
+//                         height: "40px",
+//                         alignItems: "center"
+//                       }}
+//                     >
+//                       <Flex gap="5px" alignItems="center">
+//                         <Avatar size={"xs"} name={e.drawifier.name} src={e.drawifier.avatar} />
+//                         <Box sx={{ fontSize: "12px" }}>{limitCharacters(e.drawifier.name)}</Box>
+//                       </Flex>
+//                       <Center gap={"0.25rem"}>
+//                         {e.license === "paid" && (
+//                           <Center boxSize="21px" sx={{ background: "#F6D056", color: "#FFFFFF", borderRadius: "4px" }}>
+//                             <Pro size={40} />
+//                           </Center>
+//                         )}
+//                       </Center>
+//                     </Flex>
+//                   </Flex>
+//                 ))}
+//               </Box>
+//             ) : (
+//               <Center h="500px">
+//                 <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
+//               </Center>
+//             )}
+//           </Flex>
+//         </ModalBody>
+//       </ModalContent>
+//     </Modal>
+//   )
+// }

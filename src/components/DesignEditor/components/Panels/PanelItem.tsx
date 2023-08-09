@@ -9,6 +9,7 @@ export default function PanelItem() {
   const [stateMenu, setStateMenu] = React.useState({ selected: "" })
   const { activeMenu, activePanel, isSidebarVisible, setIsSidebarVisible, setActivePanel } = useDesignEditorContext()
   const filterResource = localStorage.getItem("drawing_filter")
+  const aiGenerate = localStorage.getItem("ai_generated")
 
   React.useEffect(() => {
     setStatePanel({ selected: activePanel })
@@ -19,6 +20,8 @@ export default function PanelItem() {
       setStateMenu({ selected: activeMenu })
     } else if (filterResource) {
       setActivePanel("Illustrations")
+    } else if (aiGenerate === "true") {
+      setActivePanel("MagicLink")
     } else {
       setStateMenu({ selected: "" })
     }

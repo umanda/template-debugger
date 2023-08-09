@@ -17,6 +17,7 @@ import Magic from "./Magic"
 import Mail from "./Mail"
 import Right from "./Right"
 import Unlock from "./Unlock"
+import MagicLink from "./MagicLink"
 
 class Icons {
   static Facebook = Facebook
@@ -38,6 +39,7 @@ class Icons {
   static Magic = Magic
   static Mail = Mail
   static Right = Right
+  static MagicLink = MagicLink
 }
 
 export default Icons

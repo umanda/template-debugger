@@ -12,7 +12,8 @@ import {
   SearchTemplateDto,
   querySearchUpload,
   ICreateComponent,
-  ISubscriptionMe
+  ISubscriptionMe,
+  IMakeFavorite
 } from "~/interfaces/editor"
 import { IExportProjectNoLogin, IGetPreview, listProjectsDTO, previewParam, ShareTemplate } from "~/interfaces/template"
 import { IListComments, SaveCommentDTO } from "~/interfaces/comment"
@@ -678,9 +679,15 @@ export const searchResources = (
   })
 }
 
-export const recentResource = ({ project_id, resource_id }) => {
+export const recentResource = ({ project_id, name, is_ia }) => {
   return new Promise(() => {
-    base.put("/resource/use", { project_id, resource_id })
+    base.put("/resource/use", { project_id, name, is_ia })
+  })
+}
+
+export const deefbackResource = ({ prediction_id, image_ids }) => {
+  return new Promise(() => {
+    base.post("/ia-resource/feedback", { prediction_id, image_ids })
   })
 }
 
@@ -700,9 +707,9 @@ export const uploadArrayToAWS = async (presigned_url: string, arrayData: preview
   } catch (error) {}
 }
 
-export const favoriteResource = (id: string) => {
+export const favoriteResource = (props: IMakeFavorite) => {
   return new Promise(() => {
-    base.put("/resource/" + id + "/favorite")
+    base.put("/resource/favorite", props)
   })
 }
 
@@ -723,6 +730,17 @@ export const getListResourcesIA = (props: Partial<SearchResourceDto>) => {
       .post("/ia-resource/search", props)
       .then(({ data }) => {
         resolve(data.resources)
+      })
+      .catch((err) => reject(err))
+  })
+}
+
+export const getDesignIA = (prop: Partial<String>) => {
+  return new Promise((resolve, reject) => {
+    base
+      .post("/ia-template", { prompt: prop, token })
+      .then(({ data }) => {
+        resolve(data)
       })
       .catch((err) => reject(err))
   })
