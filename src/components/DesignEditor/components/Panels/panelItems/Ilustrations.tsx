@@ -896,7 +896,7 @@ export default function Ilustrations() {
         <Scrollable autoHide={true}>
           <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
             {load ? (
-              <>
+              <Flex flexDir="column">
                 <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
                   {resourcesIllustration?.map((r, index) => (
                     <IllustrationItem
@@ -919,7 +919,7 @@ export default function Ilustrations() {
                 >
                   Load More
                 </Button>
-              </>
+              </Flex>
             ) : (
               <Flex h="50%" w="full" align="end" justify="center">
                 <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="#5456f5" size="xl" />
