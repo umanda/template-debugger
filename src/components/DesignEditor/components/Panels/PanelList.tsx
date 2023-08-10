@@ -42,7 +42,7 @@ export default function PaneList() {
         //@ts-ignore
         const Icon = Icons[item.icon]
 
-        if (user.plan !== "HERO" && item.icon === "MagicLink") {
+        if (user.plan === "FREE" && item.icon === "MagicLink") {
           return null
         }
         return (
