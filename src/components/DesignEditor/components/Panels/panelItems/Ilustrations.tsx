@@ -554,87 +554,85 @@ export default function Ilustrations() {
           Smart Search
         </GridItem>
       </Grid>
-      {(user.plan === "HERO" || stateTabs === 0) && (
-        <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
-          <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
-            <HStack width={"100%"}>
-              <PopoverAnchor>
-                <Tooltip
-                  isOpen={toolTip}
-                  openDelay={500}
-                  label="Enter at least 3 letters and wait for the result"
-                  fontSize="md"
-                  hasArrow
-                  arrowSize={10}
-                >
-                  <Input
-                    size="sm"
-                    autoComplete="off"
-                    spellCheck="false"
-                    id="input"
-                    ref={initialFocusRef}
-                    value={nameIllustrationPrev}
-                    placeholder={stateTabs === 0 ? "Search" : "Search by single word or phrase"}
-                    sx={{
-                      _focusVisible: {
-                        boxShadow: "none"
-                      }
-                    }}
-                    onFocus={() => {
-                      onOpenInput()
-                      setInputActive(true)
-                    }}
-                    onBlur={makeBlur}
-                    onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
-                    onChange={(e) => makeChangeInput(e.target.value)}
-                  />
-                </Tooltip>
-              </PopoverAnchor>
-              <PopoverTrigger>
-                <Button visibility="hidden" position="absolute">
-                  Trigger
-                </Button>
-              </PopoverTrigger>
-            </HStack>
-            <PopoverContent id="input">
-              <PopoverArrow />
-              <PopoverBody id="input">
-                <Flex id="input" flexDir="column" fontSize="12px" gap="5px">
-                  <Flex id="input">Suggestion</Flex>
-                  {contentInput?.words.map(
-                    (obj, index) =>
-                      index <= 6 && (
-                        <Button
-                          id="input"
-                          size="xs"
-                          justifyItems="left"
-                          justifyContent="left"
-                          leftIcon={<Search size={15} />}
-                          variant="ghost"
-                          w="full"
-                          key={index}
-                          onClick={() => makeFilterBySeggestion(obj)}
-                        >
-                          {obj}
-                        </Button>
-                      )
-                  )}
-                </Flex>
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
-          <Order
-            setFetching={setMore}
-            setResources={setResourcesIllustration}
-            setSkeleton={setLoad}
-            setOrder={setOrder}
-            setDrawifier={setOrderDrawifier}
-            order={order}
-            drawifier={orderDrawifier}
-            setPage={setPage}
-          />
-        </Flex>
-      )}
+      <Flex padding={"0 1rem"} gap={"0.5rem"} justify={"space-between"}>
+        <Popover closeOnBlur={false} initialFocusRef={initialFocusRef} isOpen={isOpenInput} onClose={onCloseInput}>
+          <HStack width={"100%"}>
+            <PopoverAnchor>
+              <Tooltip
+                isOpen={toolTip}
+                openDelay={500}
+                label="Enter at least 3 letters and wait for the result"
+                fontSize="md"
+                hasArrow
+                arrowSize={10}
+              >
+                <Input
+                  size="sm"
+                  autoComplete="off"
+                  spellCheck="false"
+                  id="input"
+                  ref={initialFocusRef}
+                  value={nameIllustrationPrev}
+                  placeholder={stateTabs === 0 ? "Search" : "Search by single word or phrase"}
+                  sx={{
+                    _focusVisible: {
+                      boxShadow: "none"
+                    }
+                  }}
+                  onFocus={() => {
+                    onOpenInput()
+                    setInputActive(true)
+                  }}
+                  onBlur={makeBlur}
+                  onKeyDown={(e) => e.key === "Enter" && initialFocusRef.current.blur()}
+                  onChange={(e) => makeChangeInput(e.target.value)}
+                />
+              </Tooltip>
+            </PopoverAnchor>
+            <PopoverTrigger>
+              <Button visibility="hidden" position="absolute">
+                Trigger
+              </Button>
+            </PopoverTrigger>
+          </HStack>
+          <PopoverContent id="input">
+            <PopoverArrow />
+            <PopoverBody id="input">
+              <Flex id="input" flexDir="column" fontSize="12px" gap="5px">
+                <Flex id="input">Suggestion</Flex>
+                {contentInput?.words.map(
+                  (obj, index) =>
+                    index <= 6 && (
+                      <Button
+                        id="input"
+                        size="xs"
+                        justifyItems="left"
+                        justifyContent="left"
+                        leftIcon={<Search size={15} />}
+                        variant="ghost"
+                        w="full"
+                        key={index}
+                        onClick={() => makeFilterBySeggestion(obj)}
+                      >
+                        {obj}
+                      </Button>
+                    )
+                )}
+              </Flex>
+            </PopoverBody>
+          </PopoverContent>
+        </Popover>
+        <Order
+          setFetching={setMore}
+          setResources={setResourcesIllustration}
+          setSkeleton={setLoad}
+          setOrder={setOrder}
+          setDrawifier={setOrderDrawifier}
+          order={order}
+          drawifier={orderDrawifier}
+          setPage={setPage}
+        />
+      </Flex>
       <Box>
         <HorizontalScroll>
           {listRecommend.words.map((obj, index) => (
@@ -679,7 +677,7 @@ export default function Ilustrations() {
             </Tab>
             <Tab
               isDisabled={disableTab}
-              visibility={stateTabs === 1 && user.plan !== "HERO" ? "hidden" : "visible"}
+              // visibility={stateTabs === 1 && user.plan !== "HERO" ? "hidden" : "visible"}
               onClick={() => {
                 stateFavorite = false
                 user ? makeFilter({ stateRecents: true }) : setValidateContent("You need to login to see this panel.")
@@ -689,7 +687,7 @@ export default function Ilustrations() {
             </Tab>
             <Tab
               isDisabled={disableTab}
-              visibility={stateTabs === 1 && user.plan !== "HERO" ? "hidden" : "visible"}
+              // visibility={stateTabs === 1 && user.plan !== "HERO" ? "hidden" : "visible"}
               onClick={() => {
                 stateRecent = false
                 user ? makeFilter({ stateFavorites: true }) : setValidateContent("You need to login to see this panel.")
@@ -865,17 +863,17 @@ export default function Ilustrations() {
       ) : nameIllustration[0] === "" && stateFavorite === false && stateRecent === false ? (
         <Center h="full" flexDir="column">
           <CImage src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/magic-search.png" />
-          {user.plan === "HERO" ? (
-            <>
-              <Text w="72%" textAlign="center" marginBottom="20px">
-                Get inspired with <b>SmartSearch</b>, powered by AI.
-              </Text>
-              <Text w="72%" textAlign="center">
-                Search by phrase,and
-                <br /> discover more creative search results, faster
-              </Text>
-            </>
-          ) : (
+          {/* {user.plan === "HERO" ?  */}
+          <>
+            <Text w="72%" textAlign="center" marginBottom="20px">
+              Get inspired with <b>SmartSearch</b>, powered by AI.
+            </Text>
+            <Text w="72%" textAlign="center">
+              Search by phrase,and
+              <br /> discover more creative search results, faster
+            </Text>
+          </>
+          {/* : (
             <>
               <Text textAlign="center">Spark your imagination!</Text>
               <br />
@@ -893,7 +891,7 @@ export default function Ilustrations() {
                 Upgrade to unlock
               </Button>
             </>
-          )}
+          )} */}
         </Center>
       ) : (
         <Scrollable autoHide={true}>
