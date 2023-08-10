@@ -318,7 +318,7 @@ export default function Ilustrations() {
         }
       } catch {}
     },
-    [activeScene, editor, activeObject, projectSelect, user, id, stateTabs, stateFavorite, stateRecent]
+    [activeScene, editor, activeObject, projectSelect, user, id, stateTabs, stateFavorite, stateRecent, idPrediction]
   )
 
   const makeFilter = async ({
