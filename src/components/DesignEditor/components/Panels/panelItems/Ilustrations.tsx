@@ -318,7 +318,7 @@ export default function Ilustrations() {
         }
       } catch {}
     },
-    [activeScene, editor, activeObject, projectSelect, user, id, stateTabs]
+    [activeScene, editor, activeObject, projectSelect, user, id, stateTabs, stateFavorite, stateRecent]
   )
 
   const makeFilter = async ({
@@ -1152,14 +1152,16 @@ function IllustrationItem({
         </Flex>
       ) : (
         <Flex position="absolute">
-          <Center
-            margin="5px"
-            position="absolute"
-            boxSize="21px"
-            sx={{ background: "#F6D056", color: "#FFFFFF", borderRadius: "4px" }}
-          >
-            <Pro size={40} />
-          </Center>
+          {illustration.license === "paid" && (
+            <Center
+              margin="5px"
+              position="absolute"
+              boxSize="21px"
+              sx={{ background: "#F6D056", color: "#FFFFFF", borderRadius: "4px" }}
+            >
+              <Pro size={40} />
+            </Center>
+          )}
           <Flex
             marginTop={stateTabs === 0 ? "115px" : "110px"}
             marginLeft={stateTabs === 0 ? "5px" : "110px"}
