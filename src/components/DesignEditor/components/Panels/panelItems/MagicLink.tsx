@@ -71,7 +71,7 @@ export default function () {
             Unleash the magic of AI-generated visual stories by upgrading your subscription.
           </Text>
           <Button
-            onClick={() => (window.location.href = redirectPayments)}
+            onClick={() => window.open(redirectPayments, `_blank`)}
             borderRadius="10px"
             borderColor="#5456F5"
             color="#5456F5"
