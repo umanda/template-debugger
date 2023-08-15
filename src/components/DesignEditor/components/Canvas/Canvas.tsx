@@ -173,7 +173,14 @@ export default function Canva() {
   } catch {}
 
   return (
-    <Flex ref={flexRef} flex={1} onClick={onCloseContextMenu} onAuxClick={onToggleContextMenu}>
+    <Flex
+      ref={flexRef}
+      position="relative"
+      id="app"
+      flex={1}
+      onClick={onCloseContextMenu}
+      onAuxClick={onToggleContextMenu}
+    >
       {/* bottom-top-end-start */}
       <Popover
         isOpen={isOpenContextMenu}

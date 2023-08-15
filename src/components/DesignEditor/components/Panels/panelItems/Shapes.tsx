@@ -315,7 +315,7 @@ export default function Shapes() {
                     marginBlock="5px"
                     variant="outline"
                     isLoading={loadMoreResources}
-                    disabled={fetching}
+                    visibility={fetching ? "hidden" : "visible"}
                     onClick={fetchDataResource}
                   >
                     Load More

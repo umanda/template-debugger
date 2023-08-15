@@ -11,6 +11,7 @@ import {
   Progress,
   Select,
   Spacer,
+  Stack,
   Textarea,
   Tooltip,
   useDisclosure,
@@ -118,7 +119,7 @@ export default function Header() {
 
   useEffect(() => {
     try {
-      if (activeScene) {
+      if (activeScene && user.type !== "admin") {
         functionSave()
       }
     } catch {}
@@ -409,9 +410,14 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   const [email, setEmail] = useState<{ text: string; state: boolean }>({ text: "", state: true })
   const [typeModal, setTypeModal] = useState<string>("")
   const [stateProgressValue, setStateProgressValue] = useState<number>(0)
-  const scenes = useScenes()
+  const scenes: any[] = useScenes()
   const projectSelect = useSelector(selectProject)
   const { setDownloadCanva } = useResourcesContext()
+  const selectElement = useRef(null)
+
+  useEffect(() => {
+    selectElement.current.value = scenes?.findIndex((s) => s?.id === currentScene?.id && s)
+  }, [currentScene])
 
   const handleDownload = async (type: string) => {
     if (user.plan !== "FREE" || type === "jpg") {
@@ -510,12 +516,13 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
           const resolve: any = await functionSave()
           const getPreview = await api.getPreviewTemplate({
             id: resolve.id,
-            scene_ids: [resolve.scenes.find((s) => s.id === currentScene.id && s.id).id],
+            scene_ids: [resolve.scenes.find((s, i) => i === Number(selectElement.current.value) && s).id],
             type: "png"
           })
           if (getPreview.has_preview === true) {
             toast.closeAll()
             const url: any = await api.getShareTemplate({
+              key: resolve.key,
               type: type,
               image: getPreview.url
             })
@@ -568,11 +575,12 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
       const resolve: any = await functionSave()
       const getPreview = await api.getPreviewTemplate({
         id: resolve.id,
-        scene_ids: [resolve.scenes.find((s) => s.id === currentScene.id && s.id).id],
+        scene_ids: [],
         type: "png"
       })
       if (getPreview.has_preview === true) {
         await api.getShareTemplate({
+          key: resolve.key,
           type: "EMAIL",
           image: getPreview.url,
           email: email.text
@@ -659,7 +667,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
           onOpen={onOpenUpgradeUser}
         />
         <Box>
-          <Box>
+          <Box borderBottom="1px #DDDFE5 solid">
             <Box color="#A9A9B2">DOWNLOAD</Box>
             <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", paddingY: "0.5rem" }}>
               <Button
@@ -688,9 +696,9 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
               </Button>
             </Box>
           </Box>
-          <Box>
+          <Box marginBlock="10px" paddingBottom="10px" borderBottom="1px #DDDFE5 solid">
             <Box color="#A9A9B2">SOCIAL MEDIA</Box>
-            <Center gap="20px" paddingY="0.5rem">
+            <Center gap="20px">
               <IconButton
                 onClick={() => {
                   shareTemplate("TWITTER")
@@ -724,6 +732,13 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
                 icon={<Facebook size={20} />}
               />
             </Center>
+            <Select id="selectElement" ref={selectElement} size="sm">
+              {scenes?.map((s, index) => (
+                <option value={index} key={index} spellCheck={true}>
+                  {s?.scene?.name + " - " + (index + 1)}
+                </option>
+              ))}
+            </Select>
           </Box>
           <Box>
             <Box color="#A9A9B2">SHARE VIA EMAIL</Box>

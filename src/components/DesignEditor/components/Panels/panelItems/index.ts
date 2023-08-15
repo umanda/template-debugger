@@ -9,6 +9,7 @@ import Background from "./Background"
 import FontSelector from "./FontSelector"
 import TextColorPicker from "./TextColorPicker"
 import VectorColorPicker from "./VectorColorPicker"
+import MagicLink from "./MagicLink"
 
 export {
   Background,
@@ -21,5 +22,6 @@ export {
   Uploads,
   FontSelector,
   TextColorPicker,
-  VectorColorPicker
+  VectorColorPicker,
+  MagicLink
 }

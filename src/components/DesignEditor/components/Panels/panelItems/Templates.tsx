@@ -573,7 +573,7 @@ export default function Template() {
                     w="full"
                     variant="outline"
                     isLoading={loadMoreResources}
-                    isDisabled={!more}
+                    visibility={more ? "visible" : "hidden"}
                     onClick={fetchDataResource}
                   >
                     Load More

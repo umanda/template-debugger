@@ -81,13 +81,16 @@ export default function Common() {
   }
 
   const makeZoom = useCallback(
-    (type) => {
+    (type: string) => {
       if (type === "in") {
         editor.zoom.zoomIn()
         setZoomState(zoomState + 0.1)
       } else if (type === "out") {
         editor.zoom.zoomOut()
         setZoomState(zoomState - 0.1)
+      } else {
+        setZoomState(0)
+        editor.design.activeScene.applyFit()
       }
     },
     [zoomState]
@@ -149,13 +152,15 @@ export default function Common() {
         >
           <PanningMode />
           <IconButton
-            isDisabled={Math.trunc(zoomState * 100) >= 15 ? false : true}
+            isDisabled={Math.trunc(zoomState * 100) >= 30 ? false : true}
             variant={"ghost"}
             aria-label="Zoom out"
             icon={<Minus size={24} />}
             onClick={() => makeZoom("out")}
           />
-          <Button variant={"ghost"}>{Math.trunc(zoomState * 100)}%</Button>
+          <Button variant={"ghost"} onClick={() => Math.trunc(zoomState * 100) !== 100 && makeZoom("all")}>
+            {Math.trunc(zoomState * 100)}%
+          </Button>
           <IconButton
             isDisabled={Math.trunc(zoomState * 100) <= 390 ? false : true}
             variant={"ghost"}

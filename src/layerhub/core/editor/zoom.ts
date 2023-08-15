@@ -15,7 +15,7 @@ class Zoom {
   }
   zoomIn() {
     let zoomRatio = this.canvas.getZoom()
-    zoomRatio += 0.05
+    zoomRatio += zoomRatio / 20
     const center = this.canvas.getCenter()
     this.zoomToPoint(new fabric.Point(center.left, center.top), zoomRatio)
     this.state.setZoomRatio(zoomRatio)
@@ -23,7 +23,7 @@ class Zoom {
 
   zoomOut() {
     let zoomRatio = this.canvas.getZoom()
-    zoomRatio -= 0.05
+    zoomRatio -= zoomRatio / 20
     const center = this.canvas.getCenter()
     this.zoomToPoint(new fabric.Point(center.left, center.top), zoomRatio)
     this.state.setZoomRatio(zoomRatio)
@@ -50,7 +50,7 @@ class Zoom {
   }
 
   zoomToPoint(point: fabric.Point, zoom: number) {
-    const minZoom = 2.5
+    const minZoom = 2
     const maxZoom = 5000
     let zoomRatio = zoom
     if (zoomRatio >= 0.02) {
@@ -59,7 +59,6 @@ class Zoom {
       } else if (zoom >= maxZoom / 100) {
         zoomRatio = maxZoom / 100
       }
-
       this.canvas.zoomToPoint(point, zoomRatio)
       this.state.setZoomRatio(zoomRatio)
     }

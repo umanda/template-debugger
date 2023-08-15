@@ -17,7 +17,14 @@ export interface IResource {
   visibility: string
   preview: string
   tags: string[]
+  is_ia?: boolean
 }
+
+export interface IMakeFavorite {
+  name: string
+  is_ia: boolean
+}
+
 export interface Uploading {
   status: string
   progress: number
@@ -153,6 +160,8 @@ export interface SearchResourceDto {
     notIds?: number[]
     is_published?: boolean
     text?: string
+    prompt?: string
+    is_ia?: boolean
   }
   sorts?: string[]
 }

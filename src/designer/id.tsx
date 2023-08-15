@@ -13,10 +13,13 @@ import useResourcesContext from "~/hooks/useResourcesContext"
 import { useTokenInterceptor } from "~/hooks/useTokenInterceptor"
 import { putTemplate } from "~/store/templates/action"
 import { generateId } from "~/utils/unique"
+import { IDesign } from "~/layerhub/types"
+import IAGenerate from "~/components/Modals/IAGenerate"
 
 const Designer: any = () => {
   const { setLoadCanva, setDimensionZoom, loadCanva } = useResourcesContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen: isOpenIAGenerate, onOpen: onOpenIAGenerate, onClose: onCloseIAGenerate } = useDisclosure()
   const [typeSign, setTypeSign] = useState("signin")
   const { id } = useParams()
   const editor = useEditor()
@@ -40,12 +43,15 @@ const Designer: any = () => {
     loadCanva === true && setDimensionZoom(zoomRatio)
   }, [loadCanva])
 
+  useEffect(() => {
+    aiGenerate === "true" && onOpenIAGenerate()
+  }, [aiGenerate])
+
   const lodaTemplateById = useCallback(async () => {
-    const plans = ["FREE", "PRO", "HERO"]
     try {
       if (design && user) {
         setLoadCanva(false)
-        const resolve: any = (await dispatch(getProjectByKey(id))).payload
+        const resolve = (await dispatch(getProjectByKey(id))).payload as IDesign
         await loadGraphicTemplate(resolve)
         await design.setDesign(resolve)
         design.activeScene.applyFit()
@@ -61,19 +67,28 @@ const Designer: any = () => {
         let template: any
         if (templateId) {
           template = (await dispatch(putTemplate(templateId))).payload
-          const indexPlanTemplate = plans.findIndex((p) => p === template.plan)
-          const indexPlanUser = plans.findIndex((p) => p === user.plan)
-          if (indexPlanUser >= indexPlanTemplate) {
-            setTimeout(async () => {
-              try {
-                await loadGraphicTemplate(template)
-                await design.setDesign(template)
-                localStorage.removeItem("template_id")
-              } catch {}
-            }, 100)
+          if (template) {
+            if (user.type === "admin") {
+              setTimeout(async () => {
+                try {
+                  await loadGraphicTemplate(template)
+                  await design.setDesign(template)
+                  localStorage.removeItem("template_id")
+                } catch {}
+              }, 100)
+            }
+          } else {
+            toast({
+              title:
+                "The template does not exist, please try again later, if the problem persists, please contact info@drawify.com .",
+              status: "error",
+              position: "top",
+              duration: 2000,
+              isClosable: true
+            })
+            localStorage.removeItem("template_id")
           }
-        }
-        if (aiGenerate === "true") {
+        } else if (aiGenerate === "true") {
           const jsonAI = JSON.parse(aiGeneratedData)
           await design.setDesign(jsonAI)
           localStorage.removeItem("ai_generated")
@@ -81,7 +96,7 @@ const Designer: any = () => {
         }
         setLoadCanva(true)
         design.activeScene.applyFit()
-      } catch {
+      } catch (err) {
         toast({
           title: "You need to upgrade your current subscription plan to customize this template.",
           status: "error",
@@ -90,7 +105,6 @@ const Designer: any = () => {
           isClosable: true
         })
         localStorage.removeItem("template_id")
-
         design.activeScene.applyFit()
         setLoadCanva(true)
       }
@@ -99,6 +113,7 @@ const Designer: any = () => {
 
   return (
     <Flex sx={{ height: "100vh", width: "100vw" }} overflow="hidden">
+      <IAGenerate onClose={onCloseIAGenerate} isOpen={isOpenIAGenerate} />
       <SigninModal setType={setTypeSign} type={typeSign} onClose={onClose} isOpen={isOpen} onOpen={onOpen} />
       <Flex flex={1}>
         <DesignEditor />

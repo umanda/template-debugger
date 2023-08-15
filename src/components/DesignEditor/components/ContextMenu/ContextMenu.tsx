@@ -123,13 +123,7 @@ function ContextMenu() {
             }}
             icon="Trash"
             label="Delete"
-            disabled={
-              activeObject
-                ? activeObject?.type === "Frame" || activeObject?.type === "activeSelection"
-                  ? true
-                  : false
-                : false
-            }
+            disabled={activeObject ? false : true}
           />
           <ContextMenuItem
             onClick={() => {
@@ -183,7 +177,13 @@ function ContextMenu() {
             }}
             icon="SendBackwards"
             label="Send backwards"
-            disabled={activeObject ? (activeObject?.type === "Frame" ? true : false) : false}
+            disabled={
+              activeObject
+                ? activeObject?.type === "Frame" || activeObject?.type === "activeSelection"
+                  ? true
+                  : false
+                : false
+            }
           />
           <ContextMenuItem
             onClick={() => {

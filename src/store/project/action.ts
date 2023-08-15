@@ -1,6 +1,7 @@
 import { createAction, createAsyncThunk } from "@reduxjs/toolkit"
 import * as api from "../../services/api"
 import { IProject } from "../../interfaces/editor"
+import { IDesign } from "~/layerhub/types"
 
 export const setUpdateProject = createAction<IProject>("projects/setUpdateProject")
 
@@ -15,7 +16,7 @@ export const updateProject = createAsyncThunk<any, any, { rejectValue: void }>(
   }
 )
 
-export const getProjectByKey = createAsyncThunk<any, string, { rejectValue: void }>(
+export const getProjectByKey = createAsyncThunk<IDesign, string, { rejectValue: void }>(
   "projects/getProjectByKey",
   async (args, { dispatch, rejectWithValue }) => {
     try {

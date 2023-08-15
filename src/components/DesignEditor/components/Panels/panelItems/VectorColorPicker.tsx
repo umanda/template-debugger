@@ -44,12 +44,12 @@ export default function VectorColorPicker() {
   }, [stateChange])
 
   const changeBackgroundColor = useCallback(
-    (prev: string, next: string) => {
+    (prev: string, next: string, inactive?: boolean) => {
       if (prev !== next) {
         if (activeObject) {
           editor.design.activeScene.objects.updateLayerColor(prev, next)
         }
-        stateRecentColors(next, recentColors)
+        !inactive && stateRecentColors(next, recentColors)
         setColors({ ...colors, colorMap: activeObject.colorMap })
         editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
         editor.zoom.zoomToRatio(zoomRatio - 0.000000001)
@@ -239,19 +239,30 @@ function HexColorVector({
 }: {
   index: number
   c
-  changeBackgroundColor: (prev: string, next: string) => void
+  changeBackgroundColor: (prev: string, next: string, inactive?: boolean) => void
 }) {
   const { setInputActive, indexColorPicker, setIndexColorPicker, colors } = useDesignEditorContext()
   const { isOpen: isOpenColor, onOpen: onOpenColor, onClose: onCloseColor } = useDisclosure()
   const ref = useRef<any>()
+  const editor = useEditor()
+  const zoomRatio = useZoomRatio()
   const [inputHex, setInputHex] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
   const [inputHexPrev, setInputHexPrev] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
   const [colorHex, setColorHex] = useState<string>("")
   const [stateChange] = useDebounce(colorHex, 100)
+  const recentColors: string[] | null = JSON.parse(localStorage.getItem("recentColors"))
 
   useEffect(() => {
-    changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex)
+    changeBackgroundColor(Object.keys(colors.colorMap)[indexColorPicker], inputHex, true)
   }, [stateChange])
+
+  useEffect(() => {
+    if (!isOpenColor) {
+      stateRecentColors(colorHex, recentColors)
+      editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
+      editor.zoom.zoomToRatio(zoomRatio - 0.000000001)
+    }
+  }, [isOpenColor])
 
   return (
     <Popover
