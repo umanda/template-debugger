@@ -623,7 +623,7 @@ export default function Ilustrations() {
             </PopoverBody>
           </PopoverContent>
         </Popover>
-        <IconButton aria-label="Search" variant="outline" icon={<Search size={18} />} />
+        {stateTabs === 1 && <IconButton aria-label="Search" variant="outline" icon={<Search size={18} />} />}
         {stateTabs === 0 && (
           <Order
             setFetching={setMore}
