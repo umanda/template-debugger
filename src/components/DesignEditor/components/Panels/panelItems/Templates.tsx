@@ -448,6 +448,7 @@ export default function Template() {
             </PopoverBody>
           </PopoverContent>
         </Popover>
+        {/* <IconButton aria-label="Search" variant="outline" icon={<Search size={18} />} /> */}
         <Order
           setFetching={setMore}
           setResources={setResourcesTemplate}

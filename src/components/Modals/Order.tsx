@@ -91,39 +91,32 @@ export default function Order({
       <Portal>
         <PopoverContent>
           <PopoverArrow />
-          <PopoverBody>
-            <Flex flexDir="column" gap="10px">
-              <Text color="#A9A9B2" fontSize="12px">
-                ORDER BY STATS
-              </Text>
-              <Grid templateColumns="repeat(1, 1fr)" gap="10px">
-                <RadioGroup onChange={setValue}>
-                  <Stack spacing={5}>
-                    {DEFAULT_ORDER.map((value: any, index: number) => (
-                      <Radio
-                        size="sm"
-                        isDisabled={value === "Most downloads" || value === "A - Z" ? true : false}
-                        value={value}
-                        key={index}
-                      >
-                        {value}
-                      </Radio>
-                    ))}
-                  </Stack>
-                </RadioGroup>
-              </Grid>
-              <Button
-                bg="#5456F5"
-                onClick={() => {
-                  onClose()
-                  orderByStats()
-                }}
-                _hover={{}}
-                color="#DDDFE5"
-              >
-                Filter
-              </Button>
-            </Flex>
+          <PopoverBody flexDir="column" display="flex" gap="10px">
+            <Text color="#A9A9B2" fontSize="12px">
+              ORDER BY STATS
+            </Text>
+            <RadioGroup onChange={setValue} display="flex" flexDir="column" gap="10px">
+              {DEFAULT_ORDER.map((value: any, index: number) => {
+                if (value === "Most recent" || value === "Most favorites") {
+                  return (
+                    <Radio value={value} key={index}>
+                      {value}
+                    </Radio>
+                  )
+                }
+              })}
+            </RadioGroup>
+            <Button
+              bg="#5456F5"
+              onClick={() => {
+                onClose()
+                orderByStats()
+              }}
+              _hover={{}}
+              color="#DDDFE5"
+            >
+              Filter
+            </Button>
           </PopoverBody>
         </PopoverContent>
       </Portal>
