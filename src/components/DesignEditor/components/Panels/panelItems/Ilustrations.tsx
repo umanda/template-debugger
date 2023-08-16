@@ -21,7 +21,8 @@ import {
   Textarea,
   useToast,
   GridItem,
-  Image as CImage
+  Image as CImage,
+  IconButton
 } from "@chakra-ui/react"
 import { Tabs, TabList, Tab } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene, useEditor } from "@layerhub-pro/react"
@@ -622,16 +623,19 @@ export default function Ilustrations() {
             </PopoverBody>
           </PopoverContent>
         </Popover>
-        <Order
-          setFetching={setMore}
-          setResources={setResourcesIllustration}
-          setSkeleton={setLoad}
-          setOrder={setOrder}
-          setDrawifier={setOrderDrawifier}
-          order={order}
-          drawifier={orderDrawifier}
-          setPage={setPage}
-        />
+        <IconButton aria-label="Search" variant="outline" icon={<Search size={18} />} />
+        {stateTabs === 0 && (
+          <Order
+            setFetching={setMore}
+            setResources={setResourcesIllustration}
+            setSkeleton={setLoad}
+            setOrder={setOrder}
+            setDrawifier={setOrderDrawifier}
+            order={order}
+            drawifier={orderDrawifier}
+            setPage={setPage}
+          />
+        )}
       </Flex>
       <Box>
         <HorizontalScroll>
