@@ -687,7 +687,7 @@ export const recentResource = ({ project_id, name, is_ia }) => {
 
 export const deefbackResource = ({ prediction_id, image_ids }) => {
   return new Promise(() => {
-    base.post("/ia-resource/feedback", { prediction_id, image_ids })
+    base.post("/ia-resource/feedback", { prediction_id, image_ids: [image_ids] })
   })
 }
 
