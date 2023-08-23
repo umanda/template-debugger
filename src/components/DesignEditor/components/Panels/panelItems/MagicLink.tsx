@@ -6,6 +6,7 @@ import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import { useActiveScene, useEditor } from "~/layerhub"
 import * as api from "~/services/api"
 import { selectUser } from "~/store/user/selector"
+import { loadGraphicTemplate } from "~/utils/fonts"
 
 const redirectPayments = import.meta.env.VITE_PAYMENTS
 
@@ -23,6 +24,7 @@ export default function () {
       onOpen()
       const resolve: any = await api.getDesignIA(dataText)
       await editor.design.addScene()
+      await loadGraphicTemplate(resolve.project)
       await editor.design.scenes[editor.design.scenes.length - 1].setScene(resolve.project.scenes[0])
       setErr(null)
       onClose()
