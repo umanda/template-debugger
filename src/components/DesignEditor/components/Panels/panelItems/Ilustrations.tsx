@@ -296,6 +296,9 @@ export default function Ilustrations() {
               ? `${watermarkURL}?${Math.random().toString(36).substring(2, 10)}`
               : undefined
         }
+        if (stateTabs === 1) {
+          api.deefbackResource({ prediction_id: idPrediction, image_ids: resource.id })
+        }
         if (editor) {
           await editor.design.activeScene.objects.add(options, { desiredSize: 200 })
         }
@@ -313,9 +316,6 @@ export default function Ilustrations() {
             name: resource.name,
             is_ia: stateTabs === 0 ? false : true
           })
-        }
-        if (stateTabs === 1 && stateFavorite === false && stateRecent === false) {
-          api.deefbackResource({ prediction_id: idPrediction, image_ids: resource.id })
         }
       } catch {}
     },
