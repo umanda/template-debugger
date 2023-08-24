@@ -68,15 +68,13 @@ const Designer: any = () => {
         if (templateId) {
           template = (await dispatch(putTemplate(templateId))).payload
           if (template) {
-            if (user.type === "admin") {
-              setTimeout(async () => {
-                try {
-                  await loadGraphicTemplate(template)
-                  await design.setDesign(template)
-                  localStorage.removeItem("template_id")
-                } catch {}
-              }, 100)
-            }
+            setTimeout(async () => {
+              try {
+                await loadGraphicTemplate(template)
+                await design.setDesign(template)
+                localStorage.removeItem("template_id")
+              } catch {}
+            }, 100)
           } else {
             toast({
               title:
