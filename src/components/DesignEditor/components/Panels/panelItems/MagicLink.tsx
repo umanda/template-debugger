@@ -31,6 +31,7 @@ export default function () {
   const generateDesign = useCallback(async () => {
     try {
       onOpen()
+      console.log(dataText)
       const resolve: any = await api.getDesignIA(dataText)
       await editor.design.addScene()
       await loadGraphicTemplate(resolve.project)

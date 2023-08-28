@@ -88,6 +88,7 @@ const Designer: any = () => {
           }
         } else if (aiGenerate === "true") {
           const jsonAI = JSON.parse(aiGeneratedData)
+          await loadGraphicTemplate(jsonAI)
           await design.setDesign(jsonAI)
           localStorage.removeItem("ai_generated")
           localStorage.removeItem("ai_generated_data")

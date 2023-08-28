@@ -735,7 +735,7 @@ export const getListResourcesIA = (props: Partial<SearchResourceDto>) => {
   })
 }
 
-export const getDesignIA = (prop: Partial<String>) => {
+export const getDesignIA = (prop: String) => {
   return new Promise((resolve, reject) => {
     base
       .post("/ia-template", { prompt: prop, token })
