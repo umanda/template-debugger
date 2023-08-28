@@ -22,11 +22,11 @@ export default function () {
   const toast = useToast()
 
   useEffect(() => {
-    if (userPromt || userPromt !== null || userPromt !== "") {
+    if (userPromt !== undefined || userPromt !== null || userPromt !== "") {
       setDataText(userPromt)
       localStorage.removeItem("user_prompt")
     }
-  }, [userPromt])
+  }, [])
 
   const generateDesign = useCallback(async () => {
     try {
@@ -74,7 +74,10 @@ export default function () {
             value={dataText}
             onFocus={() => setInputActive(true)}
             onBlur={() => setInputActive(false)}
-            onChange={(e) => setDataText(e.target.value)}
+            onChange={(e) => {
+              console.log("no null")
+              setDataText(e.target.value)
+            }}
             placeholder="Describe what you would like to generate"
           />
           <Button marginBottom="20px" w="min" colorScheme={"brand"} onClick={() => generateDesign()}>
