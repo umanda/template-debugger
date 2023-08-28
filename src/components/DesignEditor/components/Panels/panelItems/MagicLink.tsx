@@ -31,7 +31,6 @@ export default function () {
   const generateDesign = useCallback(async () => {
     try {
       onOpen()
-      console.log(dataText)
       const resolve: any = await api.getDesignIA(dataText)
       await editor.design.addScene()
       await loadGraphicTemplate(resolve.project)
@@ -74,10 +73,7 @@ export default function () {
             value={dataText}
             onFocus={() => setInputActive(true)}
             onBlur={() => setInputActive(false)}
-            onChange={(e) => {
-              console.log("no null")
-              setDataText(e.target.value)
-            }}
+            onChange={(e) => setDataText(e.target.value)}
             placeholder="Describe what you would like to generate"
           />
           <Button marginBottom="20px" w="min" colorScheme={"brand"} onClick={() => generateDesign()}>
