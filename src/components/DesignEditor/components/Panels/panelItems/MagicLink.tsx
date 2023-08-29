@@ -22,7 +22,7 @@ export default function () {
   const toast = useToast()
 
   useEffect(() => {
-    if (userPromt !== undefined || userPromt !== null || userPromt !== "") {
+    if (userPromt !== null) {
       setDataText(userPromt)
       localStorage.removeItem("user_prompt")
     }

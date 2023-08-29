@@ -687,7 +687,7 @@ export const recentResource = ({ project_id, name, is_ia }) => {
 
 export const deefbackResource = ({ prediction_id, image_ids }) => {
   return new Promise(() => {
-    base.post("/ia-resource/feedback", { prediction_id, image_ids: [image_ids] })
+    base.post("/ai-resource/feedback", { prediction_id, image_ids: [image_ids] })
   })
 }
 
@@ -727,7 +727,7 @@ export const getListResourcesImages = (props: Partial<SearchResourceDto>) => {
 export const getListResourcesIA = (props: Partial<SearchResourceDto>) => {
   return new Promise((resolve, reject) => {
     base
-      .post("/ia-resource/search", props)
+      .post("/ai-resource/search", props)
       .then(({ data }) => {
         resolve(data.resources)
       })
@@ -738,7 +738,7 @@ export const getListResourcesIA = (props: Partial<SearchResourceDto>) => {
 export const getDesignIA = (prop: String) => {
   return new Promise((resolve, reject) => {
     base
-      .post("/ia-template", { prompt: prop, token })
+      .post("/ai-template", { prompt: prop, token })
       .then(({ data }) => {
         resolve(data)
       })
