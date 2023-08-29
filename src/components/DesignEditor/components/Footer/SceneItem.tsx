@@ -45,12 +45,6 @@ export default function SceneItem({ index, isCurrentScene, preview, setActiveSce
   const design = useDesign()
   const scenes: any = useScenes()
 
-  const rename = () => {
-    let newScenes: any = scenes
-    newScenes[index].scene.name = "Pablito"
-    editor.design.setScenes(newScenes)
-  }
-
   useEffect(() => {
     setViewInput(false)
     setNameInput("")

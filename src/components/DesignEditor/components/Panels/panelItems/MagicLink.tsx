@@ -66,12 +66,16 @@ export default function () {
           <Text>Your Text</Text>
           <Textarea
             h="50%"
+            maxLength={13000}
             value={dataText}
             onFocus={() => setInputActive(true)}
             onBlur={() => setInputActive(false)}
             onChange={(e) => setDataText(e.target.value)}
             placeholder="Describe what you would like to generate"
           />
+          <Text fontSize="12px" color="#7D8590" textAlign="right">
+            {dataText?.length ? dataText?.length : 0} / 13000
+          </Text>
           <Button marginBottom="20px" w="min" colorScheme={"brand"} onClick={() => generateDesign()}>
             Generate another
           </Button>
