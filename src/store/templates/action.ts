@@ -48,7 +48,7 @@ export const putTemplate = createAsyncThunk<any, any, { rejectValue: void }>(
       dispatch(setUpdateProject(template))
       return template
     } catch (error) {
-      rejectWithValue(error)
+      return rejectWithValue(error.response.data)
     }
   }
 )

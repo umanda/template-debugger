@@ -1,5 +1,5 @@
-import { Box, Button, Center, Flex, Image, Text, Textarea, useDisclosure } from "@chakra-ui/react"
-import { useCallback, useState } from "react"
+import { Box, Button, Center, Flex, Image, Text, Textarea, useDisclosure, useToast } from "@chakra-ui/react"
+import { useCallback, useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import GenerateIADesign from "~/components/Modals/GenerateIADesign"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
@@ -14,10 +14,19 @@ export default function () {
   const editor: any = useEditor()
   const { setInputActive } = useDesignEditorContext()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [dataText, setDataText] = useState<string>(null)
+  const [dataText, setDataText] = useState<string>("")
   const activeScene = useActiveScene()
   const [err, setErr] = useState<string>(null)
   const user = useSelector(selectUser)
+  const userPromt = localStorage.getItem("user_prompt")
+  const toast = useToast()
+
+  useEffect(() => {
+    if (userPromt !== undefined || userPromt !== null || userPromt !== "") {
+      setDataText(userPromt)
+      localStorage.removeItem("user_prompt")
+    }
+  }, [])
 
   const generateDesign = useCallback(async () => {
     try {
@@ -29,7 +38,13 @@ export default function () {
       setErr(null)
       onClose()
     } catch (err) {
-      setErr("Please enter a valid text.")
+      toast({
+        title: err?.response?.data?.message ? err?.response?.data?.message : "NETWORK ERROR, PLEASE TRY AGAIN.",
+        status: "error",
+        position: "top-right",
+        duration: 3000,
+        isClosable: true
+      })
       onClose()
     }
   }, [editor, dataText, activeScene])
@@ -51,6 +66,7 @@ export default function () {
           <Text>Your Text</Text>
           <Textarea
             h="50%"
+            value={dataText}
             onFocus={() => setInputActive(true)}
             onBlur={() => setInputActive(false)}
             onChange={(e) => setDataText(e.target.value)}

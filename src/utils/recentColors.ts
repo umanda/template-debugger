@@ -1,5 +1,4 @@
 export const stateRecentColors = (color: string, currentColors: string[]) => {
-  console.log("state recent color", color)
   if (currentColors === null) {
     localStorage.setItem("recentColors", JSON.stringify([color]))
   } else if (color) {

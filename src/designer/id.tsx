@@ -67,27 +67,28 @@ const Designer: any = () => {
         let template: any
         if (templateId) {
           template = (await dispatch(putTemplate(templateId))).payload
+          localStorage.removeItem("template_id")
           if (template) {
             setTimeout(async () => {
               try {
                 await loadGraphicTemplate(template)
                 await design.setDesign(template)
-                localStorage.removeItem("template_id")
-              } catch {}
+              } catch {
+                toast({
+                  title: template?.message.includes("must upgrade plan")
+                    ? "Please upgrade your plan to access this template"
+                    : "The template does not exist, please try again later, if the problem persists, please contact info@drawify.com .",
+                  status: "error",
+                  position: "top",
+                  duration: 2000,
+                  isClosable: true
+                })
+              }
             }, 100)
-          } else {
-            toast({
-              title:
-                "The template does not exist, please try again later, if the problem persists, please contact info@drawify.com .",
-              status: "error",
-              position: "top",
-              duration: 2000,
-              isClosable: true
-            })
-            localStorage.removeItem("template_id")
           }
         } else if (aiGenerate === "true") {
           const jsonAI = JSON.parse(aiGeneratedData)
+          await loadGraphicTemplate(jsonAI)
           await design.setDesign(jsonAI)
           localStorage.removeItem("ai_generated")
           localStorage.removeItem("ai_generated_data")
