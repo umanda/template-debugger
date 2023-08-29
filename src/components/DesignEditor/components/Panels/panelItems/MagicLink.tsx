@@ -38,17 +38,13 @@ export default function () {
       setErr(null)
       onClose()
     } catch (err) {
-      if (err?.response?.data?.message) {
-        setErr(err?.response?.data?.message)
-      } else {
-        toast({
-          title: "NETWORK ERROR, PLEASE TRY AGAIN.",
-          status: "error",
-          position: "top",
-          duration: 3000,
-          isClosable: true
-        })
-      }
+      toast({
+        title: err?.response?.data?.message ? err?.response?.data?.message : "NETWORK ERROR, PLEASE TRY AGAIN.",
+        status: "error",
+        position: "top-right",
+        duration: 3000,
+        isClosable: true
+      })
       onClose()
     }
   }, [editor, dataText, activeScene])

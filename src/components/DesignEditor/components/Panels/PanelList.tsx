@@ -42,9 +42,9 @@ export default function PaneList() {
         //@ts-ignore
         const Icon = Icons[item.icon]
 
-        if (user.plan === "FREE" && item.icon === "MagicLink") {
-          return null
-        }
+        // if (user.plan === "FREE" && item.icon === "MagicLink") {
+        //   return null
+        // }
         return (
           <Flex
             onClick={() => openSidebar(item.id)}
