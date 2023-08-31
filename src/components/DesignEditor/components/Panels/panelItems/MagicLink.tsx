@@ -77,7 +77,7 @@ export default function () {
             {dataText?.length ? dataText?.length : 0} / 13000
           </Text>
           <Button marginBottom="20px" w="min" colorScheme={"brand"} onClick={() => generateDesign()}>
-            Generate another
+            Generate
           </Button>
           <Center fontWeight={600} color="red">
             {err}
