@@ -41,10 +41,10 @@ class Objects {
     } else {
       this.scaleOnAdd(object)
     }
-    if( object.type==="StaticText"){
-      (object as fabric.StaticText).enterEditing();
-      (object as fabric.StaticText).setSelectionStart(0);
-      (object as fabric.StaticText).setSelectionEnd((object as fabric.StaticText).text.length);
+    if (object.type === "StaticText") {
+      ;(object as fabric.StaticText).enterEditing()
+      ;(object as fabric.StaticText).setSelectionStart(0)
+      ;(object as fabric.StaticText).setSelectionEnd((object as fabric.StaticText).text.length)
     }
 
     this.scene.canvas.requestRenderAll()
@@ -52,7 +52,6 @@ class Objects {
     this.scene.state.setActiveObject(object)
     this.scene.history.save()
     this.updateContextObjects()
-    
   }
 
   public addOnDrag = async (item: Partial<ILayer>, options?: { desiredSize: number }) => {
@@ -991,9 +990,12 @@ class Objects {
       }
     }
 
-    if (refObject && refObject?.type !== "Frame" &&
-          refObject?.type !== "BackgroundContainer" &&
-          refObject?.type !== "Background") {
+    if (
+      refObject &&
+      refObject?.type !== "Frame" &&
+      refObject?.type !== "BackgroundContainer" &&
+      refObject?.type !== "Background"
+    ) {
       this.scene.editor.clipboard = refObject
     }
   }
@@ -1051,6 +1053,7 @@ class Objects {
         }) as fabric.Object
         canvas.setActiveObject(activeSelection)
         this.scene.state.setActiveObject(activeSelection)
+        this.select(cloned.id)
       }
 
       canvas.requestRenderAll()
@@ -1191,8 +1194,8 @@ class Objects {
     // @ts-ignore
     activeSelection._objects.forEach((object) => {
       if (!this.scene.config.outsideVisible) {
-      object.clipPath = frame
-    }
+        object.clipPath = frame
+      }
     })
     this.scene.state.setActiveObject(activeSelection)
     canvas.requestRenderAll()

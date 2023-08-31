@@ -22,7 +22,7 @@ export default function () {
   const toast = useToast()
 
   useEffect(() => {
-    if (userPromt !== undefined || userPromt !== null || userPromt !== "") {
+    if (userPromt !== null) {
       setDataText(userPromt)
       localStorage.removeItem("user_prompt")
     }
@@ -32,7 +32,7 @@ export default function () {
     try {
       onOpen()
       const resolve: any = await api.getDesignIA(dataText)
-      await editor.design.addScene()
+      activeScene.json.objects.length > 2 && (await editor.design.addScene())
       await loadGraphicTemplate(resolve.project)
       await editor.design.scenes[editor.design.scenes.length - 1].setScene(resolve.project.scenes[0])
       setErr(null)
@@ -66,14 +66,18 @@ export default function () {
           <Text>Your Text</Text>
           <Textarea
             h="50%"
+            maxLength={13000}
             value={dataText}
             onFocus={() => setInputActive(true)}
             onBlur={() => setInputActive(false)}
             onChange={(e) => setDataText(e.target.value)}
             placeholder="Describe what you would like to generate"
           />
+          <Text fontSize="12px" color="#7D8590" textAlign="right">
+            {dataText?.length ? dataText?.length : 0} / 13000
+          </Text>
           <Button marginBottom="20px" w="min" colorScheme={"brand"} onClick={() => generateDesign()}>
-            Generate another
+            Generate
           </Button>
           <Center fontWeight={600} color="red">
             {err}

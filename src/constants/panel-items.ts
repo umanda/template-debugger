@@ -5,9 +5,9 @@ export const PANEL_ITEMS = [
     icon: "Templates"
   },
   // {
-  //   id: "MagicLink",
-  //   label: "Generate",
-  //   icon: "MagicLink"
+  // id: "MagicLink",
+  // label: "Generate",
+  // icon: "MagicLink"
   // },
   {
     id: "Pencil",

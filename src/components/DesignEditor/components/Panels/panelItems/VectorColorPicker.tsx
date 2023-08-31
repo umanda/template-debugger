@@ -55,7 +55,7 @@ export default function VectorColorPicker() {
         editor.zoom.zoomToRatio(zoomRatio - 0.000000001)
       }
     },
-    [activeObject, colors, editor]
+    [activeObject, colors, editor, recentColors, zoomRatio]
   )
 
   const applyTextChange = (value: number, id: string) => {
@@ -246,8 +246,8 @@ function HexColorVector({
   const ref = useRef<any>()
   const editor = useEditor()
   const zoomRatio = useZoomRatio()
-  const [inputHex, setInputHex] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
-  const [inputHexPrev, setInputHexPrev] = useState<string>(Object.keys(colors.colorMap)[indexColorPicker])
+  const [inputHex, setInputHex] = useState<string>(Object?.keys(colors?.colorMap)[indexColorPicker])
+  const [inputHexPrev, setInputHexPrev] = useState<string>(Object?.keys(colors?.colorMap)[indexColorPicker])
   const [colorHex, setColorHex] = useState<string>("")
   const [stateChange] = useDebounce(colorHex, 100)
   const recentColors: string[] | null = JSON.parse(localStorage.getItem("recentColors"))
