@@ -32,7 +32,7 @@ export default function () {
     try {
       onOpen()
       const resolve: any = await api.getDesignIA(dataText)
-      await editor.design.addScene()
+      activeScene.json.objects.length > 2 && (await editor.design.addScene())
       await loadGraphicTemplate(resolve.project)
       await editor.design.scenes[editor.design.scenes.length - 1].setScene(resolve.project.scenes[0])
       setErr(null)
