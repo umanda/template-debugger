@@ -49,13 +49,13 @@ export default function VectorColorPicker() {
         if (activeObject) {
           editor.design.activeScene.objects.updateLayerColor(prev, next)
         }
-        stateRecentColors(next, recentColors)
+        !inactive && stateRecentColors(next, recentColors)
         setColors({ ...colors, colorMap: activeObject.colorMap })
         editor.zoom.zoomToRatio(zoomRatio + 0.000000001)
         editor.zoom.zoomToRatio(zoomRatio - 0.000000001)
       }
     },
-    [activeObject, colors, editor]
+    [activeObject, colors, editor, recentColors, zoomRatio]
   )
 
   const applyTextChange = (value: number, id: string) => {
