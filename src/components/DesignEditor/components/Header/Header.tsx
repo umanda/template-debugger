@@ -65,6 +65,7 @@ import Upgrade from "~/components/Icons/Upgrade"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectListProjects: string = import.meta.env.VITE_REDIRECT_PROJECTS
+const redirectPayments = import.meta.env.VITE_PAYMENTS
 const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
 
 export default function Header() {
@@ -388,6 +389,7 @@ export default function Header() {
             variant="outline"
             _hover={{ cursor: "pointer" }}
             rightIcon={<Upgrade size={24} />}
+            onClick={() => (window.location.href = redirectPayments)}
           >
             <Text marginRight="10px">{daysTrial} days left on free trial</Text>
             <Text fontWeight="bold">Upgrade</Text>
@@ -1176,12 +1178,13 @@ function UserMenu() {
                   Profile
                 </Flex>
               </MenuOption>
-
-              <MenuOption
-                onClick={() => {
-                  handleLogout()
-                }}
-              >
+              <MenuOption onClick={() => (window.location.href = redirectPayments)}>
+                <Flex gap="0.25rem" alignItems={"center"}>
+                  <Upgrade size={24} />
+                  Upgrade
+                </Flex>
+              </MenuOption>
+              <MenuOption onClick={() => {}}>
                 <Flex gap="0.25rem" alignItems={"center"}>
                   <Logout size={24} />
                   Logout

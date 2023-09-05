@@ -63,7 +63,7 @@ export default function () {
         flexDirection: "column"
       }}
     >
-      {user.plan === "HERO" || user.count_free_requests > 0 ? (
+      {user.plan === "HERO" || user.count_free_requests !== undefined ? (
         <>
           <GenerateIADesign isOpen={isOpen} onClose={onClose} />
           <Text>Your Text</Text>
@@ -88,7 +88,7 @@ export default function () {
           >
             Generate
           </Button>
-          {user.count_free_requests > 0 && (
+          {user.count_free_requests >= 0 && (
             <Flex justify="center" flexDir="column" gap="15px">
               <Flex
                 color={countFreeRequest <= 5 ? "#911956" : countFreeRequest <= 10 ? "#FF8B55" : "#545465"}
@@ -97,7 +97,14 @@ export default function () {
                 <Information size={24} />
                 {countFreeRequest === 0 ? "No auto-generations left" : `${countFreeRequest} auto-generations left`}
               </Flex>
-              <Button size="xs" color="#5456F5" variant="solid" bg="#EEFCFD" leftIcon={<MagicLink size={20} />}>
+              <Button
+                onClick={() => (window.location.href = redirectPayments)}
+                size="xs"
+                color="#5456F5"
+                variant="solid"
+                bg="#EEFCFD"
+                leftIcon={<MagicLink size={20} />}
+              >
                 Unlock infinite auto-generations! Upgrade now
               </Button>
             </Flex>
