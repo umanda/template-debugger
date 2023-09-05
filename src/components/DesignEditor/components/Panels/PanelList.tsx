@@ -39,12 +39,11 @@ export default function PaneList() {
       display={["none", "none", "flex", "flex"]}
     >
       {PANEL_ITEMS.map((item, index) => {
-        //@ts-ignore
         const Icon = Icons[item.icon]
 
-        if (user.plan === "FREE" && item.icon === "MagicLink") {
-          return null
-        }
+        // if (user.plan === "FREE" && item.icon === "MagicLink") {
+        //   return null
+        // }
         return (
           <Flex
             onClick={() => openSidebar(item.id)}

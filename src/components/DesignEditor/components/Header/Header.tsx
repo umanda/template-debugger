@@ -12,6 +12,7 @@ import {
   Select,
   Spacer,
   Stack,
+  Text,
   Textarea,
   Tooltip,
   useDisclosure,
@@ -60,6 +61,7 @@ import { selectFonts } from "~/store/fonts/selector"
 import { initialOptions, TextState } from "../Toolbox/Text"
 import { loadFonts, loadGraphicTemplate } from "~/utils/fonts"
 import { previewParam } from "~/interfaces/template"
+import Upgrade from "~/components/Icons/Upgrade"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectListProjects: string = import.meta.env.VITE_REDIRECT_PROJECTS
@@ -70,7 +72,6 @@ export default function Header() {
   const { onOpenPreview } = useIsOpenPreview()
   const scenes: any = useScenes()
   const user = useSelector(selectUser)
-  //   const [typeSign, setTypeSign] = useState("signin")
   const activeScene: any = useActiveScene()
   const [state, setState] = useState({
     undo: 0,
@@ -98,6 +99,7 @@ export default function Header() {
     plan: projectSelect?.plan ? projectSelect.plan : "FREE",
     visibility: projectSelect?.frame?.visibility ? projectSelect.frame : "private"
   })
+  const [daysTrial, setDaysTrial] = useState<number>(30)
 
   React.useEffect(() => {
     !aiGenerate && functionSave()
@@ -119,13 +121,14 @@ export default function Header() {
 
   useEffect(() => {
     try {
-      if (activeScene && user.type !== "admin") {
+      if (activeScene && user?.type !== "admin") {
         functionSave()
       }
     } catch {}
   }, [stateChange])
 
   React.useEffect(() => {
+    setDaysTrial(Math.round(30 - Math.abs(Date.now() - user?.free_trial_time * 1000) / (1000 * 3600 * 24)))
     validateButtonSave()
   }, [])
 
@@ -379,10 +382,21 @@ export default function Header() {
             </PopoverContent>
           </Popover>
         )}
+        {user.plan === "FREE" && (
+          <Button
+            bg={daysTrial <= 2 ? "#F6C4D8" : daysTrial <= 6 ? "#FCCFBB" : daysTrial <= 8 ? "#FFEAD9" : "white"}
+            variant="outline"
+            _hover={{ cursor: "pointer" }}
+            rightIcon={<Upgrade size={24} />}
+          >
+            <Text marginRight="10px">{daysTrial} days left on free trial</Text>
+            <Text fontWeight="bold">Upgrade</Text>
+          </Button>
+        )}
         <ShareMenu functionSave={functionSave} />
         <Button
-          className="btn-preview"
-          colorScheme={"orange"}
+          variant="outline"
+          _hover={{ cursor: "pointer" }}
           onClick={() => {
             editor.design.activeScene.objects.deselect()
             onOpenPreview()
@@ -649,7 +663,8 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
     <Popover placement="bottom-start" isOpen={isOpen} onClose={onClose}>
       <PopoverTrigger>
         <Button
-          colorScheme={"brand"}
+          variant="outline"
+          _hover={{ cursor: "pointer" }}
           rightIcon={<Share size={16} />}
           onClick={() => {
             user ? onToggle() : null

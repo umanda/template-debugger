@@ -7,10 +7,23 @@ import Canvas from "./components/Canvas"
 import Footer from "./components/Footer/Footer"
 import useResourcesContext from "~/hooks/useResourcesContext"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
+import { useEffect } from "react"
+import { useSelector } from "react-redux"
+import { selectUser } from "~/store/user/selector"
+const redirectHome = import.meta.env.VITE_REDIRECT_HOME
 
 export default function DesignEditor() {
   const { loadCanva, downloadCanva } = useResourcesContext()
   const { isSidebarVisible } = useDesignEditorContext()
+  const user = useSelector(selectUser)
+
+  useEffect(() => {
+    if (user?.plan === "FREE") {
+      if (Math.round(30 - Math.abs(Date.now() - user?.free_trial_time * 1000) / (1000 * 3600 * 24)) <= 0) {
+        window.location.href = redirectHome
+      }
+    }
+  }, [])
 
   return (
     <Flex h="100vh" w="100vw" flexDirection={"column"}>

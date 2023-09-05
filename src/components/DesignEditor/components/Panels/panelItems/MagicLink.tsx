@@ -1,6 +1,8 @@
 import { Box, Button, Center, Flex, Image, Text, Textarea, useDisclosure, useToast } from "@chakra-ui/react"
 import { useCallback, useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+import Information from "~/components/Icons/Information"
+import MagicLink from "~/components/Icons/MagicLink"
 import GenerateIADesign from "~/components/Modals/GenerateIADesign"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import { useActiveScene, useEditor } from "~/layerhub"
@@ -16,12 +18,13 @@ export default function () {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [dataText, setDataText] = useState<string>("")
   const activeScene = useActiveScene()
-  const [err, setErr] = useState<string>(null)
   const user = useSelector(selectUser)
   const userPromt = localStorage.getItem("user_prompt")
   const toast = useToast()
+  const [countFreeRequest, setCountFreeRequest] = useState<number>(0)
 
   useEffect(() => {
+    setCountFreeRequest(user.count_free_requests)
     if (userPromt !== null) {
       setDataText(userPromt)
       localStorage.removeItem("user_prompt")
@@ -35,8 +38,8 @@ export default function () {
       activeScene.json.objects.length > 2 && (await editor.design.addScene())
       await loadGraphicTemplate(resolve.project)
       await editor.design.scenes[editor.design.scenes.length - 1].setScene(resolve.project.scenes[0])
-      setErr(null)
       onClose()
+      setCountFreeRequest(countFreeRequest - 1)
     } catch (err) {
       toast({
         title: err?.response?.data?.message ? err?.response?.data?.message : "NETWORK ERROR, PLEASE TRY AGAIN.",
@@ -47,7 +50,7 @@ export default function () {
       })
       onClose()
     }
-  }, [editor, dataText, activeScene])
+  }, [editor, dataText, activeScene, countFreeRequest])
 
   return (
     <Flex
@@ -60,7 +63,7 @@ export default function () {
         flexDirection: "column"
       }}
     >
-      {user.plan === "HERO" ? (
+      {user.plan === "HERO" || user.count_free_requests > 0 ? (
         <>
           <GenerateIADesign isOpen={isOpen} onClose={onClose} />
           <Text>Your Text</Text>
@@ -76,12 +79,29 @@ export default function () {
           <Text fontSize="12px" color="#7D8590" textAlign="right">
             {dataText?.length ? dataText?.length : 0} / 13000
           </Text>
-          <Button marginBottom="20px" w="min" colorScheme={"brand"} onClick={() => generateDesign()}>
+          <Button
+            isDisabled={countFreeRequest === 0 ? true : false}
+            marginBottom="20px"
+            w="min"
+            colorScheme={"brand"}
+            onClick={() => generateDesign()}
+          >
             Generate
           </Button>
-          <Center fontWeight={600} color="red">
-            {err}
-          </Center>
+          {user.count_free_requests > 0 && (
+            <Flex justify="center" flexDir="column" gap="15px">
+              <Flex
+                color={countFreeRequest <= 5 ? "#911956" : countFreeRequest <= 10 ? "#FF8B55" : "#545465"}
+                gap="5px"
+              >
+                <Information size={24} />
+                {countFreeRequest === 0 ? "No auto-generations left" : `${countFreeRequest} auto-generations left`}
+              </Flex>
+              <Button size="xs" color="#5456F5" variant="solid" bg="#EEFCFD" leftIcon={<MagicLink size={20} />}>
+                Unlock infinite auto-generations! Upgrade now
+              </Button>
+            </Flex>
+          )}
         </>
       ) : (
         <Center h="full" flexDir="column">
