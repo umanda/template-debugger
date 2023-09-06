@@ -7,6 +7,8 @@ import GenerateIADesign from "~/components/Modals/GenerateIADesign"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"
 import { useActiveScene, useEditor } from "~/layerhub"
 import * as api from "~/services/api"
+import { useAppDispatch } from "~/store/store"
+import { reduceFreeRequest } from "~/store/user/action"
 import { selectUser } from "~/store/user/selector"
 import { loadGraphicTemplate } from "~/utils/fonts"
 
@@ -21,10 +23,9 @@ export default function () {
   const user = useSelector(selectUser)
   const userPromt = localStorage.getItem("user_prompt")
   const toast = useToast()
-  const [countFreeRequest, setCountFreeRequest] = useState<number>(0)
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
-    setCountFreeRequest(user.count_free_requests)
     if (userPromt !== null) {
       setDataText(userPromt)
       localStorage.removeItem("user_prompt")
@@ -39,18 +40,18 @@ export default function () {
       await loadGraphicTemplate(resolve.project)
       await editor.design.scenes[editor.design.scenes.length - 1].setScene(resolve.project.scenes[0])
       onClose()
-      setCountFreeRequest(countFreeRequest - 1)
+      dispatch(reduceFreeRequest(user.count_free_requests - 1))
     } catch (err) {
       toast({
         title: err?.response?.data?.message ? err?.response?.data?.message : "NETWORK ERROR, PLEASE TRY AGAIN.",
         status: "error",
         position: "top-right",
-        duration: 3000,
+        duration: 4000,
         isClosable: true
       })
       onClose()
     }
-  }, [editor, dataText, activeScene, countFreeRequest])
+  }, [editor, dataText, activeScene, user])
 
   return (
     <Flex
@@ -63,7 +64,7 @@ export default function () {
         flexDirection: "column"
       }}
     >
-      {user.plan === "HERO" || user.count_free_requests !== undefined ? (
+      {user?.plan === "HERO" || user?.count_free_requests !== undefined ? (
         <>
           <GenerateIADesign isOpen={isOpen} onClose={onClose} />
           <Text>Your Text</Text>
@@ -80,7 +81,7 @@ export default function () {
             {dataText?.length ? dataText?.length : 0} / 13000
           </Text>
           <Button
-            isDisabled={countFreeRequest === 0 ? true : false}
+            isDisabled={user?.count_free_requests === 0 ? true : false}
             marginBottom="20px"
             w="min"
             colorScheme={"brand"}
@@ -88,14 +89,18 @@ export default function () {
           >
             Generate
           </Button>
-          {user.count_free_requests >= 0 && (
+          {user?.count_free_requests >= 0 && (
             <Flex justify="center" flexDir="column" gap="15px">
               <Flex
-                color={countFreeRequest <= 5 ? "#911956" : countFreeRequest <= 10 ? "#FF8B55" : "#545465"}
+                color={
+                  user?.count_free_requests <= 5 ? "#911956" : user?.count_free_requests <= 10 ? "#FF8B55" : "#545465"
+                }
                 gap="5px"
               >
                 <Information size={24} />
-                {countFreeRequest === 0 ? "No auto-generations left" : `${countFreeRequest} auto-generations left`}
+                {user?.count_free_requests === 0
+                  ? "No auto-generations left"
+                  : `${user?.count_free_requests} auto-generations left`}
               </Flex>
               <Button
                 onClick={() => (window.location.href = redirectPayments)}

@@ -7,6 +7,7 @@ export const setUser = createAction<User>("user/setUser")
 export const removeUser = createAction<void>("user/setremoveUser")
 export const setUpdateProfile = createAction<Partial<User>>("user/setupdateProfile")
 export const setListDrawifiers = createAction<IDrawifier[]>("drawifier/setListDrawifiers")
+export const setReduceFreeRequest = createAction<number>("user/setReduceFreeRequest")
 
 export const signInByToken = createAsyncThunk<any, string, { rejectValue: boolean }>(
   "user/signInByToken",
@@ -64,6 +65,7 @@ export const getListDrawifiers = createAsyncThunk<void, Partial<ISearchDrawifier
     }
   }
 )
+
 export const logout = createAsyncThunk<any, void, { rejectValue: boolean }>(
   "user/logout",
   async (_, { dispatch, rejectWithValue }) => {
@@ -72,6 +74,18 @@ export const logout = createAsyncThunk<any, void, { rejectValue: boolean }>(
       dispatch(removeUser())
       dispatch(clearResourceComposite([]))
       dispatch(clearResourceUpload([]))
+      return true
+    } catch (error: any) {
+      return rejectWithValue(false)
+    }
+  }
+)
+
+export const reduceFreeRequest = createAsyncThunk<any, number, { rejectValue: boolean }>(
+  "user/freeRequest",
+  async (count, { dispatch, rejectWithValue }) => {
+    try {
+      dispatch(setReduceFreeRequest(count))
       return true
     } catch (error: any) {
       return rejectWithValue(false)

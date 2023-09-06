@@ -169,7 +169,7 @@ export default function Header() {
 
   const functionSave = useCallback(async () => {
     try {
-      if (user.type !== "admin") {
+      if (user?.type !== "admin") {
         let designJSON: any = design?.toJSON()
         designJSON.key = id
         designJSON.is_updated = true
@@ -259,7 +259,7 @@ export default function Header() {
             aria-label=""
             icon={<DrawifyD size={24} />}
             onClick={() =>
-              user.type === "admin"
+              user?.type === "admin"
                 ? (window.location.href = redirectUserTemplateManager)
                 : (window.location.href = redirectUserProfilePage)
             }
@@ -293,7 +293,7 @@ export default function Header() {
       </Flex>
       <DesignName />
       <Flex gap={"1rem"} alignItems={"center"} paddingRight="1rem">
-        {user.type === "admin" && (
+        {user?.type === "admin" && (
           <Popover placement="bottom-start" isOpen={isOpenSave} onClose={onCloseSave}>
             <PopoverTrigger>
               <Button
@@ -383,9 +383,9 @@ export default function Header() {
             </PopoverContent>
           </Popover>
         )}
-        {user.plan === "FREE" && (
+        {user?.plan === "FREE" && (
           <Button
-            bg={daysTrial <= 2 ? "#F6C4D8" : daysTrial <= 6 ? "#FCCFBB" : daysTrial <= 8 ? "#FFEAD9" : "white"}
+            bg={daysTrial <= 3 ? "#F6C4D8" : daysTrial <= 7 ? "#FCCFBB" : daysTrial <= 14 ? "#FFEAD9" : "white"}
             variant="outline"
             _hover={{ cursor: "pointer" }}
             rightIcon={<Upgrade size={24} />}
@@ -436,7 +436,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   }, [currentScene])
 
   const handleDownload = async (type: string) => {
-    if (user.plan !== "FREE" || type === "jpg") {
+    if (user?.plan !== "FREE" || type === "jpg") {
       setDownloadCanva(true)
       setStateProgressValue(0.1)
       toast({
@@ -819,6 +819,7 @@ function FileMenu() {
 
   const handleLogout = async () => {
     const resolve = await dispatch(logout())
+    console.log("logout")
     if (resolve?.payload) {
       toast({
         title: "SUCCESSFULLY CLOSED SESSION.",
@@ -1145,7 +1146,7 @@ function UserMenu() {
         duration: 5000,
         isClosable: true
       })
-      window.location.href = redirectLogout
+      // window.location.href = redirectLogout
     } else {
       toast({
         title: "LOGOUT UNSUCCESSFULLY.",
@@ -1184,7 +1185,7 @@ function UserMenu() {
                   Upgrade
                 </Flex>
               </MenuOption>
-              <MenuOption onClick={() => {}}>
+              <MenuOption onClick={handleLogout}>
                 <Flex gap="0.25rem" alignItems={"center"}>
                   <Logout size={24} />
                   Logout

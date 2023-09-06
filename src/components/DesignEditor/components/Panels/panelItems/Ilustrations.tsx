@@ -292,7 +292,7 @@ export default function Ilustrations() {
           preview: resource.url.concat("?" + nanoid(6)),
           erasable: false,
           watermark:
-            resource.license === "paid" && user.plan === "FREE"
+            resource.license === "paid" && user?.plan === "FREE"
               ? `${watermarkURL}?${Math.random().toString(36).substring(2, 10)}`
               : undefined
         }
@@ -479,7 +479,7 @@ export default function Ilustrations() {
               type: "StaticVector",
               name: "Illustration",
               erasable: false,
-              watermark: illustration.license === "paid" && user.plan === "FREE" ? watermarkURL : undefined,
+              watermark: illustration.license === "paid" && user?.plan === "FREE" ? watermarkURL : undefined,
               preview: illustration.url,
               src: `${illustration.url}?${Math.random().toString(36).substring(2, 10)}`
             },
@@ -814,13 +814,13 @@ export default function Ilustrations() {
                 ) : stateRecent === true ? (
                   <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
                 ) : (
-                  user.plan !== "Hero" && (
+                  user?.plan !== "Hero" && (
                     <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noImages.png"} />
                   )
                 )}
                 <Flex w="full" padding="10px">
                   {validateContent === "noResult" ? (
-                    user.plan !== "HERO" ? (
+                    user?.plan !== "HERO" ? (
                       <Flex flexDir="column" gap="20px" align="center">
                         <Text>Sorry! Your current plan does not support this feature.</Text>
                         <Text>
@@ -938,13 +938,13 @@ export default function Ilustrations() {
                   ) : stateRecent === true ? (
                     <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noIllustrations.svg"} />
                   ) : (
-                    user.plan !== "Hero" && (
+                    user?.plan !== "Hero" && (
                       <img src={"https://drawify-images.s3.eu-west-3.amazonaws.com/editor/noImages.png"} />
                     )
                   )}
                   <Flex w="full" padding="10px">
                     {validateContent === "noResult" ? (
-                      user.plan !== "HERO" ? (
+                      user?.plan !== "HERO" ? (
                         <Flex flexDir="column" gap="20px" align="center">
                           <Text>Sorry! Your current plan does not support this feature.</Text>
                           <Text>
