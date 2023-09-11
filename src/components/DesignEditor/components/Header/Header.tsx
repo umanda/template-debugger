@@ -819,7 +819,6 @@ function FileMenu() {
 
   const handleLogout = async () => {
     const resolve = await dispatch(logout())
-    console.log("logout")
     if (resolve?.payload) {
       toast({
         title: "SUCCESSFULLY CLOSED SESSION.",
@@ -1146,7 +1145,7 @@ function UserMenu() {
         duration: 5000,
         isClosable: true
       })
-      // window.location.href = redirectLogout
+      window.location.href = redirectLogout
     } else {
       toast({
         title: "LOGOUT UNSUCCESSFULLY.",
