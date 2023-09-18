@@ -66,7 +66,7 @@ const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectListProjects: string = import.meta.env.VITE_REDIRECT_PROJECTS
 const redirectPayments = import.meta.env.VITE_PAYMENTS
-const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
+const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "template-manager?status=unpublished"
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -257,7 +257,8 @@ export default function Header() {
           <IconButton
             variant={"ghost"}
             aria-label=""
-            icon={<DrawifyD size={24} />}
+            w="100px"
+            icon={<DrawifyD size={30} />}
             onClick={() =>
               user?.type === "admin"
                 ? (window.location.href = redirectUserTemplateManager)

@@ -9,10 +9,7 @@ export default function GenerateIADesign({ isOpen, onClose }: { isOpen: boolean;
           <Text fontWeight={500} color="#5456F5" fontSize="24px">
             Your composition is being generated
           </Text>
-          <Image
-            boxSize="max"
-            src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/magic_wand_animation.gif"
-          />
+          <Image boxSize="max" src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/animated_maia.gif" />
           <Text fontWeight={400} color="#545465" fontSize="16px">
             Images being thrown around...
           </Text>
