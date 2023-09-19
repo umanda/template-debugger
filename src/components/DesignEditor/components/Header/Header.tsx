@@ -107,7 +107,7 @@ export default function Header() {
   }, [aiGenerate])
 
   React.useEffect(() => {
-    if (user.is_free_trial !== true || user.plan === "FREE") {
+    if (user?.is_free_trial !== true && user.plan === "FREE") {
       window.location.href = redirectUserProfilePage
     }
   }, [])
