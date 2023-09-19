@@ -107,6 +107,12 @@ export default function Header() {
   }, [aiGenerate])
 
   React.useEffect(() => {
+    if (user.is_free_trial !== true || user.plan === "FREE") {
+      window.location.href = redirectUserProfilePage
+    }
+  }, [])
+
+  React.useEffect(() => {
     let watcher = async () => {
       setStateJson(JSON.stringify(editor.design.toJSON()))
     }
@@ -384,7 +390,7 @@ export default function Header() {
             </PopoverContent>
           </Popover>
         )}
-        {user?.plan === "FREE" && (
+        {user?.is_free_trial === true && (
           <Button
             bg={daysTrial <= 3 ? "#F6C4D8" : daysTrial <= 7 ? "#FCCFBB" : daysTrial <= 14 ? "#FFEAD9" : "white"}
             variant="outline"
