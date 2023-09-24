@@ -828,7 +828,7 @@ function FileMenu() {
     const resolve = await dispatch(logout())
     if (resolve?.payload) {
       toast({
-        title: "SUCCESSFULLY CLOSED SESSION.",
+        title: "LOGGED OUT SUCCESSFULLY.",
         status: "success",
         position: "top",
         duration: 5000,
@@ -1146,7 +1146,7 @@ function UserMenu() {
     const resolve = await dispatch(logout())
     if (resolve?.payload) {
       toast({
-        title: "SUCCESSFULLY CLOSED SESSION.",
+        title: "LOGGED OUT SUCCESSFULLY.",
         status: "success",
         position: "top",
         duration: 5000,

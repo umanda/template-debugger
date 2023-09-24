@@ -31,7 +31,6 @@ export default function PanelItem() {
     setIsSidebarVisible(false)
   }, [isSidebarVisible])
 
-  //@ts-ignore
   const Panel = PanelItems[statePanel.selected]
 
   const Menu = PanelItems[stateMenu.selected]
