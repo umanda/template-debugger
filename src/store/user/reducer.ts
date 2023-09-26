@@ -1,7 +1,6 @@
 import { createReducer } from "@reduxjs/toolkit"
 import { Drawifier, IDrawifier, User } from "../../interfaces/user"
-import { removeUser, setListDrawifiers, setUpdateProfile, setUser } from "./action"
-
+import { removeUser, setListDrawifiers, setReduceFreeRequest, setUpdateProfile, setUser } from "./action"
 
 export interface UserState {
   user: User | Drawifier | null
@@ -20,7 +19,11 @@ export const userReducer = createReducer(initialState, (builder) => {
   })
   builder.addCase(setUpdateProfile, (state, { payload }) => {
     state.user = { ...state.user, ...(payload as Required<User>) }
-  })
+  }),
+    builder.addCase(setReduceFreeRequest, (state, { payload }) => {
+      state.user.count_free_requests = payload
+      state.user = { ...state.user }
+    })
 })
 
 interface ListDrawifiersState {

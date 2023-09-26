@@ -23,6 +23,9 @@ export default function Toolbox() {
     if (selectionType) {
       if (selectionType.length > 1) {
         setState({ toolbox: "Multiple" })
+      } else if (selectionType[0] === "Multiple") {
+        setState({ toolbox: selectionType[0] })
+        setActiveMenu("")
       } else {
         setState({ toolbox: selectionType[0] })
       }

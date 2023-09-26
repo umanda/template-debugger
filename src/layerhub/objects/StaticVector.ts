@@ -13,6 +13,7 @@ class StaticVectorObject extends fabric.Group {
   private watermarkObject: fabric.Group
 
   public updateLayerColor(prev: string, next: string) {
+    console.log(this.objectColors)
     const sameObjects = this.objectColors[prev]
     if (sameObjects) {
       sameObjects.forEach((c) => {

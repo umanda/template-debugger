@@ -248,7 +248,7 @@ export default function Upload() {
   }
 
   const handleInputFileRefClick = () => {
-    if (user.plan !== "FREE") {
+    if (user?.plan !== "FREE") {
       inputFileRef.current?.click()
     } else {
       onOpenUpgradeUser()

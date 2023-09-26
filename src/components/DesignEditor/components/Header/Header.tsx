@@ -12,6 +12,7 @@ import {
   Select,
   Spacer,
   Stack,
+  Text,
   Textarea,
   Tooltip,
   useDisclosure,
@@ -60,17 +61,18 @@ import { selectFonts } from "~/store/fonts/selector"
 import { initialOptions, TextState } from "../Toolbox/Text"
 import { loadFonts, loadGraphicTemplate } from "~/utils/fonts"
 import { previewParam } from "~/interfaces/template"
+import Upgrade from "~/components/Icons/Upgrade"
 const redirectLogout = import.meta.env.VITE_LOGOUT
 const redirectUserProfilePage: string = import.meta.env.VITE_REDIRECT_PROFILE
 const redirectListProjects: string = import.meta.env.VITE_REDIRECT_PROJECTS
-const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "/template-manager?status=unpublished"
+const redirectPayments = import.meta.env.VITE_PAYMENTS
+const redirectUserTemplateManager: string = import.meta.env.VITE_APP_DOMAIN + "template-manager?status=unpublished"
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { onOpenPreview } = useIsOpenPreview()
   const scenes: any = useScenes()
   const user = useSelector(selectUser)
-  //   const [typeSign, setTypeSign] = useState("signin")
   const activeScene: any = useActiveScene()
   const [state, setState] = useState({
     undo: 0,
@@ -98,10 +100,17 @@ export default function Header() {
     plan: projectSelect?.plan ? projectSelect.plan : "FREE",
     visibility: projectSelect?.frame?.visibility ? projectSelect.frame : "private"
   })
+  const [daysTrial, setDaysTrial] = useState<number>(30)
 
   React.useEffect(() => {
     !aiGenerate && functionSave()
   }, [aiGenerate])
+
+  React.useEffect(() => {
+    if (user?.is_free_trial !== true && user.plan === "FREE") {
+      window.location.href = redirectUserProfilePage
+    }
+  }, [])
 
   React.useEffect(() => {
     let watcher = async () => {
@@ -119,13 +128,14 @@ export default function Header() {
 
   useEffect(() => {
     try {
-      if (activeScene && user.type !== "admin") {
+      if (activeScene && user?.type !== "admin") {
         functionSave()
       }
     } catch {}
   }, [stateChange])
 
   React.useEffect(() => {
+    setDaysTrial(Math.round(30 - Math.abs(Date.now() - user?.free_trial_time * 1000) / (1000 * 3600 * 24)))
     validateButtonSave()
   }, [])
 
@@ -165,7 +175,7 @@ export default function Header() {
 
   const functionSave = useCallback(async () => {
     try {
-      if (user.type !== "admin") {
+      if (user?.type !== "admin") {
         let designJSON: any = design?.toJSON()
         designJSON.key = id
         designJSON.is_updated = true
@@ -253,9 +263,10 @@ export default function Header() {
           <IconButton
             variant={"ghost"}
             aria-label=""
-            icon={<DrawifyD size={24} />}
+            w="100px"
+            icon={<DrawifyD size={30} />}
             onClick={() =>
-              user.type === "admin"
+              user?.type === "admin"
                 ? (window.location.href = redirectUserTemplateManager)
                 : (window.location.href = redirectUserProfilePage)
             }
@@ -289,7 +300,7 @@ export default function Header() {
       </Flex>
       <DesignName />
       <Flex gap={"1rem"} alignItems={"center"} paddingRight="1rem">
-        {user.type === "admin" && (
+        {user?.type === "admin" && (
           <Popover placement="bottom-start" isOpen={isOpenSave} onClose={onCloseSave}>
             <PopoverTrigger>
               <Button
@@ -379,10 +390,22 @@ export default function Header() {
             </PopoverContent>
           </Popover>
         )}
+        {user?.is_free_trial === true && (
+          <Button
+            bg={daysTrial <= 3 ? "#F6C4D8" : daysTrial <= 7 ? "#FCCFBB" : daysTrial <= 14 ? "#FFEAD9" : "white"}
+            variant="outline"
+            _hover={{ cursor: "pointer" }}
+            rightIcon={<Upgrade size={24} />}
+            onClick={() => (window.location.href = redirectPayments)}
+          >
+            <Text marginRight="10px">{daysTrial} days left on free trial</Text>
+            <Text fontWeight="bold">Upgrade</Text>
+          </Button>
+        )}
         <ShareMenu functionSave={functionSave} />
         <Button
-          className="btn-preview"
-          colorScheme={"orange"}
+          variant="outline"
+          _hover={{ cursor: "pointer" }}
           onClick={() => {
             editor.design.activeScene.objects.deselect()
             onOpenPreview()
@@ -420,7 +443,7 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
   }, [currentScene])
 
   const handleDownload = async (type: string) => {
-    if (user.plan !== "FREE" || type === "jpg") {
+    if (user?.plan !== "FREE" || type === "jpg") {
       setDownloadCanva(true)
       setStateProgressValue(0.1)
       toast({
@@ -649,7 +672,8 @@ function ShareMenu({ functionSave }: { functionSave: () => Promise<void> }) {
     <Popover placement="bottom-start" isOpen={isOpen} onClose={onClose}>
       <PopoverTrigger>
         <Button
-          colorScheme={"brand"}
+          variant="outline"
+          _hover={{ cursor: "pointer" }}
           rightIcon={<Share size={16} />}
           onClick={() => {
             user ? onToggle() : null
@@ -804,7 +828,7 @@ function FileMenu() {
     const resolve = await dispatch(logout())
     if (resolve?.payload) {
       toast({
-        title: "SUCCESSFULLY CLOSED SESSION.",
+        title: "LOGGED OUT SUCCESSFULLY.",
         status: "success",
         position: "top",
         duration: 5000,
@@ -1122,7 +1146,7 @@ function UserMenu() {
     const resolve = await dispatch(logout())
     if (resolve?.payload) {
       toast({
-        title: "SUCCESSFULLY CLOSED SESSION.",
+        title: "LOGGED OUT SUCCESSFULLY.",
         status: "success",
         position: "top",
         duration: 5000,
@@ -1161,12 +1185,13 @@ function UserMenu() {
                   Profile
                 </Flex>
               </MenuOption>
-
-              <MenuOption
-                onClick={() => {
-                  handleLogout()
-                }}
-              >
+              <MenuOption onClick={() => (window.location.href = redirectPayments)}>
+                <Flex gap="0.25rem" alignItems={"center"}>
+                  <Upgrade size={24} />
+                  Upgrade
+                </Flex>
+              </MenuOption>
+              <MenuOption onClick={handleLogout}>
                 <Flex gap="0.25rem" alignItems={"center"}>
                   <Logout size={24} />
                   Logout

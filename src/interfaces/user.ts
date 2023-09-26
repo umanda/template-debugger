@@ -21,7 +21,10 @@ export interface User {
   downloaded: number
   plan?: string
   token?: string
-  type?:string
+  type?: string
+  free_trial_time?: number
+  count_free_requests?: number
+  is_free_trial?: boolean
 }
 export interface Drawifier extends User {}
 
