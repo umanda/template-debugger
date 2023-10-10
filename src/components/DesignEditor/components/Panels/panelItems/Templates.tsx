@@ -464,6 +464,8 @@ export default function Template() {
           {listRecommend?.words.map((obj, index) => (
             <Box key={index}>
               <Button
+                w="126px"
+                maxW="126px"
                 onClick={() => {
                   makeChangeInput(obj)
                   makeFilter({ input: [obj] })
@@ -551,11 +553,6 @@ export default function Template() {
                               {template.name}
                             </Text>
                             <Spacer />
-                            {template.plan !== "FREE" && (
-                              <Center bg="#F6D056" color="white" borderRadius="4px" boxSize="21px">
-                                <Pro size={20} />
-                              </Center>
-                            )}
                             {user && (
                               <IconButtonLike
                                 listFavorite={selectListFavoriteTemplates}

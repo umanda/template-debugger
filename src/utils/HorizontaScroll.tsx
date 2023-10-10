@@ -67,7 +67,7 @@ function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) 
     requestScrollLeft: false,
     requestScrollRight: false,
     step: 10,
-    distance: 150,
+    distance: 135,
     speed: 10,
     baseWidth: 360
   })
@@ -75,7 +75,6 @@ function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) 
   const contentWrapper = React.useRef<HTMLDivElement>(null)
 
   const updateScroll = () => {
-
     if (contentWrapper.current) {
       let requestScrollLeft = true
       let requestScrollRight = true
@@ -88,7 +87,7 @@ function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) 
       if (scrolls) {
         requestScrollLeft = false
         requestScrollRight = false
-      }  
+      }
       setState({ ...state, requestScrollLeft, requestScrollRight })
     }
   }
@@ -165,7 +164,6 @@ function HorizontalScroll({ children, config, scrolls }: HorizontalScrollProps) 
             background: "rgba(0, 0, 0, 0.2)",
             borderRadius: "24px"
           }
-
         }}
       >
         {children}

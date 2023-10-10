@@ -642,6 +642,8 @@ export default function Ilustrations() {
           {listRecommend.words.map((obj, index) => (
             <Box key={index}>
               <Button
+                w="126px"
+                maxW="126px"
                 onClick={() => {
                   makeChangeInput(obj)
                   makeFilter({ input: [obj] })
@@ -1134,11 +1136,6 @@ function IllustrationItem({
               <Box sx={{ fontSize: "12px" }}>{splitName(illustration?.drawifier?.name)[0]}</Box>
             </Flex>
             <Center gap={"0.25rem"}>
-              {illustration.license === "paid" && (
-                <Center boxSize="21px" sx={{ background: "#F6D056", color: "#FFFFFF", borderRadius: "4px" }}>
-                  <Pro size={40} />
-                </Center>
-              )}
               {user && (
                 <Center
                   onClick={() => {
@@ -1156,16 +1153,6 @@ function IllustrationItem({
         </Flex>
       ) : (
         <Flex position="absolute">
-          {illustration.license === "paid" && (
-            <Center
-              margin="5px"
-              position="absolute"
-              boxSize="21px"
-              sx={{ background: "#F6D056", color: "#FFFFFF", borderRadius: "4px" }}
-            >
-              <Pro size={40} />
-            </Center>
-          )}
           <Flex
             marginTop={stateTabs === 0 ? "115px" : "110px"}
             marginLeft={stateTabs === 0 ? "5px" : "110px"}
