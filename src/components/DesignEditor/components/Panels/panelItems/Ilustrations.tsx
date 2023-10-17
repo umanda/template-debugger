@@ -193,7 +193,11 @@ export default function Ilustrations() {
               query: {
                 drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
                 keywords:
-                  nameIllustration[0] === "" || nameIllustration[0] === undefined ? undefined : nameIllustration,
+                  nameIllustration[0] === "" || nameIllustration[0] === undefined
+                    ? undefined
+                    : nameIllustration[0] === "*" || nameIllustration[0] === "all"
+                    ? []
+                    : nameIllustration,
                 is_published: true,
                 is_ia: stateTabs === 0 ? false : true,
                 favorited: stateFavorite === true ? true : undefined,
@@ -256,7 +260,10 @@ export default function Ilustrations() {
         })
       })
       if (stateTabs === 0) {
-        if (nameIllustration[0] !== "") {
+        if (nameIllustration[0] === "" || nameIllustration[0] === "all") {
+          const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
+          setResourcesIllustration(validateResources)
+        } else {
           resolve?.sort((a, b) => b.count_drawings - a.count_drawings)
           const lastDraw = resolve.find(
             (r) => r?.drawifierId === resourcesIllustration[resourcesIllustration.length - 1]?.drawifierId
@@ -267,9 +274,6 @@ export default function Ilustrations() {
           setResourcesIllustration(
             resourcesIllustration.concat(resolve?.filter((r) => r?.drawifierId !== lastDraw?.drawifierId))
           )
-        } else {
-          const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
-          setResourcesIllustration(validateResources)
         }
       } else if (stateTabs === 1) {
         setResourcesIllustration(resourcesIllustration.concat(resolve))
@@ -666,6 +670,7 @@ export default function Ilustrations() {
                 if (stateTabs === 0) {
                   setNameIllustrationPrev([""])
                   setNameIllustration([""])
+                  initialState()
                 }
                 setStateFavorite(false)
                 setStateRecent(false)
@@ -673,7 +678,6 @@ export default function Ilustrations() {
                 setMore(true)
                 setOrder(["LAST_UPDATE"])
                 setOrderDrawifier([])
-                initialState()
                 setListRecommend({ words: [] })
                 setPage(0)
                 setNotIds([])
@@ -711,7 +715,35 @@ export default function Ilustrations() {
               <Scrollable autoHide={true}>
                 <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
                   {load ? (
-                    nameIllustration[0] !== "" ? (
+                    nameIllustration[0] === "" || nameIllustration[0] === "all" ? (
+                      <Flex flexDir="column">
+                        <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
+                          {resourcesIllustration.map(
+                            (illustration, index) =>
+                              illustration && (
+                                <IllustrationItem
+                                  makeDragObject={dragObject}
+                                  makeFavorite={makeFavorite}
+                                  addObject={() => addObject(illustration)}
+                                  illustration={illustration}
+                                  key={index}
+                                  listFavorite={selectListFavoriteResources}
+                                  stateTabs={stateTabs}
+                                />
+                              )
+                          )}
+                        </Box>
+                        <Button
+                          w="full"
+                          variant="outline"
+                          isLoading={loadMoreResources}
+                          visibility={more ? "visible" : "hidden"}
+                          onClick={fetchDataResource}
+                        >
+                          Load More
+                        </Button>
+                      </Flex>
+                    ) : (
                       <Flex marginTop="20px" marginInline="20px" flexDir="column">
                         {resourcesIllustration?.map((r, index) => (
                           <Flex flexDir="column" key={index} gap="5px" alignItems="center">
@@ -766,34 +798,6 @@ export default function Ilustrations() {
                           onClick={fetchDataResource}
                         >
                           Load more More
-                        </Button>
-                      </Flex>
-                    ) : (
-                      <Flex flexDir="column">
-                        <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
-                          {resourcesIllustration.map(
-                            (illustration, index) =>
-                              illustration && (
-                                <IllustrationItem
-                                  makeDragObject={dragObject}
-                                  makeFavorite={makeFavorite}
-                                  addObject={() => addObject(illustration)}
-                                  illustration={illustration}
-                                  key={index}
-                                  listFavorite={selectListFavoriteResources}
-                                  stateTabs={stateTabs}
-                                />
-                              )
-                          )}
-                        </Box>
-                        <Button
-                          w="full"
-                          variant="outline"
-                          isLoading={loadMoreResources}
-                          visibility={more ? "visible" : "hidden"}
-                          onClick={fetchDataResource}
-                        >
-                          Load More
                         </Button>
                       </Flex>
                     )
