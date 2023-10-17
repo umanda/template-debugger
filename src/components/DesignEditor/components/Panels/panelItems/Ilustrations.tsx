@@ -195,7 +195,7 @@ export default function Ilustrations() {
                 keywords:
                   nameIllustration[0] === "" || nameIllustration[0] === undefined
                     ? undefined
-                    : nameIllustration[0] === "*" || nameIllustration[0] === "all"
+                    : nameIllustration[0] === "*" || nameIllustration[0] === "all" || nameIllustrationPrev[0] === "*"
                     ? []
                     : nameIllustration,
                 is_published: true,
@@ -260,7 +260,7 @@ export default function Ilustrations() {
         })
       })
       if (stateTabs === 0) {
-        if (nameIllustration[0] === "" || nameIllustration[0] === "all") {
+        if (nameIllustration[0] === "" || nameIllustration[0] === "all" || nameIllustrationPrev[0] === "*") {
           const validateResources = lodash.uniqBy(resourcesIllustration.concat(resolve), "id")
           setResourcesIllustration(validateResources)
         } else {
@@ -396,7 +396,7 @@ export default function Ilustrations() {
 
   const makeBlur = useCallback(() => {
     setValidateContent(null)
-    if (nameIllustrationPrev[0]?.length > 2) {
+    if (nameIllustrationPrev[0]?.length > 2 || nameIllustrationPrev[0] === "*") {
       nameIllustrationPrev[0] !== nameIllustration[0] && makeFilter({ input: nameIllustrationPrev })
       setDisableTab(false)
     } else if (nameIllustrationPrev[0] === "") {
@@ -715,7 +715,7 @@ export default function Ilustrations() {
               <Scrollable autoHide={true}>
                 <InfiniteScroll hasMore={more} fetchData={fetchDataResource}>
                   {load ? (
-                    nameIllustration[0] === "" || nameIllustration[0] === "all" ? (
+                    nameIllustration[0] === "" || nameIllustration[0] === "all" || nameIllustrationPrev[0] === "*" ? (
                       <Flex flexDir="column">
                         <Box display="grid" gridTemplateColumns="1fr 1fr" gap="1rem" padding="1rem" w="full" h="full">
                           {resourcesIllustration.map(
