@@ -172,7 +172,12 @@ export default function Template() {
         limit: 10,
         query: {
           drawifier_ids: orderDrawifier[0] ? orderDrawifier : undefined,
-          keywords: nameTemplate[0]?.length > 0 ? nameTemplate : undefined,
+          keywords:
+            nameTemplate[0]?.length > 0
+              ? nameTemplate[0] === "all" || nameTemplate[0] === "*"
+                ? []
+                : nameTemplate
+              : undefined,
           plans: user?.plan === "FREE" ? ["FREE"] : user?.plan === "PRO" ? ["FREE", "PRO"] : undefined,
           favorited: stateFavorite === true ? true : undefined,
           used: stateRecent === true ? true : undefined,
@@ -303,7 +308,7 @@ export default function Template() {
     if (nameTemplatePrev[0]?.length > 2) {
       nameTemplatePrev[0] !== nameTemplate[0] && makeFilter({ input: nameTemplatePrev })
       setDisableTab(false)
-    } else if (nameTemplatePrev[0] === "") {
+    } else if (nameTemplatePrev[0] === "" || nameTemplatePrev[0] === "*") {
       if (
         nameTemplatePrev[0] === "" &&
         stateFavorite === false &&
@@ -464,6 +469,8 @@ export default function Template() {
           {listRecommend?.words.map((obj, index) => (
             <Box key={index}>
               <Button
+                w="126px"
+                maxW="126px"
                 onClick={() => {
                   makeChangeInput(obj)
                   makeFilter({ input: [obj] })
@@ -551,11 +558,6 @@ export default function Template() {
                               {template.name}
                             </Text>
                             <Spacer />
-                            {template.plan !== "FREE" && (
-                              <Center bg="#F6D056" color="white" borderRadius="4px" boxSize="21px">
-                                <Pro size={20} />
-                              </Center>
-                            )}
                             {user && (
                               <IconButtonLike
                                 listFavorite={selectListFavoriteTemplates}

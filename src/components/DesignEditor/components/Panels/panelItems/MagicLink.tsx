@@ -103,7 +103,7 @@ export default function () {
                   : `${user?.count_free_requests} auto-generations left`}
               </Flex>
               <Button
-                onClick={() => (window.location.href = redirectPayments)}
+                onClick={() => window.open(redirectPayments)}
                 size="xs"
                 color="#5456F5"
                 variant="solid"
