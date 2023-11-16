@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react"
-import { Button, Center, Flex, IconButton, Image, List, ListItem, Spacer } from "@chakra-ui/react"
+import { Button, Center, Flex, IconButton, Image, List, ListItem, Spacer, Text } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene } from "@layerhub-pro/react"
 import Lock from "~/components/Icons/Lock"
 import Unlock from "~/components/Icons/Unlock"
@@ -217,7 +217,7 @@ export default function Layer() {
       <Flex
         w="full"
         alignItems="center"
-        height="45px"
+        height="75px"
         paddingRight="20px"
         justify="center"
         flex={1}
@@ -294,7 +294,7 @@ export default function Layer() {
               ? "Illustration"
               : name}
           </Center>
-          <Spacer />
+          
           <IconButton
             onClick={handleFront}
             size="xs"
@@ -326,6 +326,15 @@ export default function Layer() {
             variant={"ghost"}
             icon={<Trash size={24} />}
           />
+        </Flex>
+        <Flex w="full">
+        <Center 
+            display="flex"
+            fontSize="12px"
+            padding="4px 2px"
+            fontWeight="bold"
+          > Object Id {object[0]?.id}</Center>
+          <Spacer />
         </Flex>
       </Flex>
     )

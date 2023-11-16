@@ -273,8 +273,8 @@ export default function Header() {
           />
         </Flex>
         <Flex padding={"0 1rem"} gap={"1rem"} alignItems={"center"}>
-          <FileMenu />
-          <Resize />
+          {/* <FileMenu /> */}
+         {/*  <Resize /> */}
           <Flex>
             <Tooltip label="Undo" fontSize="md">
               <IconButton
@@ -402,8 +402,8 @@ export default function Header() {
             <Text fontWeight="bold">Upgrade</Text>
           </Button>
         )}
-        <ShareMenu functionSave={functionSave} />
-        <Button
+        {/* <ShareMenu functionSave={functionSave} /> */}
+        {/* <Button
           variant="outline"
           _hover={{ cursor: "pointer" }}
           onClick={() => {
@@ -413,7 +413,7 @@ export default function Header() {
           rightIcon={<Play size={24} />}
         >
           Preview
-        </Button>
+        </Button> */}
         <UserMenu />
       </Flex>
     </Flex>

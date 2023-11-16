@@ -1,24 +1,24 @@
 export const PANEL_ITEMS = [
-  {
+  /* {
     id: "Templates",
     label: "Templates",
     icon: "Templates"
-  },
-  {
+  }, */
+  /* {
     id: "MagicLink",
     label: "Generate",
     icon: "MagicLink"
-  },
-  {
+  }, */
+  /* {
     id: "Pencil",
     label: "Draw",
     icon: "Pencil"
-  },
-  {
+  }, */
+  /* {
     id: "Illustrations",
     label: "Illustrations",
     icon: "Images"
-  },
+  }, */
   {
     id: "Shapes",
     label: "Shapes",
@@ -29,9 +29,9 @@ export const PANEL_ITEMS = [
     label: "Text",
     icon: "Text"
   },
-  {
+  /* {
     id: "Uploads",
     label: "Uploads",
     icon: "Uploads"
-  }
+  } */
 ]

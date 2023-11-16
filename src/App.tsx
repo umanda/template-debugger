@@ -15,7 +15,8 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/" element={state ? <Designer /> : <Loading setState={setState} state={state} />} />
+     <Route path="/" element={<Designer /> } />
+     {/*  <Route path="/" element={state ? <Designer /> : <Loading setState={setState} state={state} />} /> */}
       <Route path="/composer/" element={state ? <Designer /> : <Loading setState={setState} state={state} />} />
       <Route path="/composer/:id" element={state ? <Designer /> : <Loading setState={setState} state={state} />} />
     </Routes>
