@@ -6,6 +6,7 @@ import { getFonts } from "./store/fonts/action"
 import { useAppDispatch } from "./store/store"
 import { getListDrawifiers, signInByToken } from "./store/user/action"
 import { generateId } from "./utils/unique"
+import Home from "./home/Home"
 
 const redirectHome: string = import.meta.env.VITE_REDIRECT_HOME
 const redirectLogout = import.meta.env.VITE_LOGOUT
@@ -15,7 +16,7 @@ function App() {
 
   return (
     <Routes>
-     <Route path="/" element={<Designer /> } />
+     <Route path="/" element={<Home /> } />
      {/*  <Route path="/" element={state ? <Designer /> : <Loading setState={setState} state={state} />} /> */}
       <Route path="/composer/" element={state ? <Designer /> : <Loading setState={setState} state={state} />} />
       <Route path="/composer/:id" element={state ? <Designer /> : <Loading setState={setState} state={state} />} />
