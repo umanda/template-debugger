@@ -28,9 +28,9 @@ export const signin = createAsyncThunk<any, SigninDto, { rejectValue: boolean }>
     try {
       const user: any = await api.signin(args)
       dispatch(setUser({ ...user, email: args.email }))
-      const me = await api.userMe()
-      dispatch(setUser({ ...user, ...me }))
-      const plan = api.getsubscriptionMe()
+      //const me = await api.userMe()
+      //dispatch(setUser({ ...user, ...me }))
+      //const plan = api.getsubscriptionMe()
       return user
     } catch (err: any) {
       return rejectWithValue(err)
@@ -86,6 +86,22 @@ export const reduceFreeRequest = createAsyncThunk<any, number, { rejectValue: bo
   async (count, { dispatch, rejectWithValue }) => {
     try {
       dispatch(setReduceFreeRequest(count))
+      return true
+    } catch (error: any) {
+      return rejectWithValue(false)
+    }
+  }
+)
+
+
+// For app
+
+export const signOut = createAsyncThunk<any, void, { rejectValue: boolean }>(
+  "user/signOut",
+  async (_, { dispatch, rejectWithValue }) => {
+    localStorage.setItem("token", "")
+    try {
+      dispatch(removeUser())
       return true
     } catch (error: any) {
       return rejectWithValue(false)

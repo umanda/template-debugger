@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import {
   Box,
@@ -13,45 +13,78 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Textarea
+  Textarea,
+  Alert,
+  useToast
 } from "@chakra-ui/react"
+import Navigation from "./Navigation"
+import { useSelector } from "react-redux"
+import { selectUser } from "~/store/user/selector"
+import { combineReducers } from "@reduxjs/toolkit"
+import { NavigateFunction, useNavigate } from "react-router-dom"
 
 function Home() {
+  const navigate: NavigateFunction = useNavigate()
   const [inputValue, setInputValue] = useState<string>("")
   const [textareaValue, setTextareaValue] = useState<string>("")
+  const user = useSelector(selectUser)
+  const toast = useToast()
+  useEffect(() => {
+    if (user !== null) {
+      localStorage.setItem("token", user?.token)
+    }
+  }, [user])
 
   const handleDebugClick = () => {
-    // Save textarea data in localstorage under ai_generated_data
-    localStorage.setItem("ai_generated_data", textareaValue)
+    if (user === null) {
+      navigate("/auth/sign-in")
+    } else {
+      if (user.plan !== "HERO") {
+        if (!toast.isActive("maia-busy")) {
+          tostMessage()
+        }
+      } else {
+        loadDebugger()
+      }
+    }
+  }
 
-    // Save Input Data in localstorage under token
-    localStorage.setItem("token", inputValue)
-
-    // Save ai_generated === true
+  const loadDebugger = () => {
     localStorage.setItem("ai_generated", "true")
-
-    // Redirect to /composer/
+    localStorage.setItem("ai_generated_data", textareaValue)
+    localStorage.setItem("user_prompt", "")
     window.location.href = "/composer/"
+  }
+
+  const tostMessage = () => {
+    toast({
+      id: "maia-busy",
+      position: "bottom",
+      duration: 9000,
+      isClosable: true,
+      render: () => (
+        <Alert status="warning" variant="left-accent">
+          <Text as={"blockquote"} fontSize={"lg"} textAlign={"center"} maxW={"4xl"}>
+            Hagrid went for Romania to collect new Dragons. Please comeback later.
+          </Text>
+        </Alert>
+      )
+    })
   }
 
   return (
     <>
+      <Navigation />
       <Container maxW={"3xl"}>
         <Stack as={Box} textAlign={"center"} spacing={{ base: 8, md: 14 }} py={{ base: 20, md: 36 }}>
           <Heading fontWeight={600} fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }} lineHeight={"110%"}>
             Let's Debug <br />
-            <Text as={"span"} color={"#ff5d12"}>
+            <Text as={"span"} bgGradient="linear(to-r, primary.500,secondary.300)" bgClip="text">
               Drawify Templates & Projects
             </Text>
           </Heading>
-          <Text color={"gray.500"}>
-            Add your authentication Token and Project / Template JSON data and choose debug
-          </Text>
+
           <Stack>
-            <FormControl id="token">
-              <FormLabel>Auth Token</FormLabel>
-              <Input type="text" name="token" value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
-            </FormControl>
             <FormControl id="json">
               <FormLabel>JSON</FormLabel>
               <Textarea
@@ -67,15 +100,18 @@ function Home() {
               bg={"#ff5d12"}
               rounded={"4px"}
               fontWeight={600}
-              color={"white"}
+              minWidth={"200px"}
               fontSize={"16"}
-              height={"40px"}
-              px={8}
+              px={6}
+              py={6}
+              bgGradient="linear(to-r, primary.500,secondary.300)"
+              color={"white"}
               _hover={{
-                bg: "#e13616"
+                bgGradient: "linear(to-r, secondary.300,primary.500)",
+                boxShadow: "md"
               }}
             >
-              Debug
+              Let's Debug
             </Button>
           </Stack>
         </Stack>
