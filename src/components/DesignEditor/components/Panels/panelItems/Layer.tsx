@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react"
-import { Button, Center, Flex, IconButton, Image, List, ListItem, Spacer, Text } from "@chakra-ui/react"
+import { Button, Center, Flex, IconButton, Image, Input, List, ListItem, Spacer, Text } from "@chakra-ui/react"
 import { useActiveObject, useActiveScene } from "@layerhub-pro/react"
 import Lock from "~/components/Icons/Lock"
 import Unlock from "~/components/Icons/Unlock"
@@ -82,6 +82,8 @@ export default function Layer() {
     result.splice(endIndex, 0, removed)
     return result
   }
+
+  const handleLayerIdFocus = (event) => event.target.select();
 
   return (
     <Flex h="full" width="300px" padding="0.5rem">
@@ -333,7 +335,15 @@ export default function Layer() {
             fontSize="12px"
             padding="4px 2px"
             fontWeight="bold"
-          > Object Id {object[0]?.id}</Center>
+          > 
+          <Input
+            value={object[0]?.id}
+            fontSize="12px"
+            border={"none"}
+            color="primary.500"
+            onFocus={handleLayerIdFocus}
+          />
+          </Center>
           <Spacer />
         </Flex>
       </Flex>

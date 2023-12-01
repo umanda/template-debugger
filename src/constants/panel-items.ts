@@ -4,10 +4,15 @@ export const PANEL_ITEMS = [
     label: "Templates",
     icon: "Templates"
   }, */
-   {
-    id: "MagicLink",
-    label: "Generate",
-    icon: "MagicLink"
+  {
+    id: "JsonImport",
+    label: "Import",
+    icon: "JsonImport"
+  },
+  {
+    id: "JsonExport",
+    label: "Export",
+    icon: "JsonExport"
   },
   /* {
     id: "Pencil",

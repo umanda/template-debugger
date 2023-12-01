@@ -18,6 +18,8 @@ import Mail from "./Mail"
 import Right from "./Right"
 import Unlock from "./Unlock"
 import MagicLink from "./MagicLink"
+import JsonExport from "./JsonExport"
+import JsonImport from "./JsonImport"
 
 class Icons {
   static Facebook = Facebook
@@ -40,6 +42,8 @@ class Icons {
   static Mail = Mail
   static Right = Right
   static MagicLink = MagicLink
+  static JsonExport = JsonExport
+  static JsonImport = JsonImport
 }
 
 export default Icons

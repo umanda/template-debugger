@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react"
+import { Box, Flex, Text } from "@chakra-ui/react"
 import Icons from "~/components/Icons"
 import { useEditor } from "@layerhub-pro/react"
 import useDesignEditorContext from "~/hooks/useDesignEditorContext"

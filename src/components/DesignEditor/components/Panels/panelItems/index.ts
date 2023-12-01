@@ -10,6 +10,9 @@ import FontSelector from "./FontSelector"
 import TextColorPicker from "./TextColorPicker"
 import VectorColorPicker from "./VectorColorPicker"
 import MagicLink from "./MagicLink"
+import JsonExport from "./JsonExport"
+import JsonImport from "./JsonImport"
+
 
 export {
   Background,
@@ -23,5 +26,7 @@ export {
   FontSelector,
   TextColorPicker,
   VectorColorPicker,
-  MagicLink
+  MagicLink,
+  JsonExport,
+  JsonImport
 }
