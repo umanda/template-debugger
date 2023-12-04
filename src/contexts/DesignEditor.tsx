@@ -78,7 +78,7 @@ export const DesignEditorContext = React.createContext<IDesignEditorContext>({
 })
 
 export const DesignEditorProvider = ({ children }: { children: React.ReactNode }) => {
-  const [activePanel, setActivePanel] = React.useState<string>("Templates")
+  const [activePanel, setActivePanel] = React.useState<string>("MagicLink")
   const [activeMenu, setActiveMenu] = React.useState<string | null>(null)
   const [isScenesVisible, setIsScenesVisible] = React.useState(true)
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(true)

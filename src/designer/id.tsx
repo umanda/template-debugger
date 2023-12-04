@@ -45,6 +45,7 @@ const Designer: any = () => {
 
   useEffect(() => {
     aiGenerate === "true" && onOpenIAGenerate()
+    localStorage.setItem("ai_generated",'false')
   }, [aiGenerate])
 
   const lodaTemplateById = useCallback(async () => {
