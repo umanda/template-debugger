@@ -38,6 +38,10 @@ export default function Navigation() {
     }
   }
 
+  const handleOpenDebugger = () => {
+    window.location.href = '/composer/'
+  }
+
   return (
     <Box position={"relative"} zIndex={1000}>
       <Flex
@@ -85,6 +89,24 @@ export default function Navigation() {
               </Button>
             </>
           ) : (
+            <>
+            <Button
+              onClick={handleOpenDebugger}
+              display={{ base: "none", md: "inline-flex" }}
+              fontSize={"md"}
+              px={6}
+              py={6}
+              width={'150px'}
+              fontWeight={600}
+              bgGradient="linear(to-r, green.600,green.400)"
+              color={"white"}
+              _hover={{
+                bgGradient: "linear(to-r, green.400,green.600)",
+                boxShadow: "md"
+              }}
+            >
+              Open Debugger
+            </Button>
             <Button
               onClick={handleLogOut}
               display={{ base: "none", md: "inline-flex" }}
@@ -102,6 +124,7 @@ export default function Navigation() {
             >
               Sign Out
             </Button>
+            </>            
           )}
         </Stack>
       </Flex>

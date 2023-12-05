@@ -1,14 +1,12 @@
 import { Box, Stack, Heading, Text, Container, Input, Button, SimpleGrid, FormControl, Center } from "@chakra-ui/react"
 import { useCallback, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { AuthType } from "~/components/Modals/AuthModal"
 import { SigninDto } from "~/interfaces/user"
 import { useEditor } from "~/layerhub"
 import { useAppDispatch } from "~/store/store"
 import { signin } from "~/store/user/action"
 import { useSelector } from "react-redux"
 import { selectUser } from "~/store/user/selector"
-import { login } from "~/services/auth"
 import Navigation from "~/home/Navigation"
 
 export default function SignIn() {

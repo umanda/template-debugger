@@ -20,7 +20,6 @@ import React, { useState } from "react"
 import { useSelector } from "react-redux"
 import Navigation from "~/home/Navigation"
 import { selectUser } from "~/store/user/selector"
-import UsersGroup from "./UsersGroup"
 
 export default function SignUp() {
   const toast = useToast()
@@ -111,16 +110,6 @@ export default function SignUp() {
         spacing={{ base: 10, lg: 32 }}
         py={{ base: 10, sm: 20, lg: 32 }}
       >
-        <Stack spacing={{ base: 10, md: 20 }}>
-          <Heading lineHeight={1.1} fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}>
-            Join{" "}
-            <Text as={"span"} bgGradient="linear(to-r, primary.500,secondary.600)" bgClip="text">
-              Beta
-            </Text>{" "}
-            : Test New Features Before Others
-          </Heading>
-          <UsersGroup />
-        </Stack>
         <Stack bg={"gray.50"} rounded={"xl"} p={{ base: 4, sm: 6, md: 8 }} spacing={{ base: 8 }} maxW={{ lg: "lg" }}>
           <Stack spacing={4}>
             <Heading color={"gray.800"} lineHeight={1.1} fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}>
@@ -210,8 +199,6 @@ export default function SignUp() {
           form
         </Stack>
       </Container>
-      <Blur position={"absolute"} top={-10} left={-10} style={{ filter: "blur(70px)" }} />
-      <Footer/>
     </Box>
   )
 }

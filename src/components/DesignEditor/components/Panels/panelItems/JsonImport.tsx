@@ -57,7 +57,7 @@ export default function () {
         flexDirection: "column"
       }}
     >
-      {user?.plan === "HERO" || user?.count_free_requests !== undefined ? (
+      
         <>
         
           <Text>Please paste your JSON</Text>
@@ -79,53 +79,7 @@ export default function () {
           >
             Import your JSON
           </Button>
-          {user?.count_free_requests >= 0 && (
-            <Flex justify="center" flexDir="column" gap="15px">
-              <Flex
-                color={
-                  user?.count_free_requests <= 5 ? "#911956" : user?.count_free_requests <= 10 ? "#FF8B55" : "#545465"
-                }
-                gap="5px"
-              >
-                <Information size={24} />
-                {user?.count_free_requests === 0
-                  ? "No auto-generations left"
-                  : `${user?.count_free_requests} auto-generations left`}
-              </Flex>
-              <Button
-                onClick={() => window.open(redirectPayments)}
-                size="xs"
-                color="#5456F5"
-                variant="solid"
-                bg="#EEFCFD"
-                leftIcon={<MagicLink size={20} />}
-              >
-                Unlock infinite auto-generations! Upgrade now
-              </Button>
-            </Flex>
-          )}
         </>
-      ) : (
-        <Center h="full" flexDir="column">
-          <Image src="https://drawify-images.s3.eu-west-3.amazonaws.com/editor/magic-search.png" />
-          <Text w="100%" textAlign="center" marginBottom="20px">
-            Spark your imagination!
-          </Text>
-          <Text w="100%" textAlign="center">
-            Unleash the magic of AI-generated visual stories by upgrading your subscription.
-          </Text>
-          <Button
-            onClick={() => window.open(redirectPayments, `_blank`)}
-            borderRadius="10px"
-            borderColor="#5456F5"
-            color="#5456F5"
-            variant="outline"
-            marginTop="20px"
-          >
-            Upgrade to unlock
-          </Button>
-        </Center>
-      )}
     </Flex>
   )
 }
