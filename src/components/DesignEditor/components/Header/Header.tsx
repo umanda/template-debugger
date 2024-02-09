@@ -273,7 +273,7 @@ export default function Header() {
           />
         </Flex>
         <Flex padding={"0 1rem"} gap={"1rem"} alignItems={"center"}>
-          {/* <FileMenu /> */}
+          <FileMenu />
          {/*  <Resize /> */}
           <Flex>
             <Tooltip label="Undo" fontSize="md">
