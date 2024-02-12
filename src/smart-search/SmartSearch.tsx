@@ -26,7 +26,7 @@ const SmartSearch = () => {
   const api = {
     live: {
       key: "Pv27lnsS7I3Ko4aOnUvSW3i7FoOgKTFa1997gQ60",
-      url: "https://snapsearch.meet-drift.ai/v1/drawify/live/prediction"
+      url: "https://snapsearch.meet-drift.ai/v1/drawify/prod/prediction"
     },
     stg: {
       key: "D0EGVaJSpn7fgC5uQItDI8LfEztsuQ0Z5A6Niqq9",
