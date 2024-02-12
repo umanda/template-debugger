@@ -8,6 +8,7 @@ import { getListDrawifiers, signInByToken } from "./store/user/action"
 import { generateId } from "./utils/unique"
 import Home from "./home/Home"
 import SignIn from "./auth/SigIn"
+import SmartSearch from './smart-search/SmartSearch';
 
 const redirectHome: string = import.meta.env.VITE_REDIRECT_HOME
 const redirectLogout = import.meta.env.VITE_LOGOUT
@@ -18,6 +19,7 @@ function App() {
   return (
     <Routes>
      <Route path="/" element={<Home /> } />
+     <Route path="/smart-search" element={<SmartSearch /> } />
      <Route path="/auth/sign-in" element={<SignIn /> } />
      {/*  <Route path="/" element={state ? <Designer /> : <Loading setState={setState} state={state} />} /> */}
       <Route path="/composer/" element={state ? <Designer /> : <Loading setState={setState} state={state} />} />

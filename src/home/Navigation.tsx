@@ -42,6 +42,10 @@ export default function Navigation() {
     window.location.href = '/composer/'
   }
 
+  const handleOpenSmartSearch = () => {
+    window.location.href = '/smart-search'
+  }
+
   return (
     <Box position={"relative"} zIndex={1000}>
       <Flex
@@ -91,6 +95,23 @@ export default function Navigation() {
           ) : (
             <>
             <Button
+              onClick={handleOpenSmartSearch}
+              display={{ base: "none", md: "inline-flex" }}
+              fontSize={"md"}
+              px={6}
+              py={6}
+              minWidth={'150px'}
+              fontWeight={600}
+              bgGradient="linear(to-r, blue.600,blue.400)"
+              color={"white"}
+              _hover={{
+                bgGradient: "linear(to-r, blue.400,blue.600)",
+                boxShadow: "md"
+              }}
+            >
+              Test Smart Search
+            </Button>
+            <Button
               onClick={handleOpenDebugger}
               display={{ base: "none", md: "inline-flex" }}
               fontSize={"md"}
@@ -108,6 +129,7 @@ export default function Navigation() {
               Open Debugger
             </Button>
             <Button
+
               onClick={handleLogOut}
               display={{ base: "none", md: "inline-flex" }}
               fontSize={"md"}
